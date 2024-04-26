@@ -31,6 +31,5829 @@
 	},
 	"buffers":
 	[
+		{
+			"contents": "  rotateLeft = n => x =>\nGetMimeType(file)\n  hashString(string, bits = 32, mask = 0xffffffff)\n  decodeHTMLEntities(text)\n(match, entity) =>\nMimeType(path)\ndata =>\nGetDirMap(dirs = mountDirs, pred = '.*\\\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$')\n  pred = ent =>\n(acc, dir) =>\n  waitChild(proc)\n  runMount(dirsIterator)\n  readData(output, callback = d => {})\n(push, stop) =>\nchunk =>\n  line =>\ndata =>\nRequestContours(req, res)\n  main()\n  cp =>\n(req, res, next) =>\n(req, res, next) =>\nSendRaw(res, file, data, type = 'application/octet-stream')\n  convertToGerber = (boardFile, opts = {}) =>\n  formatToExt = (layers, format) =>\ndata =>\ndata =>\n  gerberEndpoint = (req, res) =>\n  res =>\nk =>\n  gerberToGcode = (gerberFile, allOpts = {}) =>\n  makePath(ext, side, base = basename)\n([k, v]) =>\n([k, v]) =>\ndata =>\ndata =>\n  error =>\n  side =>\n  side =>\n([side, file]) =>\nk =>\n  gcodeEndpoint = (req, res) =>\n  error =>\nGithubListContents = (owner, repo, dir, filter) =>\n({ name }) =>\n(req, res, next) =>\n  st =>\n  err =>\n() =>\n  err =>\nk =>\n(req, res, next) =>\n(req, res) =>\nFindFile(relative)\n(req, res) =>\n(req, res) =>\n(req, res) =>\n(req, res) =>\nGetVFSPath(file)\n  getDescription(file)\n  r =>\n  m =>\n(a, b) =>\n  s =>\n  re =>\n  m =>\nGetFilesList(dir = './tmp', opts = {})\n  n =>\n(acc, file) =>\n({ ctime, mtime, mode, size }) =>\n  err =>\n  a =>\n  i =>\nFilesURLs(list)\n  url =>\n(req, res) =>\n  port =>\n  key =>\n(ws, req) =>\n  data =>\n  data =>\n(req, res) =>\nf =>\nst =>\n() =>\n(req, res) =>\n() =>\nc =>\n() =>\n() =>\no =>\n() =>\n(req, res) =>\n(req, res) =>\n() =>\n  p =>\n  file =>\n() =>\nerror =>\n(req, res) =>\n  result =>\n  file =>\n  error =>\n(req, res) =>\n(req, res) =>\n(req, res) =>\n  name =>\n(req, res) =>\n(req, res, next) =>\n() =>\n  error =>\n(req, res) =>\n() =>",
+			"settings":
+			{
+				"buffer_size": 1744,
+				"line_ending": "Unix",
+				"name": "𝌆 Outline",
+				"scratch": true
+			},
+			"undo_stack":
+			[
+				[
+					1,
+					2,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/upload-server.js",
+						"symkeys":
+						[
+							[
+								1802,
+								1822
+							],
+							[
+								2052,
+								2057
+							],
+							[
+								2062,
+								2082
+							],
+							[
+								2120,
+								2127
+							],
+							[
+								2164,
+								2171
+							],
+							[
+								2494,
+								2502
+							],
+							[
+								2518,
+								2538
+							],
+							[
+								3068,
+								3101
+							],
+							[
+								3191,
+								3213
+							],
+							[
+								3427,
+								3468
+							],
+							[
+								3479,
+								3492
+							],
+							[
+								3559,
+								3594
+							],
+							[
+								3639,
+								3657
+							],
+							[
+								3693,
+								3735
+							],
+							[
+								3801,
+								3834
+							],
+							[
+								3856,
+								3860
+							],
+							[
+								4249,
+								4254
+							],
+							[
+								4304,
+								4308
+							],
+							[
+								4335,
+								4339
+							],
+							[
+								4367,
+								4371
+							],
+							[
+								4394,
+								4414
+							],
+							[
+								4493,
+								4497
+							],
+							[
+								4567,
+								4589
+							],
+							[
+								4704,
+								4709
+							],
+							[
+								4742,
+								4764
+							],
+							[
+								4958,
+								4980
+							],
+							[
+								5403,
+								5469
+							],
+							[
+								5815,
+								5824
+							],
+							[
+								5929,
+								5959
+							],
+							[
+								6320,
+								6355
+							],
+							[
+								6387,
+								6428
+							],
+							[
+								6460,
+								6526
+							],
+							[
+								6559,
+								6593
+							],
+							[
+								6659,
+								6706
+							],
+							[
+								7242,
+								7278
+							],
+							[
+								7391,
+								7400
+							],
+							[
+								7636,
+								7644
+							],
+							[
+								7750,
+								7757
+							],
+							[
+								7807,
+								7831
+							],
+							[
+								8103,
+								8114
+							],
+							[
+								8204,
+								8215
+							],
+							[
+								8279,
+								8290
+							],
+							[
+								8344,
+								8353
+							],
+							[
+								8391,
+								8402
+							],
+							[
+								8490,
+								8517
+							],
+							[
+								8649,
+								8653
+							],
+							[
+								8677,
+								8684
+							],
+							[
+								8717,
+								8733
+							],
+							[
+								8862,
+								8907
+							],
+							[
+								9146,
+								9204
+							],
+							[
+								9533,
+								9555
+							],
+							[
+								9928,
+								9938
+							],
+							[
+								10182,
+								10196
+							],
+							[
+								11131,
+								11155
+							],
+							[
+								11281,
+								11285
+							],
+							[
+								11377,
+								11391
+							],
+							[
+								11481,
+								11497
+							],
+							[
+								11929,
+								11942
+							],
+							[
+								11960,
+								11965
+							],
+							[
+								12047,
+								12054
+							],
+							[
+								12082,
+								12087
+							],
+							[
+								12232,
+								12257
+							],
+							[
+								12432,
+								12463
+							],
+							[
+								12540,
+								12551
+							],
+							[
+								14134,
+								14165
+							],
+							[
+								14695,
+								14728
+							],
+							[
+								15000,
+								15035
+							],
+							[
+								15120,
+								15153
+							],
+							[
+								16084,
+								16090
+							],
+							[
+								17205,
+								17209
+							],
+							[
+								18105,
+								18112
+							],
+							[
+								19411,
+								19443
+							],
+							[
+								19824,
+								19828
+							],
+							[
+								20507,
+								20542
+							],
+							[
+								21304,
+								21309
+							],
+							[
+								22036,
+								22040
+							],
+							[
+								22134,
+								22138
+							],
+							[
+								22258,
+								22267
+							],
+							[
+								22397,
+								22404
+							],
+							[
+								22685,
+								22692
+							],
+							[
+								22773,
+								22780
+							],
+							[
+								22844,
+								22860
+							],
+							[
+								22925,
+								22945
+							],
+							[
+								23644,
+								23656
+							],
+							[
+								23755,
+								23767
+							],
+							[
+								23969,
+								23985
+							],
+							[
+								24079,
+								24092
+							],
+							[
+								24503,
+								24521
+							],
+							[
+								24703,
+								24720
+							],
+							[
+								25146,
+								25165
+							],
+							[
+								25263,
+								25283
+							],
+							[
+								26501,
+								26523
+							],
+							[
+								26996,
+								27017
+							],
+							[
+								27568,
+								27587
+							],
+							[
+								28021,
+								28029
+							],
+							[
+								28468,
+								28477
+							],
+							[
+								30944,
+								30956
+							],
+							[
+								32868,
+								32903
+							],
+							[
+								33401,
+								33420
+							],
+							[
+								33614,
+								33631
+							],
+							[
+								33676,
+								33689
+							],
+							[
+								33725,
+								33735
+							],
+							[
+								35383,
+								35399
+							],
+							[
+								35531,
+								35550
+							],
+							[
+								35561,
+								35586
+							],
+							[
+								36010,
+								36030
+							]
+						],
+						"symlist":
+						[
+							"isin = (other, p) =>",
+							"Match",
+							"constructor(pattern)",
+							"apply()",
+							"name =>",
+							"value =>",
+							" (level, message) =>",
+							"async function AsyncCollect(iter)",
+							"function GetMime(file)",
+							"function Matcher(pattern, t = arg => arg)",
+							" (...args) =>",
+							"function KeyOrValueMatcher(pattern)",
+							" ([key, value]) =>",
+							"function GetRootDirectories(pattern = '*')",
+							"MakeUUID = (rng = Math.random) =>",
+							"n =>",
+							"dd =>",
+							"d =>",
+							"d =>",
+							"d =>",
+							"function GetDir(dir)",
+							"n =>",
+							"function DirName(name)",
+							"it =>",
+							"function DateStr(date)",
+							"function ModeStr(mode)",
+							"HTMLPage = ({ title, style, scripts = [], children, ...props }) =>",
+							"script =>",
+							"FilterForm = ({ ...props }) =>",
+							"HTMLTable = ({ rows, ...props }) =>",
+							"HTMLTableRow = ({ columns, ...props }) =>",
+							"HTMLTableColumn = ({ columns, children, tag = 'td', ...props }) =>",
+							"FileLink = ({ file, ...props }) =>",
+							"FileObject = ({ file, stat = {}, ...props }) =>",
+							"FileTable = ({ files, ...props }) =>",
+							"(a, b) =>",
+							"field =>",
+							"file =>",
+							"function ReadExiv2(file)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"(a, b) =>",
+							"([k, v]) =>",
+							"function ReadExiftool(file)",
+							"l =>",
+							"line =>",
+							"([line, idx]) =>",
+							"function HeifConvert(src, dst, quality = 100)",
+							"function MagickResize(src, dst, rotate = 0, width, height)",
+							"function main(...args)",
+							" (a, v) =>",
+							" (v, pv, o) =>",
+							" (module, ...args) =>",
+							"m =>",
+							".show = arg =>",
+							".cleanup = () =>",
+							" (...args) =>",
+							"() =>",
+							"puts(s)",
+							"() =>",
+							" function ParseBody(gen)",
+							".createWS = (url, callbacks) =>",
+							".out = s =>",
+							"async function* test(req, resp)",
+							" function proxy(req, resp)",
+							" function* config(req, resp)",
+							" function* file(req, resp)",
+							"dir =>",
+							"x =>",
+							"file =>",
+							"async function* files(req, resp)",
+							"n =>",
+							" function* files2(req, resp)",
+							" n =>",
+							"n =>",
+							"n =>",
+							"(a, b) =>",
+							"name =>",
+							"file =>",
+							"file =>",
+							"([file, rel]) =>",
+							"(acc, [file, st]) =>",
+							"string(a, b)",
+							"number(a, b)",
+							"([name, obj]) =>",
+							"({ name }) =>",
+							"onConnect(ws, req)",
+							"sendCommand(data)",
+							"onClose(ws, reason)",
+							"onRequest(req, resp)",
+							"onOpen(name, filename)",
+							"onContent(name, data)",
+							"onClose(name, file)",
+							"f = x =>",
+							"result =>",
+							"onFinalize()",
+							" (match, p1, p0, p2, p3, offset) =>",
+							"onMessage(ws, data)",
+							"get connections()",
+							"get by_uuid()",
+							"uuid(data)",
+							"onFd(fd, rd, wr)",
+							"onClose(ws, reason)",
+							"async onMessage(ws, data)",
+							" function quit(why)"
+						]
+					},
+					"AwAAAAAAAAAAAAAAbgcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG4HAAAgIGlzaW4gPSAob3RoZXIsIHApID0+Ck1hdGNoCiAgY29uc3RydWN0b3IocGF0dGVybikKICBhcHBseSgpCiAgbmFtZSA9PgogIHZhbHVlID0+CihsZXZlbCwgbWVzc2FnZSkgPT4KQXN5bmNDb2xsZWN0KGl0ZXIpCkdldE1pbWUoZmlsZSkKTWF0Y2hlcihwYXR0ZXJuLCB0ID0gYXJnID0+IGFyZykKKC4uLmFyZ3MpID0+CktleU9yVmFsdWVNYXRjaGVyKHBhdHRlcm4pCihba2V5LCB2YWx1ZV0pID0+CkdldFJvb3REaXJlY3RvcmllcyhwYXR0ZXJuID0gJyonKQpNYWtlVVVJRCA9IChybmcgPSBNYXRoLnJhbmRvbSkgPT4KICBuID0+CiAgZGQgPT4KICBkID0+CiAgZCA9PgogIGQgPT4KR2V0RGlyKGRpcikKICBuID0+CkRpck5hbWUobmFtZSkKICBpdCA9PgpEYXRlU3RyKGRhdGUpCk1vZGVTdHIobW9kZSkKSFRNTFBhZ2UgPSAoeyB0aXRsZSwgc3R5bGUsIHNjcmlwdHMgPSBbXSwgY2hpbGRyZW4sIC4uLnByb3BzIH0pID0+CiAgc2NyaXB0ID0+CkZpbHRlckZvcm0gPSAoeyAuLi5wcm9wcyB9KSA9PgpIVE1MVGFibGUgPSAoeyByb3dzLCAuLi5wcm9wcyB9KSA9PgpIVE1MVGFibGVSb3cgPSAoeyBjb2x1bW5zLCAuLi5wcm9wcyB9KSA9PgpIVE1MVGFibGVDb2x1bW4gPSAoeyBjb2x1bW5zLCBjaGlsZHJlbiwgdGFnID0gJ3RkJywgLi4ucHJvcHMgfSkgPT4KRmlsZUxpbmsgPSAoeyBmaWxlLCAuLi5wcm9wcyB9KSA9PgpGaWxlT2JqZWN0ID0gKHsgZmlsZSwgc3RhdCA9IHt9LCAuLi5wcm9wcyB9KSA9PgpGaWxlVGFibGUgPSAoeyBmaWxlcywgLi4ucHJvcHMgfSkgPT4KKGEsIGIpID0+CiAgZmllbGQgPT4KICBmaWxlID0+ClJlYWRFeGl2MihmaWxlKQooW2ssIHZdKSA9PgooW2ssIHZdKSA9PgooW2ssIHZdKSA9PgooYSwgYikgPT4KKFtrLCB2XSkgPT4KUmVhZEV4aWZ0b29sKGZpbGUpCiAgbCA9PgogIGxpbmUgPT4KKFtsaW5lLCBpZHhdKSA9PgpIZWlmQ29udmVydChzcmMsIGRzdCwgcXVhbGl0eSA9IDEwMCkKTWFnaWNrUmVzaXplKHNyYywgZHN0LCByb3RhdGUgPSAwLCB3aWR0aCwgaGVpZ2h0KQogIG1haW4oLi4uYXJncykKKGEsIHYpID0+Cih2LCBwdiwgbykgPT4KKG1vZHVsZSwgLi4uYXJncykgPT4KICBtID0+CiAgLnNob3cgPSBhcmcgPT4KICAuY2xlYW51cCA9ICgpID0+CiguLi5hcmdzKSA9PgooKSA9PgogIHB1dHMocykKKCkgPT4KUGFyc2VCb2R5KGdlbikKICAuY3JlYXRlV1MgPSAodXJsLCBjYWxsYmFja3MpID0+CiAgLm91dCA9IHMgPT4KICB0ZXN0KHJlcSwgcmVzcCkKICBwcm94eShyZXEsIHJlc3ApCiAgY29uZmlnKHJlcSwgcmVzcCkKICBmaWxlKHJlcSwgcmVzcCkKICBkaXIgPT4KICB4ID0+CiAgZmlsZSA9PgogIGZpbGVzKHJlcSwgcmVzcCkKICBuID0+CiAgZmlsZXMyKHJlcSwgcmVzcCkKbiA9PgogIG4gPT4KICBuID0+CihhLCBiKSA9PgogIG5hbWUgPT4KICBmaWxlID0+CiAgZmlsZSA9PgooW2ZpbGUsIHJlbF0pID0+CihhY2MsIFtmaWxlLCBzdF0pID0+CiAgc3RyaW5nKGEsIGIpCiAgbnVtYmVyKGEsIGIpCihbbmFtZSwgb2JqXSkgPT4KKHsgbmFtZSB9KSA9PgogIG9uQ29ubmVjdCh3cywgcmVxKQogIHNlbmRDb21tYW5kKGRhdGEpCiAgb25DbG9zZSh3cywgcmVhc29uKQogIG9uUmVxdWVzdChyZXEsIHJlc3ApCiAgb25PcGVuKG5hbWUsIGZpbGVuYW1lKQogIG9uQ29udGVudChuYW1lLCBkYXRhKQogIG9uQ2xvc2UobmFtZSwgZmlsZSkKICBmID0geCA9PgogIHJlc3VsdCA9PgogIG9uRmluYWxpemUoKQoobWF0Y2gsIHAxLCBwMCwgcDIsIHAzLCBvZmZzZXQpID0+CiAgb25NZXNzYWdlKHdzLCBkYXRhKQogIGdldCBjb25uZWN0aW9ucygpCiAgZ2V0IGJ5X3V1aWQoKQogIHV1aWQoZGF0YSkKICBvbkZkKGZkLCByZCwgd3IpCiAgb25DbG9zZSh3cywgcmVhc29uKQogIG9uTWVzc2FnZSh3cywgZGF0YSkKICBxdWl0KHdoeSkAAAAAAAAAAG4HAAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					2,
+					1,
+					"outline_refresh",
+					{
+						"path": null,
+						"symkeys":
+						[
+						],
+						"symlist":
+						[
+						]
+					},
+					"AgAAAAAAAAAAAAAAAAAAAAAAAABuBwAAICBpc2luID0gKG90aGVyLCBwKSA9PgpNYXRjaAogIGNvbnN0cnVjdG9yKHBhdHRlcm4pCiAgYXBwbHkoKQogIG5hbWUgPT4KICB2YWx1ZSA9PgoobGV2ZWwsIG1lc3NhZ2UpID0+CkFzeW5jQ29sbGVjdChpdGVyKQpHZXRNaW1lKGZpbGUpCk1hdGNoZXIocGF0dGVybiwgdCA9IGFyZyA9PiBhcmcpCiguLi5hcmdzKSA9PgpLZXlPclZhbHVlTWF0Y2hlcihwYXR0ZXJuKQooW2tleSwgdmFsdWVdKSA9PgpHZXRSb290RGlyZWN0b3JpZXMocGF0dGVybiA9ICcqJykKTWFrZVVVSUQgPSAocm5nID0gTWF0aC5yYW5kb20pID0+CiAgbiA9PgogIGRkID0+CiAgZCA9PgogIGQgPT4KICBkID0+CkdldERpcihkaXIpCiAgbiA9PgpEaXJOYW1lKG5hbWUpCiAgaXQgPT4KRGF0ZVN0cihkYXRlKQpNb2RlU3RyKG1vZGUpCkhUTUxQYWdlID0gKHsgdGl0bGUsIHN0eWxlLCBzY3JpcHRzID0gW10sIGNoaWxkcmVuLCAuLi5wcm9wcyB9KSA9PgogIHNjcmlwdCA9PgpGaWx0ZXJGb3JtID0gKHsgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlID0gKHsgcm93cywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlUm93ID0gKHsgY29sdW1ucywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlQ29sdW1uID0gKHsgY29sdW1ucywgY2hpbGRyZW4sIHRhZyA9ICd0ZCcsIC4uLnByb3BzIH0pID0+CkZpbGVMaW5rID0gKHsgZmlsZSwgLi4ucHJvcHMgfSkgPT4KRmlsZU9iamVjdCA9ICh7IGZpbGUsIHN0YXQgPSB7fSwgLi4ucHJvcHMgfSkgPT4KRmlsZVRhYmxlID0gKHsgZmlsZXMsIC4uLnByb3BzIH0pID0+CihhLCBiKSA9PgogIGZpZWxkID0+CiAgZmlsZSA9PgpSZWFkRXhpdjIoZmlsZSkKKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKGEsIGIpID0+Cihbaywgdl0pID0+ClJlYWRFeGlmdG9vbChmaWxlKQogIGwgPT4KICBsaW5lID0+CihbbGluZSwgaWR4XSkgPT4KSGVpZkNvbnZlcnQoc3JjLCBkc3QsIHF1YWxpdHkgPSAxMDApCk1hZ2lja1Jlc2l6ZShzcmMsIGRzdCwgcm90YXRlID0gMCwgd2lkdGgsIGhlaWdodCkKICBtYWluKC4uLmFyZ3MpCihhLCB2KSA9PgoodiwgcHYsIG8pID0+Cihtb2R1bGUsIC4uLmFyZ3MpID0+CiAgbSA9PgogIC5zaG93ID0gYXJnID0+CiAgLmNsZWFudXAgPSAoKSA9PgooLi4uYXJncykgPT4KKCkgPT4KICBwdXRzKHMpCigpID0+ClBhcnNlQm9keShnZW4pCiAgLmNyZWF0ZVdTID0gKHVybCwgY2FsbGJhY2tzKSA9PgogIC5vdXQgPSBzID0+CiAgdGVzdChyZXEsIHJlc3ApCiAgcHJveHkocmVxLCByZXNwKQogIGNvbmZpZyhyZXEsIHJlc3ApCiAgZmlsZShyZXEsIHJlc3ApCiAgZGlyID0+CiAgeCA9PgogIGZpbGUgPT4KICBmaWxlcyhyZXEsIHJlc3ApCiAgbiA9PgogIGZpbGVzMihyZXEsIHJlc3ApCm4gPT4KICBuID0+CiAgbiA9PgooYSwgYikgPT4KICBuYW1lID0+CiAgZmlsZSA9PgogIGZpbGUgPT4KKFtmaWxlLCByZWxdKSA9PgooYWNjLCBbZmlsZSwgc3RdKSA9PgogIHN0cmluZyhhLCBiKQogIG51bWJlcihhLCBiKQooW25hbWUsIG9ial0pID0+Cih7IG5hbWUgfSkgPT4KICBvbkNvbm5lY3Qod3MsIHJlcSkKICBzZW5kQ29tbWFuZChkYXRhKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvblJlcXVlc3QocmVxLCByZXNwKQogIG9uT3BlbihuYW1lLCBmaWxlbmFtZSkKICBvbkNvbnRlbnQobmFtZSwgZGF0YSkKICBvbkNsb3NlKG5hbWUsIGZpbGUpCiAgZiA9IHggPT4KICByZXN1bHQgPT4KICBvbkZpbmFsaXplKCkKKG1hdGNoLCBwMSwgcDAsIHAyLCBwMywgb2Zmc2V0KSA9PgogIG9uTWVzc2FnZSh3cywgZGF0YSkKICBnZXQgY29ubmVjdGlvbnMoKQogIGdldCBieV91dWlkKCkKICB1dWlkKGRhdGEpCiAgb25GZChmZCwgcmQsIHdyKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvbk1lc3NhZ2Uod3MsIGRhdGEpCiAgcXVpdCh3aHkpAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					3,
+					1,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/upload-server.js",
+						"symkeys":
+						[
+							[
+								1802,
+								1822
+							],
+							[
+								2052,
+								2057
+							],
+							[
+								2062,
+								2082
+							],
+							[
+								2120,
+								2127
+							],
+							[
+								2164,
+								2171
+							],
+							[
+								2494,
+								2502
+							],
+							[
+								2518,
+								2538
+							],
+							[
+								3068,
+								3101
+							],
+							[
+								3191,
+								3213
+							],
+							[
+								3427,
+								3468
+							],
+							[
+								3479,
+								3492
+							],
+							[
+								3559,
+								3594
+							],
+							[
+								3639,
+								3657
+							],
+							[
+								3693,
+								3735
+							],
+							[
+								3801,
+								3834
+							],
+							[
+								3856,
+								3860
+							],
+							[
+								4249,
+								4254
+							],
+							[
+								4304,
+								4308
+							],
+							[
+								4335,
+								4339
+							],
+							[
+								4367,
+								4371
+							],
+							[
+								4394,
+								4414
+							],
+							[
+								4493,
+								4497
+							],
+							[
+								4567,
+								4589
+							],
+							[
+								4704,
+								4709
+							],
+							[
+								4742,
+								4764
+							],
+							[
+								4958,
+								4980
+							],
+							[
+								5403,
+								5469
+							],
+							[
+								5815,
+								5824
+							],
+							[
+								5929,
+								5959
+							],
+							[
+								6320,
+								6355
+							],
+							[
+								6387,
+								6428
+							],
+							[
+								6460,
+								6526
+							],
+							[
+								6559,
+								6593
+							],
+							[
+								6659,
+								6706
+							],
+							[
+								7242,
+								7278
+							],
+							[
+								7391,
+								7400
+							],
+							[
+								7636,
+								7644
+							],
+							[
+								7750,
+								7757
+							],
+							[
+								7807,
+								7831
+							],
+							[
+								8103,
+								8114
+							],
+							[
+								8204,
+								8215
+							],
+							[
+								8279,
+								8290
+							],
+							[
+								8344,
+								8353
+							],
+							[
+								8391,
+								8402
+							],
+							[
+								8490,
+								8517
+							],
+							[
+								8649,
+								8653
+							],
+							[
+								8677,
+								8684
+							],
+							[
+								8717,
+								8733
+							],
+							[
+								8862,
+								8907
+							],
+							[
+								9146,
+								9204
+							],
+							[
+								9533,
+								9555
+							],
+							[
+								9928,
+								9938
+							],
+							[
+								10182,
+								10196
+							],
+							[
+								11131,
+								11155
+							],
+							[
+								11281,
+								11285
+							],
+							[
+								11377,
+								11391
+							],
+							[
+								11481,
+								11497
+							],
+							[
+								11929,
+								11942
+							],
+							[
+								11960,
+								11965
+							],
+							[
+								12047,
+								12054
+							],
+							[
+								12082,
+								12087
+							],
+							[
+								12232,
+								12257
+							],
+							[
+								12432,
+								12463
+							],
+							[
+								12540,
+								12551
+							],
+							[
+								14134,
+								14165
+							],
+							[
+								14695,
+								14728
+							],
+							[
+								15000,
+								15035
+							],
+							[
+								15120,
+								15153
+							],
+							[
+								16084,
+								16090
+							],
+							[
+								17205,
+								17209
+							],
+							[
+								18105,
+								18112
+							],
+							[
+								19411,
+								19443
+							],
+							[
+								19824,
+								19828
+							],
+							[
+								20507,
+								20542
+							],
+							[
+								21304,
+								21309
+							],
+							[
+								22036,
+								22040
+							],
+							[
+								22134,
+								22138
+							],
+							[
+								22258,
+								22267
+							],
+							[
+								22397,
+								22404
+							],
+							[
+								22685,
+								22692
+							],
+							[
+								22773,
+								22780
+							],
+							[
+								22844,
+								22860
+							],
+							[
+								22925,
+								22945
+							],
+							[
+								23644,
+								23656
+							],
+							[
+								23755,
+								23767
+							],
+							[
+								23969,
+								23985
+							],
+							[
+								24079,
+								24092
+							],
+							[
+								24503,
+								24521
+							],
+							[
+								24703,
+								24720
+							],
+							[
+								25146,
+								25165
+							],
+							[
+								25263,
+								25283
+							],
+							[
+								26501,
+								26523
+							],
+							[
+								26996,
+								27017
+							],
+							[
+								27568,
+								27587
+							],
+							[
+								28021,
+								28029
+							],
+							[
+								28468,
+								28477
+							],
+							[
+								30944,
+								30956
+							],
+							[
+								32868,
+								32903
+							],
+							[
+								33401,
+								33420
+							],
+							[
+								33614,
+								33631
+							],
+							[
+								33676,
+								33689
+							],
+							[
+								33725,
+								33735
+							],
+							[
+								35383,
+								35399
+							],
+							[
+								35531,
+								35550
+							],
+							[
+								35561,
+								35586
+							],
+							[
+								36010,
+								36030
+							]
+						],
+						"symlist":
+						[
+							"isin = (other, p) =>",
+							"Match",
+							"constructor(pattern)",
+							"apply()",
+							"name =>",
+							"value =>",
+							" (level, message) =>",
+							"async function AsyncCollect(iter)",
+							"function GetMime(file)",
+							"function Matcher(pattern, t = arg => arg)",
+							" (...args) =>",
+							"function KeyOrValueMatcher(pattern)",
+							" ([key, value]) =>",
+							"function GetRootDirectories(pattern = '*')",
+							"MakeUUID = (rng = Math.random) =>",
+							"n =>",
+							"dd =>",
+							"d =>",
+							"d =>",
+							"d =>",
+							"function GetDir(dir)",
+							"n =>",
+							"function DirName(name)",
+							"it =>",
+							"function DateStr(date)",
+							"function ModeStr(mode)",
+							"HTMLPage = ({ title, style, scripts = [], children, ...props }) =>",
+							"script =>",
+							"FilterForm = ({ ...props }) =>",
+							"HTMLTable = ({ rows, ...props }) =>",
+							"HTMLTableRow = ({ columns, ...props }) =>",
+							"HTMLTableColumn = ({ columns, children, tag = 'td', ...props }) =>",
+							"FileLink = ({ file, ...props }) =>",
+							"FileObject = ({ file, stat = {}, ...props }) =>",
+							"FileTable = ({ files, ...props }) =>",
+							"(a, b) =>",
+							"field =>",
+							"file =>",
+							"function ReadExiv2(file)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"(a, b) =>",
+							"([k, v]) =>",
+							"function ReadExiftool(file)",
+							"l =>",
+							"line =>",
+							"([line, idx]) =>",
+							"function HeifConvert(src, dst, quality = 100)",
+							"function MagickResize(src, dst, rotate = 0, width, height)",
+							"function main(...args)",
+							" (a, v) =>",
+							" (v, pv, o) =>",
+							" (module, ...args) =>",
+							"m =>",
+							".show = arg =>",
+							".cleanup = () =>",
+							" (...args) =>",
+							"() =>",
+							"puts(s)",
+							"() =>",
+							" function ParseBody(gen)",
+							".createWS = (url, callbacks) =>",
+							".out = s =>",
+							"async function* test(req, resp)",
+							" function proxy(req, resp)",
+							" function* config(req, resp)",
+							" function* file(req, resp)",
+							"dir =>",
+							"x =>",
+							"file =>",
+							"async function* files(req, resp)",
+							"n =>",
+							" function* files2(req, resp)",
+							" n =>",
+							"n =>",
+							"n =>",
+							"(a, b) =>",
+							"name =>",
+							"file =>",
+							"file =>",
+							"([file, rel]) =>",
+							"(acc, [file, st]) =>",
+							"string(a, b)",
+							"number(a, b)",
+							"([name, obj]) =>",
+							"({ name }) =>",
+							"onConnect(ws, req)",
+							"sendCommand(data)",
+							"onClose(ws, reason)",
+							"onRequest(req, resp)",
+							"onOpen(name, filename)",
+							"onContent(name, data)",
+							"onClose(name, file)",
+							"f = x =>",
+							"result =>",
+							"onFinalize()",
+							" (match, p1, p0, p2, p3, offset) =>",
+							"onMessage(ws, data)",
+							"get connections()",
+							"get by_uuid()",
+							"uuid(data)",
+							"onFd(fd, rd, wr)",
+							"onClose(ws, reason)",
+							"async onMessage(ws, data)",
+							" function quit(why)"
+						]
+					},
+					"AQAAAAAAAAAAAAAAbgcAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					4,
+					1,
+					"outline_refresh",
+					{
+						"path": null,
+						"symkeys":
+						[
+						],
+						"symlist":
+						[
+						]
+					},
+					"AgAAAAAAAAAAAAAAAAAAAAAAAABuBwAAICBpc2luID0gKG90aGVyLCBwKSA9PgpNYXRjaAogIGNvbnN0cnVjdG9yKHBhdHRlcm4pCiAgYXBwbHkoKQogIG5hbWUgPT4KICB2YWx1ZSA9PgoobGV2ZWwsIG1lc3NhZ2UpID0+CkFzeW5jQ29sbGVjdChpdGVyKQpHZXRNaW1lKGZpbGUpCk1hdGNoZXIocGF0dGVybiwgdCA9IGFyZyA9PiBhcmcpCiguLi5hcmdzKSA9PgpLZXlPclZhbHVlTWF0Y2hlcihwYXR0ZXJuKQooW2tleSwgdmFsdWVdKSA9PgpHZXRSb290RGlyZWN0b3JpZXMocGF0dGVybiA9ICcqJykKTWFrZVVVSUQgPSAocm5nID0gTWF0aC5yYW5kb20pID0+CiAgbiA9PgogIGRkID0+CiAgZCA9PgogIGQgPT4KICBkID0+CkdldERpcihkaXIpCiAgbiA9PgpEaXJOYW1lKG5hbWUpCiAgaXQgPT4KRGF0ZVN0cihkYXRlKQpNb2RlU3RyKG1vZGUpCkhUTUxQYWdlID0gKHsgdGl0bGUsIHN0eWxlLCBzY3JpcHRzID0gW10sIGNoaWxkcmVuLCAuLi5wcm9wcyB9KSA9PgogIHNjcmlwdCA9PgpGaWx0ZXJGb3JtID0gKHsgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlID0gKHsgcm93cywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlUm93ID0gKHsgY29sdW1ucywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlQ29sdW1uID0gKHsgY29sdW1ucywgY2hpbGRyZW4sIHRhZyA9ICd0ZCcsIC4uLnByb3BzIH0pID0+CkZpbGVMaW5rID0gKHsgZmlsZSwgLi4ucHJvcHMgfSkgPT4KRmlsZU9iamVjdCA9ICh7IGZpbGUsIHN0YXQgPSB7fSwgLi4ucHJvcHMgfSkgPT4KRmlsZVRhYmxlID0gKHsgZmlsZXMsIC4uLnByb3BzIH0pID0+CihhLCBiKSA9PgogIGZpZWxkID0+CiAgZmlsZSA9PgpSZWFkRXhpdjIoZmlsZSkKKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKGEsIGIpID0+Cihbaywgdl0pID0+ClJlYWRFeGlmdG9vbChmaWxlKQogIGwgPT4KICBsaW5lID0+CihbbGluZSwgaWR4XSkgPT4KSGVpZkNvbnZlcnQoc3JjLCBkc3QsIHF1YWxpdHkgPSAxMDApCk1hZ2lja1Jlc2l6ZShzcmMsIGRzdCwgcm90YXRlID0gMCwgd2lkdGgsIGhlaWdodCkKICBtYWluKC4uLmFyZ3MpCihhLCB2KSA9PgoodiwgcHYsIG8pID0+Cihtb2R1bGUsIC4uLmFyZ3MpID0+CiAgbSA9PgogIC5zaG93ID0gYXJnID0+CiAgLmNsZWFudXAgPSAoKSA9PgooLi4uYXJncykgPT4KKCkgPT4KICBwdXRzKHMpCigpID0+ClBhcnNlQm9keShnZW4pCiAgLmNyZWF0ZVdTID0gKHVybCwgY2FsbGJhY2tzKSA9PgogIC5vdXQgPSBzID0+CiAgdGVzdChyZXEsIHJlc3ApCiAgcHJveHkocmVxLCByZXNwKQogIGNvbmZpZyhyZXEsIHJlc3ApCiAgZmlsZShyZXEsIHJlc3ApCiAgZGlyID0+CiAgeCA9PgogIGZpbGUgPT4KICBmaWxlcyhyZXEsIHJlc3ApCiAgbiA9PgogIGZpbGVzMihyZXEsIHJlc3ApCm4gPT4KICBuID0+CiAgbiA9PgooYSwgYikgPT4KICBuYW1lID0+CiAgZmlsZSA9PgogIGZpbGUgPT4KKFtmaWxlLCByZWxdKSA9PgooYWNjLCBbZmlsZSwgc3RdKSA9PgogIHN0cmluZyhhLCBiKQogIG51bWJlcihhLCBiKQooW25hbWUsIG9ial0pID0+Cih7IG5hbWUgfSkgPT4KICBvbkNvbm5lY3Qod3MsIHJlcSkKICBzZW5kQ29tbWFuZChkYXRhKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvblJlcXVlc3QocmVxLCByZXNwKQogIG9uT3BlbihuYW1lLCBmaWxlbmFtZSkKICBvbkNvbnRlbnQobmFtZSwgZGF0YSkKICBvbkNsb3NlKG5hbWUsIGZpbGUpCiAgZiA9IHggPT4KICByZXN1bHQgPT4KICBvbkZpbmFsaXplKCkKKG1hdGNoLCBwMSwgcDAsIHAyLCBwMywgb2Zmc2V0KSA9PgogIG9uTWVzc2FnZSh3cywgZGF0YSkKICBnZXQgY29ubmVjdGlvbnMoKQogIGdldCBieV91dWlkKCkKICB1dWlkKGRhdGEpCiAgb25GZChmZCwgcmQsIHdyKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvbk1lc3NhZ2Uod3MsIGRhdGEpCiAgcXVpdCh3aHkpAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					5,
+					1,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/server.js",
+						"symkeys":
+						[
+							[
+								1072,
+								1094
+							],
+							[
+								1218,
+								1244
+							],
+							[
+								1414,
+								1471
+							],
+							[
+								1723,
+								1756
+							],
+							[
+								1985,
+								2004
+							],
+							[
+								2036,
+								2065
+							],
+							[
+								2171,
+								2179
+							],
+							[
+								2897,
+								2979
+							],
+							[
+								3285,
+								3298
+							],
+							[
+								3378,
+								3391
+							],
+							[
+								3666,
+								3696
+							],
+							[
+								3856,
+								3893
+							],
+							[
+								4188,
+								4239
+							],
+							[
+								4297,
+								4312
+							],
+							[
+								4342,
+								4351
+							],
+							[
+								4651,
+								4658
+							],
+							[
+								4789,
+								4797
+							],
+							[
+								4995,
+								5035
+							],
+							[
+								5358,
+								5379
+							],
+							[
+								5666,
+								5671
+							],
+							[
+								6047,
+								6066
+							],
+							[
+								6582,
+								6601
+							],
+							[
+								6948,
+								7018
+							],
+							[
+								7364,
+								7413
+							],
+							[
+								7812,
+								7845
+							],
+							[
+								8614,
+								8622
+							],
+							[
+								8669,
+								8677
+							],
+							[
+								9188,
+								9224
+							],
+							[
+								9680,
+								9686
+							],
+							[
+								9849,
+								9854
+							],
+							[
+								10131,
+								10182
+							],
+							[
+								11130,
+								11179
+							],
+							[
+								11318,
+								11329
+							],
+							[
+								11428,
+								11439
+							],
+							[
+								12017,
+								12025
+							],
+							[
+								12074,
+								12082
+							],
+							[
+								12133,
+								12141
+							],
+							[
+								12568,
+								12575
+							],
+							[
+								12716,
+								12723
+							],
+							[
+								12762,
+								12779
+							],
+							[
+								13295,
+								13300
+							],
+							[
+								13476,
+								13511
+							],
+							[
+								13654,
+								13662
+							],
+							[
+								13861,
+								13917
+							],
+							[
+								14280,
+								14293
+							],
+							[
+								14351,
+								14376
+							],
+							[
+								14633,
+								14638
+							],
+							[
+								14678,
+								14684
+							],
+							[
+								14841,
+								14846
+							],
+							[
+								14883,
+								14889
+							],
+							[
+								15399,
+								15404
+							],
+							[
+								16022,
+								16041
+							],
+							[
+								17544,
+								17563
+							],
+							[
+								18408,
+								18437
+							],
+							[
+								18660,
+								18679
+							],
+							[
+								19026,
+								19045
+							],
+							[
+								19418,
+								19432
+							],
+							[
+								19789,
+								19808
+							],
+							[
+								19935,
+								19962
+							],
+							[
+								20136,
+								20171
+							],
+							[
+								20286,
+								20290
+							],
+							[
+								20386,
+								20390
+							],
+							[
+								20412,
+								20421
+							],
+							[
+								20566,
+								20570
+							],
+							[
+								20597,
+								20602
+							],
+							[
+								20630,
+								20634
+							],
+							[
+								20861,
+								20914
+							],
+							[
+								21275,
+								21279
+							],
+							[
+								21432,
+								21446
+							],
+							[
+								21826,
+								21859
+							],
+							[
+								22106,
+								22112
+							],
+							[
+								22172,
+								22176
+							],
+							[
+								22186,
+								22190
+							],
+							[
+								22209,
+								22235
+							],
+							[
+								22359,
+								22365
+							],
+							[
+								22527,
+								22546
+							],
+							[
+								22617,
+								22624
+							],
+							[
+								22681,
+								22687
+							],
+							[
+								22729,
+								22747
+							],
+							[
+								22997,
+								23010
+							],
+							[
+								23179,
+								23192
+							],
+							[
+								23424,
+								23443
+							],
+							[
+								23573,
+								23581
+							],
+							[
+								23594,
+								23603
+							],
+							[
+								23608,
+								23617
+							],
+							[
+								23649,
+								23668
+							],
+							[
+								23736,
+								23747
+							],
+							[
+								23777,
+								23787
+							],
+							[
+								23955,
+								23966
+							],
+							[
+								24014,
+								24025
+							],
+							[
+								24043,
+								24053
+							],
+							[
+								24057,
+								24068
+							],
+							[
+								24203,
+								24222
+							],
+							[
+								24560,
+								24579
+							],
+							[
+								24602,
+								24613
+							],
+							[
+								24851,
+								24855
+							],
+							[
+								25934,
+								25941
+							],
+							[
+								25973,
+								25984
+							],
+							[
+								25989,
+								26003
+							],
+							[
+								26105,
+								26124
+							],
+							[
+								26391,
+								26400
+							],
+							[
+								26422,
+								26429
+							],
+							[
+								26466,
+								26474
+							],
+							[
+								26524,
+								26543
+							],
+							[
+								26607,
+								26626
+							],
+							[
+								26709,
+								26728
+							],
+							[
+								27044,
+								27051
+							],
+							[
+								27337,
+								27356
+							],
+							[
+								27604,
+								27629
+							],
+							[
+								28866,
+								28871
+							],
+							[
+								28915,
+								28923
+							],
+							[
+								29281,
+								29295
+							],
+							[
+								29361,
+								29367
+							]
+						],
+						"symlist":
+						[
+							"rotateLeft = n => x =>",
+							"function GetMimeType(file)",
+							"function hashString(string, bits = 32, mask = 0xffffffff)",
+							"function decodeHTMLEntities(text)",
+							" (match, entity) =>",
+							"async function MimeType(path)",
+							" data =>",
+							"function GetDirMap(dirs = mountDirs, pred = '.*\\\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$')",
+							"pred = ent =>",
+							"(acc, dir) =>",
+							"async function waitChild(proc)",
+							"async function runMount(dirsIterator)",
+							"async function readData(output, callback = d => {})",
+							"(push, stop) =>",
+							" chunk =>",
+							"line =>",
+							" data =>",
+							"async function RequestContours(req, res)",
+							"async function main()",
+							"cp =>",
+							"(req, res, next) =>",
+							"(req, res, next) =>",
+							" function SendRaw(res, file, data, type = 'application/octet-stream')",
+							"convertToGerber = async (boardFile, opts = {}) =>",
+							"formatToExt = (layers, format) =>",
+							" data =>",
+							" data =>",
+							"gerberEndpoint = async (req, res) =>",
+							"res =>",
+							" k =>",
+							"gerberToGcode = async (gerberFile, allOpts = {}) =>",
+							" function makePath(ext, side, base = basename)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							" data =>",
+							" data =>",
+							"error =>",
+							"side =>",
+							"side =>",
+							"([side, file]) =>",
+							" k =>",
+							"gcodeEndpoint = async (req, res) =>",
+							"error =>",
+							"GithubListContents = async (owner, repo, dir, filter) =>",
+							"({ name }) =>",
+							"async (req, res, next) =>",
+							"st =>",
+							"err =>",
+							"() =>",
+							"err =>",
+							" k =>",
+							"(req, res, next) =>",
+							"async (req, res) =>",
+							" function FindFile(relative)",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							" (req, res) =>",
+							"async (req, res) =>",
+							" function GetVFSPath(file)",
+							"async function getDescription(file)",
+							"r =>",
+							"m =>",
+							"(a, b) =>",
+							"s =>",
+							"re =>",
+							"m =>",
+							"async function GetFilesList(dir = './tmp', opts = {})",
+							"n =>",
+							"(acc, file) =>",
+							"({ ctime, mtime, mode, size }) =>",
+							"err =>",
+							"a =>",
+							"i =>",
+							" function FilesURLs(list)",
+							"url =>",
+							"async (req, res) =>",
+							"port =>",
+							"key =>",
+							"async (ws, req) =>",
+							"async data =>",
+							"async data =>",
+							"async (req, res) =>",
+							" f =>",
+							" st =>",
+							" () =>",
+							"async (req, res) =>",
+							" () =>",
+							" c =>",
+							" () =>",
+							" () =>",
+							" o =>",
+							" () =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async () =>",
+							"p =>",
+							"file =>",
+							" () =>",
+							" error =>",
+							"async (req, res) =>",
+							"result =>",
+							"file =>",
+							"error =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"name =>",
+							"async (req, res) =>",
+							"async (req, res, next) =>",
+							"() =>",
+							"error =>",
+							" (req, res) =>",
+							" () =>"
+						]
+					},
+					"AQAAAAAAAAAAAAAA0AYAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					6,
+					1,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/upload-server.js",
+						"symkeys":
+						[
+							[
+								1802,
+								1822
+							],
+							[
+								2052,
+								2057
+							],
+							[
+								2062,
+								2082
+							],
+							[
+								2120,
+								2127
+							],
+							[
+								2164,
+								2171
+							],
+							[
+								2494,
+								2502
+							],
+							[
+								2518,
+								2538
+							],
+							[
+								3068,
+								3101
+							],
+							[
+								3191,
+								3213
+							],
+							[
+								3427,
+								3468
+							],
+							[
+								3479,
+								3492
+							],
+							[
+								3559,
+								3594
+							],
+							[
+								3639,
+								3657
+							],
+							[
+								3693,
+								3735
+							],
+							[
+								3801,
+								3834
+							],
+							[
+								3856,
+								3860
+							],
+							[
+								4249,
+								4254
+							],
+							[
+								4304,
+								4308
+							],
+							[
+								4335,
+								4339
+							],
+							[
+								4367,
+								4371
+							],
+							[
+								4394,
+								4414
+							],
+							[
+								4493,
+								4497
+							],
+							[
+								4567,
+								4589
+							],
+							[
+								4704,
+								4709
+							],
+							[
+								4742,
+								4764
+							],
+							[
+								4958,
+								4980
+							],
+							[
+								5403,
+								5469
+							],
+							[
+								5815,
+								5824
+							],
+							[
+								5929,
+								5959
+							],
+							[
+								6320,
+								6355
+							],
+							[
+								6387,
+								6428
+							],
+							[
+								6460,
+								6526
+							],
+							[
+								6559,
+								6593
+							],
+							[
+								6659,
+								6706
+							],
+							[
+								7242,
+								7278
+							],
+							[
+								7391,
+								7400
+							],
+							[
+								7636,
+								7644
+							],
+							[
+								7750,
+								7757
+							],
+							[
+								7807,
+								7831
+							],
+							[
+								8103,
+								8114
+							],
+							[
+								8204,
+								8215
+							],
+							[
+								8279,
+								8290
+							],
+							[
+								8344,
+								8353
+							],
+							[
+								8391,
+								8402
+							],
+							[
+								8490,
+								8517
+							],
+							[
+								8649,
+								8653
+							],
+							[
+								8677,
+								8684
+							],
+							[
+								8717,
+								8733
+							],
+							[
+								8862,
+								8907
+							],
+							[
+								9146,
+								9204
+							],
+							[
+								9533,
+								9555
+							],
+							[
+								9928,
+								9938
+							],
+							[
+								10182,
+								10196
+							],
+							[
+								11131,
+								11155
+							],
+							[
+								11281,
+								11285
+							],
+							[
+								11377,
+								11391
+							],
+							[
+								11481,
+								11497
+							],
+							[
+								11929,
+								11942
+							],
+							[
+								11960,
+								11965
+							],
+							[
+								12047,
+								12054
+							],
+							[
+								12082,
+								12087
+							],
+							[
+								12232,
+								12257
+							],
+							[
+								12432,
+								12463
+							],
+							[
+								12540,
+								12551
+							],
+							[
+								14134,
+								14165
+							],
+							[
+								14695,
+								14728
+							],
+							[
+								15000,
+								15035
+							],
+							[
+								15120,
+								15153
+							],
+							[
+								16084,
+								16090
+							],
+							[
+								17205,
+								17209
+							],
+							[
+								18105,
+								18112
+							],
+							[
+								19411,
+								19443
+							],
+							[
+								19824,
+								19828
+							],
+							[
+								20507,
+								20542
+							],
+							[
+								21304,
+								21309
+							],
+							[
+								22036,
+								22040
+							],
+							[
+								22134,
+								22138
+							],
+							[
+								22258,
+								22267
+							],
+							[
+								22397,
+								22404
+							],
+							[
+								22685,
+								22692
+							],
+							[
+								22773,
+								22780
+							],
+							[
+								22844,
+								22860
+							],
+							[
+								22925,
+								22945
+							],
+							[
+								23644,
+								23656
+							],
+							[
+								23755,
+								23767
+							],
+							[
+								23969,
+								23985
+							],
+							[
+								24079,
+								24092
+							],
+							[
+								24503,
+								24521
+							],
+							[
+								24703,
+								24720
+							],
+							[
+								25146,
+								25165
+							],
+							[
+								25263,
+								25283
+							],
+							[
+								26501,
+								26523
+							],
+							[
+								26996,
+								27017
+							],
+							[
+								27568,
+								27587
+							],
+							[
+								28021,
+								28029
+							],
+							[
+								28468,
+								28477
+							],
+							[
+								30944,
+								30956
+							],
+							[
+								32868,
+								32903
+							],
+							[
+								33401,
+								33420
+							],
+							[
+								33614,
+								33631
+							],
+							[
+								33676,
+								33689
+							],
+							[
+								33725,
+								33735
+							],
+							[
+								35383,
+								35399
+							],
+							[
+								35531,
+								35550
+							],
+							[
+								35561,
+								35586
+							],
+							[
+								36010,
+								36030
+							]
+						],
+						"symlist":
+						[
+							"isin = (other, p) =>",
+							"Match",
+							"constructor(pattern)",
+							"apply()",
+							"name =>",
+							"value =>",
+							" (level, message) =>",
+							"async function AsyncCollect(iter)",
+							"function GetMime(file)",
+							"function Matcher(pattern, t = arg => arg)",
+							" (...args) =>",
+							"function KeyOrValueMatcher(pattern)",
+							" ([key, value]) =>",
+							"function GetRootDirectories(pattern = '*')",
+							"MakeUUID = (rng = Math.random) =>",
+							"n =>",
+							"dd =>",
+							"d =>",
+							"d =>",
+							"d =>",
+							"function GetDir(dir)",
+							"n =>",
+							"function DirName(name)",
+							"it =>",
+							"function DateStr(date)",
+							"function ModeStr(mode)",
+							"HTMLPage = ({ title, style, scripts = [], children, ...props }) =>",
+							"script =>",
+							"FilterForm = ({ ...props }) =>",
+							"HTMLTable = ({ rows, ...props }) =>",
+							"HTMLTableRow = ({ columns, ...props }) =>",
+							"HTMLTableColumn = ({ columns, children, tag = 'td', ...props }) =>",
+							"FileLink = ({ file, ...props }) =>",
+							"FileObject = ({ file, stat = {}, ...props }) =>",
+							"FileTable = ({ files, ...props }) =>",
+							"(a, b) =>",
+							"field =>",
+							"file =>",
+							"function ReadExiv2(file)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"(a, b) =>",
+							"([k, v]) =>",
+							"function ReadExiftool(file)",
+							"l =>",
+							"line =>",
+							"([line, idx]) =>",
+							"function HeifConvert(src, dst, quality = 100)",
+							"function MagickResize(src, dst, rotate = 0, width, height)",
+							"function main(...args)",
+							" (a, v) =>",
+							" (v, pv, o) =>",
+							" (module, ...args) =>",
+							"m =>",
+							".show = arg =>",
+							".cleanup = () =>",
+							" (...args) =>",
+							"() =>",
+							"puts(s)",
+							"() =>",
+							" function ParseBody(gen)",
+							".createWS = (url, callbacks) =>",
+							".out = s =>",
+							"async function* test(req, resp)",
+							" function proxy(req, resp)",
+							" function* config(req, resp)",
+							" function* file(req, resp)",
+							"dir =>",
+							"x =>",
+							"file =>",
+							"async function* files(req, resp)",
+							"n =>",
+							" function* files2(req, resp)",
+							" n =>",
+							"n =>",
+							"n =>",
+							"(a, b) =>",
+							"name =>",
+							"file =>",
+							"file =>",
+							"([file, rel]) =>",
+							"(acc, [file, st]) =>",
+							"string(a, b)",
+							"number(a, b)",
+							"([name, obj]) =>",
+							"({ name }) =>",
+							"onConnect(ws, req)",
+							"sendCommand(data)",
+							"onClose(ws, reason)",
+							"onRequest(req, resp)",
+							"onOpen(name, filename)",
+							"onContent(name, data)",
+							"onClose(name, file)",
+							"f = x =>",
+							"result =>",
+							"onFinalize()",
+							" (match, p1, p0, p2, p3, offset) =>",
+							"onMessage(ws, data)",
+							"get connections()",
+							"get by_uuid()",
+							"uuid(data)",
+							"onFd(fd, rd, wr)",
+							"onClose(ws, reason)",
+							"async onMessage(ws, data)",
+							" function quit(why)"
+						]
+					},
+					"AgAAAAAAAAAAAAAAAAAAAAAAAADQBgAAICByb3RhdGVMZWZ0ID0gbiA9PiB4ID0+CkdldE1pbWVUeXBlKGZpbGUpCiAgaGFzaFN0cmluZyhzdHJpbmcsIGJpdHMgPSAzMiwgbWFzayA9IDB4ZmZmZmZmZmYpCiAgZGVjb2RlSFRNTEVudGl0aWVzKHRleHQpCihtYXRjaCwgZW50aXR5KSA9PgpNaW1lVHlwZShwYXRoKQpkYXRhID0+CkdldERpck1hcChkaXJzID0gbW91bnREaXJzLCBwcmVkID0gJy4qXFwuKGJyZHxzY2h8bGJyfEdCTHxHVEx8R0tPfG5nYykkJykKICBwcmVkID0gZW50ID0+CihhY2MsIGRpcikgPT4KICB3YWl0Q2hpbGQocHJvYykKICBydW5Nb3VudChkaXJzSXRlcmF0b3IpCiAgcmVhZERhdGEob3V0cHV0LCBjYWxsYmFjayA9IGQgPT4ge30pCihwdXNoLCBzdG9wKSA9PgpjaHVuayA9PgogIGxpbmUgPT4KZGF0YSA9PgpSZXF1ZXN0Q29udG91cnMocmVxLCByZXMpCiAgbWFpbigpCiAgY3AgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgoocmVxLCByZXMsIG5leHQpID0+ClNlbmRSYXcocmVzLCBmaWxlLCBkYXRhLCB0eXBlID0gJ2FwcGxpY2F0aW9uL29jdGV0LXN0cmVhbScpCiAgY29udmVydFRvR2VyYmVyID0gKGJvYXJkRmlsZSwgb3B0cyA9IHt9KSA9PgogIGZvcm1hdFRvRXh0ID0gKGxheWVycywgZm9ybWF0KSA9PgpkYXRhID0+CmRhdGEgPT4KICBnZXJiZXJFbmRwb2ludCA9IChyZXEsIHJlcykgPT4KICByZXMgPT4KayA9PgogIGdlcmJlclRvR2NvZGUgPSAoZ2VyYmVyRmlsZSwgYWxsT3B0cyA9IHt9KSA9PgogIG1ha2VQYXRoKGV4dCwgc2lkZSwgYmFzZSA9IGJhc2VuYW1lKQooW2ssIHZdKSA9PgooW2ssIHZdKSA9PgpkYXRhID0+CmRhdGEgPT4KICBlcnJvciA9PgogIHNpZGUgPT4KICBzaWRlID0+Cihbc2lkZSwgZmlsZV0pID0+CmsgPT4KICBnY29kZUVuZHBvaW50ID0gKHJlcSwgcmVzKSA9PgogIGVycm9yID0+CkdpdGh1Ykxpc3RDb250ZW50cyA9IChvd25lciwgcmVwbywgZGlyLCBmaWx0ZXIpID0+Cih7IG5hbWUgfSkgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgogIHN0ID0+CiAgZXJyID0+CigpID0+CiAgZXJyID0+CmsgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgoocmVxLCByZXMpID0+CkZpbmRGaWxlKHJlbGF0aXZlKQoocmVxLCByZXMpID0+CihyZXEsIHJlcykgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMpID0+CkdldFZGU1BhdGgoZmlsZSkKICBnZXREZXNjcmlwdGlvbihmaWxlKQogIHIgPT4KICBtID0+CihhLCBiKSA9PgogIHMgPT4KICByZSA9PgogIG0gPT4KR2V0RmlsZXNMaXN0KGRpciA9ICcuL3RtcCcsIG9wdHMgPSB7fSkKICBuID0+CihhY2MsIGZpbGUpID0+Cih7IGN0aW1lLCBtdGltZSwgbW9kZSwgc2l6ZSB9KSA9PgogIGVyciA9PgogIGEgPT4KICBpID0+CkZpbGVzVVJMcyhsaXN0KQogIHVybCA9PgoocmVxLCByZXMpID0+CiAgcG9ydCA9PgogIGtleSA9Pgood3MsIHJlcSkgPT4KICBkYXRhID0+CiAgZGF0YSA9PgoocmVxLCByZXMpID0+CmYgPT4Kc3QgPT4KKCkgPT4KKHJlcSwgcmVzKSA9PgooKSA9PgpjID0+CigpID0+CigpID0+Cm8gPT4KKCkgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMpID0+CigpID0+CiAgcCA9PgogIGZpbGUgPT4KKCkgPT4KZXJyb3IgPT4KKHJlcSwgcmVzKSA9PgogIHJlc3VsdCA9PgogIGZpbGUgPT4KICBlcnJvciA9PgoocmVxLCByZXMpID0+CihyZXEsIHJlcykgPT4KKHJlcSwgcmVzKSA9PgogIG5hbWUgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMsIG5leHQpID0+CigpID0+CiAgZXJyb3IgPT4KKHJlcSwgcmVzKSA9PgooKSA9PgAAAAAAAAAAbgcAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					7,
+					1,
+					"outline_refresh",
+					{
+						"path": null,
+						"symkeys":
+						[
+						],
+						"symlist":
+						[
+						]
+					},
+					"AgAAAAAAAAAAAAAAAAAAAAAAAABuBwAAICBpc2luID0gKG90aGVyLCBwKSA9PgpNYXRjaAogIGNvbnN0cnVjdG9yKHBhdHRlcm4pCiAgYXBwbHkoKQogIG5hbWUgPT4KICB2YWx1ZSA9PgoobGV2ZWwsIG1lc3NhZ2UpID0+CkFzeW5jQ29sbGVjdChpdGVyKQpHZXRNaW1lKGZpbGUpCk1hdGNoZXIocGF0dGVybiwgdCA9IGFyZyA9PiBhcmcpCiguLi5hcmdzKSA9PgpLZXlPclZhbHVlTWF0Y2hlcihwYXR0ZXJuKQooW2tleSwgdmFsdWVdKSA9PgpHZXRSb290RGlyZWN0b3JpZXMocGF0dGVybiA9ICcqJykKTWFrZVVVSUQgPSAocm5nID0gTWF0aC5yYW5kb20pID0+CiAgbiA9PgogIGRkID0+CiAgZCA9PgogIGQgPT4KICBkID0+CkdldERpcihkaXIpCiAgbiA9PgpEaXJOYW1lKG5hbWUpCiAgaXQgPT4KRGF0ZVN0cihkYXRlKQpNb2RlU3RyKG1vZGUpCkhUTUxQYWdlID0gKHsgdGl0bGUsIHN0eWxlLCBzY3JpcHRzID0gW10sIGNoaWxkcmVuLCAuLi5wcm9wcyB9KSA9PgogIHNjcmlwdCA9PgpGaWx0ZXJGb3JtID0gKHsgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlID0gKHsgcm93cywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlUm93ID0gKHsgY29sdW1ucywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlQ29sdW1uID0gKHsgY29sdW1ucywgY2hpbGRyZW4sIHRhZyA9ICd0ZCcsIC4uLnByb3BzIH0pID0+CkZpbGVMaW5rID0gKHsgZmlsZSwgLi4ucHJvcHMgfSkgPT4KRmlsZU9iamVjdCA9ICh7IGZpbGUsIHN0YXQgPSB7fSwgLi4ucHJvcHMgfSkgPT4KRmlsZVRhYmxlID0gKHsgZmlsZXMsIC4uLnByb3BzIH0pID0+CihhLCBiKSA9PgogIGZpZWxkID0+CiAgZmlsZSA9PgpSZWFkRXhpdjIoZmlsZSkKKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKGEsIGIpID0+Cihbaywgdl0pID0+ClJlYWRFeGlmdG9vbChmaWxlKQogIGwgPT4KICBsaW5lID0+CihbbGluZSwgaWR4XSkgPT4KSGVpZkNvbnZlcnQoc3JjLCBkc3QsIHF1YWxpdHkgPSAxMDApCk1hZ2lja1Jlc2l6ZShzcmMsIGRzdCwgcm90YXRlID0gMCwgd2lkdGgsIGhlaWdodCkKICBtYWluKC4uLmFyZ3MpCihhLCB2KSA9PgoodiwgcHYsIG8pID0+Cihtb2R1bGUsIC4uLmFyZ3MpID0+CiAgbSA9PgogIC5zaG93ID0gYXJnID0+CiAgLmNsZWFudXAgPSAoKSA9PgooLi4uYXJncykgPT4KKCkgPT4KICBwdXRzKHMpCigpID0+ClBhcnNlQm9keShnZW4pCiAgLmNyZWF0ZVdTID0gKHVybCwgY2FsbGJhY2tzKSA9PgogIC5vdXQgPSBzID0+CiAgdGVzdChyZXEsIHJlc3ApCiAgcHJveHkocmVxLCByZXNwKQogIGNvbmZpZyhyZXEsIHJlc3ApCiAgZmlsZShyZXEsIHJlc3ApCiAgZGlyID0+CiAgeCA9PgogIGZpbGUgPT4KICBmaWxlcyhyZXEsIHJlc3ApCiAgbiA9PgogIGZpbGVzMihyZXEsIHJlc3ApCm4gPT4KICBuID0+CiAgbiA9PgooYSwgYikgPT4KICBuYW1lID0+CiAgZmlsZSA9PgogIGZpbGUgPT4KKFtmaWxlLCByZWxdKSA9PgooYWNjLCBbZmlsZSwgc3RdKSA9PgogIHN0cmluZyhhLCBiKQogIG51bWJlcihhLCBiKQooW25hbWUsIG9ial0pID0+Cih7IG5hbWUgfSkgPT4KICBvbkNvbm5lY3Qod3MsIHJlcSkKICBzZW5kQ29tbWFuZChkYXRhKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvblJlcXVlc3QocmVxLCByZXNwKQogIG9uT3BlbihuYW1lLCBmaWxlbmFtZSkKICBvbkNvbnRlbnQobmFtZSwgZGF0YSkKICBvbkNsb3NlKG5hbWUsIGZpbGUpCiAgZiA9IHggPT4KICByZXN1bHQgPT4KICBvbkZpbmFsaXplKCkKKG1hdGNoLCBwMSwgcDAsIHAyLCBwMywgb2Zmc2V0KSA9PgogIG9uTWVzc2FnZSh3cywgZGF0YSkKICBnZXQgY29ubmVjdGlvbnMoKQogIGdldCBieV91dWlkKCkKICB1dWlkKGRhdGEpCiAgb25GZChmZCwgcmQsIHdyKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvbk1lc3NhZ2Uod3MsIGRhdGEpCiAgcXVpdCh3aHkpAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					8,
+					1,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/upload-server.js",
+						"symkeys":
+						[
+							[
+								1802,
+								1822
+							],
+							[
+								2052,
+								2057
+							],
+							[
+								2062,
+								2082
+							],
+							[
+								2120,
+								2127
+							],
+							[
+								2164,
+								2171
+							],
+							[
+								2494,
+								2502
+							],
+							[
+								2518,
+								2538
+							],
+							[
+								3068,
+								3101
+							],
+							[
+								3191,
+								3213
+							],
+							[
+								3427,
+								3468
+							],
+							[
+								3479,
+								3492
+							],
+							[
+								3559,
+								3594
+							],
+							[
+								3639,
+								3657
+							],
+							[
+								3693,
+								3735
+							],
+							[
+								3801,
+								3834
+							],
+							[
+								3856,
+								3860
+							],
+							[
+								4249,
+								4254
+							],
+							[
+								4304,
+								4308
+							],
+							[
+								4335,
+								4339
+							],
+							[
+								4367,
+								4371
+							],
+							[
+								4394,
+								4414
+							],
+							[
+								4493,
+								4497
+							],
+							[
+								4567,
+								4589
+							],
+							[
+								4704,
+								4709
+							],
+							[
+								4742,
+								4764
+							],
+							[
+								4958,
+								4980
+							],
+							[
+								5403,
+								5469
+							],
+							[
+								5815,
+								5824
+							],
+							[
+								5929,
+								5959
+							],
+							[
+								6320,
+								6355
+							],
+							[
+								6387,
+								6428
+							],
+							[
+								6460,
+								6526
+							],
+							[
+								6559,
+								6593
+							],
+							[
+								6659,
+								6706
+							],
+							[
+								7242,
+								7278
+							],
+							[
+								7391,
+								7400
+							],
+							[
+								7636,
+								7644
+							],
+							[
+								7750,
+								7757
+							],
+							[
+								7807,
+								7831
+							],
+							[
+								8103,
+								8114
+							],
+							[
+								8204,
+								8215
+							],
+							[
+								8279,
+								8290
+							],
+							[
+								8344,
+								8353
+							],
+							[
+								8391,
+								8402
+							],
+							[
+								8490,
+								8517
+							],
+							[
+								8649,
+								8653
+							],
+							[
+								8677,
+								8684
+							],
+							[
+								8717,
+								8733
+							],
+							[
+								8862,
+								8907
+							],
+							[
+								9146,
+								9204
+							],
+							[
+								9533,
+								9555
+							],
+							[
+								9928,
+								9938
+							],
+							[
+								10182,
+								10196
+							],
+							[
+								11131,
+								11155
+							],
+							[
+								11281,
+								11285
+							],
+							[
+								11377,
+								11391
+							],
+							[
+								11481,
+								11497
+							],
+							[
+								11929,
+								11942
+							],
+							[
+								11960,
+								11965
+							],
+							[
+								12047,
+								12054
+							],
+							[
+								12082,
+								12087
+							],
+							[
+								12232,
+								12257
+							],
+							[
+								12432,
+								12463
+							],
+							[
+								12540,
+								12551
+							],
+							[
+								14134,
+								14165
+							],
+							[
+								14695,
+								14728
+							],
+							[
+								15000,
+								15035
+							],
+							[
+								15120,
+								15153
+							],
+							[
+								16084,
+								16090
+							],
+							[
+								17205,
+								17209
+							],
+							[
+								18105,
+								18112
+							],
+							[
+								19411,
+								19443
+							],
+							[
+								19824,
+								19828
+							],
+							[
+								20507,
+								20542
+							],
+							[
+								21304,
+								21309
+							],
+							[
+								22036,
+								22040
+							],
+							[
+								22134,
+								22138
+							],
+							[
+								22258,
+								22267
+							],
+							[
+								22397,
+								22404
+							],
+							[
+								22685,
+								22692
+							],
+							[
+								22773,
+								22780
+							],
+							[
+								22844,
+								22860
+							],
+							[
+								22925,
+								22945
+							],
+							[
+								23644,
+								23656
+							],
+							[
+								23755,
+								23767
+							],
+							[
+								23969,
+								23985
+							],
+							[
+								24079,
+								24092
+							],
+							[
+								24503,
+								24521
+							],
+							[
+								24703,
+								24720
+							],
+							[
+								25146,
+								25165
+							],
+							[
+								25263,
+								25283
+							],
+							[
+								26501,
+								26523
+							],
+							[
+								26996,
+								27017
+							],
+							[
+								27568,
+								27587
+							],
+							[
+								28021,
+								28029
+							],
+							[
+								28468,
+								28477
+							],
+							[
+								30944,
+								30956
+							],
+							[
+								32868,
+								32903
+							],
+							[
+								33401,
+								33420
+							],
+							[
+								33614,
+								33631
+							],
+							[
+								33676,
+								33689
+							],
+							[
+								33725,
+								33735
+							],
+							[
+								35383,
+								35399
+							],
+							[
+								35531,
+								35550
+							],
+							[
+								35561,
+								35586
+							],
+							[
+								36010,
+								36030
+							]
+						],
+						"symlist":
+						[
+							"isin = (other, p) =>",
+							"Match",
+							"constructor(pattern)",
+							"apply()",
+							"name =>",
+							"value =>",
+							" (level, message) =>",
+							"async function AsyncCollect(iter)",
+							"function GetMime(file)",
+							"function Matcher(pattern, t = arg => arg)",
+							" (...args) =>",
+							"function KeyOrValueMatcher(pattern)",
+							" ([key, value]) =>",
+							"function GetRootDirectories(pattern = '*')",
+							"MakeUUID = (rng = Math.random) =>",
+							"n =>",
+							"dd =>",
+							"d =>",
+							"d =>",
+							"d =>",
+							"function GetDir(dir)",
+							"n =>",
+							"function DirName(name)",
+							"it =>",
+							"function DateStr(date)",
+							"function ModeStr(mode)",
+							"HTMLPage = ({ title, style, scripts = [], children, ...props }) =>",
+							"script =>",
+							"FilterForm = ({ ...props }) =>",
+							"HTMLTable = ({ rows, ...props }) =>",
+							"HTMLTableRow = ({ columns, ...props }) =>",
+							"HTMLTableColumn = ({ columns, children, tag = 'td', ...props }) =>",
+							"FileLink = ({ file, ...props }) =>",
+							"FileObject = ({ file, stat = {}, ...props }) =>",
+							"FileTable = ({ files, ...props }) =>",
+							"(a, b) =>",
+							"field =>",
+							"file =>",
+							"function ReadExiv2(file)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"(a, b) =>",
+							"([k, v]) =>",
+							"function ReadExiftool(file)",
+							"l =>",
+							"line =>",
+							"([line, idx]) =>",
+							"function HeifConvert(src, dst, quality = 100)",
+							"function MagickResize(src, dst, rotate = 0, width, height)",
+							"function main(...args)",
+							" (a, v) =>",
+							" (v, pv, o) =>",
+							" (module, ...args) =>",
+							"m =>",
+							".show = arg =>",
+							".cleanup = () =>",
+							" (...args) =>",
+							"() =>",
+							"puts(s)",
+							"() =>",
+							" function ParseBody(gen)",
+							".createWS = (url, callbacks) =>",
+							".out = s =>",
+							"async function* test(req, resp)",
+							" function proxy(req, resp)",
+							" function* config(req, resp)",
+							" function* file(req, resp)",
+							"dir =>",
+							"x =>",
+							"file =>",
+							"async function* files(req, resp)",
+							"n =>",
+							" function* files2(req, resp)",
+							" n =>",
+							"n =>",
+							"n =>",
+							"(a, b) =>",
+							"name =>",
+							"file =>",
+							"file =>",
+							"([file, rel]) =>",
+							"(acc, [file, st]) =>",
+							"string(a, b)",
+							"number(a, b)",
+							"([name, obj]) =>",
+							"({ name }) =>",
+							"onConnect(ws, req)",
+							"sendCommand(data)",
+							"onClose(ws, reason)",
+							"onRequest(req, resp)",
+							"onOpen(name, filename)",
+							"onContent(name, data)",
+							"onClose(name, file)",
+							"f = x =>",
+							"result =>",
+							"onFinalize()",
+							" (match, p1, p0, p2, p3, offset) =>",
+							"onMessage(ws, data)",
+							"get connections()",
+							"get by_uuid()",
+							"uuid(data)",
+							"onFd(fd, rd, wr)",
+							"onClose(ws, reason)",
+							"async onMessage(ws, data)",
+							" function quit(why)"
+						]
+					},
+					"AQAAAAAAAAAAAAAAbgcAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					9,
+					1,
+					"outline_refresh",
+					{
+						"path": null,
+						"symkeys":
+						[
+						],
+						"symlist":
+						[
+						]
+					},
+					"AgAAAAAAAAAAAAAAAAAAAAAAAABuBwAAICBpc2luID0gKG90aGVyLCBwKSA9PgpNYXRjaAogIGNvbnN0cnVjdG9yKHBhdHRlcm4pCiAgYXBwbHkoKQogIG5hbWUgPT4KICB2YWx1ZSA9PgoobGV2ZWwsIG1lc3NhZ2UpID0+CkFzeW5jQ29sbGVjdChpdGVyKQpHZXRNaW1lKGZpbGUpCk1hdGNoZXIocGF0dGVybiwgdCA9IGFyZyA9PiBhcmcpCiguLi5hcmdzKSA9PgpLZXlPclZhbHVlTWF0Y2hlcihwYXR0ZXJuKQooW2tleSwgdmFsdWVdKSA9PgpHZXRSb290RGlyZWN0b3JpZXMocGF0dGVybiA9ICcqJykKTWFrZVVVSUQgPSAocm5nID0gTWF0aC5yYW5kb20pID0+CiAgbiA9PgogIGRkID0+CiAgZCA9PgogIGQgPT4KICBkID0+CkdldERpcihkaXIpCiAgbiA9PgpEaXJOYW1lKG5hbWUpCiAgaXQgPT4KRGF0ZVN0cihkYXRlKQpNb2RlU3RyKG1vZGUpCkhUTUxQYWdlID0gKHsgdGl0bGUsIHN0eWxlLCBzY3JpcHRzID0gW10sIGNoaWxkcmVuLCAuLi5wcm9wcyB9KSA9PgogIHNjcmlwdCA9PgpGaWx0ZXJGb3JtID0gKHsgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlID0gKHsgcm93cywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlUm93ID0gKHsgY29sdW1ucywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlQ29sdW1uID0gKHsgY29sdW1ucywgY2hpbGRyZW4sIHRhZyA9ICd0ZCcsIC4uLnByb3BzIH0pID0+CkZpbGVMaW5rID0gKHsgZmlsZSwgLi4ucHJvcHMgfSkgPT4KRmlsZU9iamVjdCA9ICh7IGZpbGUsIHN0YXQgPSB7fSwgLi4ucHJvcHMgfSkgPT4KRmlsZVRhYmxlID0gKHsgZmlsZXMsIC4uLnByb3BzIH0pID0+CihhLCBiKSA9PgogIGZpZWxkID0+CiAgZmlsZSA9PgpSZWFkRXhpdjIoZmlsZSkKKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKGEsIGIpID0+Cihbaywgdl0pID0+ClJlYWRFeGlmdG9vbChmaWxlKQogIGwgPT4KICBsaW5lID0+CihbbGluZSwgaWR4XSkgPT4KSGVpZkNvbnZlcnQoc3JjLCBkc3QsIHF1YWxpdHkgPSAxMDApCk1hZ2lja1Jlc2l6ZShzcmMsIGRzdCwgcm90YXRlID0gMCwgd2lkdGgsIGhlaWdodCkKICBtYWluKC4uLmFyZ3MpCihhLCB2KSA9PgoodiwgcHYsIG8pID0+Cihtb2R1bGUsIC4uLmFyZ3MpID0+CiAgbSA9PgogIC5zaG93ID0gYXJnID0+CiAgLmNsZWFudXAgPSAoKSA9PgooLi4uYXJncykgPT4KKCkgPT4KICBwdXRzKHMpCigpID0+ClBhcnNlQm9keShnZW4pCiAgLmNyZWF0ZVdTID0gKHVybCwgY2FsbGJhY2tzKSA9PgogIC5vdXQgPSBzID0+CiAgdGVzdChyZXEsIHJlc3ApCiAgcHJveHkocmVxLCByZXNwKQogIGNvbmZpZyhyZXEsIHJlc3ApCiAgZmlsZShyZXEsIHJlc3ApCiAgZGlyID0+CiAgeCA9PgogIGZpbGUgPT4KICBmaWxlcyhyZXEsIHJlc3ApCiAgbiA9PgogIGZpbGVzMihyZXEsIHJlc3ApCm4gPT4KICBuID0+CiAgbiA9PgooYSwgYikgPT4KICBuYW1lID0+CiAgZmlsZSA9PgogIGZpbGUgPT4KKFtmaWxlLCByZWxdKSA9PgooYWNjLCBbZmlsZSwgc3RdKSA9PgogIHN0cmluZyhhLCBiKQogIG51bWJlcihhLCBiKQooW25hbWUsIG9ial0pID0+Cih7IG5hbWUgfSkgPT4KICBvbkNvbm5lY3Qod3MsIHJlcSkKICBzZW5kQ29tbWFuZChkYXRhKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvblJlcXVlc3QocmVxLCByZXNwKQogIG9uT3BlbihuYW1lLCBmaWxlbmFtZSkKICBvbkNvbnRlbnQobmFtZSwgZGF0YSkKICBvbkNsb3NlKG5hbWUsIGZpbGUpCiAgZiA9IHggPT4KICByZXN1bHQgPT4KICBvbkZpbmFsaXplKCkKKG1hdGNoLCBwMSwgcDAsIHAyLCBwMywgb2Zmc2V0KSA9PgogIG9uTWVzc2FnZSh3cywgZGF0YSkKICBnZXQgY29ubmVjdGlvbnMoKQogIGdldCBieV91dWlkKCkKICB1dWlkKGRhdGEpCiAgb25GZChmZCwgcmQsIHdyKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvbk1lc3NhZ2Uod3MsIGRhdGEpCiAgcXVpdCh3aHkpAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					10,
+					1,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/upload-server.js",
+						"symkeys":
+						[
+							[
+								1802,
+								1822
+							],
+							[
+								2052,
+								2057
+							],
+							[
+								2062,
+								2082
+							],
+							[
+								2120,
+								2127
+							],
+							[
+								2164,
+								2171
+							],
+							[
+								2494,
+								2502
+							],
+							[
+								2518,
+								2538
+							],
+							[
+								3068,
+								3101
+							],
+							[
+								3191,
+								3213
+							],
+							[
+								3427,
+								3468
+							],
+							[
+								3479,
+								3492
+							],
+							[
+								3559,
+								3594
+							],
+							[
+								3639,
+								3657
+							],
+							[
+								3693,
+								3735
+							],
+							[
+								3801,
+								3834
+							],
+							[
+								3856,
+								3860
+							],
+							[
+								4249,
+								4254
+							],
+							[
+								4304,
+								4308
+							],
+							[
+								4335,
+								4339
+							],
+							[
+								4367,
+								4371
+							],
+							[
+								4394,
+								4414
+							],
+							[
+								4493,
+								4497
+							],
+							[
+								4567,
+								4589
+							],
+							[
+								4704,
+								4709
+							],
+							[
+								4742,
+								4764
+							],
+							[
+								4958,
+								4980
+							],
+							[
+								5403,
+								5469
+							],
+							[
+								5815,
+								5824
+							],
+							[
+								5929,
+								5959
+							],
+							[
+								6320,
+								6355
+							],
+							[
+								6387,
+								6428
+							],
+							[
+								6460,
+								6526
+							],
+							[
+								6559,
+								6593
+							],
+							[
+								6659,
+								6706
+							],
+							[
+								7242,
+								7278
+							],
+							[
+								7391,
+								7400
+							],
+							[
+								7636,
+								7644
+							],
+							[
+								7750,
+								7757
+							],
+							[
+								7807,
+								7831
+							],
+							[
+								8103,
+								8114
+							],
+							[
+								8204,
+								8215
+							],
+							[
+								8279,
+								8290
+							],
+							[
+								8344,
+								8353
+							],
+							[
+								8391,
+								8402
+							],
+							[
+								8490,
+								8517
+							],
+							[
+								8649,
+								8653
+							],
+							[
+								8677,
+								8684
+							],
+							[
+								8717,
+								8733
+							],
+							[
+								8862,
+								8907
+							],
+							[
+								9146,
+								9204
+							],
+							[
+								9533,
+								9555
+							],
+							[
+								9928,
+								9938
+							],
+							[
+								10182,
+								10196
+							],
+							[
+								11131,
+								11155
+							],
+							[
+								11281,
+								11285
+							],
+							[
+								11377,
+								11391
+							],
+							[
+								11481,
+								11497
+							],
+							[
+								11929,
+								11942
+							],
+							[
+								11960,
+								11965
+							],
+							[
+								12047,
+								12054
+							],
+							[
+								12082,
+								12087
+							],
+							[
+								12232,
+								12257
+							],
+							[
+								12432,
+								12463
+							],
+							[
+								12540,
+								12551
+							],
+							[
+								14134,
+								14165
+							],
+							[
+								14695,
+								14728
+							],
+							[
+								15000,
+								15035
+							],
+							[
+								15120,
+								15153
+							],
+							[
+								16084,
+								16090
+							],
+							[
+								17205,
+								17209
+							],
+							[
+								18105,
+								18112
+							],
+							[
+								19411,
+								19443
+							],
+							[
+								19824,
+								19828
+							],
+							[
+								20507,
+								20542
+							],
+							[
+								21304,
+								21309
+							],
+							[
+								22036,
+								22040
+							],
+							[
+								22134,
+								22138
+							],
+							[
+								22258,
+								22267
+							],
+							[
+								22397,
+								22404
+							],
+							[
+								22685,
+								22692
+							],
+							[
+								22773,
+								22780
+							],
+							[
+								22844,
+								22860
+							],
+							[
+								22925,
+								22945
+							],
+							[
+								23644,
+								23656
+							],
+							[
+								23755,
+								23767
+							],
+							[
+								23969,
+								23985
+							],
+							[
+								24079,
+								24092
+							],
+							[
+								24503,
+								24521
+							],
+							[
+								24703,
+								24720
+							],
+							[
+								25146,
+								25165
+							],
+							[
+								25263,
+								25283
+							],
+							[
+								26501,
+								26523
+							],
+							[
+								26996,
+								27017
+							],
+							[
+								27568,
+								27587
+							],
+							[
+								28021,
+								28029
+							],
+							[
+								28468,
+								28477
+							],
+							[
+								30944,
+								30956
+							],
+							[
+								32868,
+								32903
+							],
+							[
+								33401,
+								33420
+							],
+							[
+								33614,
+								33631
+							],
+							[
+								33676,
+								33689
+							],
+							[
+								33725,
+								33735
+							],
+							[
+								35383,
+								35399
+							],
+							[
+								35531,
+								35550
+							],
+							[
+								35561,
+								35586
+							],
+							[
+								36010,
+								36030
+							]
+						],
+						"symlist":
+						[
+							"isin = (other, p) =>",
+							"Match",
+							"constructor(pattern)",
+							"apply()",
+							"name =>",
+							"value =>",
+							" (level, message) =>",
+							"async function AsyncCollect(iter)",
+							"function GetMime(file)",
+							"function Matcher(pattern, t = arg => arg)",
+							" (...args) =>",
+							"function KeyOrValueMatcher(pattern)",
+							" ([key, value]) =>",
+							"function GetRootDirectories(pattern = '*')",
+							"MakeUUID = (rng = Math.random) =>",
+							"n =>",
+							"dd =>",
+							"d =>",
+							"d =>",
+							"d =>",
+							"function GetDir(dir)",
+							"n =>",
+							"function DirName(name)",
+							"it =>",
+							"function DateStr(date)",
+							"function ModeStr(mode)",
+							"HTMLPage = ({ title, style, scripts = [], children, ...props }) =>",
+							"script =>",
+							"FilterForm = ({ ...props }) =>",
+							"HTMLTable = ({ rows, ...props }) =>",
+							"HTMLTableRow = ({ columns, ...props }) =>",
+							"HTMLTableColumn = ({ columns, children, tag = 'td', ...props }) =>",
+							"FileLink = ({ file, ...props }) =>",
+							"FileObject = ({ file, stat = {}, ...props }) =>",
+							"FileTable = ({ files, ...props }) =>",
+							"(a, b) =>",
+							"field =>",
+							"file =>",
+							"function ReadExiv2(file)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							"(a, b) =>",
+							"([k, v]) =>",
+							"function ReadExiftool(file)",
+							"l =>",
+							"line =>",
+							"([line, idx]) =>",
+							"function HeifConvert(src, dst, quality = 100)",
+							"function MagickResize(src, dst, rotate = 0, width, height)",
+							"function main(...args)",
+							" (a, v) =>",
+							" (v, pv, o) =>",
+							" (module, ...args) =>",
+							"m =>",
+							".show = arg =>",
+							".cleanup = () =>",
+							" (...args) =>",
+							"() =>",
+							"puts(s)",
+							"() =>",
+							" function ParseBody(gen)",
+							".createWS = (url, callbacks) =>",
+							".out = s =>",
+							"async function* test(req, resp)",
+							" function proxy(req, resp)",
+							" function* config(req, resp)",
+							" function* file(req, resp)",
+							"dir =>",
+							"x =>",
+							"file =>",
+							"async function* files(req, resp)",
+							"n =>",
+							" function* files2(req, resp)",
+							" n =>",
+							"n =>",
+							"n =>",
+							"(a, b) =>",
+							"name =>",
+							"file =>",
+							"file =>",
+							"([file, rel]) =>",
+							"(acc, [file, st]) =>",
+							"string(a, b)",
+							"number(a, b)",
+							"([name, obj]) =>",
+							"({ name }) =>",
+							"onConnect(ws, req)",
+							"sendCommand(data)",
+							"onClose(ws, reason)",
+							"onRequest(req, resp)",
+							"onOpen(name, filename)",
+							"onContent(name, data)",
+							"onClose(name, file)",
+							"f = x =>",
+							"result =>",
+							"onFinalize()",
+							" (match, p1, p0, p2, p3, offset) =>",
+							"onMessage(ws, data)",
+							"get connections()",
+							"get by_uuid()",
+							"uuid(data)",
+							"onFd(fd, rd, wr)",
+							"onClose(ws, reason)",
+							"async onMessage(ws, data)",
+							" function quit(why)"
+						]
+					},
+					"AQAAAAAAAAAAAAAAbgcAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					11,
+					1,
+					"outline_refresh",
+					{
+						"path": null,
+						"symkeys":
+						[
+						],
+						"symlist":
+						[
+						]
+					},
+					"AgAAAAAAAAAAAAAAAAAAAAAAAABuBwAAICBpc2luID0gKG90aGVyLCBwKSA9PgpNYXRjaAogIGNvbnN0cnVjdG9yKHBhdHRlcm4pCiAgYXBwbHkoKQogIG5hbWUgPT4KICB2YWx1ZSA9PgoobGV2ZWwsIG1lc3NhZ2UpID0+CkFzeW5jQ29sbGVjdChpdGVyKQpHZXRNaW1lKGZpbGUpCk1hdGNoZXIocGF0dGVybiwgdCA9IGFyZyA9PiBhcmcpCiguLi5hcmdzKSA9PgpLZXlPclZhbHVlTWF0Y2hlcihwYXR0ZXJuKQooW2tleSwgdmFsdWVdKSA9PgpHZXRSb290RGlyZWN0b3JpZXMocGF0dGVybiA9ICcqJykKTWFrZVVVSUQgPSAocm5nID0gTWF0aC5yYW5kb20pID0+CiAgbiA9PgogIGRkID0+CiAgZCA9PgogIGQgPT4KICBkID0+CkdldERpcihkaXIpCiAgbiA9PgpEaXJOYW1lKG5hbWUpCiAgaXQgPT4KRGF0ZVN0cihkYXRlKQpNb2RlU3RyKG1vZGUpCkhUTUxQYWdlID0gKHsgdGl0bGUsIHN0eWxlLCBzY3JpcHRzID0gW10sIGNoaWxkcmVuLCAuLi5wcm9wcyB9KSA9PgogIHNjcmlwdCA9PgpGaWx0ZXJGb3JtID0gKHsgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlID0gKHsgcm93cywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlUm93ID0gKHsgY29sdW1ucywgLi4ucHJvcHMgfSkgPT4KSFRNTFRhYmxlQ29sdW1uID0gKHsgY29sdW1ucywgY2hpbGRyZW4sIHRhZyA9ICd0ZCcsIC4uLnByb3BzIH0pID0+CkZpbGVMaW5rID0gKHsgZmlsZSwgLi4ucHJvcHMgfSkgPT4KRmlsZU9iamVjdCA9ICh7IGZpbGUsIHN0YXQgPSB7fSwgLi4ucHJvcHMgfSkgPT4KRmlsZVRhYmxlID0gKHsgZmlsZXMsIC4uLnByb3BzIH0pID0+CihhLCBiKSA9PgogIGZpZWxkID0+CiAgZmlsZSA9PgpSZWFkRXhpdjIoZmlsZSkKKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKFtrLCB2XSkgPT4KKGEsIGIpID0+Cihbaywgdl0pID0+ClJlYWRFeGlmdG9vbChmaWxlKQogIGwgPT4KICBsaW5lID0+CihbbGluZSwgaWR4XSkgPT4KSGVpZkNvbnZlcnQoc3JjLCBkc3QsIHF1YWxpdHkgPSAxMDApCk1hZ2lja1Jlc2l6ZShzcmMsIGRzdCwgcm90YXRlID0gMCwgd2lkdGgsIGhlaWdodCkKICBtYWluKC4uLmFyZ3MpCihhLCB2KSA9PgoodiwgcHYsIG8pID0+Cihtb2R1bGUsIC4uLmFyZ3MpID0+CiAgbSA9PgogIC5zaG93ID0gYXJnID0+CiAgLmNsZWFudXAgPSAoKSA9PgooLi4uYXJncykgPT4KKCkgPT4KICBwdXRzKHMpCigpID0+ClBhcnNlQm9keShnZW4pCiAgLmNyZWF0ZVdTID0gKHVybCwgY2FsbGJhY2tzKSA9PgogIC5vdXQgPSBzID0+CiAgdGVzdChyZXEsIHJlc3ApCiAgcHJveHkocmVxLCByZXNwKQogIGNvbmZpZyhyZXEsIHJlc3ApCiAgZmlsZShyZXEsIHJlc3ApCiAgZGlyID0+CiAgeCA9PgogIGZpbGUgPT4KICBmaWxlcyhyZXEsIHJlc3ApCiAgbiA9PgogIGZpbGVzMihyZXEsIHJlc3ApCm4gPT4KICBuID0+CiAgbiA9PgooYSwgYikgPT4KICBuYW1lID0+CiAgZmlsZSA9PgogIGZpbGUgPT4KKFtmaWxlLCByZWxdKSA9PgooYWNjLCBbZmlsZSwgc3RdKSA9PgogIHN0cmluZyhhLCBiKQogIG51bWJlcihhLCBiKQooW25hbWUsIG9ial0pID0+Cih7IG5hbWUgfSkgPT4KICBvbkNvbm5lY3Qod3MsIHJlcSkKICBzZW5kQ29tbWFuZChkYXRhKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvblJlcXVlc3QocmVxLCByZXNwKQogIG9uT3BlbihuYW1lLCBmaWxlbmFtZSkKICBvbkNvbnRlbnQobmFtZSwgZGF0YSkKICBvbkNsb3NlKG5hbWUsIGZpbGUpCiAgZiA9IHggPT4KICByZXN1bHQgPT4KICBvbkZpbmFsaXplKCkKKG1hdGNoLCBwMSwgcDAsIHAyLCBwMywgb2Zmc2V0KSA9PgogIG9uTWVzc2FnZSh3cywgZGF0YSkKICBnZXQgY29ubmVjdGlvbnMoKQogIGdldCBieV91dWlkKCkKICB1dWlkKGRhdGEpCiAgb25GZChmZCwgcmQsIHdyKQogIG9uQ2xvc2Uod3MsIHJlYXNvbikKICBvbk1lc3NhZ2Uod3MsIGRhdGEpCiAgcXVpdCh3aHkpAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					12,
+					1,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/server.js",
+						"symkeys":
+						[
+							[
+								1072,
+								1094
+							],
+							[
+								1218,
+								1244
+							],
+							[
+								1414,
+								1471
+							],
+							[
+								1723,
+								1756
+							],
+							[
+								1985,
+								2004
+							],
+							[
+								2036,
+								2065
+							],
+							[
+								2171,
+								2179
+							],
+							[
+								2897,
+								2979
+							],
+							[
+								3285,
+								3298
+							],
+							[
+								3378,
+								3391
+							],
+							[
+								3666,
+								3696
+							],
+							[
+								3856,
+								3893
+							],
+							[
+								4188,
+								4239
+							],
+							[
+								4297,
+								4312
+							],
+							[
+								4342,
+								4351
+							],
+							[
+								4651,
+								4658
+							],
+							[
+								4789,
+								4797
+							],
+							[
+								4995,
+								5035
+							],
+							[
+								5358,
+								5379
+							],
+							[
+								5666,
+								5671
+							],
+							[
+								6047,
+								6066
+							],
+							[
+								6582,
+								6601
+							],
+							[
+								6948,
+								7018
+							],
+							[
+								7364,
+								7413
+							],
+							[
+								7812,
+								7845
+							],
+							[
+								8614,
+								8622
+							],
+							[
+								8669,
+								8677
+							],
+							[
+								9188,
+								9224
+							],
+							[
+								9680,
+								9686
+							],
+							[
+								9849,
+								9854
+							],
+							[
+								10131,
+								10182
+							],
+							[
+								11130,
+								11179
+							],
+							[
+								11318,
+								11329
+							],
+							[
+								11428,
+								11439
+							],
+							[
+								12017,
+								12025
+							],
+							[
+								12074,
+								12082
+							],
+							[
+								12133,
+								12141
+							],
+							[
+								12568,
+								12575
+							],
+							[
+								12716,
+								12723
+							],
+							[
+								12762,
+								12779
+							],
+							[
+								13295,
+								13300
+							],
+							[
+								13476,
+								13511
+							],
+							[
+								13654,
+								13662
+							],
+							[
+								13861,
+								13917
+							],
+							[
+								14280,
+								14293
+							],
+							[
+								14351,
+								14376
+							],
+							[
+								14633,
+								14638
+							],
+							[
+								14678,
+								14684
+							],
+							[
+								14841,
+								14846
+							],
+							[
+								14883,
+								14889
+							],
+							[
+								15399,
+								15404
+							],
+							[
+								16022,
+								16041
+							],
+							[
+								17544,
+								17563
+							],
+							[
+								18408,
+								18437
+							],
+							[
+								18660,
+								18679
+							],
+							[
+								19026,
+								19045
+							],
+							[
+								19418,
+								19432
+							],
+							[
+								19789,
+								19808
+							],
+							[
+								19935,
+								19962
+							],
+							[
+								20136,
+								20171
+							],
+							[
+								20286,
+								20290
+							],
+							[
+								20386,
+								20390
+							],
+							[
+								20412,
+								20421
+							],
+							[
+								20566,
+								20570
+							],
+							[
+								20597,
+								20602
+							],
+							[
+								20630,
+								20634
+							],
+							[
+								20861,
+								20914
+							],
+							[
+								21275,
+								21279
+							],
+							[
+								21432,
+								21446
+							],
+							[
+								21826,
+								21859
+							],
+							[
+								22106,
+								22112
+							],
+							[
+								22172,
+								22176
+							],
+							[
+								22186,
+								22190
+							],
+							[
+								22209,
+								22235
+							],
+							[
+								22359,
+								22365
+							],
+							[
+								22527,
+								22546
+							],
+							[
+								22617,
+								22624
+							],
+							[
+								22681,
+								22687
+							],
+							[
+								22729,
+								22747
+							],
+							[
+								22997,
+								23010
+							],
+							[
+								23179,
+								23192
+							],
+							[
+								23424,
+								23443
+							],
+							[
+								23573,
+								23581
+							],
+							[
+								23594,
+								23603
+							],
+							[
+								23608,
+								23617
+							],
+							[
+								23649,
+								23668
+							],
+							[
+								23736,
+								23747
+							],
+							[
+								23777,
+								23787
+							],
+							[
+								23955,
+								23966
+							],
+							[
+								24014,
+								24025
+							],
+							[
+								24043,
+								24053
+							],
+							[
+								24057,
+								24068
+							],
+							[
+								24203,
+								24222
+							],
+							[
+								24560,
+								24579
+							],
+							[
+								24602,
+								24613
+							],
+							[
+								24851,
+								24855
+							],
+							[
+								25934,
+								25941
+							],
+							[
+								25973,
+								25984
+							],
+							[
+								25989,
+								26003
+							],
+							[
+								26105,
+								26124
+							],
+							[
+								26391,
+								26400
+							],
+							[
+								26422,
+								26429
+							],
+							[
+								26466,
+								26474
+							],
+							[
+								26524,
+								26543
+							],
+							[
+								26607,
+								26626
+							],
+							[
+								26709,
+								26728
+							],
+							[
+								27044,
+								27051
+							],
+							[
+								27337,
+								27356
+							],
+							[
+								27604,
+								27629
+							],
+							[
+								28866,
+								28871
+							],
+							[
+								28915,
+								28923
+							],
+							[
+								29281,
+								29295
+							],
+							[
+								29361,
+								29367
+							]
+						],
+						"symlist":
+						[
+							"rotateLeft = n => x =>",
+							"function GetMimeType(file)",
+							"function hashString(string, bits = 32, mask = 0xffffffff)",
+							"function decodeHTMLEntities(text)",
+							" (match, entity) =>",
+							"async function MimeType(path)",
+							" data =>",
+							"function GetDirMap(dirs = mountDirs, pred = '.*\\\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$')",
+							"pred = ent =>",
+							"(acc, dir) =>",
+							"async function waitChild(proc)",
+							"async function runMount(dirsIterator)",
+							"async function readData(output, callback = d => {})",
+							"(push, stop) =>",
+							" chunk =>",
+							"line =>",
+							" data =>",
+							"async function RequestContours(req, res)",
+							"async function main()",
+							"cp =>",
+							"(req, res, next) =>",
+							"(req, res, next) =>",
+							" function SendRaw(res, file, data, type = 'application/octet-stream')",
+							"convertToGerber = async (boardFile, opts = {}) =>",
+							"formatToExt = (layers, format) =>",
+							" data =>",
+							" data =>",
+							"gerberEndpoint = async (req, res) =>",
+							"res =>",
+							" k =>",
+							"gerberToGcode = async (gerberFile, allOpts = {}) =>",
+							" function makePath(ext, side, base = basename)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							" data =>",
+							" data =>",
+							"error =>",
+							"side =>",
+							"side =>",
+							"([side, file]) =>",
+							" k =>",
+							"gcodeEndpoint = async (req, res) =>",
+							"error =>",
+							"GithubListContents = async (owner, repo, dir, filter) =>",
+							"({ name }) =>",
+							"async (req, res, next) =>",
+							"st =>",
+							"err =>",
+							"() =>",
+							"err =>",
+							" k =>",
+							"(req, res, next) =>",
+							"async (req, res) =>",
+							" function FindFile(relative)",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							" (req, res) =>",
+							"async (req, res) =>",
+							" function GetVFSPath(file)",
+							"async function getDescription(file)",
+							"r =>",
+							"m =>",
+							"(a, b) =>",
+							"s =>",
+							"re =>",
+							"m =>",
+							"async function GetFilesList(dir = './tmp', opts = {})",
+							"n =>",
+							"(acc, file) =>",
+							"({ ctime, mtime, mode, size }) =>",
+							"err =>",
+							"a =>",
+							"i =>",
+							" function FilesURLs(list)",
+							"url =>",
+							"async (req, res) =>",
+							"port =>",
+							"key =>",
+							"async (ws, req) =>",
+							"async data =>",
+							"async data =>",
+							"async (req, res) =>",
+							" f =>",
+							" st =>",
+							" () =>",
+							"async (req, res) =>",
+							" () =>",
+							" c =>",
+							" () =>",
+							" () =>",
+							" o =>",
+							" () =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async () =>",
+							"p =>",
+							"file =>",
+							" () =>",
+							" error =>",
+							"async (req, res) =>",
+							"result =>",
+							"file =>",
+							"error =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"name =>",
+							"async (req, res) =>",
+							"async (req, res, next) =>",
+							"() =>",
+							"error =>",
+							" (req, res) =>",
+							" () =>"
+						]
+					},
+					"AQAAAAAAAAAAAAAA0AYAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					13,
+					1,
+					"outline_refresh",
+					{
+						"path": null,
+						"symkeys":
+						[
+						],
+						"symlist":
+						[
+						]
+					},
+					"AgAAAAAAAAAAAAAAAAAAAAAAAADQBgAAICByb3RhdGVMZWZ0ID0gbiA9PiB4ID0+CkdldE1pbWVUeXBlKGZpbGUpCiAgaGFzaFN0cmluZyhzdHJpbmcsIGJpdHMgPSAzMiwgbWFzayA9IDB4ZmZmZmZmZmYpCiAgZGVjb2RlSFRNTEVudGl0aWVzKHRleHQpCihtYXRjaCwgZW50aXR5KSA9PgpNaW1lVHlwZShwYXRoKQpkYXRhID0+CkdldERpck1hcChkaXJzID0gbW91bnREaXJzLCBwcmVkID0gJy4qXFwuKGJyZHxzY2h8bGJyfEdCTHxHVEx8R0tPfG5nYykkJykKICBwcmVkID0gZW50ID0+CihhY2MsIGRpcikgPT4KICB3YWl0Q2hpbGQocHJvYykKICBydW5Nb3VudChkaXJzSXRlcmF0b3IpCiAgcmVhZERhdGEob3V0cHV0LCBjYWxsYmFjayA9IGQgPT4ge30pCihwdXNoLCBzdG9wKSA9PgpjaHVuayA9PgogIGxpbmUgPT4KZGF0YSA9PgpSZXF1ZXN0Q29udG91cnMocmVxLCByZXMpCiAgbWFpbigpCiAgY3AgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgoocmVxLCByZXMsIG5leHQpID0+ClNlbmRSYXcocmVzLCBmaWxlLCBkYXRhLCB0eXBlID0gJ2FwcGxpY2F0aW9uL29jdGV0LXN0cmVhbScpCiAgY29udmVydFRvR2VyYmVyID0gKGJvYXJkRmlsZSwgb3B0cyA9IHt9KSA9PgogIGZvcm1hdFRvRXh0ID0gKGxheWVycywgZm9ybWF0KSA9PgpkYXRhID0+CmRhdGEgPT4KICBnZXJiZXJFbmRwb2ludCA9IChyZXEsIHJlcykgPT4KICByZXMgPT4KayA9PgogIGdlcmJlclRvR2NvZGUgPSAoZ2VyYmVyRmlsZSwgYWxsT3B0cyA9IHt9KSA9PgogIG1ha2VQYXRoKGV4dCwgc2lkZSwgYmFzZSA9IGJhc2VuYW1lKQooW2ssIHZdKSA9PgooW2ssIHZdKSA9PgpkYXRhID0+CmRhdGEgPT4KICBlcnJvciA9PgogIHNpZGUgPT4KICBzaWRlID0+Cihbc2lkZSwgZmlsZV0pID0+CmsgPT4KICBnY29kZUVuZHBvaW50ID0gKHJlcSwgcmVzKSA9PgogIGVycm9yID0+CkdpdGh1Ykxpc3RDb250ZW50cyA9IChvd25lciwgcmVwbywgZGlyLCBmaWx0ZXIpID0+Cih7IG5hbWUgfSkgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgogIHN0ID0+CiAgZXJyID0+CigpID0+CiAgZXJyID0+CmsgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgoocmVxLCByZXMpID0+CkZpbmRGaWxlKHJlbGF0aXZlKQoocmVxLCByZXMpID0+CihyZXEsIHJlcykgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMpID0+CkdldFZGU1BhdGgoZmlsZSkKICBnZXREZXNjcmlwdGlvbihmaWxlKQogIHIgPT4KICBtID0+CihhLCBiKSA9PgogIHMgPT4KICByZSA9PgogIG0gPT4KR2V0RmlsZXNMaXN0KGRpciA9ICcuL3RtcCcsIG9wdHMgPSB7fSkKICBuID0+CihhY2MsIGZpbGUpID0+Cih7IGN0aW1lLCBtdGltZSwgbW9kZSwgc2l6ZSB9KSA9PgogIGVyciA9PgogIGEgPT4KICBpID0+CkZpbGVzVVJMcyhsaXN0KQogIHVybCA9PgoocmVxLCByZXMpID0+CiAgcG9ydCA9PgogIGtleSA9Pgood3MsIHJlcSkgPT4KICBkYXRhID0+CiAgZGF0YSA9PgoocmVxLCByZXMpID0+CmYgPT4Kc3QgPT4KKCkgPT4KKHJlcSwgcmVzKSA9PgooKSA9PgpjID0+CigpID0+CigpID0+Cm8gPT4KKCkgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMpID0+CigpID0+CiAgcCA9PgogIGZpbGUgPT4KKCkgPT4KZXJyb3IgPT4KKHJlcSwgcmVzKSA9PgogIHJlc3VsdCA9PgogIGZpbGUgPT4KICBlcnJvciA9PgoocmVxLCByZXMpID0+CihyZXEsIHJlcykgPT4KKHJlcSwgcmVzKSA9PgogIG5hbWUgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMsIG5leHQpID0+CigpID0+CiAgZXJyb3IgPT4KKHJlcSwgcmVzKSA9PgooKSA9PgAAAAAAAAAAAAAAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					14,
+					1,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/server.js",
+						"symkeys":
+						[
+							[
+								1072,
+								1094
+							],
+							[
+								1218,
+								1244
+							],
+							[
+								1414,
+								1471
+							],
+							[
+								1723,
+								1756
+							],
+							[
+								1985,
+								2004
+							],
+							[
+								2036,
+								2065
+							],
+							[
+								2171,
+								2179
+							],
+							[
+								2897,
+								2979
+							],
+							[
+								3285,
+								3298
+							],
+							[
+								3378,
+								3391
+							],
+							[
+								3666,
+								3696
+							],
+							[
+								3856,
+								3893
+							],
+							[
+								4188,
+								4239
+							],
+							[
+								4297,
+								4312
+							],
+							[
+								4342,
+								4351
+							],
+							[
+								4651,
+								4658
+							],
+							[
+								4789,
+								4797
+							],
+							[
+								4995,
+								5035
+							],
+							[
+								5358,
+								5379
+							],
+							[
+								5666,
+								5671
+							],
+							[
+								6047,
+								6066
+							],
+							[
+								6582,
+								6601
+							],
+							[
+								6948,
+								7018
+							],
+							[
+								7364,
+								7413
+							],
+							[
+								7812,
+								7845
+							],
+							[
+								8614,
+								8622
+							],
+							[
+								8669,
+								8677
+							],
+							[
+								9188,
+								9224
+							],
+							[
+								9680,
+								9686
+							],
+							[
+								9849,
+								9854
+							],
+							[
+								10131,
+								10182
+							],
+							[
+								11130,
+								11179
+							],
+							[
+								11318,
+								11329
+							],
+							[
+								11428,
+								11439
+							],
+							[
+								12017,
+								12025
+							],
+							[
+								12074,
+								12082
+							],
+							[
+								12133,
+								12141
+							],
+							[
+								12568,
+								12575
+							],
+							[
+								12716,
+								12723
+							],
+							[
+								12762,
+								12779
+							],
+							[
+								13295,
+								13300
+							],
+							[
+								13476,
+								13511
+							],
+							[
+								13654,
+								13662
+							],
+							[
+								13861,
+								13917
+							],
+							[
+								14280,
+								14293
+							],
+							[
+								14351,
+								14376
+							],
+							[
+								14633,
+								14638
+							],
+							[
+								14678,
+								14684
+							],
+							[
+								14841,
+								14846
+							],
+							[
+								14883,
+								14889
+							],
+							[
+								15399,
+								15404
+							],
+							[
+								16022,
+								16041
+							],
+							[
+								17544,
+								17563
+							],
+							[
+								18408,
+								18437
+							],
+							[
+								18660,
+								18679
+							],
+							[
+								19026,
+								19045
+							],
+							[
+								19418,
+								19432
+							],
+							[
+								19789,
+								19808
+							],
+							[
+								19935,
+								19962
+							],
+							[
+								20136,
+								20171
+							],
+							[
+								20286,
+								20290
+							],
+							[
+								20386,
+								20390
+							],
+							[
+								20412,
+								20421
+							],
+							[
+								20566,
+								20570
+							],
+							[
+								20597,
+								20602
+							],
+							[
+								20630,
+								20634
+							],
+							[
+								20861,
+								20914
+							],
+							[
+								21275,
+								21279
+							],
+							[
+								21432,
+								21446
+							],
+							[
+								21826,
+								21859
+							],
+							[
+								22106,
+								22112
+							],
+							[
+								22172,
+								22176
+							],
+							[
+								22186,
+								22190
+							],
+							[
+								22209,
+								22235
+							],
+							[
+								22359,
+								22365
+							],
+							[
+								22527,
+								22546
+							],
+							[
+								22617,
+								22624
+							],
+							[
+								22681,
+								22687
+							],
+							[
+								22729,
+								22747
+							],
+							[
+								22997,
+								23010
+							],
+							[
+								23179,
+								23192
+							],
+							[
+								23424,
+								23443
+							],
+							[
+								23573,
+								23581
+							],
+							[
+								23594,
+								23603
+							],
+							[
+								23608,
+								23617
+							],
+							[
+								23649,
+								23668
+							],
+							[
+								23736,
+								23747
+							],
+							[
+								23777,
+								23787
+							],
+							[
+								23955,
+								23966
+							],
+							[
+								24014,
+								24025
+							],
+							[
+								24043,
+								24053
+							],
+							[
+								24057,
+								24068
+							],
+							[
+								24203,
+								24222
+							],
+							[
+								24560,
+								24579
+							],
+							[
+								24602,
+								24613
+							],
+							[
+								24851,
+								24855
+							],
+							[
+								25934,
+								25941
+							],
+							[
+								25973,
+								25984
+							],
+							[
+								25989,
+								26003
+							],
+							[
+								26105,
+								26124
+							],
+							[
+								26391,
+								26400
+							],
+							[
+								26422,
+								26429
+							],
+							[
+								26466,
+								26474
+							],
+							[
+								26524,
+								26543
+							],
+							[
+								26607,
+								26626
+							],
+							[
+								26709,
+								26728
+							],
+							[
+								27044,
+								27051
+							],
+							[
+								27337,
+								27356
+							],
+							[
+								27604,
+								27629
+							],
+							[
+								28866,
+								28871
+							],
+							[
+								28915,
+								28923
+							],
+							[
+								29281,
+								29295
+							],
+							[
+								29361,
+								29367
+							]
+						],
+						"symlist":
+						[
+							"rotateLeft = n => x =>",
+							"function GetMimeType(file)",
+							"function hashString(string, bits = 32, mask = 0xffffffff)",
+							"function decodeHTMLEntities(text)",
+							" (match, entity) =>",
+							"async function MimeType(path)",
+							" data =>",
+							"function GetDirMap(dirs = mountDirs, pred = '.*\\\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$')",
+							"pred = ent =>",
+							"(acc, dir) =>",
+							"async function waitChild(proc)",
+							"async function runMount(dirsIterator)",
+							"async function readData(output, callback = d => {})",
+							"(push, stop) =>",
+							" chunk =>",
+							"line =>",
+							" data =>",
+							"async function RequestContours(req, res)",
+							"async function main()",
+							"cp =>",
+							"(req, res, next) =>",
+							"(req, res, next) =>",
+							" function SendRaw(res, file, data, type = 'application/octet-stream')",
+							"convertToGerber = async (boardFile, opts = {}) =>",
+							"formatToExt = (layers, format) =>",
+							" data =>",
+							" data =>",
+							"gerberEndpoint = async (req, res) =>",
+							"res =>",
+							" k =>",
+							"gerberToGcode = async (gerberFile, allOpts = {}) =>",
+							" function makePath(ext, side, base = basename)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							" data =>",
+							" data =>",
+							"error =>",
+							"side =>",
+							"side =>",
+							"([side, file]) =>",
+							" k =>",
+							"gcodeEndpoint = async (req, res) =>",
+							"error =>",
+							"GithubListContents = async (owner, repo, dir, filter) =>",
+							"({ name }) =>",
+							"async (req, res, next) =>",
+							"st =>",
+							"err =>",
+							"() =>",
+							"err =>",
+							" k =>",
+							"(req, res, next) =>",
+							"async (req, res) =>",
+							" function FindFile(relative)",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							" (req, res) =>",
+							"async (req, res) =>",
+							" function GetVFSPath(file)",
+							"async function getDescription(file)",
+							"r =>",
+							"m =>",
+							"(a, b) =>",
+							"s =>",
+							"re =>",
+							"m =>",
+							"async function GetFilesList(dir = './tmp', opts = {})",
+							"n =>",
+							"(acc, file) =>",
+							"({ ctime, mtime, mode, size }) =>",
+							"err =>",
+							"a =>",
+							"i =>",
+							" function FilesURLs(list)",
+							"url =>",
+							"async (req, res) =>",
+							"port =>",
+							"key =>",
+							"async (ws, req) =>",
+							"async data =>",
+							"async data =>",
+							"async (req, res) =>",
+							" f =>",
+							" st =>",
+							" () =>",
+							"async (req, res) =>",
+							" () =>",
+							" c =>",
+							" () =>",
+							" () =>",
+							" o =>",
+							" () =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async () =>",
+							"p =>",
+							"file =>",
+							" () =>",
+							" error =>",
+							"async (req, res) =>",
+							"result =>",
+							"file =>",
+							"error =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"name =>",
+							"async (req, res) =>",
+							"async (req, res, next) =>",
+							"() =>",
+							"error =>",
+							" (req, res) =>",
+							" () =>"
+						]
+					},
+					"AQAAAAAAAAAAAAAA0AYAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					15,
+					1,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/server.js",
+						"symkeys":
+						[
+							[
+								1072,
+								1094
+							],
+							[
+								1218,
+								1244
+							],
+							[
+								1414,
+								1471
+							],
+							[
+								1723,
+								1756
+							],
+							[
+								1985,
+								2004
+							],
+							[
+								2036,
+								2065
+							],
+							[
+								2171,
+								2179
+							],
+							[
+								2897,
+								2979
+							],
+							[
+								3290,
+								3303
+							],
+							[
+								3385,
+								3398
+							],
+							[
+								3673,
+								3703
+							],
+							[
+								3863,
+								3900
+							],
+							[
+								4195,
+								4246
+							],
+							[
+								4304,
+								4319
+							],
+							[
+								4349,
+								4358
+							],
+							[
+								4658,
+								4665
+							],
+							[
+								4796,
+								4804
+							],
+							[
+								5002,
+								5042
+							],
+							[
+								5365,
+								5386
+							],
+							[
+								5673,
+								5678
+							],
+							[
+								6054,
+								6073
+							],
+							[
+								6589,
+								6608
+							],
+							[
+								6955,
+								7025
+							],
+							[
+								7371,
+								7420
+							],
+							[
+								7819,
+								7852
+							],
+							[
+								8621,
+								8629
+							],
+							[
+								8676,
+								8684
+							],
+							[
+								9195,
+								9231
+							],
+							[
+								9687,
+								9693
+							],
+							[
+								9856,
+								9861
+							],
+							[
+								10138,
+								10189
+							],
+							[
+								11137,
+								11186
+							],
+							[
+								11325,
+								11336
+							],
+							[
+								11435,
+								11446
+							],
+							[
+								12024,
+								12032
+							],
+							[
+								12081,
+								12089
+							],
+							[
+								12140,
+								12148
+							],
+							[
+								12575,
+								12582
+							],
+							[
+								12723,
+								12730
+							],
+							[
+								12769,
+								12786
+							],
+							[
+								13302,
+								13307
+							],
+							[
+								13483,
+								13518
+							],
+							[
+								13661,
+								13669
+							],
+							[
+								13868,
+								13924
+							],
+							[
+								14287,
+								14300
+							],
+							[
+								14358,
+								14383
+							],
+							[
+								14640,
+								14645
+							],
+							[
+								14685,
+								14691
+							],
+							[
+								14848,
+								14853
+							],
+							[
+								14890,
+								14896
+							],
+							[
+								15406,
+								15411
+							],
+							[
+								16029,
+								16048
+							],
+							[
+								17551,
+								17570
+							],
+							[
+								18415,
+								18444
+							],
+							[
+								18667,
+								18686
+							],
+							[
+								19033,
+								19052
+							],
+							[
+								19425,
+								19439
+							],
+							[
+								19796,
+								19815
+							],
+							[
+								19942,
+								19969
+							],
+							[
+								20143,
+								20178
+							],
+							[
+								20293,
+								20297
+							],
+							[
+								20393,
+								20397
+							],
+							[
+								20419,
+								20428
+							],
+							[
+								20573,
+								20577
+							],
+							[
+								20604,
+								20609
+							],
+							[
+								20637,
+								20641
+							],
+							[
+								20868,
+								20921
+							],
+							[
+								21282,
+								21286
+							],
+							[
+								21439,
+								21453
+							],
+							[
+								21833,
+								21866
+							],
+							[
+								22113,
+								22119
+							],
+							[
+								22179,
+								22183
+							],
+							[
+								22193,
+								22197
+							],
+							[
+								22216,
+								22242
+							],
+							[
+								22366,
+								22372
+							],
+							[
+								22534,
+								22553
+							],
+							[
+								22624,
+								22631
+							],
+							[
+								22688,
+								22694
+							],
+							[
+								22736,
+								22754
+							],
+							[
+								23004,
+								23017
+							],
+							[
+								23186,
+								23199
+							],
+							[
+								23431,
+								23450
+							],
+							[
+								23580,
+								23588
+							],
+							[
+								23601,
+								23610
+							],
+							[
+								23615,
+								23624
+							],
+							[
+								23656,
+								23675
+							],
+							[
+								23743,
+								23754
+							],
+							[
+								23784,
+								23794
+							],
+							[
+								23962,
+								23973
+							],
+							[
+								24021,
+								24032
+							],
+							[
+								24050,
+								24060
+							],
+							[
+								24064,
+								24075
+							],
+							[
+								24210,
+								24229
+							],
+							[
+								24567,
+								24586
+							],
+							[
+								24609,
+								24620
+							],
+							[
+								24858,
+								24862
+							],
+							[
+								25941,
+								25948
+							],
+							[
+								25980,
+								25991
+							],
+							[
+								25996,
+								26010
+							],
+							[
+								26112,
+								26131
+							],
+							[
+								26398,
+								26407
+							],
+							[
+								26429,
+								26436
+							],
+							[
+								26473,
+								26481
+							],
+							[
+								26531,
+								26550
+							],
+							[
+								26614,
+								26633
+							],
+							[
+								26716,
+								26735
+							],
+							[
+								27051,
+								27058
+							],
+							[
+								27344,
+								27363
+							],
+							[
+								27611,
+								27636
+							],
+							[
+								28873,
+								28878
+							],
+							[
+								28922,
+								28930
+							],
+							[
+								29288,
+								29302
+							],
+							[
+								29368,
+								29374
+							]
+						],
+						"symlist":
+						[
+							"rotateLeft = n => x =>",
+							"function GetMimeType(file)",
+							"function hashString(string, bits = 32, mask = 0xffffffff)",
+							"function decodeHTMLEntities(text)",
+							" (match, entity) =>",
+							"async function MimeType(path)",
+							" data =>",
+							"function GetDirMap(dirs = mountDirs, pred = '.*\\\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$')",
+							"pred = ent =>",
+							"(acc, dir) =>",
+							"async function waitChild(proc)",
+							"async function runMount(dirsIterator)",
+							"async function readData(output, callback = d => {})",
+							"(push, stop) =>",
+							" chunk =>",
+							"line =>",
+							" data =>",
+							"async function RequestContours(req, res)",
+							"async function main()",
+							"cp =>",
+							"(req, res, next) =>",
+							"(req, res, next) =>",
+							" function SendRaw(res, file, data, type = 'application/octet-stream')",
+							"convertToGerber = async (boardFile, opts = {}) =>",
+							"formatToExt = (layers, format) =>",
+							" data =>",
+							" data =>",
+							"gerberEndpoint = async (req, res) =>",
+							"res =>",
+							" k =>",
+							"gerberToGcode = async (gerberFile, allOpts = {}) =>",
+							" function makePath(ext, side, base = basename)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							" data =>",
+							" data =>",
+							"error =>",
+							"side =>",
+							"side =>",
+							"([side, file]) =>",
+							" k =>",
+							"gcodeEndpoint = async (req, res) =>",
+							"error =>",
+							"GithubListContents = async (owner, repo, dir, filter) =>",
+							"({ name }) =>",
+							"async (req, res, next) =>",
+							"st =>",
+							"err =>",
+							"() =>",
+							"err =>",
+							" k =>",
+							"(req, res, next) =>",
+							"async (req, res) =>",
+							" function FindFile(relative)",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							" (req, res) =>",
+							"async (req, res) =>",
+							" function GetVFSPath(file)",
+							"async function getDescription(file)",
+							"r =>",
+							"m =>",
+							"(a, b) =>",
+							"s =>",
+							"re =>",
+							"m =>",
+							"async function GetFilesList(dir = './tmp', opts = {})",
+							"n =>",
+							"(acc, file) =>",
+							"({ ctime, mtime, mode, size }) =>",
+							"err =>",
+							"a =>",
+							"i =>",
+							" function FilesURLs(list)",
+							"url =>",
+							"async (req, res) =>",
+							"port =>",
+							"key =>",
+							"async (ws, req) =>",
+							"async data =>",
+							"async data =>",
+							"async (req, res) =>",
+							" f =>",
+							" st =>",
+							" () =>",
+							"async (req, res) =>",
+							" () =>",
+							" c =>",
+							" () =>",
+							" () =>",
+							" o =>",
+							" () =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async () =>",
+							"p =>",
+							"file =>",
+							" () =>",
+							" error =>",
+							"async (req, res) =>",
+							"result =>",
+							"file =>",
+							"error =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"name =>",
+							"async (req, res) =>",
+							"async (req, res, next) =>",
+							"() =>",
+							"error =>",
+							" (req, res) =>",
+							" () =>"
+						]
+					},
+					"AgAAAAAAAAAAAAAAAAAAAAAAAADQBgAAICByb3RhdGVMZWZ0ID0gbiA9PiB4ID0+CkdldE1pbWVUeXBlKGZpbGUpCiAgaGFzaFN0cmluZyhzdHJpbmcsIGJpdHMgPSAzMiwgbWFzayA9IDB4ZmZmZmZmZmYpCiAgZGVjb2RlSFRNTEVudGl0aWVzKHRleHQpCihtYXRjaCwgZW50aXR5KSA9PgpNaW1lVHlwZShwYXRoKQpkYXRhID0+CkdldERpck1hcChkaXJzID0gbW91bnREaXJzLCBwcmVkID0gJy4qXFwuKGJyZHxzY2h8bGJyfEdCTHxHVEx8R0tPfG5nYykkJykKICBwcmVkID0gZW50ID0+CihhY2MsIGRpcikgPT4KICB3YWl0Q2hpbGQocHJvYykKICBydW5Nb3VudChkaXJzSXRlcmF0b3IpCiAgcmVhZERhdGEob3V0cHV0LCBjYWxsYmFjayA9IGQgPT4ge30pCihwdXNoLCBzdG9wKSA9PgpjaHVuayA9PgogIGxpbmUgPT4KZGF0YSA9PgpSZXF1ZXN0Q29udG91cnMocmVxLCByZXMpCiAgbWFpbigpCiAgY3AgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgoocmVxLCByZXMsIG5leHQpID0+ClNlbmRSYXcocmVzLCBmaWxlLCBkYXRhLCB0eXBlID0gJ2FwcGxpY2F0aW9uL29jdGV0LXN0cmVhbScpCiAgY29udmVydFRvR2VyYmVyID0gKGJvYXJkRmlsZSwgb3B0cyA9IHt9KSA9PgogIGZvcm1hdFRvRXh0ID0gKGxheWVycywgZm9ybWF0KSA9PgpkYXRhID0+CmRhdGEgPT4KICBnZXJiZXJFbmRwb2ludCA9IChyZXEsIHJlcykgPT4KICByZXMgPT4KayA9PgogIGdlcmJlclRvR2NvZGUgPSAoZ2VyYmVyRmlsZSwgYWxsT3B0cyA9IHt9KSA9PgogIG1ha2VQYXRoKGV4dCwgc2lkZSwgYmFzZSA9IGJhc2VuYW1lKQooW2ssIHZdKSA9PgooW2ssIHZdKSA9PgpkYXRhID0+CmRhdGEgPT4KICBlcnJvciA9PgogIHNpZGUgPT4KICBzaWRlID0+Cihbc2lkZSwgZmlsZV0pID0+CmsgPT4KICBnY29kZUVuZHBvaW50ID0gKHJlcSwgcmVzKSA9PgogIGVycm9yID0+CkdpdGh1Ykxpc3RDb250ZW50cyA9IChvd25lciwgcmVwbywgZGlyLCBmaWx0ZXIpID0+Cih7IG5hbWUgfSkgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgogIHN0ID0+CiAgZXJyID0+CigpID0+CiAgZXJyID0+CmsgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgoocmVxLCByZXMpID0+CkZpbmRGaWxlKHJlbGF0aXZlKQoocmVxLCByZXMpID0+CihyZXEsIHJlcykgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMpID0+CkdldFZGU1BhdGgoZmlsZSkKICBnZXREZXNjcmlwdGlvbihmaWxlKQogIHIgPT4KICBtID0+CihhLCBiKSA9PgogIHMgPT4KICByZSA9PgogIG0gPT4KR2V0RmlsZXNMaXN0KGRpciA9ICcuL3RtcCcsIG9wdHMgPSB7fSkKICBuID0+CihhY2MsIGZpbGUpID0+Cih7IGN0aW1lLCBtdGltZSwgbW9kZSwgc2l6ZSB9KSA9PgogIGVyciA9PgogIGEgPT4KICBpID0+CkZpbGVzVVJMcyhsaXN0KQogIHVybCA9PgoocmVxLCByZXMpID0+CiAgcG9ydCA9PgogIGtleSA9Pgood3MsIHJlcSkgPT4KICBkYXRhID0+CiAgZGF0YSA9PgoocmVxLCByZXMpID0+CmYgPT4Kc3QgPT4KKCkgPT4KKHJlcSwgcmVzKSA9PgooKSA9PgpjID0+CigpID0+CigpID0+Cm8gPT4KKCkgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMpID0+CigpID0+CiAgcCA9PgogIGZpbGUgPT4KKCkgPT4KZXJyb3IgPT4KKHJlcSwgcmVzKSA9PgogIHJlc3VsdCA9PgogIGZpbGUgPT4KICBlcnJvciA9PgoocmVxLCByZXMpID0+CihyZXEsIHJlcykgPT4KKHJlcSwgcmVzKSA9PgogIG5hbWUgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMsIG5leHQpID0+CigpID0+CiAgZXJyb3IgPT4KKHJlcSwgcmVzKSA9PgooKSA9PgAAAAAAAAAA0AYAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					16,
+					1,
+					"outline_refresh",
+					{
+						"path": null,
+						"symkeys":
+						[
+						],
+						"symlist":
+						[
+						]
+					},
+					"AgAAAAAAAAAAAAAAAAAAAAAAAADQBgAAICByb3RhdGVMZWZ0ID0gbiA9PiB4ID0+CkdldE1pbWVUeXBlKGZpbGUpCiAgaGFzaFN0cmluZyhzdHJpbmcsIGJpdHMgPSAzMiwgbWFzayA9IDB4ZmZmZmZmZmYpCiAgZGVjb2RlSFRNTEVudGl0aWVzKHRleHQpCihtYXRjaCwgZW50aXR5KSA9PgpNaW1lVHlwZShwYXRoKQpkYXRhID0+CkdldERpck1hcChkaXJzID0gbW91bnREaXJzLCBwcmVkID0gJy4qXFwuKGJyZHxzY2h8bGJyfEdCTHxHVEx8R0tPfG5nYykkJykKICBwcmVkID0gZW50ID0+CihhY2MsIGRpcikgPT4KICB3YWl0Q2hpbGQocHJvYykKICBydW5Nb3VudChkaXJzSXRlcmF0b3IpCiAgcmVhZERhdGEob3V0cHV0LCBjYWxsYmFjayA9IGQgPT4ge30pCihwdXNoLCBzdG9wKSA9PgpjaHVuayA9PgogIGxpbmUgPT4KZGF0YSA9PgpSZXF1ZXN0Q29udG91cnMocmVxLCByZXMpCiAgbWFpbigpCiAgY3AgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgoocmVxLCByZXMsIG5leHQpID0+ClNlbmRSYXcocmVzLCBmaWxlLCBkYXRhLCB0eXBlID0gJ2FwcGxpY2F0aW9uL29jdGV0LXN0cmVhbScpCiAgY29udmVydFRvR2VyYmVyID0gKGJvYXJkRmlsZSwgb3B0cyA9IHt9KSA9PgogIGZvcm1hdFRvRXh0ID0gKGxheWVycywgZm9ybWF0KSA9PgpkYXRhID0+CmRhdGEgPT4KICBnZXJiZXJFbmRwb2ludCA9IChyZXEsIHJlcykgPT4KICByZXMgPT4KayA9PgogIGdlcmJlclRvR2NvZGUgPSAoZ2VyYmVyRmlsZSwgYWxsT3B0cyA9IHt9KSA9PgogIG1ha2VQYXRoKGV4dCwgc2lkZSwgYmFzZSA9IGJhc2VuYW1lKQooW2ssIHZdKSA9PgooW2ssIHZdKSA9PgpkYXRhID0+CmRhdGEgPT4KICBlcnJvciA9PgogIHNpZGUgPT4KICBzaWRlID0+Cihbc2lkZSwgZmlsZV0pID0+CmsgPT4KICBnY29kZUVuZHBvaW50ID0gKHJlcSwgcmVzKSA9PgogIGVycm9yID0+CkdpdGh1Ykxpc3RDb250ZW50cyA9IChvd25lciwgcmVwbywgZGlyLCBmaWx0ZXIpID0+Cih7IG5hbWUgfSkgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgogIHN0ID0+CiAgZXJyID0+CigpID0+CiAgZXJyID0+CmsgPT4KKHJlcSwgcmVzLCBuZXh0KSA9PgoocmVxLCByZXMpID0+CkZpbmRGaWxlKHJlbGF0aXZlKQoocmVxLCByZXMpID0+CihyZXEsIHJlcykgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMpID0+CkdldFZGU1BhdGgoZmlsZSkKICBnZXREZXNjcmlwdGlvbihmaWxlKQogIHIgPT4KICBtID0+CihhLCBiKSA9PgogIHMgPT4KICByZSA9PgogIG0gPT4KR2V0RmlsZXNMaXN0KGRpciA9ICcuL3RtcCcsIG9wdHMgPSB7fSkKICBuID0+CihhY2MsIGZpbGUpID0+Cih7IGN0aW1lLCBtdGltZSwgbW9kZSwgc2l6ZSB9KSA9PgogIGVyciA9PgogIGEgPT4KICBpID0+CkZpbGVzVVJMcyhsaXN0KQogIHVybCA9PgoocmVxLCByZXMpID0+CiAgcG9ydCA9PgogIGtleSA9Pgood3MsIHJlcSkgPT4KICBkYXRhID0+CiAgZGF0YSA9PgoocmVxLCByZXMpID0+CmYgPT4Kc3QgPT4KKCkgPT4KKHJlcSwgcmVzKSA9PgooKSA9PgpjID0+CigpID0+CigpID0+Cm8gPT4KKCkgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMpID0+CigpID0+CiAgcCA9PgogIGZpbGUgPT4KKCkgPT4KZXJyb3IgPT4KKHJlcSwgcmVzKSA9PgogIHJlc3VsdCA9PgogIGZpbGUgPT4KICBlcnJvciA9PgoocmVxLCByZXMpID0+CihyZXEsIHJlcykgPT4KKHJlcSwgcmVzKSA9PgogIG5hbWUgPT4KKHJlcSwgcmVzKSA9PgoocmVxLCByZXMsIG5leHQpID0+CigpID0+CiAgZXJyb3IgPT4KKHJlcSwgcmVzKSA9PgooKSA9PgAAAAAAAAAAAAAAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				],
+				[
+					17,
+					1,
+					"outline_refresh",
+					{
+						"path": "/home/roman/Projects/plot-cv/server.js",
+						"symkeys":
+						[
+							[
+								1072,
+								1094
+							],
+							[
+								1218,
+								1244
+							],
+							[
+								1414,
+								1471
+							],
+							[
+								1723,
+								1756
+							],
+							[
+								1985,
+								2004
+							],
+							[
+								2036,
+								2065
+							],
+							[
+								2171,
+								2179
+							],
+							[
+								2897,
+								2979
+							],
+							[
+								3290,
+								3303
+							],
+							[
+								3385,
+								3398
+							],
+							[
+								3673,
+								3703
+							],
+							[
+								3863,
+								3900
+							],
+							[
+								4195,
+								4246
+							],
+							[
+								4304,
+								4319
+							],
+							[
+								4349,
+								4358
+							],
+							[
+								4658,
+								4665
+							],
+							[
+								4796,
+								4804
+							],
+							[
+								5002,
+								5042
+							],
+							[
+								5365,
+								5386
+							],
+							[
+								5673,
+								5678
+							],
+							[
+								6054,
+								6073
+							],
+							[
+								6589,
+								6608
+							],
+							[
+								6955,
+								7025
+							],
+							[
+								7371,
+								7420
+							],
+							[
+								7819,
+								7852
+							],
+							[
+								8621,
+								8629
+							],
+							[
+								8676,
+								8684
+							],
+							[
+								9195,
+								9231
+							],
+							[
+								9687,
+								9693
+							],
+							[
+								9856,
+								9861
+							],
+							[
+								10138,
+								10189
+							],
+							[
+								11137,
+								11186
+							],
+							[
+								11325,
+								11336
+							],
+							[
+								11435,
+								11446
+							],
+							[
+								12024,
+								12032
+							],
+							[
+								12081,
+								12089
+							],
+							[
+								12140,
+								12148
+							],
+							[
+								12575,
+								12582
+							],
+							[
+								12723,
+								12730
+							],
+							[
+								12769,
+								12786
+							],
+							[
+								13302,
+								13307
+							],
+							[
+								13483,
+								13518
+							],
+							[
+								13661,
+								13669
+							],
+							[
+								13868,
+								13924
+							],
+							[
+								14287,
+								14300
+							],
+							[
+								14358,
+								14383
+							],
+							[
+								14640,
+								14645
+							],
+							[
+								14685,
+								14691
+							],
+							[
+								14848,
+								14853
+							],
+							[
+								14890,
+								14896
+							],
+							[
+								15406,
+								15411
+							],
+							[
+								16029,
+								16048
+							],
+							[
+								17551,
+								17570
+							],
+							[
+								18415,
+								18444
+							],
+							[
+								18667,
+								18686
+							],
+							[
+								19033,
+								19052
+							],
+							[
+								19425,
+								19439
+							],
+							[
+								19796,
+								19815
+							],
+							[
+								19942,
+								19969
+							],
+							[
+								20143,
+								20178
+							],
+							[
+								20293,
+								20297
+							],
+							[
+								20393,
+								20397
+							],
+							[
+								20419,
+								20428
+							],
+							[
+								20573,
+								20577
+							],
+							[
+								20604,
+								20609
+							],
+							[
+								20637,
+								20641
+							],
+							[
+								20868,
+								20921
+							],
+							[
+								21282,
+								21286
+							],
+							[
+								21439,
+								21453
+							],
+							[
+								21833,
+								21866
+							],
+							[
+								22113,
+								22119
+							],
+							[
+								22179,
+								22183
+							],
+							[
+								22193,
+								22197
+							],
+							[
+								22216,
+								22242
+							],
+							[
+								22366,
+								22372
+							],
+							[
+								22534,
+								22553
+							],
+							[
+								22624,
+								22631
+							],
+							[
+								22688,
+								22694
+							],
+							[
+								22736,
+								22754
+							],
+							[
+								23004,
+								23017
+							],
+							[
+								23186,
+								23199
+							],
+							[
+								23431,
+								23450
+							],
+							[
+								23580,
+								23588
+							],
+							[
+								23601,
+								23610
+							],
+							[
+								23615,
+								23624
+							],
+							[
+								23656,
+								23675
+							],
+							[
+								23743,
+								23754
+							],
+							[
+								23784,
+								23794
+							],
+							[
+								23962,
+								23973
+							],
+							[
+								24021,
+								24032
+							],
+							[
+								24050,
+								24060
+							],
+							[
+								24064,
+								24075
+							],
+							[
+								24210,
+								24229
+							],
+							[
+								24567,
+								24586
+							],
+							[
+								24609,
+								24620
+							],
+							[
+								24858,
+								24862
+							],
+							[
+								25941,
+								25948
+							],
+							[
+								25980,
+								25991
+							],
+							[
+								25996,
+								26010
+							],
+							[
+								26112,
+								26131
+							],
+							[
+								26398,
+								26407
+							],
+							[
+								26429,
+								26436
+							],
+							[
+								26473,
+								26481
+							],
+							[
+								26531,
+								26550
+							],
+							[
+								26614,
+								26633
+							],
+							[
+								26716,
+								26735
+							],
+							[
+								27051,
+								27058
+							],
+							[
+								27344,
+								27363
+							],
+							[
+								27611,
+								27636
+							],
+							[
+								28873,
+								28878
+							],
+							[
+								28922,
+								28930
+							],
+							[
+								29288,
+								29302
+							],
+							[
+								29368,
+								29374
+							]
+						],
+						"symlist":
+						[
+							"rotateLeft = n => x =>",
+							"function GetMimeType(file)",
+							"function hashString(string, bits = 32, mask = 0xffffffff)",
+							"function decodeHTMLEntities(text)",
+							" (match, entity) =>",
+							"async function MimeType(path)",
+							" data =>",
+							"function GetDirMap(dirs = mountDirs, pred = '.*\\\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$')",
+							"pred = ent =>",
+							"(acc, dir) =>",
+							"async function waitChild(proc)",
+							"async function runMount(dirsIterator)",
+							"async function readData(output, callback = d => {})",
+							"(push, stop) =>",
+							" chunk =>",
+							"line =>",
+							" data =>",
+							"async function RequestContours(req, res)",
+							"async function main()",
+							"cp =>",
+							"(req, res, next) =>",
+							"(req, res, next) =>",
+							" function SendRaw(res, file, data, type = 'application/octet-stream')",
+							"convertToGerber = async (boardFile, opts = {}) =>",
+							"formatToExt = (layers, format) =>",
+							" data =>",
+							" data =>",
+							"gerberEndpoint = async (req, res) =>",
+							"res =>",
+							" k =>",
+							"gerberToGcode = async (gerberFile, allOpts = {}) =>",
+							" function makePath(ext, side, base = basename)",
+							"([k, v]) =>",
+							"([k, v]) =>",
+							" data =>",
+							" data =>",
+							"error =>",
+							"side =>",
+							"side =>",
+							"([side, file]) =>",
+							" k =>",
+							"gcodeEndpoint = async (req, res) =>",
+							"error =>",
+							"GithubListContents = async (owner, repo, dir, filter) =>",
+							"({ name }) =>",
+							"async (req, res, next) =>",
+							"st =>",
+							"err =>",
+							"() =>",
+							"err =>",
+							" k =>",
+							"(req, res, next) =>",
+							"async (req, res) =>",
+							" function FindFile(relative)",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							" (req, res) =>",
+							"async (req, res) =>",
+							" function GetVFSPath(file)",
+							"async function getDescription(file)",
+							"r =>",
+							"m =>",
+							"(a, b) =>",
+							"s =>",
+							"re =>",
+							"m =>",
+							"async function GetFilesList(dir = './tmp', opts = {})",
+							"n =>",
+							"(acc, file) =>",
+							"({ ctime, mtime, mode, size }) =>",
+							"err =>",
+							"a =>",
+							"i =>",
+							" function FilesURLs(list)",
+							"url =>",
+							"async (req, res) =>",
+							"port =>",
+							"key =>",
+							"async (ws, req) =>",
+							"async data =>",
+							"async data =>",
+							"async (req, res) =>",
+							" f =>",
+							" st =>",
+							" () =>",
+							"async (req, res) =>",
+							" () =>",
+							" c =>",
+							" () =>",
+							" () =>",
+							" o =>",
+							" () =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async () =>",
+							"p =>",
+							"file =>",
+							" () =>",
+							" error =>",
+							"async (req, res) =>",
+							"result =>",
+							"file =>",
+							"error =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"async (req, res) =>",
+							"name =>",
+							"async (req, res) =>",
+							"async (req, res, next) =>",
+							"() =>",
+							"error =>",
+							" (req, res) =>",
+							" () =>"
+						]
+					},
+					"AQAAAAAAAAAAAAAA0AYAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAA"
+				]
+			]
+		},
+		{
+			"file": "upload-server.js",
+			"redo_stack":
+			[
+				[
+					1,
+					1,
+					"insert",
+					{
+						"characters": "rver"
+					},
+					"BAAAAAMAAAAAAAAAAwAAAAAAAAABAAAAcgIAAAAAAAAAAgAAAAAAAAABAAAAZQEAAAAAAAAAAQAAAAAAAAABAAAAdgAAAAAAAAAAAAAAAAAAAAABAAAAcg",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAEAAAAAAAAAAQAAAAAAAAAAAAAAAAA8L8"
+				]
+			],
+			"settings":
+			{
+				"buffer_size": 36357,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "server.js",
+			"settings":
+			{
+				"buffer_size": 29538,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					16,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AgAAABwNAAAAAAAAHQ0AAAAAAAAAAAAAHQ0AAAAAAAAfDQAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAcDQAAAAAAABwNAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					19,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AwAAAPoMAAAAAAAA+wwAAAAAAAAAAAAA+wwAAAAAAAD9DAAAAAAAAAAAAAAgDQAAAAAAACANAAAAAAAAAgAAACAg",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD6DAAAAAAAAPoMAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					22,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AwAAAE0MAAAAAAAATgwAAAAAAAAAAAAATgwAAAAAAABSDAAAAAAAAAAAAAAADQAAAAAAAAANAAAAAAAAAgAAACAg",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAABNDAAAAAAAAE0MAAAAAAAAAAAAAAAA8L8"
+				]
+			]
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -43,6 +5866,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"out",
+				"Browse Mode: Outline (Right)"
+			],
 			[
 				"prettier",
 				"JsPrettier: Format Code"
@@ -58,10 +5885,6 @@
 			[
 				"clang",
 				"Clang Format: Format Selection"
-			],
-			[
-				"out",
-				"Browse Mode: Outline (Right)"
 			],
 			[
 				"mode",
@@ -104,8 +5927,7 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Projects/plot-cv",
-		"/home/roman/Projects/plot-cv/opencv"
+		"/home/roman/Projects/plot-cv"
 	],
 	"file_history":
 	[
@@ -240,7 +6062,7 @@
 	],
 	"find":
 	{
-		"height": 29.0
+		"height": 25.0
 	},
 	"find_in_files":
 	{
@@ -258,6 +6080,12 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"mountDirs",
+			"defaultDirs",
+			"glob\\b",
+			"glob",
+			"import { MessageReceiver, MessageTransmitter, MessageTransceiver, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';\n",
+			">\n",
 			"^  (.)\\:",
 			"Heute",
 			"Hippiainen",
@@ -379,13 +6207,7 @@
 			"anchorPoints",
 			"get points",
 			"touches.length",
-			"r:",
-			"isTouch",
-			"AddPoint",
-			"TouchEvents",
-			"anchorPoints",
-			"SVG",
-			"'svg'"
+			"r:"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -436,12 +6258,798 @@
 		{
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1744,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"current_file": "/home/roman/Projects/plot-cv/server.js",
+							"function_name_status_row": -1,
+							"outline_rename_mode": false,
+							"show_line_column": "disabled",
+							"symkeys":
+							[
+								[
+									1072,
+									1094
+								],
+								[
+									1218,
+									1244
+								],
+								[
+									1414,
+									1471
+								],
+								[
+									1723,
+									1756
+								],
+								[
+									1985,
+									2004
+								],
+								[
+									2036,
+									2065
+								],
+								[
+									2171,
+									2179
+								],
+								[
+									2897,
+									2979
+								],
+								[
+									3290,
+									3303
+								],
+								[
+									3385,
+									3398
+								],
+								[
+									3673,
+									3703
+								],
+								[
+									3863,
+									3900
+								],
+								[
+									4195,
+									4246
+								],
+								[
+									4304,
+									4319
+								],
+								[
+									4349,
+									4358
+								],
+								[
+									4658,
+									4665
+								],
+								[
+									4796,
+									4804
+								],
+								[
+									5002,
+									5042
+								],
+								[
+									5365,
+									5386
+								],
+								[
+									5673,
+									5678
+								],
+								[
+									6054,
+									6073
+								],
+								[
+									6589,
+									6608
+								],
+								[
+									6955,
+									7025
+								],
+								[
+									7371,
+									7420
+								],
+								[
+									7819,
+									7852
+								],
+								[
+									8621,
+									8629
+								],
+								[
+									8676,
+									8684
+								],
+								[
+									9195,
+									9231
+								],
+								[
+									9687,
+									9693
+								],
+								[
+									9856,
+									9861
+								],
+								[
+									10138,
+									10189
+								],
+								[
+									11137,
+									11186
+								],
+								[
+									11325,
+									11336
+								],
+								[
+									11435,
+									11446
+								],
+								[
+									12024,
+									12032
+								],
+								[
+									12081,
+									12089
+								],
+								[
+									12140,
+									12148
+								],
+								[
+									12575,
+									12582
+								],
+								[
+									12723,
+									12730
+								],
+								[
+									12769,
+									12786
+								],
+								[
+									13302,
+									13307
+								],
+								[
+									13483,
+									13518
+								],
+								[
+									13661,
+									13669
+								],
+								[
+									13868,
+									13924
+								],
+								[
+									14287,
+									14300
+								],
+								[
+									14358,
+									14383
+								],
+								[
+									14640,
+									14645
+								],
+								[
+									14685,
+									14691
+								],
+								[
+									14848,
+									14853
+								],
+								[
+									14890,
+									14896
+								],
+								[
+									15406,
+									15411
+								],
+								[
+									16029,
+									16048
+								],
+								[
+									17551,
+									17570
+								],
+								[
+									18415,
+									18444
+								],
+								[
+									18667,
+									18686
+								],
+								[
+									19033,
+									19052
+								],
+								[
+									19425,
+									19439
+								],
+								[
+									19796,
+									19815
+								],
+								[
+									19942,
+									19969
+								],
+								[
+									20143,
+									20178
+								],
+								[
+									20293,
+									20297
+								],
+								[
+									20393,
+									20397
+								],
+								[
+									20419,
+									20428
+								],
+								[
+									20573,
+									20577
+								],
+								[
+									20604,
+									20609
+								],
+								[
+									20637,
+									20641
+								],
+								[
+									20868,
+									20921
+								],
+								[
+									21282,
+									21286
+								],
+								[
+									21439,
+									21453
+								],
+								[
+									21833,
+									21866
+								],
+								[
+									22113,
+									22119
+								],
+								[
+									22179,
+									22183
+								],
+								[
+									22193,
+									22197
+								],
+								[
+									22216,
+									22242
+								],
+								[
+									22366,
+									22372
+								],
+								[
+									22534,
+									22553
+								],
+								[
+									22624,
+									22631
+								],
+								[
+									22688,
+									22694
+								],
+								[
+									22736,
+									22754
+								],
+								[
+									23004,
+									23017
+								],
+								[
+									23186,
+									23199
+								],
+								[
+									23431,
+									23450
+								],
+								[
+									23580,
+									23588
+								],
+								[
+									23601,
+									23610
+								],
+								[
+									23615,
+									23624
+								],
+								[
+									23656,
+									23675
+								],
+								[
+									23743,
+									23754
+								],
+								[
+									23784,
+									23794
+								],
+								[
+									23962,
+									23973
+								],
+								[
+									24021,
+									24032
+								],
+								[
+									24050,
+									24060
+								],
+								[
+									24064,
+									24075
+								],
+								[
+									24210,
+									24229
+								],
+								[
+									24567,
+									24586
+								],
+								[
+									24609,
+									24620
+								],
+								[
+									24858,
+									24862
+								],
+								[
+									25941,
+									25948
+								],
+								[
+									25980,
+									25991
+								],
+								[
+									25996,
+									26010
+								],
+								[
+									26112,
+									26131
+								],
+								[
+									26398,
+									26407
+								],
+								[
+									26429,
+									26436
+								],
+								[
+									26473,
+									26481
+								],
+								[
+									26531,
+									26550
+								],
+								[
+									26614,
+									26633
+								],
+								[
+									26716,
+									26735
+								],
+								[
+									27051,
+									27058
+								],
+								[
+									27344,
+									27363
+								],
+								[
+									27611,
+									27636
+								],
+								[
+									28873,
+									28878
+								],
+								[
+									28922,
+									28930
+								],
+								[
+									29288,
+									29302
+								],
+								[
+									29368,
+									29374
+								]
+							],
+							"symlist":
+							[
+								"  rotateLeft = n => x =>",
+								"GetMimeType(file)",
+								"  hashString(string, bits = 32, mask = 0xffffffff)",
+								"  decodeHTMLEntities(text)",
+								"(match, entity) =>",
+								"MimeType(path)",
+								"data =>",
+								"GetDirMap(dirs = mountDirs, pred = '.*\\\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$')",
+								"  pred = ent =>",
+								"(acc, dir) =>",
+								"  waitChild(proc)",
+								"  runMount(dirsIterator)",
+								"  readData(output, callback = d => {})",
+								"(push, stop) =>",
+								"chunk =>",
+								"  line =>",
+								"data =>",
+								"RequestContours(req, res)",
+								"  main()",
+								"  cp =>",
+								"(req, res, next) =>",
+								"(req, res, next) =>",
+								"SendRaw(res, file, data, type = 'application/octet-stream')",
+								"  convertToGerber = (boardFile, opts = {}) =>",
+								"  formatToExt = (layers, format) =>",
+								"data =>",
+								"data =>",
+								"  gerberEndpoint = (req, res) =>",
+								"  res =>",
+								"k =>",
+								"  gerberToGcode = (gerberFile, allOpts = {}) =>",
+								"  makePath(ext, side, base = basename)",
+								"([k, v]) =>",
+								"([k, v]) =>",
+								"data =>",
+								"data =>",
+								"  error =>",
+								"  side =>",
+								"  side =>",
+								"([side, file]) =>",
+								"k =>",
+								"  gcodeEndpoint = (req, res) =>",
+								"  error =>",
+								"GithubListContents = (owner, repo, dir, filter) =>",
+								"({ name }) =>",
+								"(req, res, next) =>",
+								"  st =>",
+								"  err =>",
+								"() =>",
+								"  err =>",
+								"k =>",
+								"(req, res, next) =>",
+								"(req, res) =>",
+								"FindFile(relative)",
+								"(req, res) =>",
+								"(req, res) =>",
+								"(req, res) =>",
+								"(req, res) =>",
+								"GetVFSPath(file)",
+								"  getDescription(file)",
+								"  r =>",
+								"  m =>",
+								"(a, b) =>",
+								"  s =>",
+								"  re =>",
+								"  m =>",
+								"GetFilesList(dir = './tmp', opts = {})",
+								"  n =>",
+								"(acc, file) =>",
+								"({ ctime, mtime, mode, size }) =>",
+								"  err =>",
+								"  a =>",
+								"  i =>",
+								"FilesURLs(list)",
+								"  url =>",
+								"(req, res) =>",
+								"  port =>",
+								"  key =>",
+								"(ws, req) =>",
+								"  data =>",
+								"  data =>",
+								"(req, res) =>",
+								"f =>",
+								"st =>",
+								"() =>",
+								"(req, res) =>",
+								"() =>",
+								"c =>",
+								"() =>",
+								"() =>",
+								"o =>",
+								"() =>",
+								"(req, res) =>",
+								"(req, res) =>",
+								"() =>",
+								"  p =>",
+								"  file =>",
+								"() =>",
+								"error =>",
+								"(req, res) =>",
+								"  result =>",
+								"  file =>",
+								"  error =>",
+								"(req, res) =>",
+								"(req, res) =>",
+								"(req, res) =>",
+								"  name =>",
+								"(req, res) =>",
+								"(req, res, next) =>",
+								"() =>",
+								"  error =>",
+								"(req, res) =>",
+								"() =>"
+							],
+							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1714043429.31,
+							"tabs_extra_last_activated_sheet_index": 0,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "upload-server.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 36357,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								20872,
+								20883
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"function_name_status_row": 651,
+							"show_line_column": "disabled",
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1714043460.63,
+							"tabs_extra_last_activated_sheet_index": 1,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 12598.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "server.js",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 29538,
+						"regions":
+						{
+							"col_7FFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1708,
+										1718
+									]
+								],
+								"scope": "col_7FFFFFFF"
+							},
+							"col_7FFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_7FFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										1693,
+										1693
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_DD0000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										16625,
+										16635
+									]
+								],
+								"scope": "col_DD0000FF"
+							},
+							"col_DD0000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_DD0000FF_circle.png",
+								"regions":
+								[
+									[
+										16597,
+										16597
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1460,
+										1470
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										1414,
+										1414
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								3148,
+								3148
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"function_name_status_row": 105,
+							"show_line_column": "disabled",
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1714087247.53,
+							"tabs_extra_last_activated_sheet_index": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1490.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 29.0
+		"height": 25.0
 	},
 	"input":
 	{
@@ -490,7 +7098,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 54.0
+		"height": 46.0
 	},
 	"save_all_on_build": false,
 	"select_file":
@@ -499,6 +7107,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"server.",
+				"server.js"
+			],
+			[
+				"upload-ser",
+				"upload-server.js"
+			],
 			[
 				"htmle",
 				"lib/htmlentities.js"
@@ -546,10 +7162,6 @@
 			[
 				"fire.js",
 				"fire.js"
-			],
-			[
-				"upload-ser",
-				"upload-server.js"
 			],
 			[
 				"compon",
