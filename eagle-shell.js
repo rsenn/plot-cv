@@ -1273,10 +1273,12 @@ function GetRotation(element) {
 }
 
 function Package2Circuit(p) {
-  let points = p.pads
+  let points = [...p.pads.list]
     .map(({ x, y }) => new Point(x, y))
     .map(pt => pt.div(2.54))
-    .map(pt => pt.toFixed(1));
+    .map(pt => pt.round(1))
+    //.map(pt => pt.toFixed(1))
+    ;
 
   let xpoints = points.map(({ x }) => x),
     ypoints = points.map(({ y }) => y);
@@ -1339,7 +1341,7 @@ function Element2Circuit(element) {
 }
 
 function GetUsedPackages(doc = project.board) {
-  return unique(doc.elements.list.map(e => e.package));
+  return unique([...doc.elements.list].map(e => e.package));
 }
 
 function GetPackagePitch(pkg) {
