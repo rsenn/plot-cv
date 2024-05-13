@@ -358,6 +358,7 @@ async function LoadSVG(filename) {
   }
 
   Element.setCSS(elem, { position: 'absolute', left: '0px', top: '0px' });
+  Element.setCSS(elem.lastElementChild, { transform: 'scale(-1, 1)' });
 
   return elem;
 }
@@ -587,14 +588,14 @@ window.addEventListener('load', async e => {
 
   render(component, element);
 
-  false &&
-    (async () => {
-      await LoadSVG('Mind-Synchronizing-Generator-PinHdrPot-board.svg');
-      await waitFor(1000);
+  //false &&
+  (async () => {
+    await LoadSVG('Mind-Synchronizing-Generator-PinHdrPot-board.svg');
+    await waitFor(1000);
 
-      Element.find('svg > #bg').style.setProperty('pointer-events', 'none');
-      ColorSignals();
-    })();
+    Element.find('svg > #bg').style.setProperty('pointer-events', 'none');
+    ColorSignals();
+  })();
 
   for await(let event of streamify(['mousemove', 'touchmove'], document.body, e => true)) {
     let { clientX: x, clientY: y, target, currentTarget, type } = event;
