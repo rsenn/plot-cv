@@ -1059,9 +1059,9 @@ function SaveLibraries() {
   //console.log('libraries', libraries);
 }
 
-function BoardFromSchematic(doc = project.schematic, f = 1, r=0.5) {
+function BoardFromSchematic(doc = project.schematic, f = 1, r = 0.5) {
   let a = [];
-  
+
   for(let e of [...doc.sheets[0].instances.list]) {
     const { part, x, y } = e;
     let p = new Point(x, y).mul(f * 0.03937).round(r);
@@ -1276,10 +1276,8 @@ function Package2Circuit(p) {
   let points = [...p.pads.list]
     .map(({ x, y }) => new Point(x, y))
     .map(pt => pt.div(2.54))
-    .map(pt => pt.round(1))
-    //.map(pt => pt.toFixed(1))
-    ;
-
+    .map(pt => pt.round(1));
+  //.map(pt => pt.toFixed(1))
   let xpoints = points.map(({ x }) => x),
     ypoints = points.map(({ y }) => y);
 
