@@ -39,7 +39,8 @@ import GerberParser from './lib/gerber/parser.js';
 import { useDimensions } from './lib/hooks/useDimensions.js';
 import { useDoubleClick } from './lib/hooks/useDoubleClick.js';
 import { Iterator } from './lib/iterator.js';
-import { arrayDiff, ImmutablePath, MutablePath, objectDiff, toXML } from './lib/json.js';
+import { Pointer as ImmutablePath } from './lib/pointer.js';
+import { arrayDiff, /*ImmutablePath, */ MutablePath, objectDiff, toXML } from './lib/json.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
 import LogJS from './lib/log.js';
 import { BaseCache, brcache, CachedFetch, lscache } from './lib/lscache.js';
@@ -369,10 +370,9 @@ const filesystem = {
 async function LoadFile(file) {
   let { url, name } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
 
-  console.log(`LoadFile ${name}`);
-
   // url = /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
   url = `file?action=load&file=${file}`; // /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
+  console.log(`LoadFile ${url}`);
 
   let response = await FetchURL(url);
   let xml = await response.text();
@@ -961,15 +961,18 @@ async function LoadDocument(project, parentElem) {
 
   config.currentProject(project.name);
   project.doc = await LoadFile(project).catch(err => console.error(err));
-
+  console.log('project.doc', project.doc);
   currentProj(project);
   LogJS.info(`${project.name} loaded.`);
   const topPlace = 'tPlace';
   elementChildren = memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
   elementGeometries = memoize(() => ElementGeometries(topPlace, ent => Object.fromEntries(ent)));
-  documentTitle(project.doc.file.replace(/.*\//g, ''));
-  let s = project.doc.type != 'lbr' && project.doc.dimensions;
-  if(s) documentSize(s.round(0.01).toString({ unit: 'mm' }));
+
+  tryCatch(() => {
+    documentTitle(project.doc.file.replace(/.*\//g, ''));
+    let s = project.doc.type != 'lbr' && project.doc.dimensions;
+    if(s) documentSize(s.round(0.01).toString({ unit: 'mm' }));
+  });
 
   const { doc } = project;
   window.eagle = doc;
@@ -990,43 +993,52 @@ async function LoadDocument(project, parentElem) {
       { memoize: true, configurable: true }
     )
   );
+
+  await RenderProject(project);
+
+  return project;
+}
+
+async function RenderProject(project = globalThis.project) {
+  const { doc } = project;
+
   let Component;
-  if(true) {
-    project.renderer = new Renderer(doc, ReactComponent.append, config.debugFlag());
-    config.showGrid = trkl(true);
-    config.showGrid.subscribe(value => {
-      let obj = { ...project.renderer.grid, visible: value };
-      project.renderer.grid = obj;
-    });
-    let style = { width: '100%', height: '100%', position: 'relative' };
-    Component = project.renderer.render(doc, null, {});
 
-    let usedLayers = [...doc.layers.list]; /*.filter(layer => layer.elements.size > 0)*/
+  project.renderer = new Renderer(doc, ReactComponent.append, config.debugFlag());
 
-    Timer.once(250).then(() =>
-      layerList(
-        usedLayers.map(layer => ({
-          i: layer.number,
-          name: layer.name,
-          color: layer.getColor(),
-          element: layer,
-          visible: (() => {
-            let fn;
-            const handler = layer.handlers.visible;
-            fn = function(v) {
-              if(v !== undefined) handler(is.on(v) ? 'yes' : 'no');
-              else return handler();
-            };
-            fn.subscribe = handler.subscribe;
-            fn.unsubscribe = handler.unsubscribe;
-            return fn;
-          })()
-        }))
-      )
-    );
-    LogJS.info(`${project.name} rendered.`);
-    window.component = project.component = Component;
-  }
+  config.showGrid = trkl(true);
+  config.showGrid.subscribe(value => {
+    let obj = { ...project.renderer.grid, visible: value };
+    project.renderer.grid = obj;
+  });
+  let style = { width: '100%', height: '100%', position: 'relative' };
+  Component = project.renderer.render(doc, null, {});
+
+  let usedLayers = [...doc.layers.list]; /*.filter(layer => layer.elements.size > 0)*/
+
+  Timer.once(250).then(() =>
+    layerList(
+      usedLayers.map(layer => ({
+        i: layer.number,
+        name: layer.name,
+        color: layer.getColor(),
+        element: layer,
+        visible: (() => {
+          let fn;
+          const handler = layer.handlers.visible;
+          fn = function(v) {
+            if(v !== undefined) handler(is.on(v) ? 'yes' : 'no');
+            else return handler();
+          };
+          fn.subscribe = handler.subscribe;
+          fn.unsubscribe = handler.unsubscribe;
+          return fn;
+        })()
+      }))
+    )
+  );
+  LogJS.info(`${project.name} rendered.`);
+  window.component = project.component = Component;
   let element = Element.find('#main');
 
   if(project.renderer) {
@@ -1143,40 +1155,49 @@ async function LoadDocument(project, parentElem) {
     project.status = SaveSVG();
   }, putError);*/
 
-  let viewBox = new Rect(svgElement.getAttribute('viewBox').split(/\s+/g));
-  let bgRects = [...svgElement.querySelector('#bg').children];
+  if(svgElement) {
+    let viewBox = new Rect(svgElement.getAttribute('viewBox').split(/\s+/g));
 
-  const setRect = rect => {
-    svgElement.setAttribute('viewBox', rect + '');
-    ['x', 'y', 'width', 'height'].forEach(k => bgRects.forEach(elem => elem.setAttribute(k, rect[k])));
-  };
+    let bgRects = [...svgElement.querySelector('#bg').children];
 
-  let r = (globalThis.viewBox = {
-    /* prettier-ignore */ get x() { return viewBox.x; },
-    /* prettier-ignore */ set x(value) { viewBox.x = value; setRect(viewBox); },
-    /* prettier-ignore */ get y() { return viewBox.y; },
-    /* prettier-ignore */ set y(value) { viewBox.y = value; setRect(viewBox); },
-    /* prettier-ignore */ get x1() { return viewBox.x1; },
-    /* prettier-ignore */ set x1(value) { viewBox.x1 = value; setRect(viewBox); },
-    /* prettier-ignore */ get y1() { return viewBox.y1; },
-    /* prettier-ignore */ set y1(value) { viewBox.y1 = value; setRect(viewBox); },
-    /* prettier-ignore */ get x2() { return viewBox.x2; },
-    /* prettier-ignore */ set x2(value) { viewBox.x2 = value; setRect(viewBox); },
-    /* prettier-ignore */ get y2() { return viewBox.y2; },
-    /* prettier-ignore */ set y2(value) { viewBox.y2 = value; setRect(viewBox); },
-    /* prettier-ignore */ get width() { return viewBox.width; },
-    /* prettier-ignore */ set width(value) { viewBox.width = value; setRect(viewBox); },
-    /* prettier-ignore */ get height() { return viewBox.height; },
-    /* prettier-ignore */ set height(value) { viewBox.height = value; setRect(viewBox); }
-  });
+    const setRect = rect => {
+      svgElement.setAttribute('viewBox', rect + '');
+      ['x', 'y', 'width', 'height'].forEach(k => bgRects.forEach(elem => elem.setAttribute(k, rect[k])));
+    };
 
-  tryCatch(
-    () => {
-      let { name, data, doc, svg, bbox } = project;
-      let bounds = doc.getBounds();
-      let rect = bounds.toRect(Rect.prototype);
-      console.log('rect', rect);
-      const { width, height } = rect;
+    let r = (globalThis.viewBox = {
+      /* prettier-ignore */ get x() { return viewBox.x; },
+      /* prettier-ignore */ set x(value) { viewBox.x = value; setRect(viewBox); },
+      /* prettier-ignore */ get y() { return viewBox.y; },
+      /* prettier-ignore */ set y(value) { viewBox.y = value; setRect(viewBox); },
+      /* prettier-ignore */ get x1() { return viewBox.x1; },
+      /* prettier-ignore */ set x1(value) { viewBox.x1 = value; setRect(viewBox); },
+      /* prettier-ignore */ get y1() { return viewBox.y1; },
+      /* prettier-ignore */ set y1(value) { viewBox.y1 = value; setRect(viewBox); },
+      /* prettier-ignore */ get x2() { return viewBox.x2; },
+      /* prettier-ignore */ set x2(value) { viewBox.x2 = value; setRect(viewBox); },
+      /* prettier-ignore */ get y2() { return viewBox.y2; },
+      /* prettier-ignore */ set y2(value) { viewBox.y2 = value; setRect(viewBox); },
+      /* prettier-ignore */ get width() { return viewBox.width; },
+      /* prettier-ignore */ set width(value) { viewBox.width = value; setRect(viewBox); },
+      /* prettier-ignore */ get height() { return viewBox.height; },
+      /* prettier-ignore */ set height(value) { viewBox.height = value; setRect(viewBox); }
+    });
+  }
+
+  /*tryCatch(
+    () => */ {
+    let { name, data, doc, svg, bbox } = project;
+
+    let bounds = doc.getBounds();
+    //console.log('bounds', bounds);
+    let rect = bounds.toRect(Rect.prototype);
+
+    //console.log('rect', rect);
+
+    const { width, height } = rect;
+
+    if(width && height) {
       let size = new Size(width, height);
 
       size.mul(doc.type == 'brd' ? 2 : 1.5);
@@ -1190,13 +1211,14 @@ async function LoadDocument(project, parentElem) {
       });
       AdjustZoom();
       project.status = SaveSVG();
-    },
+    }
+  } /*,
     a => a,
     err => console.log('ERROR: ' + err.message + '\n' + err.stack)
-  );
+  );*/
+
   return project;
 }
-
 async function ChooseDocument(project, i) {
   let r;
   if(i == undefined) i = project.i || projectFiles.indexOf(project);
@@ -1211,6 +1233,7 @@ async function ChooseDocument(project, i) {
     //console.log('loaded:', project);
     loading(false);
   }
+
   return project.loaded;
 }
 

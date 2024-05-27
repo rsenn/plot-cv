@@ -104,7 +104,7 @@ function GetDirMap(dirs = mountDirs, pred = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$
       console.log('expr', expr);
       pred = new RegExp(expr, 'i');
     }
-    
+
     if(typeof pred == 'object' && pred !== null && pred instanceof RegExp) {
       const re = pred;
       console.log('re', re);
