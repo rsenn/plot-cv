@@ -1,4 +1,4 @@
-import { COLOR_BGR2GRAY, COLOR_GRAY2BGR, cvtColor, imread, imshow, invert, Mat, skeletonization, pixelNeighborhood, pixelNeighborhoodCross, waitKey, resize, INTER_NEAREST, dilate, erode, morphologyEx, Point, adaptiveThreshold, threshold, BORDER_ISOLATED, THRESH_BINARY,THRESH_OTSU, ADAPTIVE_THRESH_MEAN_C, ADAPTIVE_THRESH_GAUSSIAN_C, getStructuringElement, MORPH_OPEN, MORPH_CLOSE, MORPH_CROSS ,MORPH_ERODE,MORPH_DILATE, MORPH_HITMISS} from 'opencv';
+import { COLOR_BGR2GRAY, COLOR_GRAY2BGR, cvtColor, imread, imshow, invert, Mat, skeletonization, pixelNeighborhood, pixelNeighborhoodCross, waitKey, resize, INTER_LINEAR, INTER_NEAREST, INTER_LINEAR_EXACT, dilate, erode, morphologyEx, Point, adaptiveThreshold, threshold, BORDER_ISOLATED, THRESH_BINARY, THRESH_OTSU, ADAPTIVE_THRESH_MEAN_C, ADAPTIVE_THRESH_GAUSSIAN_C, getStructuringElement, MORPH_OPEN, MORPH_CLOSE, MORPH_CROSS, MORPH_RECT, MORPH_ERODE, MORPH_DILATE, MORPH_HITMISS, traceSkeleton,GaussianBlur, paletteApply } from 'opencv';
 import { startInteractive } from 'util';
 
 const pal = (globalThis.pal = [
@@ -13,10 +13,18 @@ const pal = (globalThis.pal = [
   [102, 0, 255]
 ]);
 
-function Show(m) {
+function Show(m, scale = true, usePalette = false) {
+  let m2 = new Mat();
   let out = new Mat();
 
-  resize(m, out, m.size.mul(2), 0, 0, INTER_NEAREST);
+  if(usePalette) {
+    paletteApply(m, m2, pal);
+  } else {
+    m.copyTo(m2);
+  }
+
+  if(scale) resize(m2, out, null, 2, 2, INTER_LINEAR);
+  else m2.copyTo(out);
 
   imshow('output', out);
   waitKey(-1);
@@ -39,28 +47,27 @@ function Neighbourhood(m) {
 }
 
 function main(...args) {
-  let m = imread('../an-tronics/images/fm/4tr.jpg');
+  let input = (globalThis.input = imread(args[0] ?? '../an-tronics/images/fm/4tr.jpg'));
 
-  cvtColor(m, m, COLOR_BGR2GRAY);
-  m.xor(0xff); // invert;
-  globalThis.img = m;
+  cvtColor(input, input, COLOR_BGR2GRAY);
+  input.xor(0xff); // invert;
 
-  //adaptiveThreshold(m, m, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 3, -2);
-  //
-  let k = getStructuringElement(MORPH_CROSS, [3, 3]);
+  GaussianBlur(input, input, [3, 3], 0);
+  threshold(input, input, 0, 255, THRESH_BINARY | THRESH_OTSU);
+
+  globalThis.input = input;
+
+  let m = (globalThis.img = new Mat());
+  input.copyTo(m);
+
+  let k = (globalThis.kernel = getStructuringElement(MORPH_CROSS, [3, 3]));
 
   morphologyEx(m, m, MORPH_CLOSE, k, new Point(-1, -1), 1);
- // morphologyEx(m, m,MORPH_HITMISS, k, new Point(-1, -1), 1);
-
-  /*dilate(m, m, new Mat(), new Point(-1, -1), 1);
-  erode(m, m, new Mat(), new Point(-1, -1), 1);*/
-  //dilate(m, m, new Mat(), new Point(-1, -1));
-
-threshold(m, m, 0,255, THRESH_BINARY |THRESH_OTSU);
 
   let skeleton = (globalThis.skeleton = new Mat());
 
   skeletonization(m, skeleton);
+
   let out = new Mat();
 
   try {
@@ -69,16 +76,11 @@ threshold(m, m, 0,255, THRESH_BINARY |THRESH_OTSU);
     console.log('error', e?.message ?? e);
   }
 
-  /*pixelNeighborhood(skeleton, neigh);
-
-  cvtColor(skeleton, out, COLOR_GRAY2BGR);
-
-  imshow('output', out);
-  waitKey(-1);*/
+  globalThis.r = traceSkeleton(skeleton, (globalThis.polylines = []), null, (globalThis.mapping = new Mat()));
 
   startInteractive();
 }
 
-Object.assign(globalThis, { Show });
+Object.assign(globalThis, { Show, traceSkeleton });
 
 main(...scriptArgs.slice(1));
