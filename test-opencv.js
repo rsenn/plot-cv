@@ -137,6 +137,7 @@ async function main(...args) {
   let scaled;
   console.log('Symbol.inspect', Symbol.inspect);
   console.log('resolution', resolution);
+
   if(resolution.width > 1200) {
     let f = 1024 / resolution.width;
     scaled = new Size(resolution.width * f, resolution.height * f);
