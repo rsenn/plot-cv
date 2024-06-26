@@ -1,4 +1,4 @@
-import { COLOR_BGR2GRAY, COLOR_GRAY2BGR, cvtColor, imread, imshow, invert, Mat, skeletonization, pixelNeighborhood, pixelNeighborhoodCross, waitKey, resize, INTER_LINEAR, INTER_NEAREST, INTER_LINEAR_EXACT, dilate, erode, morphologyEx, Point, adaptiveThreshold, threshold, BORDER_ISOLATED, THRESH_BINARY, THRESH_OTSU, ADAPTIVE_THRESH_MEAN_C, ADAPTIVE_THRESH_GAUSSIAN_C, getStructuringElement, MORPH_OPEN, MORPH_CLOSE, MORPH_CROSS, MORPH_RECT, MORPH_ERODE, MORPH_DILATE, MORPH_HITMISS, traceSkeleton,GaussianBlur, paletteApply } from 'opencv';
+import { COLOR_BGR2GRAY, COLOR_GRAY2BGR, cvtColor, imread, imshow, invert, Mat, skeletonization, pixelNeighborhood, pixelNeighborhoodCross, waitKey, resize, INTER_LINEAR, INTER_NEAREST, INTER_LINEAR_EXACT, dilate, erode, morphologyEx, Point, adaptiveThreshold, threshold, BORDER_ISOLATED, THRESH_BINARY, THRESH_OTSU, ADAPTIVE_THRESH_MEAN_C, ADAPTIVE_THRESH_GAUSSIAN_C, getStructuringElement, MORPH_OPEN, MORPH_CLOSE, MORPH_CROSS, MORPH_RECT, MORPH_ERODE, MORPH_DILATE, MORPH_HITMISS, traceSkeleton, GaussianBlur, paletteApply } from 'opencv';
 import { startInteractive } from 'util';
 
 const pal = (globalThis.pal = [
