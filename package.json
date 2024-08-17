@@ -35,7 +35,7 @@
     "quickjs/qjs-ffi/lib/socket.js": "sockets",
     "quickjs/qjs-ffi/lib/fcntl.js": "util",
     "node_modules/events/events.js": "events",
-    "xlib/xml/xpath.js": "quickjs/qjs-modules/lib/xpath.js",
+    "lib/xml/xpath.js": "quickjs/qjs-modules/lib/xpath.js",
     "lib/preact.js": "lib/preact.esm.js",
     "xlib/preact.mjs": "lib/preact.module.js"
   },
