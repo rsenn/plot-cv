@@ -277,7 +277,7 @@ function DrawSVG(...args) {
   let c = RGBA.random();
   let [tag, attrs, children] = args;
   if(typeof tag == 'string') {
-    // console.log('draw(', ...args, ')');
+    //console.log('draw(', ...args, ')');
     e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
   } else if(Array.isArray(args[0])) {
     let items = args.shift();
@@ -822,7 +822,7 @@ function restoreItemStates(itemStates, /* prettier-ignore */ set = (item, value)
 function EagleMaps(project) {
   let transformPath = p => p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
   let dom2path = [...Element.findAll('*[data-path]', project.object)].map(e => [e, new ImmutableXPath(transformPath(e.getAttribute('data-path')))]);
-  // console.debug('dom2path:', dom2path);
+  //console.debug('dom2path:', dom2path);
   dom2path = mapFunction(new WeakMap(dom2path));
 
   let dom2eagle = node => {
@@ -1004,8 +1004,6 @@ async function LoadDocument(project, parentElem) {
 async function RenderProject(project = globalThis.project) {
   const { doc } = project;
 
-  let Component;
-
   project.renderer = new Renderer(doc, ReactComponent.append, config.debugFlag());
 
   config.showGrid = trkl(true);
@@ -1013,8 +1011,10 @@ async function RenderProject(project = globalThis.project) {
     let obj = { ...project.renderer.grid, visible: value };
     project.renderer.grid = obj;
   });
+
   let style = { width: '100%', height: '100%', position: 'relative' };
-  Component = project.renderer.render(doc, null, {});
+  
+  let Component = project.renderer.render(doc, null, {});
 
   let usedLayers = [...doc.layers.list]; /*.filter(layer => layer.elements.size > 0)*/
 
@@ -1475,7 +1475,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
     //console.log('WebSocket event:', event);
     if(event.type == 'message') {
       const { data } = event;
-      //   console.log('data:', abbreviate(data, 40));
+      //console.log('data:', abbreviate(data, 40));
       let msg = new Message(data);
       window.msg = msg;
       // LogJS.info('WebSocket recv: ' + inspect(msg));
@@ -1761,7 +1761,7 @@ const AppMain = (window.onload = async () => {
 
       if(isObject(files) && 'files' in files) files = files.files;
 
-      console.log('files', files);
+      //console.log('files', files);
 
       function File(obj, i) {
         const { name } = obj;
@@ -1771,7 +1771,7 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        //        console.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
+        //console.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
 
         return file;
       }
@@ -1922,7 +1922,7 @@ const AppMain = (window.onload = async () => {
     }
     const result = useResult(async function* () {
       for await(let msg of logger) {
-        //  console.debug("msg:", msg);
+        //console.debug("msg:", msg);
         yield msg;
       }
     });
@@ -2011,7 +2011,7 @@ const AppMain = (window.onload = async () => {
         return true;
       }
     }, 200);
-    // console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
+    //console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
     return h(
       'div',
       {
@@ -2284,7 +2284,7 @@ const AppMain = (window.onload = async () => {
 
                         continue;
                       }
-                      //  console.debug('gc.svg ',gc.svg );
+                      //console.debug('gc.svg ',gc.svg );
                       let layer = GetLayer({
                         name: makeLayerName('processed', side),
                         'data-filename': processed,
@@ -2604,8 +2604,8 @@ const AppMain = (window.onload = async () => {
       let u = union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
       let [remove, add] = difference(prevEvent.elements, event.elements, (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1);
 
-      //  console.log('difference:', [remove,add], 'union:', u);
-      //  console.log('add:', add);
+      //console.log('difference:', [remove,add], 'union:', u);
+      //console.log('add:', add);
 
       const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
 
@@ -2651,19 +2651,19 @@ const AppMain = (window.onload = async () => {
         /* console.log('event.elements:', event.elements);
         //console.log('event.classes:', event.classes);
         //console.log('event.target:', zIndex);*/
-        //  console.log('rects:', clone(bboxes));
+        //console.log('rects:', clone(bboxes));
       }
     }
   }
   function TouchEvent(event) {
     const { x, y, index, buttons, start, type, target } = event;
-    //  console.log('touchHandler', event);
+    //console.log('touchHandler', event);
     if(type.endsWith('end') || type.endsWith('up')) return cancel();
     if(event.buttons === 0 && type.endsWith('move')) return cancel();
     // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
     if(!move && !resize) {
       let elemId;
-      //  console.log('target:', target);
+      //console.log('target:', target);
       box = (e => {
         do {
           elemId = e.getAttribute('id');
@@ -2679,7 +2679,7 @@ const AppMain = (window.onload = async () => {
           let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
           window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, size => {
-            //    console.log('resizeRelative:', { elemId, size });
+            //console.log('resizeRelative:', { elemId, size });
             if(elemId == 'console') config.logSize(size);
           });
 
@@ -2731,7 +2731,7 @@ const AppMain = (window.onload = async () => {
               translation.x = rel.x;
               translation.y = rel.y;
               transform(transformList.collapse());
-              //   console.log('TouchHandler transform:', transform());
+              //console.log('TouchHandler transform:', transform());
             }
           }
         });
@@ -2753,7 +2753,7 @@ const AppMain = (window.onload = async () => {
         /*  window.crosshair.show = true;
           window.crosshair.position = absolute;*/
 
-        //          console.log('move', { rel, absolute });
+        //console.log('move', { rel, absolute });
         if(event.buttons > 0) move(rel.x, rel.y);
         else move = move.jump();
       }
