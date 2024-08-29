@@ -1329,9 +1329,10 @@ function Signal2Circuit(s) {
 }
 
 function Element2Circuit(element) {
-  let [packageName] = Package2Circuit(element.package);
+  const { x, y, package: pkg } = element;
+
+  let [packageName] = Package2Circuit(pkg);
   let name = ElementName(element);
-  let { x, y } = element;
 
   return `${name.padEnd(8)} ${packageName.padEnd(16)}${(x / 2.54).toFixed(0)},${(y / 2.54).toFixed(0)}\n`;
 

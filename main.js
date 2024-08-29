@@ -961,7 +961,9 @@ async function LoadDocument(project, parentElem) {
 
   config.currentProject(project.name);
   project.doc = await LoadFile(project).catch(err => console.error(err));
-  console.log('project.doc', project.doc);
+
+  //console.log('project.doc', project.doc);
+
   currentProj(project);
   LogJS.info(`${project.name} loaded.`);
   const topPlace = 'tPlace';
@@ -1184,12 +1186,11 @@ async function RenderProject(project = globalThis.project) {
       /* prettier-ignore */ set height(value) { viewBox.height = value; setRect(viewBox); }
     });
   }
-
-  /*tryCatch(
-    () => */ {
+  {
     let { name, data, doc, svg, bbox } = project;
 
     let bounds = doc.getBounds();
+
     //console.log('bounds', bounds);
     let rect = bounds.toRect(Rect.prototype);
 
@@ -1244,9 +1245,9 @@ const GenerateVoronoi = () => {
   let { doc } = project;
   //console.log('doc', doc);
   let points = new PointList();
+
   for(let element of doc.elements.list) {
-    const pkg = element.package;
-    let { x, y } = element;
+    let { x, y, package: pkg } = element;
     //console.log('element:', element, { x, y });
     let origin = new Point(x, y);
     for(let item of pkg.children) {
@@ -1257,6 +1258,7 @@ const GenerateVoronoi = () => {
       }
     }
   }
+
   let bb = doc.getBounds();
   let rect = bb.toRect(Rect.prototype);
   //console.log('bb:', bb);
