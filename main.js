@@ -1013,7 +1013,7 @@ async function RenderProject(project = globalThis.project) {
   });
 
   let style = { width: '100%', height: '100%', position: 'relative' };
-  
+
   let Component = project.renderer.render(doc, null, {});
 
   let usedLayers = [...doc.layers.list]; /*.filter(layer => layer.elements.size > 0)*/
@@ -1778,6 +1778,10 @@ const AppMain = (window.onload = async () => {
       File.prototype.toString = function() {
         return this.name;
       };
+      File.prototype.path = function() {
+        return this.dir + '/' + this.name;
+      };
+
       if(files) {
         list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
         let svgs = list.reduce((acc, file) => {
@@ -2254,10 +2258,13 @@ const AppMain = (window.onload = async () => {
             }
             //console.debug('GerberToGcode allGcode = ', allGcode);
             let bbox;
+
             for(let side of ['outline', 'back', 'front', 'drill']) {
               try {
                 let gerber = project.gerber[side];
+                console.debug('GerberToGcode  ', { gerber, allGcode, side });
                 let data = allGcode[side];
+                console.debug('GerberToGcode  ', { data });
                 let file = gerber.file || allGcode.data.files[side];
                 //console.debug('GerberToGcode  ', { gerber, data, file });
 
@@ -2276,11 +2283,14 @@ const AppMain = (window.onload = async () => {
                       if(side == 'outline') {
                         //console.debug('outline', gc.svg);
                         let xmlData = tXml(gc.svg);
+                        console.debug('xmlData', xmlData);
+                        const tail = a => a.length ? a[a.length - 1] : null;
                         let svgPath = tail(xmlData[0].children).children[0];
                         let points = SVG.pathToPoints(svgPath.attributes);
                         //console.debug('points:', points);
                         bbox = new Rect(new BBox().update(points)).round(0.001);
                         //console.debug('bbox:', bbox);
+                        //
 
                         continue;
                       }
@@ -2325,7 +2335,8 @@ const AppMain = (window.onload = async () => {
                   //console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', abbreviate(gc.svg));
                 }
               } catch(err) {
-                console.log('ERROR: ' + err.message + '\n' + err.stack);
+                console.error('ERROR: ' + err.message);
+                console.error('STACK:', err.stack);
               }
             }
             gcode(project.gcode);

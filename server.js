@@ -187,7 +187,7 @@ async function main() {
     stderr,
     inspectOptions: {
       breakLength: 120,
-      maxStringLength: Infinity,
+      maxStringLength: 100,
       maxArrayLength: Infinity,
       compact: 2,
       depth: 1
@@ -280,10 +280,12 @@ async function main() {
   };
 
   const gerberEndpoint = async (req, res) => {
-    const { body } = req;
+    const { body, method } = req;
     let { board, save, file: filename, raw, ...opts } = body;
     let result;
-    console.log('Request /gerber', { board, save, opts });
+
+    console.log('Request /gerber', { method, board, save, opts });
+
     try {
       result = await convertToGerber(board, opts);
       if(save) {
@@ -294,6 +296,7 @@ async function main() {
     } catch(error) {
       result = { error };
     }
+
     console.log(
       'Response /gerber',
       filterKeys(result, k => !/(output|data)/.test(k))
@@ -540,8 +543,8 @@ async function main() {
 
     dirmap ??= GetDirMap(mountDirs);
 
-    /*  console.log('dirs:', unique(Object.values(dirmap)));
-    console.log('names:', unique(Object.keys(dirmap)).filter(n => /\//.test(n)));*/
+    console.log('dirs:', unique(Object.values(dirmap)));
+    /*console.log('names:', unique(Object.keys(dirmap)).filter(n => /\//.test(n)));*/
 
     let dir = dirmap[file];
 
@@ -672,6 +675,8 @@ async function main() {
       }
     }
 
+    //console.log('GetFilesList', {dirs,dirmap});
+
     return Promise.all(
       names.reduce((acc, file) => {
         let dir = dirmap[file];
@@ -679,7 +684,7 @@ async function main() {
         let description = descriptions ? descMap(file) : descMap.get(file);
         let obj = {
           name: file,
-          dir: dirs[file]
+          dir: dirmap[file]
         };
         if(typeof description == 'string') obj.description = description;
         acc.push(
@@ -758,7 +763,7 @@ async function main() {
       data = {},
       time = 0;
     tryCatch(
-      () => fs.readFileSync(configFile,'utf-8'),
+      () => fs.readFileSync(configFile, 'utf-8'),
       c => {
         str = c;
         let stat = safeStat(configFile);
@@ -773,7 +778,7 @@ async function main() {
       o => o,
       () => ({})
     );
-    console.log('config:', {config,str});
+    console.log('config:', { config, str });
 
     res.json({ config, time, hash: hashString(str) });
   });
@@ -856,6 +861,7 @@ async function main() {
     const { body } = req;
     let { filter, descriptions, names, limit } = body;
     let opts = { filter, limit };
+
     if(descriptions) opts.descriptions = descriptions;
 
     if(names !== undefined) {
@@ -896,9 +902,11 @@ async function main() {
 */
 
     const { body } = req;
-    console.log('req.headers:', req.headers);
+    //console.log('req.headers:', req.headers);
     //console.log('body:', abbreviate(body), className(body), inspect(body));
+    //
     console.log('save body:', typeof body == 'string' ? abbreviate(body, 100) : body);
+
     let st,
       err,
       filename = (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
