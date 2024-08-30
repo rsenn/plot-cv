@@ -758,12 +758,13 @@ async function main() {
       data = {},
       time = 0;
     tryCatch(
-      () => fs.readFileSync(configFile),
+      () => fs.readFileSync(configFile,'utf-8'),
       c => {
         str = c;
         let stat = safeStat(configFile);
         console.log('stat:', stat);
-        if(isObject(stat.mtime)) time = stat.mtime.getTime();
+
+        if(stat && isObject(stat.mtime)) time = stat.mtime.getTime();
       },
       () => (str = '{}')
     );
@@ -772,7 +773,7 @@ async function main() {
       o => o,
       () => ({})
     );
-    console.log('config:', config);
+    console.log('config:', {config,str});
 
     res.json({ config, time, hash: hashString(str) });
   });
@@ -781,12 +782,12 @@ async function main() {
     const { body } = req;
     let text = body.toString();
     console.log('text:', text);
-    let ret = fs.writeFile(configFile, text);
+    let ret = fs.writeFileSync(configFile, text);
     console.log('ret:', ret);
     let stat = safeStat(configFile);
     res.json({
       size: ret,
-      time: stat.mtime.getTime(),
+      time: stat ? stat.mtime.getTime() : undefined,
       hash: hashString(text)
     });
   });
