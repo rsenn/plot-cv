@@ -2284,7 +2284,7 @@ const AppMain = (window.onload = async () => {
                         //console.debug('outline', gc.svg);
                         let xmlData = tXml(gc.svg);
                         console.debug('xmlData', xmlData);
-                        const tail = a => a.length ? a[a.length - 1] : null;
+                        const tail = a => (a.length ? a[a.length - 1] : null);
                         let svgPath = tail(xmlData[0].children).children[0];
                         let points = SVG.pathToPoints(svgPath.attributes);
                         //console.debug('points:', points);
