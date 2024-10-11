@@ -104,7 +104,7 @@ export class DebuggerDispatcher {
 
     try {
       let v = conn.process(async msg => {
-        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m', console.config({ compact: 0 }), msg);
+        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m', msg);
 
         const { type, event, request_seq, body } = msg;
 
@@ -120,7 +120,7 @@ export class DebuggerDispatcher {
               if(!receiver[prop]) continue;
               if(receiver[prop]) {
                 const callback = receiver[prop];
-                if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m  ', console.config({ compact: 0 }), { prop, event });
+                if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m  ', { prop, event });
                 //if((await callback.call(receiver, event)) === false) if(receiver[prop] === callback) delete receiver[prop];
                 callback.call(receiver, event);
                 delete receiver[prop];

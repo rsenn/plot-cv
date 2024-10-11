@@ -7,7 +7,7 @@ import { Element, RGBA } from './lib/dom.js';
 import { Fragment, h, render, toChildArray } from './lib/dom/preactComponent.js';
 import { useFetch, useTrkl } from './lib/hooks.js';
 import { JSLexer } from './lib/jslexer.js';
-import { define, memoize, rand } from './lib/misc.js';
+import { define,weakDefine, memoize, rand } from './lib/misc.js';
 import { trkl } from './lib/trkl.js';
 
 let cwd = '.';
@@ -17,6 +17,12 @@ let currentLine = trkl(-1);
 let url;
 let seq = 0,
   numLines = trkl(0);
+
+  weakDefine(WebSocket.prototype, {
+    sendMessage(msg) {
+      return this.send(JSON.stringify(msg));
+    }
+  });
 
 globalThis.process = { env: { DEBUG: true } };
 
@@ -231,6 +237,7 @@ async function CreateSocket(endpoint) {
       return rws.socket;
     }
   });
+
   //let ws = (globalThis.ws = rws.ws/*new WebSocketClient()*/);
 
   console.log('ws', ws);
@@ -367,7 +374,9 @@ async function StackTrace() {
 
 function SendRequest(command, args = {}) {
   const request_seq = ++seq;
+
   ws.sendMessage({ type: 'request', request: { request_seq, command, args } });
+
   return new Promise((resolve, reject) => (responses[request_seq] = resolve));
 }
 
