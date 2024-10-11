@@ -1,11 +1,6 @@
 let filesystem, globalThis;
 
 main(...scriptArgs.slice(1));
-  let { message, stack } = error;
-
-  console.log('ERROR message =', message);
-  console.log('ERROR stack:\n' + stack);
-});
 
 async function main(...args) {
 

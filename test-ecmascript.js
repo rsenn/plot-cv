@@ -6,6 +6,7 @@ import { CallExpression, ESNode, Identifier, ImportDeclaration, TemplateLiteral 
 import Printer from './lib/ecmascript/printer.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
+import { getOpt,defineGettersSetters,once,abbreviate,isObject } from './lib/misc.js';
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;
@@ -13,7 +14,7 @@ const testtmpl = `this is\na test`;
 const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i])));`;
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
-function WriteFile(name, data) {
+function Write(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -55,7 +56,7 @@ async function main(...args) {
       help: [
         false,
         (v, r, o) => {
-          console.log(`Usage: ${getArgs()[0]} [OPTIONS]\n`);
+          console.log(`Usage: ${scriptArgs[0]} [OPTIONS]\n`);
           console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
           exit(0);
         },
@@ -75,7 +76,6 @@ async function main(...args) {
   );
 
   //  params.debug ??= true;
-  console.log(`Platform: ${getPlatform()}`);
 
   /*await signal('SIGINT', () => {
     console.log(`Got SIGINT. (${os.SIGINT})`);
@@ -119,7 +119,7 @@ async function main(...args) {
     console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  exit(Number(files.length == 0));
+  std.exit(Number(files.length == 0));
 }
 
 function processFile(file, params) {
@@ -185,15 +185,15 @@ function processFile(file, params) {
   let tree = new Tree(ast);
 
   let flat = tree.flat(null, ([path, node]) => {
-    return !isPrimitive(node);
+    return isObject(node);
   });
 
-  WriteFile(params['output-ast'] ?? file + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
+  Write(params['output-ast'] ?? file + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 
   const code = printAst(ast, parser.comments, printer);
   //console.log('code:', abbreviate(escape(code)));
 
-  WriteFile(output_file, code);
+  Write(output_file, code);
 
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
@@ -241,7 +241,7 @@ function finish(err) {
   return !fail;
 }
 
-main(...getArgs().slice(1))
+main(...scriptArgs.slice(1))
   .then(() => console.log('SUCCESS'))
   .catch(error => {
     console.log(`FAIL: ${error.message}\n${error.stack}`);

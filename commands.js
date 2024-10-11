@@ -86,7 +86,7 @@ export const AddLayer = (layer, project = window.project) => {
 export async function BoardToGerber(proj, opts = { fetch: true }) {
   let b,
     gerber = proj.gerber || {};
-  let params = { ...opts, board: proj.name, raw: false },
+  let params = { ...opts, board: proj.path ? proj.path() : proj.name, raw: false },
     response,
     result;
   response = await FetchURL(`gerber/${opts.side ? '?side=' + opts.side : ''}`, {

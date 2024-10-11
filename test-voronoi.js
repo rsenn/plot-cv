@@ -12,8 +12,7 @@ async function testVoronoi(filename) {
   let points = new PointList();
 
   for(let element of doc.elements.list) {
-    const pkg = element.package;
-    let { x, y } = element;
+    let { x, y, package: pkg } = element;
     //console.log('element:', element, { x, y });
     let origin = new Point(x, y);
 

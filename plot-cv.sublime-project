@@ -55,7 +55,6 @@
   "folders": [
     {
       "file_exclude_patterns": [
-         "*.json",
          "*.pdf",
         "*.log.*",
         "*.ast.json*",

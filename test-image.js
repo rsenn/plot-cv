@@ -1,6 +1,7 @@
 import { SaveSVG } from './image-helpers.js';
 import { ImagePipeline } from './imagePipeline.js';
 import { WriteJSON } from './io-helpers.js';
+import { Rect, Size } from './lib/geom.js';
 import { HSLA } from './lib/color.js';
 import SvgPath from './lib/svg/path.js';
 import { Mouse, MouseFlags, Screen, Window } from './qjs-opencv/js/cvHighGUI.js';

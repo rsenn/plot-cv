@@ -7,6 +7,7 @@ import Printer from './lib/ecmascript/printer.js';
 import { Stack } from './lib/stack.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
+import { getOpt,defineGettersSetters,once,abbreviate,escape,isObject } from 'util';
 
 let lexer, parser;
 
@@ -40,8 +41,9 @@ globalThis.FormatStack = (stack, start, limit) => {
       .map(([func, file, line]) => '  ' + func.padEnd(40) + file + ':' + line)
       .join('\n')
   );
-};
-function WriteFile(name, data) {
+}
+
+function Write(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -74,7 +76,7 @@ function main(...argv) {
     }
   });
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       help: [
         false,
@@ -104,8 +106,8 @@ function main(...argv) {
   // params.debug ??= true;
   if(params.debug) ECMAScriptParser.instrumentate();
 
-  Util.defineGettersSetters(globalThis, {
-    printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
+  defineGettersSetters(globalThis, {
+    printer: once(() => new Printer({ colors: false, indent: 2 }))
   });
 
   const time = () => Date.now() / 1000;
@@ -156,7 +158,7 @@ function ParseECMAScript(file, params) {
     file = 'stdin';
     data = source;
   }
-  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+  console.log('OK, data: ', abbreviate(escape(data)));
   if(debug) ECMAScriptParser.instrumentate();
   console.log('ECMAScriptParser:', ECMAScriptParser);
 
@@ -210,7 +212,7 @@ function ParseECMAScript(file, params) {
 function processFile(file, params) {
   let ast = ParseECMAScript(file, params);
 
-  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
+  Write(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 
   let node2path = new WeakMap();
   let nodeKeys = [];
@@ -229,13 +231,11 @@ function processFile(file, params) {
 
   let tree = new Tree(ast);
 
-  let flat = tree.flat(null, ([path, node]) => {
-    return !Util.isPrimitive(node);
-  });
+  let flat = tree.flat(null, ([path, node]) => isObject(node));
 
   const code = printAst(ast, parser.comments, printer);
 
-  WriteFile(output_file, code);
+  Write(output_file, code);
 
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 
@@ -259,7 +259,7 @@ function finish(err) {
   lexer = parser.lexer;
   let t = [];
   console.log(parser.trace());
-  WriteFile('trace.log', parser.trace());
+  Write('trace.log', parser.trace());
   if(fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }

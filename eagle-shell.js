@@ -1059,9 +1059,9 @@ function SaveLibraries() {
   //console.log('libraries', libraries);
 }
 
-function BoardFromSchematic(doc = project.schematic, f = 1, r=0.5) {
+function BoardFromSchematic(doc = project.schematic, f = 1, r = 0.5) {
   let a = [];
-  
+
   for(let e of [...doc.sheets[0].instances.list]) {
     const { part, x, y } = e;
     let p = new Point(x, y).mul(f * 0.03937).round(r);
@@ -1273,11 +1273,11 @@ function GetRotation(element) {
 }
 
 function Package2Circuit(p) {
-  let points = p.pads
+  let points = [...p.pads.list]
     .map(({ x, y }) => new Point(x, y))
     .map(pt => pt.div(2.54))
-    .map(pt => pt.toFixed(1));
-
+    .map(pt => pt.round(1));
+  //.map(pt => pt.toFixed(1))
   let xpoints = points.map(({ x }) => x),
     ypoints = points.map(({ y }) => y);
 
@@ -1329,9 +1329,10 @@ function Signal2Circuit(s) {
 }
 
 function Element2Circuit(element) {
-  let [packageName] = Package2Circuit(element.package);
+  const { x, y, package: pkg } = element;
+
+  let [packageName] = Package2Circuit(pkg);
   let name = ElementName(element);
-  let { x, y } = element;
 
   return `${name.padEnd(8)} ${packageName.padEnd(16)}${(x / 2.54).toFixed(0)},${(y / 2.54).toFixed(0)}\n`;
 
@@ -1339,7 +1340,7 @@ function Element2Circuit(element) {
 }
 
 function GetUsedPackages(doc = project.board) {
-  return unique(doc.elements.list.map(e => e.package));
+  return unique([...doc.elements.list].map(e => e.package));
 }
 
 function GetPackagePitch(pkg) {

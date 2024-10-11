@@ -2,7 +2,7 @@ import { existsSync, reader, readerSync, readSync, writeSync } from 'fs';
 import { createServer, getSessions, LLL_INFO, LLL_NOTICE, LLL_USER, LLL_WARN, logLevels, setLog } from 'net';
 import { kill, setReadHandler, SIGTERM, sleep, ttySetRaw, Worker } from 'os';
 import { clearInterval, setInterval, setTimeout } from 'timers';
-import { atexit, bindMethods, btoa, define, keys, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, toString, tryCatch, types } from 'util';
+import { atexit, bindMethods, btoa, define, keys, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, toString, tryCatch, types,mapWrapper } from 'util';
 import { List, Table } from './cli-helpers.js';
 import { DebuggerDispatcher, FindFunctions, GetFunctionName, TrivialSyntaxHighlighter } from './debugger.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
@@ -55,7 +55,6 @@ Object.assign(globalThis, {
   RPCServer,
   RPCClient,
   RPCSocket,
-
   RPCConnect,
   RPCListen
 });
@@ -134,12 +133,6 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   let { show } = repl;
 
   repl.show = arg => {
-    /*console.log('repl.show', arg);
-    if(types.isPromise(arg)) {
-      repl.printStatus('Promise');
-      arg.then(val => repl.printStatus(repl.show(val)));
-      return;
-    }*/
     if(isObject(arg)) {
       if(arg[Symbol.for('print')]) return arg.toString ? arg.toString() : arg + '';
 
@@ -179,7 +172,7 @@ export function StartDebugger(args, connect, address) {
   if(connect) env['QUICKJS_DEBUG_ADDRESS'] = address;
   else env['QUICKJS_DEBUG_LISTEN_ADDRESS'] = address;
 
-  const child = Spawn('qjsm', args, { block: false, env, stdio: ['inherit', 'pipe', 'pipe'] });
+  const child = Spawn('qjsm', args, { block: false, env, stdio: ['pipe', 'pipe', 'pipe'] });
 
   if(!connect) listeners[address] = child;
 
@@ -214,12 +207,14 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
     async process(callback) {
       let ret,
         lenBuf = new ArrayBuffer(9);
+
       try {
         while((ret = await sock.recv(lenBuf, 0, 9)) > 0) {
           let len = parseInt(toString(lenBuf, 0, ret), 16);
 
           let dataBuf = new ArrayBuffer(len);
           let offset = 0;
+
           while(offset < len) {
             ret = await sock.recv(dataBuf, offset, len - offset);
 
@@ -312,9 +307,11 @@ async function PrintStackFrame(frame) {
 
   let { id, name, filename, line } = frame;
   let params;
+
   try {
     params = (await files[filename].functions).find(f => f.name == name)?.params;
   } catch(e) {}
+
   if(params) name += `(${params.join(', ')})`;
   let loc = line !== undefined ? new Location(filename, line) : undefined;
   let code = line !== undefined ? files[filename].line(line - 1) : undefined;
@@ -351,16 +348,16 @@ decorate(
         return (await member.call(this, frame)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
       },
       async scopes(n) {
-        //let v = await this.variables(n);
-        //console.log('scopes', {v});
         let stack = await this.stackTrace();
         if(n >= stack.length) return null;
         let scopes = [];
+       
         for(let scope of await member.call(this, n)) {
           const variables = await this.variables(scope.reference);
           scope.variables = variables.length;
           scopes.push(scope);
         }
+
         return scopes;
       },
       async waitRun() {
@@ -380,12 +377,14 @@ decorate(
         const list = await member.call(this, n);
         const ret = [];
         const add = item => (item.variablesReference === 0 && delete item.variablesReference, ret.push(item));
+       
         for(let item of list) {
           add(item);
 
           if(depth > 0) {
             if(item.variablesReference > 0) {
               let children = await this.variables(item.variablesReference, depth - 1);
+             
               for(let child of children) {
                 if(!isNaN(child.name)) child.name = '  [' + child.name + ']';
                 else child.name = '  .' + child.name;
@@ -408,19 +407,6 @@ decorate(
 
   DebuggerDispatcher.prototype
 );
-
-/*decorate((member, obj, prop) => {
-  return async function(...args) {
-    let result = await member.call(this, ...args);
- 
-    if(Array.isArray(result) && Array.isArray(result[1]) && 'id' in result[1][0]) {
-      let [event, stack] = result;
-      const { filename, line, name } = stack[0];
-      repl.printStatus(filename + ':' + line + ': ' + files[filename].line(line) + '\n');
-    }
-    return result;
-  };
-}, DebuggerDispatcher.prototype);*/
 
 const mkaddr = (
   (port = 8777) =>
@@ -446,8 +432,6 @@ function NewDebugger(args, skipToMain = false, address) {
     kill: () => (children.delete(child.pid), kill(child.pid, SIGTERM))
   });
   ConnectDebugger.call(dbg, address, skipToMain);
-
-  //  consume(dbg, dbg.onmessage);
 
   return dbg; //dispatch;
 }
@@ -513,8 +497,6 @@ function main(...args) {
 
   const listen = params.connect && !params.listen ? false : true;
 
-  //const server = !params.client || params.server;
-
   let name = scriptArgs[0];
   name = name
     .replace(/.*\//, '')
@@ -524,6 +506,7 @@ function main(...args) {
   let [prefix, suffix] = name.split(' ');
 
   let protocol = new WeakMap();
+  let ws2dbg =globalThis.ws2dbg =mapWrapper(new WeakMap());
 
   let sockets = (globalThis.sockets ??= new Set());
   //console.log(name, params['@']);
@@ -657,7 +640,7 @@ function main(...args) {
           return resp;
         },
         onMessage(ws, data) {
-          let child = ws.child;
+          let child = ws2dbg(ws);
           // showSessions();
 
           handleCommand(ws, data);
@@ -674,14 +657,17 @@ function main(...args) {
             switch (command) {
               case 'start': {
                 console.log('ws', ws);
-                child = ws.child = StartDebugger(args, connect, address);
+                child = StartDebugger(args, connect, address);
+                ws2dbg(ws,child);
 
-                const { stdout, stderr } = child;
-                for(let fd of [stdout, stderr]) {
+                const [ stdin, stdout, stderr ] = child.stdio;
+                for(let fd of [stdout,stderr]) {
                   let flags = fcntl(fd, F_GETFL);
                   flags |= O_NONBLOCK;
                   fcntl(fd, F_SETFL, flags);
                 }
+
+console.log('stdout flags', fcntl(stdout, F_GETFL)&O_NONBLOCK, 'O_NONBLOCK=',O_NONBLOCK);
 
                 const forward = (fd, name) =>
                   consume(reader(fd), buf => {
@@ -740,12 +726,13 @@ function main(...args) {
                 break;
               }
               case 'connect': {
-                dbg = ws.dbg = ConnectDebugger(address, (dbg, sock) => {
+                dbg = ConnectDebugger(address, (dbg, sock) => {
                   console.log('wait(WNOHANG) =', child.wait(WNOHANG));
                   console.log('child', child);
                 });
                 console.log('connect command', { ws, dbg });
                 sockets.add(dbg);
+                ws2dbg(ws,dbg);
 
                 const cwd = process.cwd();
                 let connected;
@@ -822,18 +809,17 @@ function main(...args) {
                 break;
               }
               default: {
+                const dbg=ws2dbg(ws);
                 console.log('send to debugger', { command, data });
-                console.log('send to debugger', ws.dbg);
+                console.log('send to debugger', dbg);
 
-                ws.dbg?.sendMessage(data);
+                dbg.sendMessage(data);
 
                 //DebuggerProtocol.send(dbg, data);
                 break;
               }
             }
           }
-          /*let p = new DebuggerProtocol();
-        protocol.set(ws, p);*/
         },
         ...(url && url.host ? url : {})
       })

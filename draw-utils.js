@@ -38,18 +38,14 @@ GLFW.defaultCallbacks = {
   handleClose(window = this) {
     console.log('handleClose', { window });
   },
-  handleRefresh(window = this) {
-    //console.log('handleRefresh', { window });
-  },
+  handleRefresh(window = this) {},
   handleFocus(focused) {
     console.log('handleFocus', { focused });
   },
   handleIconify(iconified) {
     console.log('handleIconify', { iconified });
   },
-  handleFramebufferSize(width, height) {
-    //console.log('handleFramebufferSize', { width, height });
-  },
+  handleFramebufferSize(width, height) {},
   handleMouseButton(button, action, mods) {
     console.log('handleMouseButton', { button, action, mods });
   },
@@ -124,11 +120,6 @@ Object.assign(GLFW.prototype, {
   },
   show(mat) {
     this.begin();
-    /* let img = Mat2Image(mat);
-     let size = nvg.ImageSize(img);
- console.log('GLFW.show', {mat,img,size});
-   DrawImage(img);*/
-    //   this.end();
   }
 });
 

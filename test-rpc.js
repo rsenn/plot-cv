@@ -1,4 +1,4 @@
-import { client, FormParser, LLL_NOTICE, LLL_USER, LLL_WARN, server, setLog } from 'net';
+import { client, FormParser, LLL_NOTICE, LLL_USER, LLL_WARN, createServer, setLog } from 'net';
 import * as os from 'os';
 import * as path from 'path';
 import { dateToObject, parseDate } from './date-helpers.js';
@@ -9,18 +9,19 @@ import * as fs from './lib/filesystem.js';
 import inspect from './lib/objectInspect.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
+import { REPL } from './quickjs/qjs-modules/lib/repl.js';
+import * as rpc from './quickjs/qjs-net/js/rpc.js';
 import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
 import * as Terminal from './terminal.js';
 import { Console } from 'console';
-import { toString } from 'misc';
+import { toString, getOpt } from 'util';
 import require from 'require';
 import * as std from 'std';
 
 globalThis.fs = fs;
 
 function main(...args) {
-  const base = path.basename(getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+  const base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
   let params = getOpt(
@@ -47,7 +48,7 @@ function main(...args) {
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
   Object.assign(globalThis, { ...rpc2, rpc });
-  let name = process.env['NAME'] ?? getArgs()[0];
+  let name = process.env['NAME'] ?? process.argv[1];
   /*console.log('argv[1]',process.argv[1]);*/
   name = name
     .replace(/.*\//, '')
@@ -89,7 +90,7 @@ function main(...args) {
 
   console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
-  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${is_server ? 'Server' : 'Client'}Connection`], +params.verbose));
+  let cli = (globalThis.sock = new rpc.RPCSocket(`${address}:${port}`, rpc[`RPC${is_server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
   let logFile =
@@ -113,7 +114,7 @@ function main(...args) {
         out((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) + message.replace(/\n/g, '\\n'));
     });
 
-    return [client, server][+listen]({
+    return [client, createServer][+listen]({
       tls: params.tls,
       sslCert,
       sslPrivateKey,
