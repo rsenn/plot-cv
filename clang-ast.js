@@ -6,6 +6,7 @@ import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import { Spawn } from './os-helpers.js';
 import { countSubstring } from './string-helpers.js';
+import { inspect } from 'inspect';
 
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
@@ -281,8 +282,9 @@ export class Type extends Node {
     }
 
     if(node instanceof Node) {
-      //console.log('node', className(node), node);
-      putStack();
+      return node;
+      console.log('node', className(node), node);
+
       throw new Error();
     }
 
@@ -1054,7 +1056,7 @@ export function TypeFactory(node, ast, cache = true) {
   // console.log('TypeFactory:', { node });
 
   assert(
-    node.kind,
+    node?.kind,
     `Not an AST node: ${inspect(node, {
       colors: false,
       compact: 0,
