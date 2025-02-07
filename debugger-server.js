@@ -2,7 +2,7 @@ import { existsSync, reader, readerSync, readSync, writeSync } from 'fs';
 import { createServer, getSessions, LLL_INFO, LLL_NOTICE, LLL_USER, LLL_WARN, logLevels, setLog } from 'net';
 import { kill, setReadHandler, SIGTERM, sleep, ttySetRaw, Worker } from 'os';
 import { clearInterval, setInterval, setTimeout } from 'timers';
-import { atexit, bindMethods, btoa, define, keys, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, toString, tryCatch, types,mapWrapper } from 'util';
+import { atexit, bindMethods, btoa, define, keys, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, toString, tryCatch, types, mapWrapper } from 'util';
 import { List, Table } from './cli-helpers.js';
 import { DebuggerDispatcher, FindFunctions, GetFunctionName, TrivialSyntaxHighlighter } from './debugger.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
@@ -23,12 +23,14 @@ import { codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer,
 
 function decorate(decorators, obj, ...args) {
   if(!Array.isArray(decorators)) decorators = [decorators];
+
   for(let decorator of decorators)
     for(let prop of keys(obj))
       if(typeof obj[prop] == 'function') {
         let newfn = decorator(obj[prop], obj, prop, ...args);
         if(obj[prop] !== newfn) obj[prop] = newfn;
       }
+
   return obj;
 }
 
@@ -163,7 +165,7 @@ function StartREPL(prefix = scriptName(), suffix = '') {
 }
 
 export function StartDebugger(args, connect, address) {
-  let env = process.env ?? {};
+  let env = {};
 
   address ??= '127.0.0.1:9901';
 
@@ -172,11 +174,11 @@ export function StartDebugger(args, connect, address) {
   if(connect) env['QUICKJS_DEBUG_ADDRESS'] = address;
   else env['QUICKJS_DEBUG_LISTEN_ADDRESS'] = address;
 
-  const child = Spawn('qjsm', args, { block: false, env, stdio: ['pipe', 'pipe', 'pipe'] });
+  const child = Spawn('qjsm', args, { block: false, env: { ...process.env, ...env }, stdio: ['pipe', 'pipe', 'pipe'] });
 
   if(!connect) listeners[address] = child;
 
-  console.log('StartDebugger', { args, connect, address }, child);
+  console.log('StartDebugger', { args, connect, address, env }, child);
 
   children.add(child.pid);
 
@@ -190,7 +192,7 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
   const ret = sock.connect(addr);
 
   if(typeof callback != 'function' && typeof callback == 'object') callback = callback.onMessage;
-  console.log('ConnectDebugger', { ret });
+  console.log('ConnectDebugger', { address, skipToMain, sock });
 
   if(ret >= 0) {
     sock.ndelay(true);
@@ -351,7 +353,7 @@ decorate(
         let stack = await this.stackTrace();
         if(n >= stack.length) return null;
         let scopes = [];
-       
+
         for(let scope of await member.call(this, n)) {
           const variables = await this.variables(scope.reference);
           scope.variables = variables.length;
@@ -377,14 +379,14 @@ decorate(
         const list = await member.call(this, n);
         const ret = [];
         const add = item => (item.variablesReference === 0 && delete item.variablesReference, ret.push(item));
-       
+
         for(let item of list) {
           add(item);
 
           if(depth > 0) {
             if(item.variablesReference > 0) {
               let children = await this.variables(item.variablesReference, depth - 1);
-             
+
               for(let child of children) {
                 if(!isNaN(child.name)) child.name = '  [' + child.name + ']';
                 else child.name = '  .' + child.name;
@@ -506,7 +508,7 @@ function main(...args) {
   let [prefix, suffix] = name.split(' ');
 
   let protocol = new WeakMap();
-  let ws2dbg =globalThis.ws2dbg =mapWrapper(new WeakMap());
+  let ws2dbg = (globalThis.ws2dbg = mapWrapper(new WeakMap()));
 
   let sockets = (globalThis.sockets ??= new Set());
   //console.log(name, params['@']);
@@ -640,7 +642,8 @@ function main(...args) {
           return resp;
         },
         onMessage(ws, data) {
-          let child = ws2dbg(ws);
+        dbg = ws2dbg(ws);
+
           // showSessions();
 
           handleCommand(ws, data);
@@ -656,18 +659,17 @@ function main(...args) {
 
             switch (command) {
               case 'start': {
-                console.log('ws', ws);
-                child = StartDebugger(args, connect, address);
-                ws2dbg(ws,child);
+               dbg= globalThis.dbg = { child: StartDebugger(args, connect, address) };
+                ws2dbg(ws, dbg);
 
-                const [ stdin, stdout, stderr ] = child.stdio;
-                for(let fd of [stdout,stderr]) {
+                const [stdin, stdout, stderr] = child.stdio;
+                for(let fd of [stdout, stderr]) {
                   let flags = fcntl(fd, F_GETFL);
                   flags |= O_NONBLOCK;
                   fcntl(fd, F_SETFL, flags);
                 }
 
-console.log('stdout flags', fcntl(stdout, F_GETFL)&O_NONBLOCK, 'O_NONBLOCK=',O_NONBLOCK);
+                console.log('stdout flags', fcntl(stdout, F_GETFL) & O_NONBLOCK, 'O_NONBLOCK=', O_NONBLOCK);
 
                 const forward = (fd, name) =>
                   consume(reader(fd), buf => {
@@ -726,13 +728,13 @@ console.log('stdout flags', fcntl(stdout, F_GETFL)&O_NONBLOCK, 'O_NONBLOCK=',O_N
                 break;
               }
               case 'connect': {
-                dbg = ConnectDebugger(address, (dbg, sock) => {
+                dbg = globalThis.dbg=ConnectDebugger(address, (dbg, sock) => {
                   console.log('wait(WNOHANG) =', child.wait(WNOHANG));
                   console.log('child', child);
                 });
+                ws2dbg(ws, dbg);
                 console.log('connect command', { ws, dbg });
-                sockets.add(dbg);
-                ws2dbg(ws,dbg);
+                sockets.add(dbg.sock);
 
                 const cwd = process.cwd();
                 let connected;
@@ -759,7 +761,7 @@ console.log('stdout flags', fcntl(stdout, F_GETFL)&O_NONBLOCK, 'O_NONBLOCK=',O_N
                       console.log(`ws.send(${quote(msg, "'")}) = ${ret}`);
                     } else {
                       console.log('closed socket', dbg);
-                      sockets.delete(dbg);
+                      sockets.delete(dbg.sock);
                       ws.sendMessage({
                         type: 'end',
                         reason: 'closed'
@@ -809,9 +811,9 @@ console.log('stdout flags', fcntl(stdout, F_GETFL)&O_NONBLOCK, 'O_NONBLOCK=',O_N
                 break;
               }
               default: {
-                const dbg=ws2dbg(ws);
-                console.log('send to debugger', { command, data });
-                console.log('send to debugger', dbg);
+                const dbg = ws2dbg(ws);
+                const { pid } = dbg.child;
+                console.log('send to debugger', { pid, command, data });
 
                 dbg.sendMessage(data);
 
@@ -861,7 +863,7 @@ console.log('stdout flags', fcntl(stdout, F_GETFL)&O_NONBLOCK, 'O_NONBLOCK=',O_N
 
   define(globalThis, {
     get connections() {
-      return [...globalThis.sockets];
+      return [...globalThis.sockets].map(ws => ws2dbg(ws));
     },
     get socklist() {
       return [...globalThis.sockets];

@@ -7,8 +7,9 @@ import { Element, RGBA } from './lib/dom.js';
 import { Fragment, h, render, toChildArray } from './lib/dom/preactComponent.js';
 import { useFetch, useTrkl } from './lib/hooks.js';
 import { JSLexer } from './lib/jslexer.js';
-import { define,weakDefine, memoize, rand } from './lib/misc.js';
+import { define, weakDefine, memoize, rand } from './lib/misc.js';
 import { trkl } from './lib/trkl.js';
+import { MessageReceiver, MessageTransmitter, MessageTransceiver, parseURL, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
 
 let cwd = '.';
 let responses = {};
@@ -18,11 +19,11 @@ let url;
 let seq = 0,
   numLines = trkl(0);
 
-  weakDefine(WebSocket.prototype, {
-    sendMessage(msg) {
-      return this.send(JSON.stringify(msg));
-    }
-  });
+weakDefine(WebSocket.prototype, {
+  sendMessage(msg) {
+    return this.send(JSON.stringify(msg));
+  }
+});
 
 globalThis.process = { env: { DEBUG: true } };
 
@@ -223,7 +224,37 @@ Object.assign(globalThis, {
 });
 Object.assign(globalThis, { responses, currentLine, currentSource, TokenizeJS });
 Object.assign(globalThis, { CreateSocket, Start, Initiate, LoadSource, GetVariables });
-
+Object.assign(globalThis, {
+  WebSocketURL,
+  parseURL,
+  MessageReceiver,
+  MessageTransmitter,
+  MessageTransceiver,
+  codecs,
+  RPCApi,
+  RPCProxy,
+  RPCObject,
+  RPCFactory,
+  Connection,
+  RPC_PARSE_ERROR,
+  RPC_INVALID_REQUEST,
+  RPC_METHOD_NOT_FOUND,
+  RPC_INVALID_PARAMS,
+  RPC_INTERNAL_ERROR,
+  RPC_SERVER_ERROR_BASE,
+  FactoryEndpoint,
+  RPCServer,
+  RPCClient,
+  FactoryClient,
+  RPCSocket,
+  GetProperties,
+  GetKeys,
+  SerializeValue,
+  DeserializeSymbols,
+  DeserializeValue,
+  RPCConnect,
+  RPCListen
+});
 async function CreateSocket(endpoint) {
   let url = WebSocketURL('/ws');
   let rws = (globalThis.rws = new ReconnectingWebSocket(url, 'ws', {
