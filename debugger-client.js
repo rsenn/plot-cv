@@ -33,9 +33,13 @@ currentLine.id = 'currentLine';
 currentSource.subscribe(source => console.log('currentSource set to', source));
 currentLine.subscribe(line => console.log('currentLine set to', line));
 currentLine.subscribe(line => {
-  const numLines = Math.floor(Element.find('main').offsetHeight / Element.find('.source > pre').offsetHeight);
-  let pos = Math.max(0, line - (numLines >>> 1));
-  window.location.hash = `#line-${pos}`;
+  let e;
+
+  if((e = Element.find('main'))) {
+    const numLines = Math.floor(e.offsetHeight / Element.find('.source > pre').offsetHeight);
+    let pos = Math.max(0, line - (numLines >>> 1));
+    window.location.hash = `#line-${pos}`;
+  }
 });
 
 const doRender = memoize(RenderUI);
@@ -110,7 +114,9 @@ const SourceFile = props => {
   const file = useTrkl(currentSource);
 
   console.log('file', { cwd, file });
+
   const filename = file; /*? path.relative(cwd, file, cwd) : null*/
+
   let text =
     (file &&
       !/^<.*>$/.test(file) &&
@@ -139,10 +145,14 @@ async function LoadSource(filename) {
 }
 
 function Start(args, address) {
+  if(!address) {
+    globalThis.address = address = '127.0.0.1:' + (Math.floor(Math.random() * 4096) + 8192);
+  }
+
   return Initiate('start', address, false, args);
 }
 
-function Connect(address) {
+function Connect(address = globalThis.address) {
   return Initiate('connect', address, true);
 }
 
@@ -222,7 +232,7 @@ Object.assign(globalThis, {
   StackTrace,
   SendRequest
 });
-Object.assign(globalThis, { responses, currentLine, currentSource, TokenizeJS });
+Object.assign(globalThis, { currentLine, currentSource, TokenizeJS });
 Object.assign(globalThis, { CreateSocket, Start, Initiate, LoadSource, GetVariables });
 Object.assign(globalThis, {
   WebSocketURL,
@@ -255,6 +265,7 @@ Object.assign(globalThis, {
   RPCConnect,
   RPCListen
 });
+
 async function CreateSocket(endpoint) {
   let url = WebSocketURL('/ws');
   let rws = (globalThis.rws = new ReconnectingWebSocket(url, 'ws', {
@@ -317,17 +328,21 @@ async function CreateSocket(endpoint) {
         continue;
       }
     }
-  })();
-*/
+  })();*/
+
   let dispatch = (globalThis.dispatch = new DebuggerDispatcher({
     async process(callback) {
       for await(let msg of rws) {
         let data = JSON.parse(msg);
+
         process.env.DEBUG && console.log('WS received:', data);
+
         callback(data);
       }
     }
   }));
+
+  responses = globalThis.responses = dispatch.responses;
 
   ws.sendMessage = function(msg) {
     process.env.DEBUG && console.log('WS sending:', msg);

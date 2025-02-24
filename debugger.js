@@ -91,7 +91,7 @@ export function TrivialSyntaxHighlighter(input) {
 */
 export class DebuggerDispatcher {
   #seq = 0;
-  #responses = {};
+  responses = {};
   #callback = null;
   #promise = null;
   onclose = () => console.log('CLOSED');
@@ -111,9 +111,13 @@ export class DebuggerDispatcher {
 
           switch (type) {
             case 'response':
-              let fn = this.#responses[request_seq] ?? this.#callback;
+              let fn = this.responses[request_seq] ?? this.#callback;
+
+              delete this.responses[request_seq];
+
               if(typeof fn == 'function') await fn.call(this, msg);
               break;
+
             case 'event':
               const prop = 'on' + event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
 
@@ -128,6 +132,7 @@ export class DebuggerDispatcher {
                 }
               }
               break;
+
             default:
               //console.log('DebuggerDispatcher', { msg });
               if(conn.onmessage) await conn.onmessage(msg);
@@ -230,8 +235,8 @@ export class DebuggerDispatcher {
 
     return new Promise(
       (resolve, reject) =>
-        (this.#responses[request_seq] = response => {
-          delete this.#responses[request_seq];
+        (this.responses[request_seq] = response => {
+          delete this.responses[request_seq];
           resolve(response);
         })
     );

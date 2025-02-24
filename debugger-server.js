@@ -16,6 +16,7 @@ import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import { Console } from 'console';
 import { Location } from 'location';
 import process from 'process';
+import * as path from 'path';
 import extendArray from 'extendArray';
 import { AF_INET, AsyncSocket, IPPROTO_TCP, SOCK_STREAM, SockAddr } from 'sockets';
 import { err as stderr } from 'std';
@@ -794,6 +795,7 @@ function main(...args) {
                 console.log('dbg', dbg);
                 break;
               }
+
               case 'file': {
                 const { path } = rest;
                 const data = ReadFile(path, 'utf-8');
@@ -832,6 +834,13 @@ function main(...args) {
 
                 let response = await dbg.dispatch.sendRequest(command, args, request_seq);
 
+                if(command == 'stackTrace') {
+                  response.body = response.body.map(frame => {
+                    if(frame.filename) frame.filename = path.relative(frame.filename);
+
+                    return frame;
+                  });
+                }
                 console.log('Request', { request, response });
 
                 ws.sendMessage(response);
