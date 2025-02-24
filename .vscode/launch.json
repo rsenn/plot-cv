@@ -4,14 +4,11 @@
     {
       "type": "quickjs",
       "request": "launch",
-      "name": "Launch QuickJS",
+      "name": "QuickJS Debug",
       "runtimeExecutable": "/usr/local/bin/qjsm",
-      "cwd": "${workspaceFolder}/",
-      "localRoot": "${workspaceFolder}",
-      "program": "${workspaceFolder}/${relativeFile}",
-      "args": ["../an-tronics/eagle/555-PWM-Motor-Speed-Controller-alt.brd"]
+      "program": "${workspaceFolder}/${relativeFile}"
     },
-    {
+       {
       "type": "quickjs",
       "request": "launch",
       "name": "Attach QuickJS",
@@ -19,9 +16,8 @@
       "mode": "connect",
       "program": "${workspaceFolder}/test-ecmascript2.js",
       "runtimeExecutable": "/usr/local/bin/qjsm",
-      "attach": true,
       "address": "127.0.0.1",
-      "port": 45224
+      "port": 8777
     },
     {
       "name": "Extension",
@@ -54,13 +50,22 @@
       "type": "quickjs",
       "request": "launch",
       "program": "${workspaceFolder}/test-ecmascript2.js",
-      "runtimeExecutable": "/usr/bin/env",
-      "runtimeArgs": ["QUICKJS_DEBUG_ADDRESS=127.0.0.1:9001", "/usr/local/bin/qjsm"],
+      "runtimeExecutable": "/usr/local/bin/qjsm",
       "localRoot": "${workspaceFolder}",
       "mode": "connect",
-      "attach": true,
-      "address": "127.0.0.1",
-      "port": 9000
+       "address": "127.0.0.1",
+      "port": 8777
+    },
+    {
+      "name": "Connect QuickJS",
+      "type": "quickjs",
+      "request": "launch",
+      "program": "${workspaceFolder}/test-nanovg.js",
+      "runtimeExecutable": "/usr/local/bin/qjsm",
+      "localRoot": "${workspaceFolder}",
+      "mode": "connect",
+       "address": "127.0.0.1",
+      "port": 8777
     }
   ],
   "compounds": [

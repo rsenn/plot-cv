@@ -61,42 +61,7 @@ Object.assign(globalThis, {
   RPCListen
 });
 
-const signalName = n =>
-  'SIG' +
-  [
-    ,
-    'HUP',
-    'INT',
-    'QUIT',
-    'ILL',
-    'TRAP',
-    'ABRT',
-    'BUS',
-    'FPE',
-    'KILL',
-    'USR1',
-    'SEGV',
-    'USR2',
-    'PIPE',
-    'ALRM',
-    'TERM',
-    'STKFLT',
-    'CHLD',
-    'CONT',
-    'STOP',
-    'TSTP',
-    'TTIN',
-    'TTOU',
-    'URG',
-    'XCPU',
-    'XFSZ',
-    'VTALRM',
-    'PROF',
-    'WINCH',
-    'IO',
-    'PWR',
-    'SYS'
-  ][n];
+const signalName = n => 'SIG' + [, 'HUP', 'INT', 'QUIT', 'ILL', 'TRAP', 'ABRT', 'BUS', 'FPE', 'KILL', 'USR1', 'SEGV', 'USR2', 'PIPE', 'ALRM', 'TERM', 'STKFLT', 'CHLD', 'CONT', 'STOP', 'TSTP', 'TTIN', 'TTOU', 'URG', 'XCPU', 'XFSZ', 'VTALRM', 'PROF', 'WINCH', 'IO', 'PWR', 'SYS'][n];
 
 function checkChildExited(child) {
   const { exited, termsig, signaled, exitcode } = child;
@@ -146,11 +111,7 @@ function StartREPL(prefix = scriptName(), suffix = '') {
             if(['type', 'reason'].every(k => k in event)) if (['id', 'name', 'line'].every(k => k in stack[0])) return [List([event]), List(stack)];
           }
 
-          if(
-            arg.length >= 2 /*Object.keys(arg[0]).some(key => arg.every(a => key in a)) ||*/ &&
-            arg.map(item => Object.keys(item)).reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))
-          )
-            return repl.show(Table(arg));
+          if(arg.length >= 2 /*Object.keys(arg[0]).some(key => arg.every(a => key in a)) ||*/ && arg.map(item => Object.keys(item)).reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))) return repl.show(Table(arg));
         }
       }
     }
@@ -486,16 +447,7 @@ function main(...args) {
     args
   );
   if(params['no-tls'] === true) params.tls = false;
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key',
-    'ssl-ca': sslCA = '/etc/ssl/certs/ca-certificates.crt',
-    quiet = false,
-    debug = false,
-    tls = true
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key', 'ssl-ca': sslCA = '/etc/ssl/certs/ca-certificates.crt', quiet = false, debug = false, tls = true } = params;
 
   const listen = params.connect && !params.listen ? false : true;
 
@@ -642,7 +594,7 @@ function main(...args) {
           return resp;
         },
         onMessage(ws, data) {
-        dbg = ws2dbg(ws);
+          dbg = ws2dbg(ws);
 
           // showSessions();
 
@@ -659,7 +611,7 @@ function main(...args) {
 
             switch (command) {
               case 'start': {
-               dbg= globalThis.dbg = { child: StartDebugger(args, connect, address) };
+                dbg = globalThis.dbg = { child: StartDebugger(args, connect, address) };
                 ws2dbg(ws, dbg);
 
                 const [stdin, stdout, stderr] = child.stdio;
@@ -728,7 +680,7 @@ function main(...args) {
                 break;
               }
               case 'connect': {
-                dbg = globalThis.dbg=ConnectDebugger(address, (dbg, sock) => {
+                dbg = globalThis.dbg = ConnectDebugger(address, (dbg, sock) => {
                   console.log('wait(WNOHANG) =', child.wait(WNOHANG));
                   console.log('child', child);
                 });
