@@ -7,7 +7,7 @@ tests({
   async 'next() value'() {
     const gen = new Repeater(async (push, stop) => push(await push(undefined)));
 
-throw new Error('test');
+    throw new Error('test');
 
     await gen.next();
     eq((await gen.next('value#1')).value, 'value#1');

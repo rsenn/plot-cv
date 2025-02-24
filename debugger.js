@@ -103,36 +103,39 @@ export class DebuggerDispatcher {
     let ret;
 
     try {
-      let v = conn.process(async msg => {
-        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m', msg);
+      let v = conn
+        .process(async msg => {
+          if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m', msg);
 
-        const { type, event, request_seq, body } = msg;
+          const { type, event, request_seq, body } = msg;
 
-        switch (type) {
-          case 'response':
-            let fn = this.#responses[request_seq] ?? this.#callback;
-            if(typeof fn == 'function') await fn.call(this, msg);
-            break;
-          case 'event':
-            const prop = 'on' + event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
+          switch (type) {
+            case 'response':
+              let fn = this.#responses[request_seq] ?? this.#callback;
+              if(typeof fn == 'function') await fn.call(this, msg);
+              break;
+            case 'event':
+              const prop = 'on' + event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
 
-            for(let receiver of [this, conn]) {
-              if(!receiver[prop]) continue;
-              if(receiver[prop]) {
-                const callback = receiver[prop];
-                if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m  ', { prop, event });
-                //if((await callback.call(receiver, event)) === false) if(receiver[prop] === callback) delete receiver[prop];
-                callback.call(receiver, event);
-                delete receiver[prop];
+              for(let receiver of [this, conn]) {
+                if(!receiver[prop]) continue;
+                if(receiver[prop]) {
+                  const callback = receiver[prop];
+                  if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m  ', { prop, event });
+                  //if((await callback.call(receiver, event)) === false) if(receiver[prop] === callback) delete receiver[prop];
+                  callback.call(receiver, event);
+                  delete receiver[prop];
+                }
               }
-            }
-            break;
-          default:
-            //console.log('DebuggerDispatcher', { msg });
-            if(conn.onmessage) await conn.onmessage(msg);
-            break;
-        }
-      });
+              break;
+            default:
+              //console.log('DebuggerDispatcher', { msg });
+              if(conn.onmessage) await conn.onmessage(msg);
+              break;
+          }
+        })
+        .catch(e => console.log('process() exception:', e));
+
       console.log('process(handler) returned:', v);
 
       isFunction(v.then) && v.then(r => (ret = r));
@@ -222,9 +225,7 @@ export class DebuggerDispatcher {
     });
   }
 
-  async sendRequest(command, args = {}) {
-    const request_seq = ++this.#seq;
-
+  async sendRequest(command, args = {}, request_seq = ++this.#seq) {
     await this.sendMessage({ type: 'request', request: { request_seq, command, args } });
 
     return new Promise(

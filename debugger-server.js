@@ -61,7 +61,42 @@ Object.assign(globalThis, {
   RPCListen
 });
 
-const signalName = n => 'SIG' + [, 'HUP', 'INT', 'QUIT', 'ILL', 'TRAP', 'ABRT', 'BUS', 'FPE', 'KILL', 'USR1', 'SEGV', 'USR2', 'PIPE', 'ALRM', 'TERM', 'STKFLT', 'CHLD', 'CONT', 'STOP', 'TSTP', 'TTIN', 'TTOU', 'URG', 'XCPU', 'XFSZ', 'VTALRM', 'PROF', 'WINCH', 'IO', 'PWR', 'SYS'][n];
+const signalName = n =>
+  'SIG' +
+  [
+    ,
+    'HUP',
+    'INT',
+    'QUIT',
+    'ILL',
+    'TRAP',
+    'ABRT',
+    'BUS',
+    'FPE',
+    'KILL',
+    'USR1',
+    'SEGV',
+    'USR2',
+    'PIPE',
+    'ALRM',
+    'TERM',
+    'STKFLT',
+    'CHLD',
+    'CONT',
+    'STOP',
+    'TSTP',
+    'TTIN',
+    'TTOU',
+    'URG',
+    'XCPU',
+    'XFSZ',
+    'VTALRM',
+    'PROF',
+    'WINCH',
+    'IO',
+    'PWR',
+    'SYS'
+  ][n];
 
 function checkChildExited(child) {
   const { exited, termsig, signaled, exitcode } = child;
@@ -111,7 +146,11 @@ function StartREPL(prefix = scriptName(), suffix = '') {
             if(['type', 'reason'].every(k => k in event)) if (['id', 'name', 'line'].every(k => k in stack[0])) return [List([event]), List(stack)];
           }
 
-          if(arg.length >= 2 /*Object.keys(arg[0]).some(key => arg.every(a => key in a)) ||*/ && arg.map(item => Object.keys(item)).reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))) return repl.show(Table(arg));
+          if(
+            arg.length >= 2 /*Object.keys(arg[0]).some(key => arg.every(a => key in a)) ||*/ &&
+            arg.map(item => Object.keys(item)).reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))
+          )
+            return repl.show(Table(arg));
         }
       }
     }
@@ -146,17 +185,17 @@ export function StartDebugger(args, connect, address) {
   return define(child, { args });
 }
 
-export function ConnectDebugger(address, skipToMain = true, callback) {
+export async function ConnectDebugger(address, skipToMain = true, callback) {
   const addr = new SockAddr(AF_INET, ...address.split(':'));
   const sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-  const ret = sock.connect(addr);
+  const ret = await sock.connect(addr);
 
   if(typeof callback != 'function' && typeof callback == 'object') callback = callback.onMessage;
   console.log('ConnectDebugger', { address, skipToMain, sock });
 
   if(ret >= 0) {
-    sock.ndelay(true);
+    // sock.ndelay(true);
     console.log('Connected', +sock, 'to', sock.remote);
     sockets.add(sock);
     //console.log('sockets', sockets);
@@ -168,6 +207,9 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
     sock,
     addr,
     async process(callback) {
+      console.log('Debugger process()', callback);
+      //  throw new Error('process() exception');
+
       let ret,
         lenBuf = new ArrayBuffer(9);
 
@@ -192,7 +234,7 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
           let obj = JSON.parse(s);
 
           const funcName = '\x1b[38;5;208mPROCESS\x1b[0m';
-          console.log(funcName + ' \x1b[38;5;196mbefore callback\x1b[0m');
+          console.log(funcName + ' \x1b[38;5;196mbefore callback\x1b[0m', obj);
           let result = callback(obj);
           await result;
         }
@@ -205,8 +247,11 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
     },
     async sendMessage(msg) {
       if(typeof msg != 'string') msg = JSON.stringify(msg);
-      const ret = await sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg);
+      const ret = sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg);
+
       if(process.env.DEBUG) console.log('\x1b[38;5;33mSEND\x1b[0m[' + sock.fd + '] (' + ret + ') ' + msg);
+
+      return ret;
     }
   });
 
@@ -241,8 +286,7 @@ function LaunchDebugger(dbg, skipToMain = true) {
     });
   }
   //dbg.onstopped ??= OnStopped;
-
-  let dispatch = (globalThis.dispatch = new DebuggerDispatcher(dbg));
+  let dispatch = (dbg.dispatch = globalThis.dispatch = new DebuggerDispatcher(dbg));
 
   Object.assign(globalThis, bindMethods(dispatch, DebuggerDispatcher.prototype, {}));
   Object.assign(globalThis, {
@@ -377,7 +421,7 @@ const mkaddr = (
     `127.0.0.1:${port--}`
 )();
 
-function NewDebugger(args, skipToMain = false, address) {
+async function NewDebugger(args, skipToMain = false, address) {
   address ??= mkaddr();
 
   const child = (globalThis.child = globalThis.listeners[address] || StartDebugger(args, false, address));
@@ -394,7 +438,8 @@ function NewDebugger(args, skipToMain = false, address) {
     args,
     kill: () => (children.delete(child.pid), kill(child.pid, SIGTERM))
   });
-  ConnectDebugger.call(dbg, address, skipToMain);
+
+  await ConnectDebugger.call(dbg, address, skipToMain);
 
   return dbg; //dispatch;
 }
@@ -447,7 +492,16 @@ function main(...args) {
     args
   );
   if(params['no-tls'] === true) params.tls = false;
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key', 'ssl-ca': sslCA = '/etc/ssl/certs/ca-certificates.crt', quiet = false, debug = false, tls = true } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key',
+    'ssl-ca': sslCA = '/etc/ssl/certs/ca-certificates.crt',
+    quiet = false,
+    debug = false,
+    tls = true
+  } = params;
 
   const listen = params.connect && !params.listen ? false : true;
 
@@ -461,6 +515,7 @@ function main(...args) {
 
   let protocol = new WeakMap();
   let ws2dbg = (globalThis.ws2dbg = mapWrapper(new WeakMap()));
+  let dbg2ws = (globalThis.dbg2ws = mapWrapper(new WeakMap()));
 
   let sockets = (globalThis.sockets ??= new Set());
   //console.log(name, params['@']);
@@ -542,9 +597,9 @@ function main(...args) {
 
           Object.defineProperties(ws, {
             sendMessage: {
-              value: function sendMessage(msg) {
-                let ret = this.send(JSON.stringify(msg));
-                console.log(`ws.sendMessage(`, console.config({ compact: 0 }), msg, `) = ${ret}`);
+              value: async function sendMessage(msg) {
+                let ret = await this.send(JSON.stringify(msg));
+                console.log(`ws.sendMessage(`, console.config({ compact: 1 }), msg, `) = ${ret}`);
                 return ret;
               },
               enumerable: false
@@ -600,7 +655,7 @@ function main(...args) {
 
           handleCommand(ws, data);
 
-          function handleCommand(ws, data) {
+          async function handleCommand(ws, data) {
             let obj = JSON.parse(data);
 
             console.log('onMessage(x)', obj);
@@ -609,10 +664,12 @@ function main(...args) {
             // console.log('onMessage', command, rest);
             const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = rest;
 
-            switch (command) {
+            switch (obj.type ?? command) {
               case 'start': {
                 dbg = globalThis.dbg = { child: StartDebugger(args, connect, address) };
+
                 ws2dbg(ws, dbg);
+                dbg2ws(dbg, ws);
 
                 const [stdin, stdout, stderr] = child.stdio;
                 for(let fd of [stdout, stderr]) {
@@ -679,19 +736,23 @@ function main(...args) {
 
                 break;
               }
+
               case 'connect': {
-                dbg = globalThis.dbg = ConnectDebugger(address, (dbg, sock) => {
+                dbg = globalThis.dbg = await ConnectDebugger.call(globalThis.dbg, address, false, (dbg, sock) => {
                   console.log('wait(WNOHANG) =', child.wait(WNOHANG));
                   console.log('child', child);
                 });
+
                 ws2dbg(ws, dbg);
+                dbg2ws(dbg, ws);
+
                 console.log('connect command', { ws, dbg });
                 sockets.add(dbg.sock);
 
                 const cwd = process.cwd();
                 let connected;
 
-                dbg.process(msg => {
+                /*  await dbg.process(msg => {
                   if(!connected) {
                     connected = true;
                     ws.sendMessage({
@@ -728,6 +789,8 @@ function main(...args) {
                     dbg.close();
                   }
                 });
+*/
+
                 console.log('dbg', dbg);
                 break;
               }
@@ -762,7 +825,23 @@ function main(...args) {
                 console.log('lines', lines);
                 break;
               }
+
+              case 'request': {
+                const { request } = obj;
+                const { request_seq, command, args } = request;
+
+                let response = await dbg.dispatch.sendRequest(command, args, request_seq);
+
+                console.log('Request', { request, response });
+
+                ws.sendMessage(response);
+
+                break;
+              }
+
               default: {
+                /*  console.log('send to debugger', { obj });
+                dbg.sendMessage(obj);*/
                 const dbg = ws2dbg(ws);
                 const { pid } = dbg.child;
                 console.log('send to debugger', { pid, command, data });
