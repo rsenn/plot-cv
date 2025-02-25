@@ -233,7 +233,7 @@ export async function ConnectDebugger(address, skipToMain = true, callback) {
           let s = toString(dataBuf);
           let obj = JSON.parse(s);
 
-                /*if(process.env.DEBUG)*/ console.log('process() read:',obj);
+          if(process.env.DEBUG) console.log('process() read:',obj);
 
 
           const funcName = '\x1b[38;5;208mPROCESS\x1b[0m';
