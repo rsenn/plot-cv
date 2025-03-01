@@ -36,7 +36,13 @@ function* Up(e, k = 'parentNode') {
 }
 
 function Log(...args) {
-  if(globalThis.ws && ws.sendMessage) ws.sendMessage({ command: 'log', args });
+  if(globalThis.ws) {
+    try {
+      sendMessage({ command: 'log', args });
+    } catch(error) {
+      console.error('Log() error:', error);
+    }
+  }
   console.log(...args);
 }
 
@@ -188,7 +194,7 @@ function AddPoint(pt) {
   const l = anchorPoints();
 
   //Log('AddPoint', l.length, pt);
-  ws.sendMessage({ type: 'add', index: l.length, point: { ...pt.toObject() } });
+  sendMessage({ type: 'add', index: l.length, point: { ...pt.toObject() } });
 
   anchorPoints(l.concat([pt]));
 }
@@ -396,12 +402,18 @@ function MakePalette(num) {
 
   return result;
 }
+function sendMessage(msg) {
+  return globalThis.ws.send(JSON.stringify(msg));
+}
 
 async function CreateSocket(endpoint) {
   const url = WebSocketURL('/ws?mirror=draw.js');
   const rws = (globalThis.rws = new ReconnectingWebSocket(url, 'ws', {
-    onOpen() {
-      console.log('ReconnectingWebSocket connected!');
+    onOpen({ target: ws }) {
+      console.log('ReconnectingWebSocket connected!', ws);
+    },
+    onMessage(e) {
+      console.log('onMessage', e);
     }
   }));
 
@@ -413,10 +425,7 @@ async function CreateSocket(endpoint) {
 
   await rws.connect(endpoint);
 
-  ws.addEventListener('close', () => (ws.sendMessage = null));
-  ws.addEventListener('message', ({ data }) => console.log('message', JSON.parse(data)));
-
-  ws.sendMessage = msg => ws.send(JSON.stringify(msg));
+  //ws.addEventListener('close', () => (ws.sendMessage = null));
 
   return rws;
 }
@@ -470,6 +479,7 @@ Object.assign(globalThis, {
   HSLA,
   waitFor,
   CreateSocket,
+  sendMessage,
   Log,
   Up,
   getMethodNames,
@@ -493,7 +503,7 @@ window.addEventListener('load', async e => {
   let element = document.querySelector('#preact');
   document.querySelector('span').style.setProperty('display', 'none');
 
-  CreateSocket();
+  await CreateSocket();
   ref.subscribe(value => {
     svgElem = globalThis.svgElem = value.base;
     Log('ref', value);
@@ -561,7 +571,7 @@ window.addEventListener('load', async e => {
             p.x = pt.x;
             p.y = pt.y;
 
-            if(diff.distance()) ws.sendMessage({ type: 'move', index, point: { ...p.toObject() } });
+            if(diff.distance()) sendMessage({ type: 'move', index, point: { ...p.toObject() } });
 
             anchorPoints([...anchorPoints()]);
 
