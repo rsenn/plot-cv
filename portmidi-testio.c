@@ -128,7 +128,13 @@ main_test_output(int isochronous_test) {
      when latency is zero, we will pass in a NULL timer pointer
      for that case. If PortMidi tries to access the time_proc,
      we will crash, so this test will tell us something. */
-  Pm_OpenOutput(&midi, i, DRIVER_INFO, OUTPUT_BUFFER_SIZE, (latency == 0 ? NULL : TIME_PROC), (latency == 0 ? NULL : TIME_INFO), latency);
+  Pm_OpenOutput(&midi,
+                i,
+                DRIVER_INFO,
+                OUTPUT_BUFFER_SIZE,
+                (latency == 0 ? NULL : TIME_PROC),
+                (latency == 0 ? NULL : TIME_INFO),
+                latency);
   printf("Midi Output opened with %ld ms latency.\n", (long)latency);
 
   /* output note on/off w/latency offset; hold until user prompts */
@@ -463,7 +469,8 @@ main(int argc, char* argv[]) {
   for(i = 0; i < Pm_CountDevices(); i++) {
     char* deflt;
     const PmDeviceInfo* info = Pm_GetDeviceInfo(i);
-    if(((test_input | test_both) & info->input) | ((test_output | test_both | stream_test) & info->output)) {
+    if(((test_input | test_both) & info->input) |
+       ((test_output | test_both | stream_test) & info->output)) {
       printf("%d: %s, %s", i, info->interf, info->name);
       if(info->input) {
         deflt = (i == default_in ? "default " : "");

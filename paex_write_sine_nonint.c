@@ -75,7 +75,9 @@ main(void) {
   int i, j, k;
   int bufferCount;
 
-  printf("PortAudio Test: output sine wave NON-INTERLEAVED. SR = %d, BufSize = %d\n", SAMPLE_RATE, FRAMES_PER_BUFFER);
+  printf("PortAudio Test: output sine wave NON-INTERLEAVED. SR = %d, BufSize = %d\n",
+         SAMPLE_RATE,
+         FRAMES_PER_BUFFER);
 
   /* initialise sinusoidal wavetable */
   for(i = 0; i < TABLE_SIZE; i++) {
@@ -91,19 +93,22 @@ main(void) {
     fprintf(stderr, "Error: No default output device.\n");
     goto error;
   }
-  outputParameters.channelCount = 2;                            /* stereo output */
-  outputParameters.sampleFormat = paFloat32 | paNonInterleaved; /* 32 bit floating point output NON-INTERLEAVED */
-  outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
+  outputParameters.channelCount = 2; /* stereo output */
+  outputParameters.sampleFormat =
+      paFloat32 | paNonInterleaved; /* 32 bit floating point output NON-INTERLEAVED */
+  outputParameters.suggestedLatency =
+      Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
   outputParameters.hostApiSpecificStreamInfo = NULL;
 
-  err = Pa_OpenStream(&stream,
-                      NULL, /* no input */
-                      &outputParameters,
-                      SAMPLE_RATE,
-                      FRAMES_PER_BUFFER,
-                      paClipOff, /* we won't output out of range samples so don't bother clipping them */
-                      NULL,      /* no callback, use blocking API */
-                      NULL);     /* no callback, so no callback userData */
+  err = Pa_OpenStream(
+      &stream,
+      NULL, /* no input */
+      &outputParameters,
+      SAMPLE_RATE,
+      FRAMES_PER_BUFFER,
+      paClipOff, /* we won't output out of range samples so don't bother clipping them */
+      NULL,      /* no callback, use blocking API */
+      NULL);     /* no callback, so no callback userData */
   if(err != paNoError)
     goto error;
 

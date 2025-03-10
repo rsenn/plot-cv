@@ -15,7 +15,8 @@
 #include <stdio.h>
 #include <libxml/xmlreader.h>
 
-#if defined(LIBXML_READER_ENABLED) && defined(LIBXML_PATTERN_ENABLED) && defined(LIBXML_OUTPUT_ENABLED)
+#if defined(LIBXML_READER_ENABLED) && defined(LIBXML_PATTERN_ENABLED) && \
+    defined(LIBXML_OUTPUT_ENABLED)
 
 /**
  * streamFile:

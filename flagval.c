@@ -37,10 +37,14 @@ main() {
   printf("ImGuiWindowFlags_MenuBar = 0x%x\n", ImGuiWindowFlags_MenuBar);
   printf("ImGuiWindowFlags_HorizontalScrollbar = 0x%x\n", ImGuiWindowFlags_HorizontalScrollbar);
   printf("ImGuiWindowFlags_NoFocusOnAppearing = 0x%x\n", ImGuiWindowFlags_NoFocusOnAppearing);
-  printf("ImGuiWindowFlags_NoBringToFrontOnFocus = 0x%x\n", ImGuiWindowFlags_NoBringToFrontOnFocus);
-  printf("ImGuiWindowFlags_AlwaysVerticalScrollbar = 0x%x\n", ImGuiWindowFlags_AlwaysVerticalScrollbar);
-  printf("ImGuiWindowFlags_AlwaysHorizontalScrollbar = 0x%x\n", ImGuiWindowFlags_AlwaysHorizontalScrollbar);
-  printf("ImGuiWindowFlags_AlwaysUseWindowPadding = 0x%x\n", ImGuiWindowFlags_AlwaysUseWindowPadding);
+  printf("ImGuiWindowFlags_NoBringToFrontOnFocus = 0x%x\n",
+         ImGuiWindowFlags_NoBringToFrontOnFocus);
+  printf("ImGuiWindowFlags_AlwaysVerticalScrollbar = 0x%x\n",
+         ImGuiWindowFlags_AlwaysVerticalScrollbar);
+  printf("ImGuiWindowFlags_AlwaysHorizontalScrollbar = 0x%x\n",
+         ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+  printf("ImGuiWindowFlags_AlwaysUseWindowPadding = 0x%x\n",
+         ImGuiWindowFlags_AlwaysUseWindowPadding);
   printf("ImGuiWindowFlags_NoNavInputs = 0x%x\n", ImGuiWindowFlags_NoNavInputs);
   printf("ImGuiWindowFlags_NoNavFocus = 0x%x\n", ImGuiWindowFlags_NoNavFocus);
   printf("ImGuiWindowFlags_UnsavedDocument = 0x%x\n", ImGuiWindowFlags_UnsavedDocument);

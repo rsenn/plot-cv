@@ -143,9 +143,11 @@ main(int argc, char* argv[]) {
 
   /* create two ports */
 
-  output_port1 = jack_port_register(client, "output1", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+  output_port1 =
+      jack_port_register(client, "output1", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
 
-  output_port2 = jack_port_register(client, "output2", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+  output_port2 =
+      jack_port_register(client, "output2", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
 
   if((output_port1 == NULL) || (output_port2 == NULL)) {
     fprintf(stderr, "no more JACK ports available\n");

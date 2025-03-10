@@ -43,7 +43,10 @@ main() {
   settings.majorVersion = 3;
   settings.minorVersion = 2;
 
-  sf::Window window(sf::VideoMode(1280, 900, 32), "OpenGL", sf::Style::Titlebar | sf::Style::Close, settings);
+  sf::Window window(sf::VideoMode(1280, 900, 32),
+                    "OpenGL",
+                    sf::Style::Titlebar | sf::Style::Close,
+                    settings);
 
   // Initialize GLEW
   glewExperimental = GL_TRUE;
@@ -103,11 +106,13 @@ main() {
 
   GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
   glEnableVertexAttribArray(colAttrib);
-  glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+  glVertexAttribPointer(
+      colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
 
   GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
   glEnableVertexAttribArray(texAttrib);
-  glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat)));
+  glVertexAttribPointer(
+      texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat)));
 
   // Load textures
   GLuint textures[2];

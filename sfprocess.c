@@ -86,7 +86,9 @@ main(void) { /* This is a buffer of double precision floating point values
   **		sfinfo.format   = SF_FORMAT_RAW | SF_FORMAT_PCM_16 ;
   **		sfinfo.channels = 2 ;
   */
-  if(!(infile = sf_open(infilename, SFM_READ, &sfinfo))) { /* Open failed so print an error message. */
+  if(!(infile = sf_open(infilename,
+                        SFM_READ,
+                        &sfinfo))) { /* Open failed so print an error message. */
     printf("Not able to open input file %s.\n", infilename);
     /* Print the error message from libsndfile. */
     puts(sf_strerror(NULL));

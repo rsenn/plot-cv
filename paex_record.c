@@ -204,7 +204,8 @@ main(void) {
   data.frameIndex = 0;
   numSamples = totalFrames * NUM_CHANNELS;
   numBytes = numSamples * sizeof(SAMPLE);
-  data.recordedSamples = (SAMPLE*)malloc(numBytes); /* From now on, recordedSamples is initialised. */
+  data.recordedSamples =
+      (SAMPLE*)malloc(numBytes); /* From now on, recordedSamples is initialised. */
   if(data.recordedSamples == NULL) {
     printf("Could not allocate record array.\n");
     goto done;
@@ -223,18 +224,20 @@ main(void) {
   }
   inputParameters.channelCount = 2; /* stereo input */
   inputParameters.sampleFormat = PA_SAMPLE_TYPE;
-  inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultLowInputLatency;
+  inputParameters.suggestedLatency =
+      Pa_GetDeviceInfo(inputParameters.device)->defaultLowInputLatency;
   inputParameters.hostApiSpecificStreamInfo = NULL;
 
   /* Record some audio. -------------------------------------------- */
-  err = Pa_OpenStream(&stream,
-                      &inputParameters,
-                      NULL, /* &outputParameters, */
-                      SAMPLE_RATE,
-                      FRAMES_PER_BUFFER,
-                      paClipOff, /* we won't output out of range samples so don't bother clipping them */
-                      recordCallback,
-                      &data);
+  err = Pa_OpenStream(
+      &stream,
+      &inputParameters,
+      NULL, /* &outputParameters, */
+      SAMPLE_RATE,
+      FRAMES_PER_BUFFER,
+      paClipOff, /* we won't output out of range samples so don't bother clipping them */
+      recordCallback,
+      &data);
   if(err != paNoError)
     goto done;
 
@@ -299,19 +302,21 @@ main(void) {
   }
   outputParameters.channelCount = 2; /* stereo output */
   outputParameters.sampleFormat = PA_SAMPLE_TYPE;
-  outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
+  outputParameters.suggestedLatency =
+      Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
   outputParameters.hostApiSpecificStreamInfo = NULL;
 
   printf("\n=== Now playing back. ===\n");
   fflush(stdout);
-  err = Pa_OpenStream(&stream,
-                      NULL, /* no input */
-                      &outputParameters,
-                      SAMPLE_RATE,
-                      FRAMES_PER_BUFFER,
-                      paClipOff, /* we won't output out of range samples so don't bother clipping them */
-                      playCallback,
-                      &data);
+  err = Pa_OpenStream(
+      &stream,
+      NULL, /* no input */
+      &outputParameters,
+      SAMPLE_RATE,
+      FRAMES_PER_BUFFER,
+      paClipOff, /* we won't output out of range samples so don't bother clipping them */
+      playCallback,
+      &data);
   if(err != paNoError)
     goto done;
 

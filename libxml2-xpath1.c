@@ -21,7 +21,9 @@
 #if defined(LIBXML_XPATH_ENABLED) && defined(LIBXML_SAX1_ENABLED)
 
 static void usage(const char* name);
-int execute_xpath_expression(const char* filename, const xmlChar* xpathExpr, const xmlChar* nsList);
+int execute_xpath_expression(const char* filename,
+                             const xmlChar* xpathExpr,
+                             const xmlChar* nsList);
 int register_namespaces(xmlXPathContextPtr xpathCtx, const xmlChar* nsList);
 void print_xpath_nodes(xmlNodeSetPtr nodes, FILE* output);
 
@@ -39,7 +41,8 @@ main(int argc, char** argv) {
   LIBXML_TEST_VERSION
 
   /* Do the main job */
-  if(execute_xpath_expression(argv[1], BAD_CAST argv[2], (argc > 3) ? BAD_CAST argv[3] : NULL) < 0) {
+  if(execute_xpath_expression(argv[1], BAD_CAST argv[2], (argc > 3) ? BAD_CAST argv[3] : NULL) <
+     0) {
     usage(argv[0]);
     return (-1);
   }
@@ -81,7 +84,9 @@ usage(const char* name) {
  * Returns 0 on success and a negative value otherwise.
  */
 int
-execute_xpath_expression(const char* filename, const xmlChar* xpathExpr, const xmlChar* nsList) {
+execute_xpath_expression(const char* filename,
+                         const xmlChar* xpathExpr,
+                         const xmlChar* nsList) {
   xmlDocPtr doc;
   xmlXPathContextPtr xpathCtx;
   xmlXPathObjectPtr xpathObj;
@@ -185,7 +190,10 @@ register_namespaces(xmlXPathContextPtr xpathCtx, const xmlChar* nsList) {
 
     /* do register namespace */
     if(xmlXPathRegisterNs(xpathCtx, prefix, href) != 0) {
-      fprintf(stderr, "Error: unable to register NS with prefix=\"%s\" and href=\"%s\"\n", prefix, href);
+      fprintf(stderr,
+              "Error: unable to register NS with prefix=\"%s\" and href=\"%s\"\n",
+              prefix,
+              href);
       xmlFree(nsListDup);
       return (-1);
     }
@@ -221,9 +229,15 @@ print_xpath_nodes(xmlNodeSetPtr nodes, FILE* output) {
       ns = (xmlNsPtr)nodes->nodeTab[i];
       cur = (xmlNodePtr)ns->next;
       if(cur->ns) {
-        fprintf(output, "= namespace \"%s\"=\"%s\" for node %s:%s\n", ns->prefix, ns->href, cur->ns->href, cur->name);
+        fprintf(output,
+                "= namespace \"%s\"=\"%s\" for node %s:%s\n",
+                ns->prefix,
+                ns->href,
+                cur->ns->href,
+                cur->name);
       } else {
-        fprintf(output, "= namespace \"%s\"=\"%s\" for node %s\n", ns->prefix, ns->href, cur->name);
+        fprintf(
+            output, "= namespace \"%s\"=\"%s\" for node %s\n", ns->prefix, ns->href, cur->name);
       }
     } else if(nodes->nodeTab[i]->type == XML_ELEMENT_NODE) {
       cur = nodes->nodeTab[i];

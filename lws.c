@@ -52,7 +52,8 @@
 #include "quickjs/net/libwebsockets/lib/secure-streams/secure-streams-process.c"
 #include "quickjs/net/libwebsockets/lib/abstract/protocols/smtp/smtp-sequencer.c"
 #include "quickjs/net/libwebsockets/lib/abstract/protocols/smtp/smtp.c"
-//#include "quickjs/net/libwebsockets/lib/abstract/protocols/smtp/private-lib-abstract-protocols-smtp.h"
+//#include
+//"quickjs/net/libwebsockets/lib/abstract/protocols/smtp/private-lib-abstract-protocols-smtp.h"
 #include "quickjs/net/libwebsockets/lib/abstract/abstract.c"
 #include "quickjs/net/libwebsockets/lib/abstract/test-sequencer.c"
 #include "quickjs/net/libwebsockets/lib/abstract/transports/unit-test.c"
@@ -83,7 +84,8 @@
 #include "quickjs/net/libwebsockets/lib/system/dhcpclient/dhcpclient.c"
 #include "quickjs/net/libwebsockets/lib/system/dhcpclient/dhcpc4.c"
 #include "quickjs/net/libwebsockets/lib/system/system.c"
-//#include "quickjs/net/libwebsockets/lib/system/fault-injection/private-lib-system-fault-injection.h"
+//#include
+//"quickjs/net/libwebsockets/lib/system/fault-injection/private-lib-system-fault-injection.h"
 #include "quickjs/net/libwebsockets/lib/system/fault-injection/fault-injection.c"
 //#include "quickjs/net/libwebsockets/lib/roles/h2/huftable.h"
 #include "quickjs/net/libwebsockets/lib/roles/h2/hpack.c"
@@ -115,7 +117,8 @@
 //#include "quickjs/net/libwebsockets/lib/roles/http/lextable.h"
 #include "quickjs/net/libwebsockets/lib/roles/http/cookie.c"
 #include "quickjs/net/libwebsockets/lib/roles/http/compression/brotli/brotli.c"
-//#include "quickjs/net/libwebsockets/lib/roles/http/compression/private-lib-roles-http-compression.h"
+//#include
+//"quickjs/net/libwebsockets/lib/roles/http/compression/private-lib-roles-http-compression.h"
 #include "quickjs/net/libwebsockets/lib/roles/http/compression/deflate/deflate.c"
 #include "quickjs/net/libwebsockets/lib/roles/http/compression/stream.c"
 #include "quickjs/net/libwebsockets/lib/roles/http/header.c"

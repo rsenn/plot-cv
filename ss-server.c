@@ -150,7 +150,11 @@ static lws_ss_state_return_t
 myss_srv_state(void* userobj, void* sh, lws_ss_constate_t state, lws_ss_tx_ordinal_t ack) {
   myss_srv_t* m = (myss_srv_t*)userobj;
 
-  lwsl_user("%s: %p %s, ord 0x%x\n", __func__, m->ss, lws_ss_state_name((int)state), (unsigned int)ack);
+  lwsl_user("%s: %p %s, ord 0x%x\n",
+            __func__,
+            m->ss,
+            lws_ss_state_name((int)state),
+            (unsigned int)ack);
 
   switch(state) {
     case LWSSSCS_DISCONNECTED: lws_sul_cancel(&m->sul); break;
@@ -175,14 +179,16 @@ myss_srv_state(void* userobj, void* sh, lws_ss_constate_t state, lws_ss_tx_ordin
        * ... it's going to be either text/html or multipart ...
        */
       if(multipart) {
-        if(lws_ss_set_metadata(m->ss, "mime", "multipart/form-data; boundary=aBoundaryString", 45))
+        if(lws_ss_set_metadata(
+               m->ss, "mime", "multipart/form-data; boundary=aBoundaryString", 45))
           return LWSSSSRET_DISCONNECT_ME;
       } else if(lws_ss_set_metadata(m->ss, "mime", "text/html", 9))
         return LWSSSSRET_DISCONNECT_ME;
       /*
        * ...it's going to be whatever size it is (and request tx)
        */
-      lws_ss_request_tx_len(m->ss, (unsigned long)(multipart ? strlen(multipart_html) : strlen(html)));
+      lws_ss_request_tx_len(m->ss,
+                            (unsigned long)(multipart ? strlen(multipart_html) : strlen(html)));
       break;
 
     case LWSSSCS_SERVER_UPGRADE:

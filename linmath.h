@@ -35,7 +35,9 @@
       p += b[i] * a[i]; \
     return p; \
   } \
-  LINMATH_H_FUNC float vec##n##_len(vec##n const v) { return sqrtf(vec##n##_mul_inner(v, v)); } \
+  LINMATH_H_FUNC float vec##n##_len(vec##n const v) { \
+    return sqrtf(vec##n##_mul_inner(v, v)); \
+  } \
   LINMATH_H_FUNC void vec##n##_norm(vec##n r, vec##n const v) { \
     float k = 1.f / vec##n##_len(v); \
     vec##n##_scale(r, v, k); \
@@ -265,7 +267,8 @@ mat4x4_invert(mat4x4 T, mat4x4 const M) {
   c[5] = M[2][2] * M[3][3] - M[3][2] * M[2][3];
 
   /* Assumes it is invertible */
-  float idet = 1.0f / (s[0] * c[5] - s[1] * c[4] + s[2] * c[3] + s[3] * c[2] - s[4] * c[1] + s[5] * c[0]);
+  float idet = 1.0f / (s[0] * c[5] - s[1] * c[4] + s[2] * c[3] + s[3] * c[2] - s[4] * c[1] +
+                       s[5] * c[0]);
 
   T[0][0] = (M[1][1] * c[5] - M[1][2] * c[4] + M[1][3] * c[3]) * idet;
   T[0][1] = (-M[0][1] * c[5] + M[0][2] * c[4] - M[0][3] * c[3]) * idet;

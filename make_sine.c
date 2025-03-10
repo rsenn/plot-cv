@@ -87,7 +87,8 @@ main(void) {
     return 1;
   };
 
-  if(sf_write_int(file, buffer, sfinfo.channels * SAMPLE_COUNT) != sfinfo.channels * SAMPLE_COUNT)
+  if(sf_write_int(file, buffer, sfinfo.channels * SAMPLE_COUNT) !=
+     sfinfo.channels * SAMPLE_COUNT)
     puts(sf_strerror(file));
 
   sf_close(file);
