@@ -60,9 +60,9 @@ function CopyObject(obj) {
       if(prop == '__proto__') continue;
       if(typeof prop == 'symbol') continue;
       if(isFunction(obj[prop])) continue;
-    
+
       let v = obj[prop];
-   
+
       if(isObject(v)) {
         v = Object2JSON(v);
 
@@ -283,7 +283,7 @@ async function* TouchPrinter(iter) {
   for await(let event of iter) {
     let n = event.touches?.length;
     let t = [];
-    
+
     for(let i = 0; i < n; i++) {
       const { x, y } = event.touches[i];
       t.push({ x, y });
@@ -313,7 +313,7 @@ function MouseToTouch(event) {
       delete event.type;
       Object.defineProperty(event, 'type', { value: 'touchend', configurable: true, enumerable: true });
       break;
-    
+
     case 'mousedown':
       delete event.type;
       Object.defineProperty(event, 'type', { value: 'touchstart', configurable: true, enumerable: true });
@@ -324,9 +324,8 @@ function MouseToTouch(event) {
       Object.defineProperty(event, 'type', { value: 'touchmove', configurable: true, enumerable: true });
       break;
   }
-  
-  if(!('touches' in event)) 
-    event.touches = [{ clientX: event.clientX, clientY: event.clientY, x: event.x, y: event.y }];
+
+  if(!('touches' in event)) event.touches = [{ clientX: event.clientX, clientY: event.clientY, x: event.x, y: event.y }];
 
   return event;
 }
@@ -362,9 +361,9 @@ async function* TouchIterator(element, t) {
     if(event.cancelable) event.preventDefault();
     event.stopPropagation();
     MouseToTouch(event);
-    
+
     if(event.touches) [...event.touches].forEach(t);
-    
+
     yield event;
 
     if(event.type.endsWith('end')) break;
@@ -567,7 +566,7 @@ function main() {
 
     while(x0 != x1 || y0 != y1) {
       var e2 = 2 * err;
-      
+
       if(e2 > dy * -1) {
         err -= dy;
         x0 += sx;
@@ -577,7 +576,7 @@ function main() {
         err += dx;
         y0 += sy;
       }
-      
+
       yield [x0, y0];
     }
   }
@@ -590,7 +589,7 @@ function main() {
       [0, r, 0],
       [r, r, r],
       [0, r, 0]
-    ]); 
+    ]);
   }
 
   function PutArray(x, y, a) {
@@ -599,9 +598,7 @@ function main() {
     let w = pixels[0].length;
     let h = pixels.length;
 
-    for(let ty = 0; ty < rows; ++ty) 
-      for(let tx = 0; tx < cols; ++tx) 
-        pixels[(y + ty) % h][(x + tx) % w] += a[ty][tx] / 2;
+    for(let ty = 0; ty < rows; ++ty) for (let tx = 0; tx < cols; ++tx) pixels[(y + ty) % h][(x + tx) % w] += a[ty][tx] / 2;
   }
 
   function PutArray2(x, y, a) {
@@ -610,9 +607,7 @@ function main() {
     let w = pixels[0].length;
     let h = pixels.length;
 
-    for(let ty = 0; ty < rows; ++ty) 
-      for(let tx = 0; tx < cols; ++tx) 
-        pixels[(y + ty) % h][(x + tx) % w] = a[ty >> 1][tx >> 1];
+    for(let ty = 0; ty < rows; ++ty) for (let tx = 0; tx < cols; ++tx) pixels[(y + ty) % h][(x + tx) % w] = a[ty >> 1][tx >> 1];
   }
 
   Object.assign(globalThis, { RandomByte });
@@ -622,7 +617,7 @@ function main() {
       console.log('WS connected!');
 
       const { cid } = globalThis;
-      
+
       SendWS({ type: 'hello', cid });
       /*SendWS({ type: 'rects', cid, rects: GetRects() });*/
     }
@@ -644,8 +639,7 @@ function main() {
     for await(let e of streamify(['keydown', 'keyup'], window, { passive: false })) {
       const { type, key, keyCode, repeat, ctrlKey, shiftKey, altKey, metaKey } = (globalThis.keyEvent = e);
 
-      if(!ctrlKey && !altKey && !metaKey) 
-        if(e.cancelable) e.preventDefault();
+      if(!ctrlKey && !altKey && !metaKey) if (e.cancelable) e.preventDefault();
 
       KeyHandler(key);
     }
@@ -658,8 +652,8 @@ function main() {
     const timegen = (() => {
       let t = Date.now();
       let prev = 0;
-   
-     return Object.assign(
+
+      return Object.assign(
         () => {
           let tmp = t;
           t = Date.now() - prev;
@@ -681,30 +675,28 @@ function main() {
 
       for await(let ev of iter) {
         globalThis.movement = ev;
-        
+
         if(gfxRect.inside(ev)) {
           let pt = (globalThis.mousePos = new Point(ev));
           let diff = pt,
             t;
-         
+
           if(prev) diff = pt.diff(prev);
-         
+
           let time = timegen();
           let obj = { ...pt, time };
-         
+
           trail.push(obj);
-         
+
           if(prev) {
-            for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) 
-              drawList.insert({ x, y, time });
-            
+            for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) drawList.insert({ x, y, time });
           } else drawList.insert(obj);
-          
+
           last = t;
-          
+
           try {
           } catch(e) {}
-          
+
           prev = pt;
         }
       }
@@ -715,7 +707,7 @@ function main() {
         if(trail.length) {
           trail[0].time = 0;
           const payload = (globalThis.payload = { type: 'blaze', cid: globalThis.cid, start, trail: [...trail] });
-          
+
           //console.log('SendTrail', payload);
 
           SendWS(payload);
@@ -799,7 +791,7 @@ function Init() {
     );
   };
 
-/*  let svgContainer = (globalThis.svgContainer = Element.create('div', { class: 'overlay' }, document.body));
+  /*  let svgContainer = (globalThis.svgContainer = Element.create('div', { class: 'overlay' }, document.body));
 
   render(h(SVGComponent, { circle: globalThis.circle, points: globalThis.points }), svgContainer);
 
@@ -828,11 +820,12 @@ function ResizeHandler() {
 
   console.log('ResizeHandler', { width, height });
 
-  if(globalThis.svgElement) Element.setCSS(globalThis.svgElement, {
-    width: canvasElement.offsetWidth + 'px',
-    height: canvasElement.offsetHeight + 'px',
-    transform: 'rotate(90deg)'
-  });
+  if(globalThis.svgElement)
+    Element.setCSS(globalThis.svgElement, {
+      width: canvasElement.offsetWidth + 'px',
+      height: canvasElement.offsetHeight + 'px',
+      transform: 'rotate(90deg)'
+    });
 }
 
 function ParseJSON(s) {
@@ -968,9 +961,8 @@ function TargetName(e) {
 function GetRects() {
   let rects = [];
 
-  for(let element of [...AllParents(Element.find('canvas'))]) 
-    rects.push([ElementName(element), Element.rect(element), new Point(element.scrollLeft, element.scrollTop)]);
-  
+  for(let element of [...AllParents(Element.find('canvas'))]) rects.push([ElementName(element), Element.rect(element), new Point(element.scrollLeft, element.scrollTop)]);
+
   rects.push(['window', new Rect(0, 0, window.innerWidth, window.innerHeight), new Point(window.scrollX, window.scrollY)]);
 
   return rects;

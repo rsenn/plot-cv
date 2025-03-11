@@ -233,8 +233,7 @@ export async function ConnectDebugger(address, skipToMain = true, callback) {
           let s = toString(dataBuf);
           let obj = JSON.parse(s);
 
-          if(process.env.DEBUG) console.log('process() read:',obj);
-
+          if(process.env.DEBUG) console.log('process() read:', obj);
 
           const funcName = '\x1b[38;5;208mPROCESS\x1b[0m';
 
@@ -346,18 +345,18 @@ decorate(
         if(!(typeof args[0] == 'string')) args.unshift(globalThis.script);
 
         let [file, breakpoints] = args;
-        
+
         file = absolute(file);
-        
+
         if(types.isPromise(breakpoints)) breakpoints = await breakpoints;
         if(Array.isArray(breakpoints)) breakpoints = breakpoints.map(b => filterKeys(b, ['name', 'line', 'column']));
-        
+
         let ret = await member.call(this, file, breakpoints);
-        
+
         if(ret.path) ret.path = relative(ret.path);
         if(ret?.breakpoints?.path) ret.breakpoints.path = relative(ret.breakpoints.path);
-        
-       // console.log('breakpoints =', ret);
+
+        // console.log('breakpoints =', ret);
 
         return ret;
       },

@@ -58,10 +58,8 @@ trkl.property(globalThis, 'logLevel').subscribe(value => {
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
-    out(
-      (logLevels[level]).padEnd(8) +        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
-    );
-  })
+    out(logLevels[level].padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
+  });
 });
 
 async function AsyncCollect(iter) {
@@ -409,7 +407,7 @@ function main(...args) {
 
     globalThis.out = s => logFile.puts(s + '\n');
 
-    logLevel = (params.debug ? LLL_USER : 0) /*| (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1)*/;
+    logLevel = params.debug ? LLL_USER : 0 /*| (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1)*/;
     console.log('createWS', { logLevel }, createServer);
 
     return createServer({
@@ -1103,17 +1101,17 @@ function main(...args) {
       onMessage(ws, data) {
         const msg = JSON.parse(data);
 
-        console.log('onMessage',msg);
+        console.log('onMessage', msg);
 
         switch (msg.type) {
           case 'uuid':
             break;
 
           default:
-              const result = serv.processMessage(msg);
-              result.type = msg.type;
-              console.log('send', result);
-              ws.send(JSON.stringify(result));
+            const result = serv.processMessage(msg);
+            result.type = msg.type;
+            console.log('send', result);
+            ws.send(JSON.stringify(result));
             break;
         }
       }
