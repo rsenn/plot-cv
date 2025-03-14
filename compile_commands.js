@@ -93,7 +93,7 @@ function main(...arglist) {
   });
   let file = arglist[0] ?? '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-debug/compile_commands.json';
 
-console.log('file', file);
+  console.log('file', file);
 
   let builddir = path.dirname(file);
   let json = fs.readFileSync(file, 'utf-8');
