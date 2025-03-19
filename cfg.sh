@@ -164,6 +164,7 @@ cfg-diet64() {
       CC="diet-gcc" \
       cfg-diet \
       -DCMAKE_SYSTEM_LIBRARY_PATH=/opt/diet/lib-x86_64 \
+      -DCMAKE_INSTALL_LIBDIR=/opt/diet/lib-x86_64 \
       "$@"
   )
 }
@@ -191,6 +192,7 @@ cfg-diet32() {
       PKG_CONFIG_PATH=/opt/diet/lib-i386/pkgconfig:/usr/lib/diet/lib-i386/pkgconfig \
       cfg-diet \
       -DCMAKE_SYSTEM_LIBRARY_PATH=/opt/diet/lib-i386 \
+      -DCMAKE_INSTALL_LIBDIR=/opt/diet/lib-i386 \
       "$@"
   )
 }
