@@ -2,8 +2,7 @@ if(UNIX AND NOT APPLE)
   include(GNUInstallDirs)
 
 elseif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
-  set(CMAKE_INSTALL_LIBDIR "" CACHE PATH
-                                    "Specify the output directory for libraries (default is lib)")
+  set(CMAKE_INSTALL_LIBDIR "" CACHE PATH "Specify the output directory for libraries (default is lib)")
 endif()
 
 if(NOT CMAKE_INSTALL_LIBDIR OR "${CMAKE_INSTALL_LIBDIR}" STREQUAL "lib")
@@ -13,8 +12,7 @@ if(NOT CMAKE_INSTALL_LIBDIR OR "${CMAKE_INSTALL_LIBDIR}" STREQUAL "lib")
     set(HOST_SYSTEM_NAME $ENV{VSCMD_ARG_HOST_ARCH})
     set(SYSTEM_NAME $ENV{VSCMD_ARG_TGT_ARCH})
   else(MSVC OR DEFINED ENV{VSCMD_ARG_TGT_ARCH})
-    execute_process(COMMAND cc -dumpmachine OUTPUT_VARIABLE HOST_SYSTEM_NAME
-                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND cc -dumpmachine OUTPUT_VARIABLE HOST_SYSTEM_NAME OUTPUT_STRIP_TRAILING_WHITESPACE)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpmachine OUTPUT_VARIABLE SYSTEM_NAME
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
   endif(MSVC OR DEFINED ENV{VSCMD_ARG_TGT_ARCH})
