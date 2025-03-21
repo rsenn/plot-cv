@@ -9,7 +9,7 @@ import { extendArray } from 'extendArray';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import Tree from './lib/tree.js';
-import Util from './lib/util.js';
+import { split } from 'util';
 import { Shell, Spawn } from './os-helpers.js';
 import * as Terminal from './terminal.js';
 import { Console } from 'console';
@@ -45,6 +45,30 @@ let libdirs = [
 ];
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
 let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
+
+const traceProxy = (obj, handler) => {
+  let proxy;
+  handler = /*handler || */ function(name, args) {
+    console.log(`Calling method '${name}':`, ...args);
+  };
+  //console.log('handler', { handler }, handler + '');
+  proxy = new Proxy(obj, {
+    get(target, key, receiver) {
+      let member = Reflect.get(obj, key, receiver);
+      if(0 && typeof member == 'function') {
+        let method = member; // member.bind(obj);
+        member = function() {
+          //          handler.call(receiver, key, arguments);
+          return method.apply(obj, arguments);
+        };
+        member = method.bind(obj);
+        console.log('Util.traceProxy', key, (member + '').replace(/\n\s+/g, ' ').split(lineSplit)[0]);
+      }
+      return member;
+    }
+  });
+  return proxy;
+};
 
 const ConcatIterator = iterator => {
   let result,
@@ -506,7 +530,7 @@ function InspectStruct(decl, includes, compiler = 'clang') {
     let lines = output.trim().split('\n');
     let firstLine = lines.shift();
 
-    let [name, size] = [...Util.splitAt(firstLine, [...firstLine].lastIndexOf(' '))];
+    let [name, size] = [...split(firstLine, [...firstLine].lastIndexOf(' '))];
 
     name = name.replace(/^(struct|union|enum)\ /, '');
 
