@@ -167,7 +167,6 @@ function CommandLine() {
       'import module'
     ]
   });
-  repl.inspectOptions = console.options;
   repl.show = value => {
     let first, str;
     if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first)) str = Table(value);
@@ -180,6 +179,9 @@ function CommandLine() {
       });
     std.out.puts(str + '\n');
   };
+
+  repl.loadSaveOptions();
+  repl.inspectOptions ??= console.options;
 
   let debugLog = fs.openSync('debug.log', 'a');
   repl.debugLog = debugLog;
@@ -1121,6 +1123,7 @@ function MakeFFI(node, lib, exp, fp) {
 
 async function ASTShell(...args) {
   let inspectOptions = {
+    depth: 2,
     /*breakLength: 240, */ customInspect: true,
     compact: false,
     depth: Infinity,
@@ -1169,14 +1172,13 @@ async function ASTShell(...args) {
   });
 
   async function Compile(file, ...args) {
-    console.log('Compiling', { file, args });
     let r;
 
     /* if(params.target)
       args.unshift(`--target=${params.target}`);*/
 
     try {
-      r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
+      r = globalThis.r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
     } catch(e) {
       console.log('Compile ERROR:', e.message + '\n' + e.stack);
       return e;
@@ -1202,43 +1204,43 @@ async function ASTShell(...args) {
         : node => node.name == name_or_id && pred(node);
     }
 
-    r,
-      {
-        select(name_or_id, pred = n => true) {
-          return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
-        },
-        getByIdOrName(name_or_id, pred = n => true) {
-          let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
+    define(r, {
+      select(name_or_id, pred = n => true) {
+        return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
+      },
+      getByIdOrName(name_or_id, pred = n => true) {
+        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
 
-          node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
-          node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
-          return node;
-        },
-        getType(name_or_id) {
-          let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
+        node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
+        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
+        return node;
+      },
+      getType(name_or_id) {
+        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
 
-          if(result) {
-            let type = TypeFactory(result, this.data);
-            if(type) result = type;
-          }
-
-          return result;
-        },
-
-        getFunction(name_or_id) {
-          let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
-
-          if(result) return new FunctionDecl(result, this.data);
-        },
-        getVariable(name_or_id) {
-          let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
-
-          if(result) return new VarDecl(result, this.data);
-        },
-        getLoc(node) {
-          return CompleteLocation(node);
+        if(result) {
+          let type = TypeFactory(result, this.data);
+          if(type) result = type;
         }
-      };
+
+        return result;
+      },
+
+      getFunction(name_or_id) {
+        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+
+        if(result) return new FunctionDecl(result, this.data);
+      },
+      getVariable(name_or_id) {
+        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
+
+        if(result) return new VarDecl(result, this.data);
+      },
+      getLoc(node) {
+        return CompleteLocation(node);
+      }
+    });
+
     defineGetter(
       r,
       'tree',

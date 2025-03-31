@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import { read as readBJSON, write as writeBJSON } from 'bjson';
 import { closeSync, readFileSync, statSync, writeFileSync, readSync } from 'fs';
 import { define, error, toString } from './lib/misc.js';
 
@@ -151,16 +152,14 @@ export function WriteJSON(name, data, ...args) {
   return WriteAny(name, JSON.stringify(data, ...args));
 }
 
-export async function ReadBJSON(filename) {
-  const { read } = await import('bjson');
+export function ReadBJSON(filename) {
   let data = readFileSync(filename);
   const { byteLength: size } = data;
-  return read(data, 0, size);
+  return readBJSON(data, 0, size);
 }
 
-export async function WriteBJSON(name, value) {
-  const { write } = await import('bjson');
-  return writeFileSync(name, write(value));
+export function WriteBJSON(name, value) {
+  return writeFileSync(name, writeBJSON(value));
 }
 
 export function* Filter(gen, regEx = /.*/) {
