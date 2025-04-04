@@ -11,7 +11,7 @@ import { Pointer } from './lib/pointer.js';
 import Tree from './lib/tree.js';
 import { split } from 'util';
 import { Shell, Spawn } from './os-helpers.js';
-import * as Terminal from './terminal.js';
+import * as Terminal from 'terminal';
 import { Console } from 'console';
 import { REPL } from 'repl';
 import { inspect } from 'inspect';
@@ -133,9 +133,10 @@ function CommandLine() {
 
   let repl;
   repl = globalThis.repl = new REPL('AST', false);
-  //console.log('repl', repl);
+ console.log('config', config);
 
   let cfg = ReadJSON(config);
+ console.log('cfg', cfg);
 
   if(cfg) Object.assign(console.options, cfg.inspectOptions);
 
@@ -1131,7 +1132,7 @@ async function ASTShell(...args) {
     hideKeys: ['loc', 'range']
   };
 
-  globalThis.console = new Console({ stdout: process.stdout, inspectOptions });
+  globalThis.console = new Console({  inspectOptions });
 
   globalThis.files = files = {};
 
@@ -1411,7 +1412,7 @@ async function ASTShell(...args) {
 let error;
 
 try {
-  const argv = [...(process?.argv ?? scriptArgs)].slice(2);
+  const argv = scriptArgs.slice(1);
   ASTShell(...argv);
 } catch(e) {
   error = e;

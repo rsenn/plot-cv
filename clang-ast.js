@@ -1230,9 +1230,9 @@ export async function AstDump(compiler, source, args, force) {
   let newer;
 
   for(let p of paths) {
-    if(!path.isFile(p)) continue;
+    if(!fs.existsSync(p)) continue;
 
-    let existsAndNotEmpty = path.isFile(p) && fs.sizeSync(p) > 0;
+    let existsAndNotEmpty =  fs.sizeSync(p) > 0;
 
     if(existsAndNotEmpty) newer = Newer(output, ...sources);
 
