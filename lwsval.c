@@ -27,7 +27,6 @@
 #include <linux/random.h>
 #include <zlib.h>
 #include <dns.h>
-#include "quickjs/qjs-net/libwebsockets/include/libwebsockets.h"
 
 static inline int
 escape_char_pred(int c) {

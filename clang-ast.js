@@ -367,6 +367,10 @@ export class Type extends Node {
     return /\[[0-9]*\]$/.test(str);
   }
 
+  isInteger() {
+    return !this.isPointer() &&!this.isCompound() &&!this.isFloatingPoint();
+  }
+
   arrayOf() {
     let typeName = this.trimSubscripts();
     return Type.declarations.get(typeName);
