@@ -58,9 +58,23 @@
 
 /*******************************************************************/
 static void
-PrintSupportedStandardSampleRates(const PaStreamParameters* inputParameters, const PaStreamParameters* outputParameters) {
+PrintSupportedStandardSampleRates(const PaStreamParameters* inputParameters,
+                                  const PaStreamParameters* outputParameters) {
   static double standardSampleRates[] = {
-      8000.0, 9600.0, 11025.0, 12000.0, 16000.0, 22050.0, 24000.0, 32000.0, 44100.0, 48000.0, 88200.0, 96000.0, 192000.0, -1 /* negative terminated  list */
+      8000.0,
+      9600.0,
+      11025.0,
+      12000.0,
+      16000.0,
+      22050.0,
+      24000.0,
+      32000.0,
+      44100.0,
+      48000.0,
+      88200.0,
+      96000.0,
+      192000.0,
+      -1 /* negative terminated  list */
   };
   int i, printCount;
   PaError err;
@@ -167,7 +181,8 @@ main(void) {
     if(Pa_GetHostApiInfo(deviceInfo->hostApi)->type == paASIO) {
       long minLatency, maxLatency, preferredLatency, granularity;
 
-      err = PaAsio_GetAvailableLatencyValues(i, &minLatency, &maxLatency, &preferredLatency, &granularity);
+      err = PaAsio_GetAvailableLatencyValues(
+          i, &minLatency, &maxLatency, &preferredLatency, &granularity);
 
       printf("ASIO minimum buffer size    = %ld\n", minLatency);
       printf("ASIO maximum buffer size    = %ld\n", maxLatency);
@@ -197,17 +212,20 @@ main(void) {
     outputParameters.hostApiSpecificStreamInfo = NULL;
 
     if(inputParameters.channelCount > 0) {
-      printf("Supported standard sample rates\n for half-duplex 16 bit %d channel input = \n", inputParameters.channelCount);
+      printf("Supported standard sample rates\n for half-duplex 16 bit %d channel input = \n",
+             inputParameters.channelCount);
       PrintSupportedStandardSampleRates(&inputParameters, NULL);
     }
 
     if(outputParameters.channelCount > 0) {
-      printf("Supported standard sample rates\n for half-duplex 16 bit %d channel output = \n", outputParameters.channelCount);
+      printf("Supported standard sample rates\n for half-duplex 16 bit %d channel output = \n",
+             outputParameters.channelCount);
       PrintSupportedStandardSampleRates(NULL, &outputParameters);
     }
 
     if(inputParameters.channelCount > 0 && outputParameters.channelCount > 0) {
-      printf("Supported standard sample rates\n for full-duplex 16 bit %d channel input, %d channel output = \n",
+      printf("Supported standard sample rates\n for full-duplex 16 bit %d channel input, %d "
+             "channel output = \n",
              inputParameters.channelCount,
              outputParameters.channelCount);
       PrintSupportedStandardSampleRates(&inputParameters, &outputParameters);

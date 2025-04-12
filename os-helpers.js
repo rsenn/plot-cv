@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import * as fs from 'fs';
 import { close, exec, pipe, waitpid, Worker } from 'os';
-import { btoa, define, properties } from './lib/misc.js';
+import { btoa, define, properties } from 'util';
 import { Repeater } from './lib/repeater/repeater.js';
 import { fdopen, popen } from 'std';
 export { WNOHANG } from 'child_process';
@@ -62,7 +62,7 @@ export function URLWorker(script) {
 export function Spawn(...args) {
   const child = spawn(...args);
 
-  //console.log('child.stdio', child.stdio);
+  console.log('child', child);
 
   //define(child, { get stdin() { return this.stdio[0]; },get stdout() { return this.stdio[1]; },get stderr() { return this.stdio[2]; } });
   define(

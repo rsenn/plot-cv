@@ -11,7 +11,7 @@ import * as Terminal from 'terminal';
 import * as fs from 'fs';
 import { unlink, error, fnmatch } from 'misc';
 import { keys, toString, define, toUnixTime, getOpt, randStr, isObject, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
-import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
+import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, logLevels, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { ReadFile, ReadJSON, WriteFile, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { ExecTool } from './os-helpers.js';
@@ -52,19 +52,15 @@ globalThis.worker = new PromiseWorker(new os.Worker('./upload-worker.js'));
 globalThis.fs = fs;
 globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
 
-trkl.property(globalThis, 'logLevel').subscribe(value =>
+trkl.property(globalThis, 'logLevel').subscribe(value => {
   setLog(value, (level, message) => {
     if(/__lws|serve_(resolved|xgenerator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)) return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
-    //if(params.debug || level <= LLL_WARN)
-    out(
-      (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) +
-        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
-    );
-  })
-);
+    out(logLevels[level].padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
+  });
+});
 
 async function AsyncCollect(iter) {
   let ret = [];
@@ -411,7 +407,7 @@ function main(...args) {
 
     globalThis.out = s => logFile.puts(s + '\n');
 
-    logLevel = (params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1);
+    logLevel = params.debug ? LLL_USER : 0 /*| (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1)*/;
     console.log('createWS', { logLevel }, createServer);
 
     return createServer({
@@ -1088,19 +1084,7 @@ function main(...args) {
     ReadExiftool,
     HeifConvert,
     MagickResize,
-    Directory,
-    net: {
-      createServer,
-      setLog,
-      LLL_USER,
-      LLL_NOTICE,
-      LLL_WARN,
-      LLL_INFO,
-      FormParser,
-      Hash,
-      Response,
-      Socket
-    }
+    Directory
   });
 
   delete globalThis.DEBUG;
@@ -1114,20 +1098,20 @@ function main(...args) {
         os.setWriteHandler(fd, wr);
       },
       onClose(ws, reason) {},
-      async onMessage(ws, data) {
+      onMessage(ws, data) {
         const msg = JSON.parse(data);
+
+        console.log('onMessage', msg);
 
         switch (msg.type) {
           case 'uuid':
             break;
 
           default:
-            try {
-              const result = await serv.processMessage(msg);
-              result.type = msg.type;
-              console.log('send', result);
-              ws.send(JSON.stringify(result));
-            } catch(e) {}
+            const result = serv.processMessage(msg);
+            result.type = msg.type;
+            console.log('send', result);
+            ws.send(JSON.stringify(result));
             break;
         }
       }

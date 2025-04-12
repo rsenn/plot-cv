@@ -122,7 +122,9 @@ main(void) {
   printf("     LL: %g s\n", outputInfo->defaultLowOutputLatency);
   printf("     HL: %g s\n", outputInfo->defaultHighOutputLatency);
 
-  numChannels = inputInfo->maxInputChannels < outputInfo->maxOutputChannels ? inputInfo->maxInputChannels : outputInfo->maxOutputChannels;
+  numChannels = inputInfo->maxInputChannels < outputInfo->maxOutputChannels
+                    ? inputInfo->maxInputChannels
+                    : outputInfo->maxOutputChannels;
   printf("Num channels = %d.\n", numChannels);
 
   inputParameters.channelCount = numChannels;
@@ -137,14 +139,15 @@ main(void) {
 
   /* -- setup -- */
 
-  err = Pa_OpenStream(&stream,
-                      &inputParameters,
-                      &outputParameters,
-                      SAMPLE_RATE,
-                      FRAMES_PER_BUFFER,
-                      paClipOff, /* we won't output out of range samples so don't bother clipping them */
-                      NULL,      /* no callback, use blocking API */
-                      NULL);     /* no callback, so no callback userData */
+  err = Pa_OpenStream(
+      &stream,
+      &inputParameters,
+      &outputParameters,
+      SAMPLE_RATE,
+      FRAMES_PER_BUFFER,
+      paClipOff, /* we won't output out of range samples so don't bother clipping them */
+      NULL,      /* no callback, use blocking API */
+      NULL);     /* no callback, so no callback userData */
   if(err != paNoError)
     goto error2;
 

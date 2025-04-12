@@ -9,11 +9,12 @@ import { extendArray } from 'extendArray';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import Tree from './lib/tree.js';
-import Util from './lib/util.js';
+import { split } from 'util';
 import { Shell, Spawn } from './os-helpers.js';
-import * as Terminal from './terminal.js';
+import * as Terminal from 'terminal';
 import { Console } from 'console';
 import { REPL } from 'repl';
+import { inspect } from 'inspect';
 //import PortableSpawn from './lib/spawn.js';
 
 extendArray(Array.prototype);
@@ -45,28 +46,62 @@ let libdirs = [
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
 let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
 
+const traceProxy = (obj, handler) => {
+  let proxy;
+  handler = /*handler || */ function(name, args) {
+    console.log(`Calling method '${name}':`, ...args);
+  };
+  //console.log('handler', { handler }, handler + '');
+  proxy = new Proxy(obj, {
+    get(target, key, receiver) {
+      let member = Reflect.get(obj, key, receiver);
+      if(0 && typeof member == 'function') {
+        let method = member; // member.bind(obj);
+        member = function() {
+          //          handler.call(receiver, key, arguments);
+          return method.apply(obj, arguments);
+        };
+        member = method.bind(obj);
+        console.log('Util.traceProxy', key, (member + '').replace(/\n\s+/g, ' ').split(lineSplit)[0]);
+      }
+      return member;
+    }
+  });
+  return proxy;
+};
+
+const ConcatIterator = iterator => {
+  let result,
+    s = '';
+
+  if(!('next' in iterator)) {
+    if(Symbol.iterator in iterator) iterator = iterator[Symbol.iterator]();
+  }
+
+  while((result = iterator.next()) && !result.done) {
+    if(s != '') s += '\n';
+    s += result.value;
+  }
+
+  return s;
+};
+
 const StringGenerator =
   gen =>
   (...args) => {
-    let iterator = gen(...args);
+    const iterator = gen(...args);
 
     return Object.assign(iterator, {
       toString() {
-        let result,
-          s = '';
-
-        while((result = iterator.next()) && !result.done) {
-          if(s != '') s += '\n';
-          s += result.value;
-        }
-        return s;
+        return ConcatIterator(this);
       }
     });
   };
 
 async function ImportModule(modulePath, ...args) {
-  let done = false;
-  let moduleName = path.basename(modulePath, '.js');
+  let done = false,
+    moduleName = path.basename(modulePath, '.js');
+
   return await import(modulePath).then(module => {
     done = true;
     module = Object.create(
@@ -98,9 +133,10 @@ function CommandLine() {
 
   let repl;
   repl = globalThis.repl = new REPL('AST', false);
-  //console.log('repl', repl);
+ console.log('config', config);
 
   let cfg = ReadJSON(config);
+ console.log('cfg', cfg);
 
   if(cfg) Object.assign(console.options, cfg.inspectOptions);
 
@@ -132,7 +168,6 @@ function CommandLine() {
       'import module'
     ]
   });
-  repl.inspectOptions = console.options;
   repl.show = value => {
     let first, str;
     if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first)) str = Table(value);
@@ -145,6 +180,9 @@ function CommandLine() {
       });
     std.out.puts(str + '\n');
   };
+
+  repl.loadSaveOptions();
+  repl.inspectOptions ??= console.options;
 
   let debugLog = fs.openSync('debug.log', 'a');
   repl.debugLog = debugLog;
@@ -195,15 +233,13 @@ function* IncludeAll(dir, maxDepth = Infinity, pred = entry => /\.[ch]$/.test(en
 }
 
 function SelectLocations(node) {
-  let result = deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
-  //console.log('result:', console.config({ depth: 1 }), result);
-  return result;
+  return deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
 }
 
 function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
     let file = loc.file ?? (loc.includedFrom && loc.includedFrom.file);
-    //if(file) file = path.relative(file, process.cwd());
+
     if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
     return `${file ? file : ''}@${loc.offset}`;
   }
@@ -229,6 +265,7 @@ function Table(list, pred = (n, l) => true) {
   let keys = ['id', typeKey, 'name'].filter(k => !!k);
   let items = entries.filter(([i, l, n]) => pred(n, l));
   const first = items[0][2];
+
   if(/Function/.test(first[typeKey])) {
     keys = [
       ...keys,
@@ -253,12 +290,14 @@ function Table(list, pred = (n, l) => true) {
   const names = keys.map(k => (typeof k == 'function' ? k.name : k));
   let rows = items.map(([i, l, n]) => Object.fromEntries([['n', i], ...keys.slice(1, -1).map((k, j) => [names[j + 1], (typeof k == 'string' ? n[k] : k(n)) ?? '']), ['location', l]]));
   let sizes = {};
+
   for(let row of rows) {
     for(let [j, i] of names.entries()) {
       const col = row[i] + '';
       if((sizes[i] ?? 0) < col.length) sizes[i] = col.length;
     }
   }
+
   let width = names.reduce((acc, name) => (acc ? acc + 3 + sizes[name] : sizes[name]), 0);
   if(width > repl.termWidth) sizes['Params'] -= width - repl.termWidth;
 
@@ -280,6 +319,7 @@ function Table(list, pred = (n, l) => true) {
       .join(sep ?? ' │ ')
       .trimEnd();
   };
+
   return (
     pad(names) +
     '\n' +
@@ -364,7 +404,9 @@ function ParseStructs(text) {
     let columns = line[1].split(/\s+/g);
 
     if(isNaN(+columns[1])) continue;
+
     let [name] = columns;
+
     if(fields && name[0] == '.') {
       let [, offset, size] = columns;
       fields.push([name, +offset, +size]);
@@ -372,6 +414,7 @@ function ParseStructs(text) {
       structs.push([name, { size: +columns[1], fields: (fields = []) }]);
     }
   }
+
   return new Map(structs);
 }
 
@@ -490,7 +533,7 @@ function InspectStruct(decl, includes, compiler = 'clang') {
     let lines = output.trim().split('\n');
     let firstLine = lines.shift();
 
-    let [name, size] = [...Util.splitAt(firstLine, [...firstLine].lastIndexOf(' '))];
+    let [name, size] = [...split(firstLine, [...firstLine].lastIndexOf(' '))];
 
     name = name.replace(/^(struct|union|enum)\ /, '');
 
@@ -537,22 +580,26 @@ function MakeStructClass(decl, filename) {
 
 function* GenerateStructClass(decl, ffiPrefix = '') {
   let name;
+
   if(decl instanceof TypedefDecl) {
     name = decl.name;
     decl = decl.type;
   }
 
-  let { size, members } = decl;
+  let { size, members = [] } = decl;
   name ??= decl.name;
 
   let className = name.replace(/struct\s*/, '');
+
   yield `class ${className} extends ArrayBuffer {`;
   yield `  constructor(obj = {}) {\n    super(${size});\n    Object.assign(this, obj);\n  }`;
   yield `  get [Symbol.toStringTag]() { return \`[${name} @ \${this} ]\`; }`;
-  let fields = [];
-  let offset = 0;
 
-  console.log('GenerateStructClass', decl);
+  let fields = [],
+    offset = 0;
+
+  console.log('GenerateStructClass', { decl, members });
+
   for(let [name, type] of members) {
     if(/reserved/.test(name)) continue;
 
@@ -561,15 +608,20 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
     let pointer = type.pointer;
 
     yield '';
+
     let subscript = type.subscript ?? '';
+
     yield `  /* ${offset}: ${type}${desugared} ${name}${subscript} */`;
+
     try {
       yield* GenerateGetSet(name, offset, type, ffiPrefix).map(line => `  ${line}`);
     } catch(e) {}
+
     fields.push(name);
 
     offset += RoundTo(type.size, 4);
   }
+
   yield '';
   yield `  static from(address) {\n    let ret = ${ffiPrefix}toArrayBuffer(address, ${offset});\n    return Object.setPrototypeOf(ret, ${className}.prototype);\n  }`;
   yield '';
@@ -584,17 +636,20 @@ function GenerateGetSet(name, offset, type, ffiPrefix) {
   const { size, signed } = type;
   const floating = type.isFloatingPoint();
   const pointer = type.getPointer($.data);
+
   let ctor = ByteLength2TypedArray(size, signed, floating);
   let toHex = v => v;
+
   if(type.isPointer()) toHex = v => `'0x'+${v}.toString(16)`;
 
-  let a = [];
+  const a = [];
 
   if(pointer) {
-    let { name, size, signed, desugared } = pointer;
+    const { name, size, signed, desugared } = pointer;
     a.unshift(`/* ${name}${desugared ? ` (${desugared})` : ''} ${size} ${signed} */`);
     console.log('GenerateStructClass', { pointer });
   }
+
   return [
     ...a,
     `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(
@@ -617,6 +672,7 @@ function ByteLength2TypedArray(byteLength, signed, floating) {
         throw new Error(`Floating point, but ${byteLength} size`);
     }
   }
+
   switch (byteLength) {
     case 1:
       return signed ? 'Int8Array' : 'Uint8Array';
@@ -625,7 +681,7 @@ function ByteLength2TypedArray(byteLength, signed, floating) {
     case 4:
       return signed ? 'Int32Array' : 'Uint32Array';
     case 8:
-      return signed ? 'BigInt64Array' : 'BigUint64Array';
+      return floating ? 'Float64Array' : signed ? 'BigInt64Array' : 'BigUint64Array';
     default:
       return signed ? 'Int8Array' : 'Uint8Array';
   }
@@ -639,7 +695,9 @@ function ByteLength2Value(byteLength, signed, floating) {
 export class FFI_Function {
   constructor(node, prefix = '') {
     const { name, returnType = 'void', parameters = [] } = node;
-    console.log('FFI_Function.constructor', node, { name, parameters });
+
+    //console.log('FFI_Function.constructor', node, { name, parameters });
+
     this.name = name;
     this.prefix = prefix;
     this.returnType = returnType.ffi;
@@ -650,11 +708,17 @@ export class FFI_Function {
     const { prefix, name, returnType, parameters } = this;
     fp ??= (name, lib) => `${prefix}dlsym(${lib ?? 'RTLD_DEFAULT'}, '${name}')`;
     let code = `'${name}', ${fp(name, lib)}, null, '${returnType}'`;
-    console.log('function', colorText(name, 1, 33), 'returnType:', colorText(returnType, 1, 31));
+    const colorText = x => x;
+
+    //console.log('function', colorText(name, 1, 33), 'returnType:', colorText(returnType, 1, 31));
+
     let paramIndex = 0;
+
     for(let [paramName, type] of parameters) {
       ++paramIndex;
+
       //console.log(`param #${paramIndex}`, ...(paramName ? ['name:', paramName] : []), 'type:', type);
+
       code += ', ';
       code += `'${type}'`;
     }
@@ -665,6 +729,7 @@ export class FFI_Function {
     const { prefix, name, returnType, parameters } = this;
     const lines = [];
     const columns = [10, 16];
+
     const push = (...args) =>
       lines.push(
         [...args]
@@ -672,9 +737,10 @@ export class FFI_Function {
           .map((field, col) => field.padEnd(columns[col] ?? 0))
           .join('')
       );
-    push('/**');
 
+    push('/**');
     push(`@function`, `${name}`);
+
     if(parameters.length) push();
 
     let js = type => {
@@ -682,15 +748,13 @@ export class FFI_Function {
       return typeObj ? typeObj.toJS() : type;
     };
 
-    for(let [paramName, type] of parameters) {
-      //console.log(console.config({ breakLength: Infinity }), { paramName, type });
+    for(let [paramName, type] of parameters) push(`@param`, `{${js(type)}}`, paramName);
 
-      push(`@param`, `{${js(type)}}`, paramName);
-    }
     if(returnType != 'void') {
       push();
       push(`@return`, `{${js(returnType)}}`);
     }
+
     return lines.join('\n * ') + '\n */\n';
   }
 
@@ -698,8 +762,10 @@ export class FFI_Function {
     const { prefix, name, returnType, parameters } = this;
     const paramNames = parameters.map(([name, type]) => name);
     let code = `function ${name}(${paramNames.join(', ')}) {\n`;
+
     code += `  ${returnType != 'void' ? 'return ' : ''}${prefix}call('${name}', ${paramNames.join(', ')});\n`;
     code += `}`;
+
     return code;
   }
 
@@ -710,31 +776,37 @@ export class FFI_Function {
   generateFunction(fp, lib) {
     const { prefix, name, returnType, parameters } = this;
     const paramNames = parameters.map(([name, type]) => name);
-    let code = `new Function(${paramNames.map(p => `'${p}'`).join(', ')}, `;
 
+    let code = `new Function(${paramNames.map(p => `'${p}'`).join(', ')}, `;
     code += `'return ${prefix}call("${name}"${paramNames.map(p => `, ${p}`).join('')})');`;
+
     return code;
   }
 
   compileFunction(fp, lib) {
     let code = this.generateCall(fp, lib);
     let fn = new Function(`return ${code}`);
+
     return fn();
   }
 }
 
 function FdReader(fd, bufferSize = 1024) {
   let buf = fs.buffer(bufferSize);
+
   return new Repeater(async (push, stop) => {
     let ret;
+
     do {
       let r = await fs.waitRead(fd);
       ret = fs.read(fd, buf);
+
       if(ret > 0) {
         let data = buf.slice(0, ret);
         await push(fs.bufferToString(data));
       }
     } while(ret == bufferSize);
+
     stop();
     fs.close(fd);
   });
@@ -745,11 +817,14 @@ export async function CommandRead(args) {
     block: false,
     stdio: ['inherit', 'pipe', 'inherit']
   });
-  let output = '';
-  let done = false;
-  let buf = new ArrayBuffer(1024);
+
+  let output = '',
+    done = false,
+    buf = new ArrayBuffer(1024);
+
   if(platform == 'quickjs') {
     let { fd } = child.stdout;
+
     for(;;) {
       1;
       let r;
@@ -757,20 +832,24 @@ export async function CommandRead(args) {
       r = ReadOutput(fd);
       if(r > 0 && r < buf.byteLength) break;
     }
+
     let result = await child.wait();
+
     return output.trimEnd();
   } else {
     AcquireReader(child.stdout, async reader => {
       let r;
-      while((r = await reader.read())) {
-        if(!r.done) errors += r.value.toString();
-      }
+
+      while((r = await reader.read())) if(!r.done) errors += r.value.toString();
     });
   }
+
   function ReadOutput(fd) {
     let buf = new ArrayBuffer(1024);
     let r = os.read(fd, buf, 0, buf.byteLength);
+
     output += fs.bufferToString(buf.slice(0, r));
+
     return r;
   }
 }
@@ -780,10 +859,11 @@ export async function LibraryExports(file) {
 
   let output = await CommandRead(['/opt/diet/bin/objdump', '-T', file]);
   output = output.replace(/.*DYNAMIC SYMBOL TABLE:\s/m, '');
+
   let lines = output.split(/\n/g).filter(line => /\sBase\s/.test(line));
   let columns = colIndexes(lines[0]);
-
   let entries = lines.map(line => colSplit(line, columns).map(column => column.trimEnd()));
+
   entries.sort((a, b) => a[0].localeCompare(b[0]));
 
   return entries.map(entry => entry[entry.length - 1].trimStart());
@@ -796,6 +876,7 @@ function SaveLibraries() {
 function ProcessFile(file, debug = true) {
   const ext = path.extname(file);
   let ret = null;
+
   switch (ext) {
     case '.js':
       ret = ParseECMAScript(file, debug);
@@ -808,13 +889,16 @@ function ProcessFile(file, debug = true) {
       ret = Compile(file /*, debug*/);
       break;
   }
+
   return ret;
 }
 
 function ParseECMAScript(file, params = {}) {
   let data, b, ret;
   const { debug } = params;
+
   if(file == '-') file = '/dev/stdin';
+
   if(file && fs.existsSync(file)) {
     data = ReadFile(file, 'utf8');
     console.log('opened:', file);
@@ -822,11 +906,15 @@ function ParseECMAScript(file, params = {}) {
     file = 'stdin';
     data = source;
   }
+
   console.log('OK, data: ', abbreviate(escape(data)));
+
   if(debug) ECMAScriptParser.instrumentate();
+
   console.log('ECMAScriptParser:', ECMAScriptParser);
 
   let parser, ast, error;
+
   globalThis.parser = parser = null;
   globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
@@ -888,8 +976,7 @@ function PrintCArray(strings) {
     else o += '0';
   }
 
-  /*     +
-    strings.map(str => (typeof str == 'string' && str ? '"' + str + '"' : '""')).map(str => str != '' ? str : '""').join(',\n') +*/
+  /* strings.map(str => (typeof str == 'string' && str ? '"' + str + '"' : '""')).map(str => str != '' ? str : '""').join(',\n') +*/
 
   o += ` });`;
   return `((const char*const []){ ` + o;
@@ -916,59 +1003,64 @@ MemberNames.PROPERTIES = 4;
 
 function GetImports(ast = $.data) {
   const r = [];
-  for(let [n, p] of deep.select($.data, n => (n.type ?? n.kind).startsWith('Import'))) {
-    r.push(n);
-  }
+
+  for(let [n, p] of deep.select($.data, n => (n.type ?? n.kind).startsWith('Import'))) r.push(n);
+
   return r;
 }
 
 function GetIdentifiers(nodes, key = null) {
   const r = [];
-  for(let node of nodes) {
-    for(let n of deep.select(node, (n, k) => (n.type ?? n.kind) == 'Identifier' && (key === null || k == key), deep.RETURN_VALUE)) r.push(n.name);
-  }
+
+  for(let node of nodes) for (let n of deep.select(node, (n, k) => (n.type ?? n.kind) == 'Identifier' && (key === null || k == key), deep.RETURN_VALUE)) r.push(n.name);
+
   return r;
 }
 
 function MemberNames(members, flags = 0) {
   let ret = [];
+
   if(members.members) members = members.members;
+
   if(!Array.isArray(members)) {
     for(let ptr of deep.select(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH).map(path => new Pointer(path))) {
       let ptrs = ptr.chain(2);
+
       console.log('ptrs:', ptrs);
+
       let names = ptrs.map(p => deep.get(members, [...p, 'name'], deep.NO_THROW));
       let kinds = ptrs.map(p => deep.get(members, [...p, 'kind'], deep.NO_THROW));
+
       console.log('kinds:', kinds);
       console.log('names:', names);
+
       ret.push(names.filter(name => name).join('.'));
     }
   } else {
     const memberNamePointers = deep.select(members, n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null, deep.RETURN_VALUE_PATH).map(([node, ptr]) => ptr);
-    //  console.log('memberNamePointers', memberNamePointers);
+    //console.log('memberNamePointers', memberNamePointers);
 
     for(let ptr of memberNamePointers.map(path => new Pointer(path))) {
-      let ptrs = ptr.chain(3);
-      let names = ptrs.map(p => deep.get(members, [...p, 0]));
+      let ptrs = ptr.chain(3),
+        names = ptrs.map(p => deep.get(members, [...p, 0]));
+
       ret.push(names.filter(name => name).join('.'));
     }
   }
-  if(flags & MemberNames.UPPER) {
-    ret = ret.map(name => decamelize(name, '_').toUpperCase());
-  }
+
+  if(flags & MemberNames.UPPER) ret = ret.map(name => decamelize(name, '_').toUpperCase());
+
   return ret;
 }
 
 function UnsetLoc(node, pred = (v, p) => true) {
-  for(let [v, p] of deep.select(node, (v, k) => k == 'loc' || k == 'range', deep.RETURN_VALUE_PATH)) {
-    console.log('UnsetLoc', { v, p });
-    if(pred(deep.get(node, [...p].slice(0, -1)), [...p].last)) deep.unset(node, p);
-  }
+  for(let [v, p] of deep.select(node, (v, k) => k == 'loc' || k == 'range', deep.RETURN_VALUE_PATH)) if(pred(deep.get(node, [...p].slice(0, -1)), [...p].last)) deep.unset(node, p);
+
   return node;
 }
 
 function MakeFFI(node, lib, exp, fp) {
-  if(Array.isArray(node)) {
+  if(Array.isArray(node))
     return (function* () {
       let i = 0;
 
@@ -976,14 +1068,19 @@ function MakeFFI(node, lib, exp, fp) {
 
       if(lib) {
         let libvar = lib.replace(/\.so($|\..*)/g, '').replace(/[^A-Za-z0-9_]/g, '_');
+
         yield `const ${libvar} = dlopen('${lib}', RTLD_NOW);\n`;
+
         lib = libvar;
       }
+
       for(let item of node) {
         let out = '';
-        console.log(`MakeFFI item #${i + 1}/${node.length}`);
+        //console.log(`MakeFFI item #${i + 1}/${node.length}`);
+
         try {
           let ret = MakeFFI(item, lib, exp, fp);
+
           if(typeof ret == 'string' && ret.length > 0) {
             if(out) out += '\n';
             out += ret;
@@ -991,12 +1088,18 @@ function MakeFFI(node, lib, exp, fp) {
         } catch(error) {
           console.log(`ERROR item [${i}]:`, error.message + '\n' + error.stack);
         }
+
         i++;
+
         yield out;
       }
     })();
+
+  try {
+    if(!(node instanceof Node)) node = TypeFactory(node, $.data);
+  } catch(e) {
+    console.error('TypeFactory', e?.message);
   }
-  if(!(node instanceof Node)) node = TypeFactory(node, $.data);
 
   if(typeof node == 'object' && node && node.kind == 'FunctionDecl') node = new FunctionDecl(node);
 
@@ -1011,48 +1114,28 @@ function MakeFFI(node, lib, exp, fp) {
       .replace(/\ {$/, ';');
 
     protoStr = protoStr.replace(/^\s*extern\s+/, '');
+
     return (ffi.generateDoc(fp, lib, exp) ?? `/* ${protoStr} */\n`) + ffi.generate(fp, lib, exp);
   } else if(node instanceof RecordDecl || node instanceof TypedefDecl) {
-    let code = [...GenerateStructClass(node)].join('\n');
-    return code;
+    return GenerateStructClass(node);
+    //return [...GenerateStructClass(node)].join('\n');
   }
 }
 
 async function ASTShell(...args) {
   let inspectOptions = {
+    depth: 2,
     /*breakLength: 240, */ customInspect: true,
     compact: false,
     depth: Infinity,
     maxArrayLength: Infinity,
     hideKeys: ['loc', 'range']
   };
-  globalThis.console = new Console({ stdout: process.stdout, inspectOptions });
 
-  //await PortableSpawn(fn => (spawn = fn));
-
-  /*  await import('bjson').then(module => {
-    const { read, write } = module;
-    globalThis.bjson = { read, write };
-  });
-  console.log('bjson:', globalThis.bjson);*/
-  /*await import('mmap').then(module => {const {mmap, munmap, toString, PROT_READ, PROT_WRITE, PROT_EXEC, PROT_SEM, PROT_NONE, PROT_GROWSDOWN, PROT_GROWSUP, MAP_SHARED, MAP_PRIVATE, MAP_TYPE, MAP_FIXED, MAP_ANONYMOUS, MAP_GROWSDOWN, MAP_DENYWRITE, MAP_EXECUTABLE, MAP_LOCKED, MAP_NORESERVE, MAP_POPULATE, MAP_NONBLOCK, MAP_STACK } = module; globalThis.mmap = {mmap, munmap, toString, PROT_READ, PROT_WRITE, PROT_EXEC, PROT_SEM, PROT_NONE, PROT_GROWSDOWN, PROT_GROWSUP, MAP_SHARED, MAP_PRIVATE, MAP_TYPE, MAP_FIXED, MAP_ANONYMOUS, MAP_GROWSDOWN, MAP_DENYWRITE, MAP_EXECUTABLE, MAP_LOCKED, MAP_NORESERVE, MAP_POPULATE, MAP_NONBLOCK, MAP_STACK }; });
-  console.log('mmap:', globalThis.mmap);
-*/
-  /*  console.options = consoleOptions;
-  console.options.compact = 1;
-  console.options.hideKeys = ['loc', 'range'];*/
-  /*console.options.depth = 2;
-  console.options.compact = 1;*/
+  globalThis.console = new Console({  inspectOptions });
 
   globalThis.files = files = {};
 
-  /*  const platform = getPlatform();
-  if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
-
-  if(platform == 'node') await import('./lib/misc.js').then(module => (globalThis.inspect = module.inspect));
-
-  (await getPlatform()) == 'quickjs' ? import('deep.so').then(module => (globalThis.deep = module)) : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
-*/
   base = path.basename(args[0], '.js').replace(/\.[a-z]*$/, '');
   cmdhist = `.${base}-cmdhistory`;
   config = `.${base}-config`;
@@ -1075,8 +1158,6 @@ async function ASTShell(...args) {
     args
   );
 
-  //console.log('params', params);
-
   defs = params.define || [];
   includes = params.include || [];
   libs = params.libs || [];
@@ -1092,14 +1173,13 @@ async function ASTShell(...args) {
   });
 
   async function Compile(file, ...args) {
-    console.log('Compiling', { file, args });
     let r;
 
     /* if(params.target)
       args.unshift(`--target=${params.target}`);*/
 
     try {
-      r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
+      r = globalThis.r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
     } catch(e) {
       console.log('Compile ERROR:', e.message + '\n' + e.stack);
       return e;
@@ -1115,7 +1195,9 @@ async function ASTShell(...args) {
         let name = name_or_id.substring(idx + 1);
         return node => node.name == name && node.tagUsed == tag;
       }
+
       if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
+
       return name_or_id instanceof RegExp
         ? node => name_or_id.test(node.name) && pred(node)
         : name_or_id.startsWith('0x')
@@ -1123,42 +1205,43 @@ async function ASTShell(...args) {
         : node => node.name == name_or_id && pred(node);
     }
 
-    r,
-      {
-        select(name_or_id, pred = n => true) {
-          return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
-        },
-        getByIdOrName(name_or_id, pred = n => true) {
-          let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
+    define(r, {
+      select(name_or_id, pred = n => true) {
+        return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
+      },
+      getByIdOrName(name_or_id, pred = n => true) {
+        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
 
-          node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
-          node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
-          return node;
-        },
-        getType(name_or_id) {
-          let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
+        node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
+        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
+        return node;
+      },
+      getType(name_or_id) {
+        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
 
-          if(result) {
-            let type = TypeFactory(result, this.data);
-            if(type) result = type;
-          }
-          return result;
-        },
-
-        getFunction(name_or_id) {
-          let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
-
-          if(result) return new FunctionDecl(result, this.data);
-        },
-        getVariable(name_or_id) {
-          let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
-
-          if(result) return new VarDecl(result, this.data);
-        },
-        getLoc(node) {
-          return CompleteLocation(node);
+        if(result) {
+          let type = TypeFactory(result, this.data);
+          if(type) result = type;
         }
-      };
+
+        return result;
+      },
+
+      getFunction(name_or_id) {
+        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+
+        if(result) return new FunctionDecl(result, this.data);
+      },
+      getVariable(name_or_id) {
+        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
+
+        if(result) return new VarDecl(result, this.data);
+      },
+      getLoc(node) {
+        return CompleteLocation(node);
+      }
+    });
+
     defineGetter(
       r,
       'tree',
@@ -1168,10 +1251,7 @@ async function ASTShell(...args) {
       pathOf(needle, maxDepth = 10) {
         if('ast' in needle) needle = needle.ast;
 
-        for(let [node, path] of deep.iterate(r.data, n => typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, maxDepth)) {
-          //console.log("pathOf",console.config({depth:1}),{node,path});
-          if(node === needle) return new Pointer(path);
-        }
+        for(let [node, path] of deep.iterate(r.data, n => typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, maxDepth)) if(node === needle) return new Pointer(path);
       }
     });
   }
@@ -1206,6 +1286,10 @@ async function ASTShell(...args) {
     IncludeAll,
     Terminal,
     PrintAst,
+    ConcatIterator,
+    StringGenerator,
+    ReadFile,
+    WriteFile,
     MakeFFI,
     ParseECMAScript,
     PrintECMAScript,
@@ -1221,16 +1305,19 @@ async function ASTShell(...args) {
   });
 
   Pointer.prototype.chain = function(step, limit = Infinity) {
-    let ptr = this;
-    let ret = [];
-    let len = ptr.length;
+    let ptr = this,
+      ret = [],
+      len = ptr.length;
+
     for(;;) {
       if(ret.length >= limit) break;
       ret.unshift(ptr);
+
       len -= step;
       if(len <= 0) break;
       ptr = ptr.slice(0, -step);
     }
+
     return ret;
   };
 
@@ -1291,22 +1378,25 @@ async function ASTShell(...args) {
       return printer.print(node);
     };
   });
+
   console.log('Loading history');
 
   const unithist = `.${base}-unithistory`;
-  let items = [];
-  let hist = ReadJSON(unithist) || [];
+  let items = [],
+    hist = ReadJSON(unithist) || [];
 
   console.log('Loading sources:' + sources.map(s => ' ' + s).join(','));
 
   globalThis['_'] = items;
 
   for(let source of sources) {
-    let item;
-    item = await ProcessFile(source);
+    let item = await ProcessFile(source);
+
     globalThis['$'] = item;
-    /*    if(/\.js$/.test(source)) item = ParseECMAScript(source);
+
+    /*if(/\.js$/.test(source)) item = ParseECMAScript(source);
     else item = await Compile(source);*/
+
     if(item) {
       pushUnique(hist, [...flags, source]);
       items.push(item);
@@ -1320,8 +1410,9 @@ async function ASTShell(...args) {
 }
 
 let error;
+
 try {
-  const argv = [...(process?.argv ?? scriptArgs)].slice(2);
+  const argv = scriptArgs.slice(1);
   ASTShell(...argv);
 } catch(e) {
   error = e;

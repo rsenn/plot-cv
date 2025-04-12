@@ -51,16 +51,26 @@ main() {
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, rw, rh);
   glGenFramebuffers(1, &RenderRelatedIds[NORMAL_FBO]);
   glBindFramebuffer(GL_FRAMEBUFFER, RenderRelatedIds[NORMAL_FBO]);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RenderRelatedIds[NORMAL_TEXTURE], 0);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, RenderRelatedIds[NORMAL_COLOR_RBO]);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderRelatedIds[NORMAL_DEPTH_RBO]);
+  glFramebufferTexture2D(
+      GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RenderRelatedIds[NORMAL_TEXTURE], 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+                            GL_COLOR_ATTACHMENT0,
+                            GL_RENDERBUFFER,
+                            RenderRelatedIds[NORMAL_COLOR_RBO]);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+                            GL_DEPTH_ATTACHMENT,
+                            GL_RENDERBUFFER,
+                            RenderRelatedIds[NORMAL_DEPTH_RBO]);
   {
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER); // Check the FBO is ready.
     glViewport(0, 0, rw, rh);
     void* data = 0;
     glReadPixels(0, 0, rw, rh, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, 100, 100); // width(), height() are functions returning the actual window size.
+    glViewport(0,
+               0,
+               100,
+               100); // width(), height() are functions returning the actual window size.
     glDeleteFramebuffers(1, &RenderRelatedIds[NORMAL_FBO]);
     glDeleteFramebuffers(1, &RenderRelatedIds[NORMAL_COLOR_RBO]);
     glDeleteFramebuffers(1, &RenderRelatedIds[NORMAL_DEPTH_RBO]);

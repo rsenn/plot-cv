@@ -59,7 +59,8 @@ extern uint_t force_overwrite;
 // functions defined in utils.c
 extern void examples_common_init(int argc, char** argv);
 extern void examples_common_del(void);
-extern void examples_common_process(aubio_process_func_t process_func, aubio_print_func_t print);
+extern void examples_common_process(aubio_process_func_t process_func,
+                                    aubio_print_func_t print);
 int parse_args(int argc, char** argv);
 
 // internal stuff
@@ -253,7 +254,9 @@ parse_args(int argc, char** argv) {
       case 'm': /* mix_input flag */ mix_input = 1; break;
       case '?': /* unknown options */ usage(stderr, 1); break;
       case -1: /* done with options */ break;
-      default: /*something else unexpected */ fprintf(stderr, "Error parsing option '%c'\n", next_option); abort();
+      default: /*something else unexpected */
+        fprintf(stderr, "Error parsing option '%c'\n", next_option);
+        abort();
     }
   } while(next_option != -1);
 #else  /* HAVE_GETOPT_H */

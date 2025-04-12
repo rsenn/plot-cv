@@ -96,21 +96,17 @@ if(HAVE_LIBDL)
   # message("Found dlfcn library: ${LIBDL}")
 endif(HAVE_LIBDL)
 
-set(CMAKE_INSTALL_RPATH
-    "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib/quickjs")
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib/quickjs")
 set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR}")
 
 check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
 
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE
-    CACHE BOOL "Build installable binaries with -Wl,-rpath=PREFIX" FORCE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE
-    CACHE BOOL "Add dirs in runtime search path to the install rpath" FORCE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE BOOL "Build installable binaries with -Wl,-rpath=PREFIX" FORCE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE CACHE BOOL "Add dirs in runtime search path to the install rpath" FORCE)
 
 include_directories(
-  ${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv
-  ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
+  ${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
 if(NOT CXX_STANDARD_FLAG)
   foreach(CXX_STANDARD c++17 c++14 c++11)
@@ -209,8 +205,7 @@ if(OPT_C_OPT_NONE)
 endif(OPT_C_OPT_NONE)
 if(OPT_CXX_OPT_NONE)
   if(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-O0")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0" CACHE STRING "C++ compiler options"
-                                                                   FORCE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0" CACHE STRING "C++ compiler options" FORCE)
   endif(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-O0")
 endif(OPT_CXX_OPT_NONE)
 
@@ -223,8 +218,7 @@ if(OPT_C_G_GDB)
 endif(OPT_C_G_GDB)
 if(OPT_CXX_G_GDB)
   if(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-ggdb")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb" CACHE STRING "C++ compiler options"
-                                                                     FORCE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb" CACHE STRING "C++ compiler options" FORCE)
   endif(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-ggdb")
 endif(OPT_CXX_G_GDB)
 
@@ -361,10 +355,8 @@ if(BUILD_CLI)
   )
 
   target_compile_definitions(
-    cli
-    PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}"
-            CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE
-            ${PLOTCV_DEFS})
+    cli PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM
+                CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
   target_link_libraries(cli ${QUICKJS_OPENCV_A})
   target_link_libraries(cli ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY})
 
@@ -415,9 +407,6 @@ add_custom_target(
   BYPRODUCTS "${CMAKE_INSTALL_DIR}"
   COMMENT "Install into directory")
 
-install(
-  FILES meriyah.js eagle2gerber.js xml2react.js convert-imports.js create-tamper.js cv-shell.js
-        eagle2svg.js eagle-shell.js extract-structs.js takephoto.js xml2js.js
-  DESTINATION bin
-  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ
-              WORLD_EXECUTE)
+install(FILES meriyah.js eagle2gerber.js xml2react.js convert-imports.js create-tamper.js cv-shell.js eagle2svg.js
+              eagle-shell.js extract-structs.js takephoto.js xml2js.js DESTINATION bin
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)

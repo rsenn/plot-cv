@@ -1,11 +1,22 @@
 import Alea from './lib/alea.js';
 import { repeat } from './lib/misc.js';
+import { eq, tests } from './lib/tinytest.js';
 
-let rng = new Alea(1337);
+function log(arg) {
+  console.log('result:', [...arg]);
+}
 
-console.log(repeat(10, rng));
-console.log(repeat(10, rng.fract53));
-console.log(repeat(10, rng.uint32));
-console.log(repeat(10, rng.int32));
-console.log(repeat(10, rng.signed));
-console.log(repeat(10, rng.color));
+const x = {
+  alea() {
+    let rng = new Alea(1337);
+
+    log(repeat(10, rng));
+    log(repeat(10, rng.fract53));
+    log(repeat(10, rng.uint32));
+    log(repeat(10, rng.int32));
+    log(repeat(10, rng.signed));
+    log(repeat(10, rng.color));
+  }
+};
+
+x.alea();

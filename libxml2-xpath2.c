@@ -4,9 +4,9 @@
  *              said elements and save the resulting document.
  * purpose: 	Shows how to make a full round-trip from a load/edit/save
  * usage:	xpath2 <xml-file> <xpath-expr> <new-value>
- * test:	xpath2 test3.xml '//discarded' discarded > xpath2.tmp && diff xpath2.tmp $(srcdir)/xpath2.res
- * author: 	Aleksey Sanin and Daniel Veillard
- * copy: 	see Copyright for the status of this software.
+ * test:	xpath2 test3.xml '//discarded' discarded > xpath2.tmp && diff xpath2.tmp
+ * $(srcdir)/xpath2.res author: 	Aleksey Sanin and Daniel Veillard copy: 	see Copyright for
+ * the status of this software.
  */
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,7 +18,8 @@
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
 
-#if defined(LIBXML_XPATH_ENABLED) && defined(LIBXML_SAX1_ENABLED) && defined(LIBXML_OUTPUT_ENABLED)
+#if defined(LIBXML_XPATH_ENABLED) && defined(LIBXML_SAX1_ENABLED) && \
+    defined(LIBXML_OUTPUT_ENABLED)
 
 static void usage(const char* name);
 static int example4(const char* filename, const xmlChar* xpathExpr, const xmlChar* value);

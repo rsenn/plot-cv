@@ -145,7 +145,7 @@ get_prototypes() {
     add_arg -q
     CPROTO_REDIR="2>/dev/null"
   fi
-  CPROTO_CMD="cproto \$CPROTO_ARGS -D__restrict= -D__THROW= -D_Noreturn= -D__{value,x,y}= -p \"\$@\" $CPROTO_REDIR | sed \"\\|^/|d ;; $EXPR\""
+  CPROTO_CMD="cproto \$CPROTO_ARGS -D__restrict= -D__THROW= -D_Noreturn= -D__{value,x,y}= -p \"\$@\" $CPROTO_REDIR | sed \"\\|^/|d ;; s|\b_Bool\b|bool|g ;; $EXPR\""
   if [ "$DEBUG" = true ]; then
     eval "echo \"Command:\" $CPROTO_CMD 1>&2"
   fi

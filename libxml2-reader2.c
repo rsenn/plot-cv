@@ -33,7 +33,12 @@ processNode(xmlTextReaderPtr reader) {
 
   value = xmlTextReaderConstValue(reader);
 
-  printf("%d %d %s %d %d", xmlTextReaderDepth(reader), xmlTextReaderNodeType(reader), name, xmlTextReaderIsEmptyElement(reader), xmlTextReaderHasValue(reader));
+  printf("%d %d %s %d %d",
+         xmlTextReaderDepth(reader),
+         xmlTextReaderNodeType(reader),
+         name,
+         xmlTextReaderIsEmptyElement(reader),
+         xmlTextReaderHasValue(reader));
   if(value == NULL)
     printf("\n");
   else {

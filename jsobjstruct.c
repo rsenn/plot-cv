@@ -34,10 +34,10 @@ struct JSObject {
       union {
         struct {
           uint8_t extensible : 1;
-          uint8_t free_mark : 1;            /* only used when freeing objects with cycles */
-          uint8_t is_exotic : 1;            /* TRUE if object has exotic property handlers */
-          uint8_t fast_array : 1;           /* TRUE if u.array is used for get/put (for JS_CLASS_ARRAY,
-                                               JS_CLASS_ARGUMENTS and typed arrays) */
+          uint8_t free_mark : 1;  /* only used when freeing objects with cycles */
+          uint8_t is_exotic : 1;  /* TRUE if object has exotic property handlers */
+          uint8_t fast_array : 1; /* TRUE if u.array is used for get/put (for JS_CLASS_ARRAY,
+                                     JS_CLASS_ARGUMENTS and typed arrays) */
           uint8_t is_constructor : 1;       /* TRUE if object is a constructor function */
           uint8_t is_uncatchable_error : 1; /* if TRUE, error is not catchable */
           uint8_t tmp_mark : 1;             /* used in JS_WriteObjectRec() */
@@ -58,9 +58,13 @@ main() {
   int32_t idx = -2;
   uint32_t len = 100;
 
-  printf("JSObject.__gc_ref_count %lu %lu\n", offsetof(struct JSObject, __gc_ref_count), sizeof(obj.__gc_ref_count));
+  printf("JSObject.__gc_ref_count %lu %lu\n",
+         offsetof(struct JSObject, __gc_ref_count),
+         sizeof(obj.__gc_ref_count));
   printf("JSObject.__flags %lu %lu\n", offsetof(struct JSObject, __flags), sizeof(obj.__flags));
-  printf("JSObject.class_id %lu %lu\n", offsetof(struct JSObject, class_id), sizeof(obj.class_id));
+  printf("JSObject.class_id %lu %lu\n",
+         offsetof(struct JSObject, class_id),
+         sizeof(obj.class_id));
   printf("JSObject.__flags.byte %02x\n", obj.__flags.byte);
   printf("idx %% len = %i\n", idx % (int32_t)len);
 }

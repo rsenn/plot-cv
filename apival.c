@@ -540,7 +540,8 @@ main() {
   printf("WSI_TOKEN_HTTP_COLON_STATUS = 0o%o\n", WSI_TOKEN_HTTP_COLON_STATUS);
   printf("WSI_TOKEN_HTTP_ACCEPT_CHARSET = 0o%o\n", WSI_TOKEN_HTTP_ACCEPT_CHARSET);
   printf("WSI_TOKEN_HTTP_ACCEPT_RANGES = 0o%o\n", WSI_TOKEN_HTTP_ACCEPT_RANGES);
-  printf("WSI_TOKEN_HTTP_ACCESS_CONTROL_ALLOW_ORIGIN = 0o%o\n", WSI_TOKEN_HTTP_ACCESS_CONTROL_ALLOW_ORIGIN);
+  printf("WSI_TOKEN_HTTP_ACCESS_CONTROL_ALLOW_ORIGIN = 0o%o\n",
+         WSI_TOKEN_HTTP_ACCESS_CONTROL_ALLOW_ORIGIN);
   printf("WSI_TOKEN_HTTP_AGE = 0o%o\n", WSI_TOKEN_HTTP_AGE);
   printf("WSI_TOKEN_HTTP_ALLOW = 0o%o\n", WSI_TOKEN_HTTP_ALLOW);
   printf("WSI_TOKEN_HTTP_CONTENT_DISPOSITION = 0o%o\n", WSI_TOKEN_HTTP_CONTENT_DISPOSITION);
@@ -565,7 +566,8 @@ main() {
   printf("WSI_TOKEN_HTTP_RETRY_AFTER = 0o%o\n", WSI_TOKEN_HTTP_RETRY_AFTER);
   printf("WSI_TOKEN_HTTP_SERVER = 0o%o\n", WSI_TOKEN_HTTP_SERVER);
   printf("WSI_TOKEN_HTTP_SET_COOKIE = 0o%o\n", WSI_TOKEN_HTTP_SET_COOKIE);
-  printf("WSI_TOKEN_HTTP_STRICT_TRANSPORT_SECURITY = 0o%o\n", WSI_TOKEN_HTTP_STRICT_TRANSPORT_SECURITY);
+  printf("WSI_TOKEN_HTTP_STRICT_TRANSPORT_SECURITY = 0o%o\n",
+         WSI_TOKEN_HTTP_STRICT_TRANSPORT_SECURITY);
   printf("WSI_TOKEN_HTTP_TRANSFER_ENCODING = 0o%o\n", WSI_TOKEN_HTTP_TRANSFER_ENCODING);
   printf("WSI_TOKEN_HTTP_USER_AGENT = 0o%o\n", WSI_TOKEN_HTTP_USER_AGENT);
   printf("WSI_TOKEN_HTTP_VARY = 0o%o\n", WSI_TOKEN_HTTP_VARY);
@@ -670,7 +672,8 @@ main() {
          "import REPL from 'repl';\n"
          "import fs from 'fs';\n"
          "const history = '%s/.%s_history';\n"
-         "globalThis.repl = new REPL((__filename ?? '%s').replace(/.*\\//g, '').replace(/\\.js$/g, ''), false);\n"
+         "globalThis.repl = new REPL((__filename ?? '%s').replace(/.*\\//g, "
+         "'').replace(/\\.js$/g, ''), false);\n"
          "repl.loadSaveOptions();\n"
          "repl.historyLoad(null, fs);\n"
          "repl.directives = { i: [\n"

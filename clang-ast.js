@@ -1,11 +1,13 @@
 import * as fs from 'fs';
-import { ReadFile, WriteBJSON } from './io-helpers.js';
+import { ReadFile, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import * as deep from './lib/deep.js';
 import { assert, bits, className, define, entries, errors, filter, isArray, isFunction, isObject, isString, keys, lazyProperties, matchAll, memoize, predicate, range, repeat, split, toString, types, unique, values, weakDefine } from './lib/misc.js';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import { Spawn } from './os-helpers.js';
 import { countSubstring } from './string-helpers.js';
+import { inspect } from 'inspect';
+import { readObject } from 'util';
 
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
@@ -281,8 +283,9 @@ export class Type extends Node {
     }
 
     if(node instanceof Node) {
-      //console.log('node', className(node), node);
-      putStack();
+      return node;
+      console.log('node', className(node), node);
+
       throw new Error();
     }
 
@@ -362,6 +365,10 @@ export class Type extends Node {
   isArray() {
     let str = this + '';
     return /\[[0-9]*\]$/.test(str);
+  }
+
+  isInteger() {
+    return !this.isPointer() &&!this.isCompound() &&!this.isFloatingPoint();
   }
 
   arrayOf() {
@@ -1054,7 +1061,7 @@ export function TypeFactory(node, ast, cache = true) {
   // console.log('TypeFactory:', { node });
 
   assert(
-    node.kind,
+    node?.kind,
     `Not an AST node: ${inspect(node, {
       colors: false,
       compact: 0,
@@ -1112,7 +1119,7 @@ export function TypeFactory(node, ast, cache = true) {
 }
 
 export async function SpawnCompiler(compiler, input, outfile, args = []) {
-  //console.log(`SpawnCompiler`, { compiler, input, outfile, args });
+  console.log(`SpawnCompiler`, new Error().stack.split(/\n/g).slice(0, 2));
 
   let base = path.basename(input, path.extname(input));
 
@@ -1148,6 +1155,7 @@ export async function SpawnCompiler(compiler, input, outfile, args = []) {
   let pid = await child.wait();
 
   let { exitcode, termsig, exited, signaled, stopped, continued } = child;
+  console.log('SpawnCompiler', console.config({ compact: true }), { pid, exited, exitcode });
 
   done = true;
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
@@ -1219,27 +1227,38 @@ export async function AstDump(compiler, source, args, force) {
   compiler ??= 'clang';
   // console.log('AstDump', { compiler, source, args, force });
   let output = path.basename(source, path.extname(source)) + '.ast.json';
+  let bjson = path.basename(output, '.json') + '.bjson';
+  const paths = [output, bjson];
   let r;
   let sources = await SourceDependencies(compiler, source, args);
   let newer;
-  let existsAndNotEmpty = fs.existsSync(output) && fs.sizeSync(output) > 0;
 
-  if(existsAndNotEmpty) newer = Newer(output, ...sources);
+  for(let p of paths) {
+    if(!fs.existsSync(p)) continue;
+
+    let existsAndNotEmpty =  fs.sizeSync(p) > 0;
+
+    if(existsAndNotEmpty) newer = Newer(output, ...sources);
+
+    if(newer) output = p;
+  }
 
   //console.log('AstDump', console.config({compact: true }), { output });
 
-  if(!force && existsAndNotEmpty && newer) {
+  if(!force && newer) {
     console.log(`Loading cached '${output}'...`);
   } else {
-    //console.log(`Compiling '${source}' to '${output}'...`);
+    console.log(`Compiling '${source}' to '${output}'...`);
 
     try {
       if(fs.existsSync(output)) fs.unlinkSync(output);
     } catch(e) {}
 
-    console.log(`Compiling...`, console.config({ compact: true }), { source, compiler });
+    console.log(`Compiling...`, console.config({ compact: Infinity, depth: 0 }), { source, compiler });
 
-    let { exitcode, errors, ...result } = await SpawnCompiler(compiler, source, output, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
+    const child = await SpawnCompiler(compiler, source, paths[0], ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
+
+    let { exitcode, errors, ...result } = child;
 
     //console.log(`Compiling '${source}'...`, console.config({compact: true }), { output, exitcode, ...result });
   }
@@ -1252,15 +1271,16 @@ export async function AstDump(compiler, source, args, force) {
       return fs.stat(output)?.size;
     },
     json() {
-      console.log(`r.json`, this.file);
+      const binary = /\.bjson$/i.test(this.file);
+      console.log('json()', this.file, { binary });
 
-      let json = fs.readFileSync(this.file, 'utf-8');
-      return json;
+      return binary ? ReadBJSON(this.file, null) : JSON.parse(fs.readFileSync(this.file, 'utf-8'));
     },
     data() {
-      let data = JSON.parse(this.json);
+      let data = this.json;
       let file;
       let maxDepth = 0;
+
       for(let node of data.inner) {
         let range;
 
@@ -1276,7 +1296,10 @@ export async function AstDump(compiler, source, args, force) {
         SetFile(node.range?.begin);
         SetFile(node.range?.end);
       }
-      WriteBJSON(this.file.replace('.json', '.bjson'), data);
+      if(!/\.bjson$/i.test(this.file)) {
+        console.log(`Writing '${bjson}'...`);
+        WriteBJSON(bjson, data);
+      }
       return data;
     },
     files() {
@@ -1510,7 +1533,7 @@ export function NodePrinter(ast) {
     printer.nodePrinter.ast ??= printer.ast;
 
     //  console.log('printer()', inspect({ node }, { depth: 1 }));
-    printer.print(node);
+    console.log(printer.print(node));
 
     return printer;
   };
@@ -1538,22 +1561,23 @@ export function NodePrinter(ast) {
 
         let success = fn.call(this.nodePrinter, node, this.ast);
 
-        let { loc } = node;
-        //  let location = new Location(node);
-
-        if(loc?.line !== undefined) {
-          const { line, column } = loc;
-          this.loc = {
-            line,
-            column,
-            toString() {
-              return [line, column].filter(i => i).join(':');
-            }
-          };
-        }
         if(out.length == oldlen) {
           console.log(`printer error at ${loc}`, node);
           throw (this.error = new NodeError(`Node printer for ${node.kind} (${this.loc}) failed\n`, node));
+          this.nodePrinter.errorNode = node;
+
+          let { loc } = node;
+
+          if(loc?.line !== undefined) {
+            const { line, column } = loc;
+            this.loc = {
+              line,
+              column,
+              toString() {
+                return [line, column].filter(i => i).join(':');
+              }
+            };
+          }
         }
         // else console.log('out:', out);
         return out;
@@ -1834,11 +1858,18 @@ export function NodePrinter(ast) {
         }
         GotoStmt(goto_stmt) {
           const { targetLabelDeclId } = goto_stmt;
+          try {
+            let target = deep.find(this.ast ?? this, n => typeof n == 'object' && n && n.declId == targetLabelDeclId)[0];
+            const { name } = target;
 
-          let target = deep.find(this.ast, n => typeof n == 'object' && n && n.declId == targetLabelDeclId)?.value;
-          const { name } = target;
+            put(`goto ${name}`);
+          } catch(e) {
+            console.log('GotoStmt', { goto_stmt });
+            globalThis.goto_stmt = goto_stmt;
 
-          put(`goto ${name}`);
+            startInteractive();
+            throw e;
+          }
         }
         HTMLEndTagComment(html_end_tag_comment) {
           const { name } = html_end_tag_comment;
@@ -1855,11 +1886,15 @@ export function NodePrinter(ast) {
           put(`>`);
         }
         IfStmt(if_stmt) {
-          let [cond, body] = if_stmt.inner;
+          let [cond, body, alt] = if_stmt.inner;
           put(`if(`);
           printer.print(cond);
           put(`) `);
           printer.print(body);
+          if(alt) {
+            put(` else `);
+            printer.print(alt);
+          }
         }
         ImplicitCastExpr(implicit_cast_expr) {
           for(let inner of implicit_cast_expr.inner) printer.print(inner);
@@ -2098,7 +2133,13 @@ export function NodePrinter(ast) {
         ClassTemplatePartialSpecializationDecl(class_template_partial_specialization_decl) {}
         ClassTemplateSpecializationDecl(class_template_specialization_decl) {}
         ComplexType(complex_type) {}
-        CompoundLiteralExpr(compound_literal_expr) {}
+        CompoundLiteralExpr(compound_literal_expr) {
+          const { type } = compound_literal_expr;
+
+          if(type.qualType) put(`(${type.qualType})`);
+
+          printer.print(compound_literal_expr.inner[0]);
+        }
         ConstantArrayType(constant_array_type) {}
         ConstructorUsingShadowDecl(constructor_using_shadow_decl) {}
         ConvertVectorExpr(convert_vector_expr) {}
@@ -2165,7 +2206,11 @@ export function NodePrinter(ast) {
         ParenType(paren_type) {}
         PointerAttr(pointer_attr) {}
         PointerType(pointer_type) {}
-        PredefinedExpr(predefined_expr) {}
+        PredefinedExpr(predefined_expr) {
+          const { name } = predefined_expr;
+
+          put(name);
+        }
         QualType(qual_type) {}
         RecordType(record_type) {}
         ReturnsNonNullAttr(returns_non_null_attr) {}
@@ -2174,7 +2219,9 @@ export function NodePrinter(ast) {
         ShuffleVectorExpr(shuffle_vector_expr) {}
         SizeOfPackExpr(size_of_pack_expr) {}
         StaticAssertDecl(static_assert_decl) {}
-        StmtExpr(stmt_expr) {}
+        StmtExpr(stmt_expr) {
+          printer.print(stmt_expr.inner[0]);
+        }
         SubstNonTypeTemplateParmExpr(subst_non_type_template_parm_expr) {}
         SubstTemplateTypeParmType(subst_template_type_parm_type) {}
         TargetAttr(target_attr) {}
