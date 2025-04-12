@@ -368,7 +368,7 @@ export class Type extends Node {
   }
 
   isInteger() {
-    return !this.isPointer() &&!this.isCompound() &&!this.isFloatingPoint();
+    return !this.isPointer() && !this.isCompound() && !this.isFloatingPoint();
   }
 
   arrayOf() {
@@ -1236,7 +1236,7 @@ export async function AstDump(compiler, source, args, force) {
   for(let p of paths) {
     if(!fs.existsSync(p)) continue;
 
-    let existsAndNotEmpty =  fs.sizeSync(p) > 0;
+    let existsAndNotEmpty = fs.sizeSync(p) > 0;
 
     if(existsAndNotEmpty) newer = Newer(output, ...sources);
 
