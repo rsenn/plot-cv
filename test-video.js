@@ -550,12 +550,11 @@ function main(...args) {
           break;
         }
         default: {
-          if(keyCode !== undefined && key != -1)
-            log.info('unhandled', console.config({ compact: 2, numberBase: 16 }), {
-              key,
-              keyCode,
-              modifiers
-            });
+          if(keyCode !== undefined && key != -1) {
+            //log.info('unhandled', console.config({ compact: 2, numberBase: 16 }), { key, keyCode, modifiers });
+            //
+
+          }
           break;
         }
       }

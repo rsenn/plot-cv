@@ -32,6 +32,30 @@
 	"buffers":
 	[
 		{
+			"contents": "Package Control Messages\n========================\n\n\nMarkdownEditing\n---------------\n\n  # MarkdownEditing 3.1.14 Changelog\n  \n  Your _MarkdownEditing_ plugin is updated. Enjoy new version. For any type of\n  feedback you can use [GitHub issues][issues].\n  \n  ## Bug Fixes\n  \n  * improve code span patterns in table cells\n  * Fix Terraform syntax highlighting in fenced code blocks (#765)\n  * add missing language tag names to detect fenced code block syntaxes\n  \n  ## New Features\n  \n  * syntax highlighting for `==highlight==` emphasis (#764)\n  * syntax highlighting for Groovy in fenced code blocks (#768)\n  \n  ## Changes\n  \n  [issues]: https://github.com/SublimeText-Markdown/MarkdownEditing/issues\n\n  # MarkdownEditing 3.1.13 Changelog\n  \n  Your _MarkdownEditing_ plugin is updated. Enjoy new version. For any type of\n  feedback you can use [GitHub issues][issues].\n  \n  ## Bug Fixes\n  \n  - fix premature block quote termination\n  - fix extra backticks when creating fenced code blocks (#749)\n  - fix syntax highlighting of single backticks and code-spans in table cells\n  \n  ## New Features\n  \n  - syntax highlighting for LaTeX in fenced code blocks\n  \n  ## Changes\n  \n  [issues]: https://github.com/SublimeText-Markdown/MarkdownEditing/issues\n",
+			"settings":
+			{
+				"buffer_size": 1247,
+				"line_ending": "Unix",
+				"name": "Package Control Messages",
+				"read_only": true,
+				"scratch": true
+			},
+			"undo_stack":
+			[
+				[
+					1,
+					1,
+					"package_control_message",
+					{
+						"message": "\n\nMarkdownEditing\n---------------\n\n  # MarkdownEditing 3.1.14 Changelog\n  \n  Your _MarkdownEditing_ plugin is updated. Enjoy new version. For any type of\n  feedback you can use [GitHub issues][issues].\n  \n  ## Bug Fixes\n  \n  * improve code span patterns in table cells\n  * Fix Terraform syntax highlighting in fenced code blocks (#765)\n  * add missing language tag names to detect fenced code block syntaxes\n  \n  ## New Features\n  \n  * syntax highlighting for `==highlight==` emphasis (#764)\n  * syntax highlighting for Groovy in fenced code blocks (#768)\n  \n  ## Changes\n  \n  [issues]: https://github.com/SublimeText-Markdown/MarkdownEditing/issues\n\n  # MarkdownEditing 3.1.13 Changelog\n  \n  Your _MarkdownEditing_ plugin is updated. Enjoy new version. For any type of\n  feedback you can use [GitHub issues][issues].\n  \n  ## Bug Fixes\n  \n  - fix premature block quote termination\n  - fix extra backticks when creating fenced code blocks (#749)\n  - fix syntax highlighting of single backticks and code-spans in table cells\n  \n  ## New Features\n  \n  - syntax highlighting for LaTeX in fenced code blocks\n  \n  ## Changes\n  \n  [issues]: https://github.com/SublimeText-Markdown/MarkdownEditing/issues\n"
+					},
+					"AQAAAAAAAAAAAAAA3wQAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8"
+				]
+			]
+		},
+		{
 			"file": "eagle-shell.js",
 			"settings":
 			{
@@ -49,7 +73,7 @@
 						"characters": "let"
 					},
 					"BAAAAHpzAAAAAAAAe3MAAAAAAAAAAAAAe3MAAAAAAAB7cwAAAAAAAAUAAABjb25zdHtzAAAAAAAAfHMAAAAAAAAAAAAAfHMAAAAAAAB9cwAAAAAAAAAAAAA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAB6cwAAAAAAAH9zAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAenMAAAAAAAB/cwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					54,
@@ -59,7 +83,7 @@
 						"characters": ","
 					},
 					"AQAAAA9zAAAAAAAAEHMAAAAAAAAAAAAA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAPcwAAAAAAAA9zAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAD3MAAAAAAAAPcwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					55,
@@ -69,7 +93,7 @@
 						"characters": " r=.01"
 					},
 					"BgAAABBzAAAAAAAAEXMAAAAAAAAAAAAAEXMAAAAAAAAScwAAAAAAAAAAAAAScwAAAAAAABNzAAAAAAAAAAAAABNzAAAAAAAAFHMAAAAAAAAAAAAAFHMAAAAAAAAVcwAAAAAAAAAAAAAVcwAAAAAAABZzAAAAAAAAAAAAAA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAQcwAAAAAAABBzAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAEHMAAAAAAAAQcwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					56,
@@ -77,7 +101,7 @@
 					"left_delete",
 					null,
 					"AwAAABVzAAAAAAAAFXMAAAAAAAABAAAAMRRzAAAAAAAAFHMAAAAAAAABAAAAMBNzAAAAAAAAE3MAAAAAAAABAAAALg",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAWcwAAAAAAABZzAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAFnMAAAAAAAAWcwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					57,
@@ -87,7 +111,7 @@
 						"characters": "0."
 					},
 					"AgAAABNzAAAAAAAAFHMAAAAAAAAAAAAAFHMAAAAAAAAVcwAAAAAAAAAAAAA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAATcwAAAAAAABNzAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAE3MAAAAAAAATcwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					58,
@@ -95,7 +119,7 @@
 					"left_delete",
 					null,
 					"AgAAABRzAAAAAAAAFHMAAAAAAAABAAAALhNzAAAAAAAAE3MAAAAAAAABAAAAMA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAVcwAAAAAAABVzAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAFXMAAAAAAAAVcwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					59,
@@ -105,7 +129,7 @@
 						"characters": "1"
 					},
 					"AQAAABNzAAAAAAAAFHMAAAAAAAAAAAAA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAATcwAAAAAAABNzAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAE3MAAAAAAAATcwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					62,
@@ -113,7 +137,7 @@
 					"left_delete",
 					null,
 					"AwAAALBzAAAAAAAAsHMAAAAAAAABAAAAMa9zAAAAAAAAr3MAAAAAAAABAAAALq5zAAAAAAAArnMAAAAAAAABAAAAMA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAACxcwAAAAAAALFzAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAsXMAAAAAAACxcwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					63,
@@ -123,7 +147,7 @@
 						"characters": "r"
 					},
 					"AQAAAK5zAAAAAAAAr3MAAAAAAAAAAAAA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAACucwAAAAAAAK5zAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAArnMAAAAAAACucwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					68,
@@ -131,7 +155,7 @@
 					"right_delete",
 					null,
 					"AQAAABNzAAAAAAAAE3MAAAAAAAABAAAAMQ",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAATcwAAAAAAABNzAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAE3MAAAAAAAATcwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					69,
@@ -141,7 +165,7 @@
 						"characters": "0.5"
 					},
 					"AwAAABNzAAAAAAAAFHMAAAAAAAAAAAAAFHMAAAAAAAAVcwAAAAAAAAAAAAAVcwAAAAAAABZzAAAAAAAAAAAAAA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAATcwAAAAAAABNzAAAAAAAAAAAAAAAA8L8"
+					"BAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAE3MAAAAAAAATcwAAAAAAAAAAAAAAAPC/"
 				]
 			]
 		},
@@ -154,14 +178,52 @@
 			}
 		},
 		{
+			"contents": "import { existsSync, reader, readerSync, readSync, writeSync } from 'fs';\nimport { createServer, getSessions, LLL_INFO, LLL_NOTICE, LLL_USER, LLL_WARN, logLevels, setLog } from 'net';\nimport { kill, setReadHandler, SIGTERM, sleep, ttySetRaw, Worker } from 'os';\nimport { clearInterval, setInterval, setTimeout } from 'timers';\nimport { atexit, bindMethods, btoa, define, keys, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, toString, tryCatch, types,mapWrapper } from 'util';\nimport { List, Table } from './cli-helpers.js';\nimport { DebuggerDispatcher, FindFunctions, GetFunctionName, TrivialSyntaxHighlighter } from './debugger.js';\nimport { DebuggerProtocol } from './debuggerprotocol.js';\nimport { ReadFile, ReadJSON, WriteJSON } from './io-helpers.js';\nimport { consume, map } from './lib/async/helpers.js';\nimport { absolute, basename, extname, relative } from './lib/path.js';\nimport { Repeater } from './lib/repeater/repeater.js';\nimport { Spawn, WNOHANG } from './os-helpers.js';\nimport { F_GETFL, F_SETFL, fcntl, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';\nimport { REPL } from './quickjs/qjs-modules/lib/repl.js';\nimport { Console } from 'console';\nimport { Location } from 'location';\nimport process from 'process';\nimport extendArray from 'extendArray';\nimport { AF_INET, AsyncSocket, IPPROTO_TCP, SOCK_STREAM, SockAddr } from 'sockets';\nimport { err as stderr } from 'std';\nimport { codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';\n\nfunction decorate(decorators, obj, ...args) {\n  if(!Array.isArray(decorators)) decorators = [decorators];\n  for(let decorator of decorators)\n    for(let prop of keys(obj))\n      if(typeof obj[prop] == 'function') {\n        let newfn = decorator(obj[prop], obj, prop, ...args);\n        if(obj[prop] !== newfn) obj[prop] = newfn;\n      }\n  return obj;\n}\n\nextendArray(Array.prototype);\n\nconst scriptName = (arg = scriptArgs[0]) => basename(arg, extname(arg));\n\nconst children = new Set();\n\natexit(() => {\n  for(let pid of children) {\n    console.log('atexit killing child', pid);\n    kill(pid, SIGTERM);\n  }\n});\n\nObject.assign(globalThis, {\n  codecs,\n  RPCApi,\n  RPCProxy,\n  RPCObject,\n  RPCFactory,\n  Connection,\n  RPCServer,\n  RPCClient,\n  RPCSocket,\n  RPCConnect,\n  RPCListen\n});\n\nconst signalName = n =>\n  'SIG' +\n  [\n    ,\n    'HUP',\n    'INT',\n    'QUIT',\n    'ILL',\n    'TRAP',\n    'ABRT',\n    'BUS',\n    'FPE',\n    'KILL',\n    'USR1',\n    'SEGV',\n    'USR2',\n    'PIPE',\n    'ALRM',\n    'TERM',\n    'STKFLT',\n    'CHLD',\n    'CONT',\n    'STOP',\n    'TSTP',\n    'TTIN',\n    'TTOU',\n    'URG',\n    'XCPU',\n    'XFSZ',\n    'VTALRM',\n    'PROF',\n    'WINCH',\n    'IO',\n    'PWR',\n    'SYS'\n  ][n];\n\nfunction checkChildExited(child) {\n  const { exited, termsig, signaled, exitcode } = child;\n\n  return exited ? (signaled ? `signalled ${signalName(termsig)}` : `exitcode ${exitcode}`) : null;\n}\n\nfunction GetLoc(node) {\n  if(node.loc?.start?.line) {\n    const { line, column } = node.loc.start;\n    const [charOffset] = node.range ?? [node.start];\n    return new Location(line, column + 1, charOffset);\n  }\n}\n\nasync function LoadAST(source) {\n  if(!existsSync(source)) return null;\n  const child = Spawn('meriyah', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });\n\n  let s = '';\n  for(let chunk of readerSync(child.stdout)) s += toString(chunk);\n\n  const status = child.wait();\n  const { length } = s;\n  //console.log('loadAST', { source, length, status });\n\n  return JSON.parse(s);\n}\n\nfunction StartREPL(prefix = scriptName(), suffix = '') {\n  let repl = new REPL(`\\x1b[38;5;165m${prefix} \\x1b[38;5;39m${suffix}\\x1b[0m`, false);\n  repl.historyLoad(null);\n  let { log } = console;\n\n  console.log = repl.printFunction(log.bind(console, console.config({ compact: 2 })));\n  let { show } = repl;\n\n  repl.show = arg => {\n    if(isObject(arg)) {\n      if(arg[Symbol.for('print')]) return arg.toString ? arg.toString() : arg + '';\n\n      //if(Array.isArray(arg) && typeof arg[0] == 'object' &&  Array.isArray(arg[0])) {\n      if(Array.isArray(arg) && typeof arg[0] == 'object') {\n        if(!Array.isArray(arg[0]) && (arg.length !== 2 || !Array.isArray(arg[1]))) {\n          if(arg.length == 2 && Array.isArray(arg[1])) {\n            const [event, stack] = arg;\n            if(['type', 'reason'].every(k => k in event)) if (['id', 'name', 'line'].every(k => k in stack[0])) return [List([event]), List(stack)];\n          }\n\n          if(\n            arg.length >= 2 /*Object.keys(arg[0]).some(key => arg.every(a => key in a)) ||*/ &&\n            arg.map(item => Object.keys(item)).reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))\n          )\n            return repl.show(Table(arg));\n        }\n      }\n    }\n\n    return show.call(repl, arg);\n  };\n\n  repl.loadSaveOptions();\n  //repl.printPromise = () => {};\n  repl.run();\n  return repl;\n}\n\nexport function StartDebugger(args, connect, address) {\n  let env = process.env ?? {};\n\n  address ??= '127.0.0.1:9901';\n\n  env['DISPLAY'] ??= ':0.0';\n\n  if(connect) env['QUICKJS_DEBUG_ADDRESS'] = address;\n  else env['QUICKJS_DEBUG_LISTEN_ADDRESS'] = address;\n\n  const child = Spawn('qjsm', args, { block: false, env, stdio: ['pipe', 'pipe', 'pipe'] });\n\n  if(!connect) listeners[address] = child;\n\n  console.log('StartDebugger', { args, connect, address }, child);\n\n  children.add(child.pid);\n\n  return define(child, { args });\n}\n\nexport function ConnectDebugger(address, skipToMain = true, callback) {\n  const addr = new SockAddr(AF_INET, ...address.split(':'));\n  const sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);\n\n  const ret = sock.connect(addr);\n\n  if(typeof callback != 'function' && typeof callback == 'object') callback = callback.onMessage;\n  console.log('ConnectDebugger', { ret });\n\n  if(ret >= 0) {\n    sock.ndelay(true);\n    console.log('Connected', +sock, 'to', sock.remote);\n    sockets.add(sock);\n    //console.log('sockets', sockets);\n  }\n\n  const dbg = this ?? {};\n\n  define(dbg, {\n    sock,\n    addr,\n    async process(callback) {\n      let ret,\n        lenBuf = new ArrayBuffer(9);\n\n      try {\n        while((ret = await sock.recv(lenBuf, 0, 9)) > 0) {\n          let len = parseInt(toString(lenBuf, 0, ret), 16);\n\n          let dataBuf = new ArrayBuffer(len);\n          let offset = 0;\n\n          while(offset < len) {\n            ret = await sock.recv(dataBuf, offset, len - offset);\n\n            if(ret <= 0) {\n              sock.close();\n              break;\n            }\n            offset += ret;\n          }\n          if(ret <= 0) break;\n          let s = toString(dataBuf);\n          let obj = JSON.parse(s);\n\n          const funcName = '\\x1b[38;5;208mPROCESS\\x1b[0m';\n          console.log(funcName + ' \\x1b[38;5;196mbefore callback\\x1b[0m');\n          let result = callback(obj);\n          await result;\n        }\n      } catch(error) {\n        console.log('Socket error:', error.message + '\\n' + error.stack);\n      } finally {\n        sock.close();\n        return ret;\n      }\n    },\n    async sendMessage(msg) {\n      if(typeof msg != 'string') msg = JSON.stringify(msg);\n      const ret = await sock.send(msg.length.toString(16).padStart(8, '0') + '\\n' + msg);\n      if(process.env.DEBUG) console.log('\\x1b[38;5;33mSEND\\x1b[0m[' + sock.fd + '] (' + ret + ') ' + msg);\n    }\n  });\n\n  console.log('ConnectDebugger', console.config({ depth: 1, compact: 0 }), dbg);\n\n  LaunchDebugger(dbg, skipToMain);\n\n  return dbg;\n}\n\nfunction LaunchDebugger(dbg, skipToMain = true) {\n  console.log('LaunchDebugger', console.config({ depth: 1, compact: 0 }), { dbg, skipToMain });\n  if(skipToMain) {\n    dbg.onstopped = once(async (...args) => {\n      let st = await dispatch.stackTrace();\n\n      script ??= st[0].filename;\n\n      let fns = await files[script].match(/main$/gi);\n      console.log('matched /main$/gi', fns /*.map(({ name }) => name)*/);\n\n      dbg.onstopped = null;\n      let resp;\n      console.log('breakpoints()', console.config({ compact: 0 }), { script, fns });\n      resp = await dispatch.breakpoints(script, fns);\n      console.log('breakpoints() response:', console.config({ compact: 0 }), resp);\n\n      setTimeout(async () => {\n        resp = await dispatch.continue();\n        console.log('continue() response:', console.config({ compact: 0 }), resp);\n      }, 100);\n    });\n  }\n  //dbg.onstopped ??= OnStopped;\n\n  let dispatch = (globalThis.dispatch = new DebuggerDispatcher(dbg));\n\n  Object.assign(globalThis, bindMethods(dispatch, DebuggerDispatcher.prototype, {}));\n  Object.assign(globalThis, {\n    GetLoc,\n    PrintStackFrame,\n    PrintStack,\n    async value(name) {\n      let stack = await dispatch.stackTrace();\n\n      for(let frame of stack) {\n        let { local } = await dispatch.variables(frame.id, 1);\n\n        let v = local.find(v => v.name == name);\n\n        return v;\n      }\n    }\n  });\n\n  return dbg;\n}\n\nasync function PrintStackFrame(frame) {\n  if(frame === undefined) frame = 0;\n\n  let { id, name, filename, line } = frame;\n  let params;\n\n  try {\n    params = (await files[filename].functions).find(f => f.name == name)?.params;\n  } catch(e) {}\n\n  if(params) name += `(${params.join(', ')})`;\n  let loc = line !== undefined ? new Location(filename, line) : undefined;\n  let code = line !== undefined ? files[filename].line(line - 1) : undefined;\n  return [`#${id}`, ` at ${name.padEnd(30)}`, loc ? ' in ' + loc : ''].concat(code ? [code] : []);\n}\n\nasync function PrintStack(stack) {\n  stack ??= await stackTrace();\n  let frames = [];\n  for(let frame of stack) {\n    frames.push(await PrintStackFrame(frame));\n  }\n  return List(frames);\n}\n\ndecorate(\n  (member, obj, prop) =>\n    ({\n      async breakpoints(...args) {\n        if(!(typeof args[0] == 'string')) args.unshift(globalThis.script);\n\n        let [file, breakpoints] = args;\n        file = absolute(file);\n\n        if(types.isPromise(breakpoints)) breakpoints = await breakpoints;\n\n        if(Array.isArray(breakpoints)) {\n          breakpoints = breakpoints.map(b => filterKeys(b, ['name', 'line', 'column']));\n        }\n\n        return await member.call(this, file, breakpoints);\n      },\n      async stackTrace(frame) {\n        return (await member.call(this, frame)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));\n      },\n      async scopes(n) {\n        let stack = await this.stackTrace();\n        if(n >= stack.length) return null;\n        let scopes = [];\n       \n        for(let scope of await member.call(this, n)) {\n          const variables = await this.variables(scope.reference);\n          scope.variables = variables.length;\n          scopes.push(scope);\n        }\n\n        return scopes;\n      },\n      async waitRun() {\n        const [event, stack] = await member.call(this);\n        define(globalThis, { event, stack });\n        //console.log('waitRun', { event, stack });\n\n        repl.printStatus((await PrintStackFrame(stack[0])).join(' ') + '\\n');\n\n        const { filename, line } = stack[0];\n\n        define(globalThis, { file: filename, line });\n\n        return [event, stack];\n      },\n      async variables(n, depth = 0) {\n        const list = await member.call(this, n);\n        const ret = [];\n        const add = item => (item.variablesReference === 0 && delete item.variablesReference, ret.push(item));\n       \n        for(let item of list) {\n          add(item);\n\n          if(depth > 0) {\n            if(item.variablesReference > 0) {\n              let children = await this.variables(item.variablesReference, depth - 1);\n             \n              for(let child of children) {\n                if(!isNaN(child.name)) child.name = '  [' + child.name + ']';\n                else child.name = '  .' + child.name;\n\n                if(child.value?.startsWith('function ')) continue;\n                add(child);\n              }\n            }\n          }\n        }\n\n        return define(ret, {\n          [Symbol.for('print')]: true,\n          toString() {\n            return Table(this, ['name', 'value', 'type', 'variablesReference']);\n          }\n        });\n      }\n    }[prop] || member),\n\n  DebuggerDispatcher.prototype\n);\n\nconst mkaddr = (\n  (port = 8777) =>\n  () =>\n    `127.0.0.1:${port--}`\n)();\n\nfunction NewDebugger(args, skipToMain = false, address) {\n  address ??= mkaddr();\n\n  const child = (globalThis.child = globalThis.listeners[address] || StartDebugger(args, false, address));\n  let dispatch;\n\n  globalThis.script = args[0];\n\n  sleep(500);\n\n  const dbg = this ?? {};\n\n  define(dbg, {\n    child,\n    args,\n    kill: () => (children.delete(child.pid), kill(child.pid, SIGTERM))\n  });\n  ConnectDebugger.call(dbg, address, skipToMain);\n\n  return dbg; //dispatch;\n}\n\nasync function OnStopped(msg) {\n  const st = (globalThis.stack = await dispatch.stackTrace());\n  let [top] = st;\n  let { id, name, filename, line } = top;\n  repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));\n}\n\nfunction URLWorker(script) {\n  const dataURL = s => `data:application/javascript;charset=utf-8;base64,` + btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');\n\n  const url = dataURL(script);\n  const w = new Worker(url);\n\n  return define(new Repeater((push, stop) => (w.onmessage = push)), {\n    postMessage: msg => w.postMessage(msg)\n  });\n}\n\nfunction main(...args) {\n  const base = scriptName().replace(/\\.[a-z]*$/, '');\n\n  const config = ReadJSON(`.${base}-config`) ?? {};\n\n  globalThis.console = new Console(stderr, {\n    inspectOptions: { depth: Infinity, compact: 1, maxArrayLength: Infinity, customInspect: true }\n  });\n\n  let params = getOpt(\n    {\n      verbose: [false, (a, v) => (v | 0) + 1, 'v'],\n      listen: [false, null, 'l'],\n      connect: [false, null, 'c'],\n      client: [false, null, 'C'],\n      server: [false, null, 'S'],\n      debug: [false, null, 'x'],\n      tls: [false, (v, pv, o) => ((o.tls = true), true), 't'],\n      'no-tls': [false, (v, pv, o) => ((o.tls = false), true), 'T'],\n      address: [true, null, 'a'],\n      port: [true, null, 'p'],\n      quiet: [false, null, 'q'],\n      'ssl-cert': [true, null],\n      'ssl-private-key': [true, null],\n      'ssl-ca': [true, null],\n      '@': 'address,port'\n    },\n    args\n  );\n  if(params['no-tls'] === true) params.tls = false;\n  const {\n    address = '0.0.0.0',\n    port = 8999,\n    'ssl-cert': sslCert = 'localhost.crt',\n    'ssl-private-key': sslPrivateKey = 'localhost.key',\n    'ssl-ca': sslCA = '/etc/ssl/certs/ca-certificates.crt',\n    quiet = false,\n    debug = false,\n    tls = true\n  } = params;\n\n  const listen = params.connect && !params.listen ? false : true;\n\n  let name = scriptArgs[0];\n  name = name\n    .replace(/.*\\//, '')\n    .replace(/-/g, ' ')\n    .replace(/\\.[^\\/.]*$/, '');\n\n  let [prefix, suffix] = name.split(' ');\n\n  let protocol = new WeakMap();\n  let ws2dbg =globalThis.ws2dbg =mapWrapper(new WeakMap());\n\n  let sockets = (globalThis.sockets ??= new Set());\n  //console.log(name, params['@']);\n\n  function createWS(url, callbacks, listen) {\n    //console.log('createWS', { url, callbacks, listen });\n\n    setLog(\n      quiet ? 0 : LLL_USER | (((debug > 1 ? LLL_INFO : LLL_WARN) << 1) - 1),\n      quiet || params.debug <= 1\n        ? () => {}\n        : (level, str) => {\n            if(/BIND_PROTOCOL|DROP_PROTOCOL|CHECK_ACCESS_RIGHTS|ADD_HEADERS/.test(str)) return;\n            console.log(logLevels[level].padEnd(10), str.trim());\n          }\n    );\n\n    let options;\n    let dbg;\n    console.log('createWS', { url });\n    return createServer(\n      url,\n      (options = {\n        tls: params.tls,\n        sslCert,\n        sslPrivateKey,\n        sslCA,\n        mimetypes: [\n          ['.svgz', 'application/gzip'],\n          ['.mjs', 'application/javascript'],\n          ['.es', 'application/javascript'],\n          ['.wasm', 'application/octet-stream'te\n          ['.gitignore', 'text/plain'],\n          ['.cmake', 'text/plain'],\n          ['.hex', 'text/plain'],\n          ['.md', 'text/plain'],\n          ['.pbxproj', 'text/plain'],\n          ['.wat', 'text/plain'],\n          ['.c', 'text/x-c'],\n          ['.h', 'text/x-c'],\n          ['.cpp', 'text/x-c++'],\n          ['.hpp', 'text/x-c++'],\n          ['.filters', 'text/xml'],\n          ['.plist', 'text/xml'],\n          ['.storyboard', 'text/xml'],\n          ['.vcxproj', 'text/xml'],\n          ['.bat', 'text/x-msdos-batch'],\n          ['.mm', 'text/x-objective-c'],\n          ['.m', 'text/x-objective-c'],\n          ['.sh', 'text/x-shellscript']\n        ],\n        mounts: [\n          ['/proxy', 'ipv4:127.0.0.1:22', null, 'proxy-ws-raw-ws'],\n          ['/lws', 'https://www.google.ch/', null, ''],\n          ['/', '.', 'debugger.html'],\n          function* config(req, res) {\n            const { body, headers } = req;\n            console.log('/config', { req, res });\n            console.log('*config', { body, headers });\n            yield '{}';\n          },\n          function* files(req, res) {\n            const { body, headers } = req;\n            yield fs\n              .readdirSync('.')\n              .sort()\n              .map(f => f + '\\n')\n              .join('');\n          }\n        ],\n        ...url,\n        ...callbacks,\n        block: false,\n        onConnect(ws, req) {\n          console.log('onConnect', { ws, req }, req && req.headers);\n\n          Object.defineProperties(ws, {\n            sendMessage: {\n              value: function sendMessage(msg) {\n                let ret = this.send(JSON.stringify(msg));\n                console.log(`ws.sendMessage(`, console.config({ compact: 0 }), msg, `) = ${ret}`);\n                return ret;\n              },\n              enumerable: false\n            },\n            dbg: { value: null, writable: true, enumerable: false }\n          });\n\n          sockets.add(ws);\n        },\n        onClose(ws) {\n          console.log('onClose', { ws, dbg });\n          dbg?.close();\n\n          protocol.delete(ws);\n          sockets.delete(ws);\n        },\n        onError(ws) {\n          console.log('onError', ws);\n        },\n        onRequest(req, resp) {\n          const { method, headers } = req;\n          //console.log('\\x1b[38;5;33monRequest\\x1b[0m [\\n  ', req, ',\\n  ', resp, '\\n]');\n          const { body, url } = resp;\n\n          const file = url.path.slice(1);\n          const dir = file.replace(/\\/[^\\/]*$/g, '');\n          console.log('\\x1b[38;5;33monRequest\\x1b[0m', { file, dir, body });\n\n          if(file.endsWith('.js') && resp.body) {\n            //console.log('onRequest', { file, dir });\n            const re = /^(\\s*(im|ex)port[^\\n]*from ['\"])([^./'\"]*)(['\"]\\s*;[\\t ]*\\n?)/gm;\n\n            resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {\n              if(!/[\\/\\.]/.test(p2)) {\n                let fname = `${p2}.js`;\n\n                if(!existsSync(dir + '/' + fname)) return `/* ${match} */`;\n\n                match = [p1, './' + fname, p3].join('');\n\n                //console.log('args', { match, p1, p2, p3, offset });\n              }\n              return match;\n            });\n          }\n\n          return resp;\n        },\n        onMessage(ws, data) {\n          let child = ws2dbg(ws);\n          // showSessions();\n\n          handleCommand(ws, data);\n\n          function handleCommand(ws, data) {\n            let obj = JSON.parse(data);\n\n            console.log('onMessage(x)', obj);\n\n            const { command, ...rest } = obj;\n            // console.log('onMessage', command, rest);\n            const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = rest;\n\n            switch (command) {\n              case 'start': {\n                console.log('ws', ws);\n                child = StartDebugger(args, connect, address);\n                ws2dbg(ws,child);\n\n                const [ stdin, stdout, stderr ] = child.stdio;\n                for(let fd of [stdout,stderr]) {\n                  let flags = fcntl(fd, F_GETFL);\n                  flags |= O_NONBLOCK;\n                  fcntl(fd, F_SETFL, flags);\n                }\n\nconsole.log('stdout flags', fcntl(stdout, F_GETFL)&O_NONBLOCK, 'O_NONBLOCK=',O_NONBLOCK);\n\n                const forward = (fd, name) =>\n                  consume(reader(fd), buf => {\n                    let data = toString(buf.slice(0, r));\n                    //console.log(`read(${fd}, buf) = ${r} (${quote(data, \"'\")})`);\n\n                    ws.sendMessage({\n                      type: 'output',\n                      channel: name,\n                      data\n                    });\n                  });\n                forward(stdout, 'stdout');\n                forward(stderr, 'stderr');\n                define(globalThis, { stdout, stderr, reader });\n\n                sleep(1000);\n\n                let tid, exited;\n\n                tid = setInterval(() => {\n                  let pid = child.wait(WNOHANG);\n\n                  if((exited = checkChildExited(child))) {\n                    ws.sendMessage({\n                      type: 'error',\n                      command: 'start',\n                      message: `child process ${pid} ${exited}`\n                    });\n                    clearInterval(tid);\n                  }\n                }, 1000);\n\n                let pid = child.wait(WNOHANG);\n\n                if((exited = checkChildExited(child))) {\n                  ws.sendMessage({\n                    type: 'error',\n                    command: 'start',\n                    message: `unable to start debugger: ${exited}`\n                  });\n                  break;\n                }\n\n                const cwd = process.cwd();\n                ws.sendMessage({\n                  type: 'response',\n                  response: {\n                    command: 'start',\n                    args,\n                    cwd,\n                    address\n                  }\n                });\n\n                break;\n              }\n              case 'connect': {\n                dbg = ConnectDebugger(address, (dbg, sock) => {\n                  console.log('wait(WNOHANG) =', child.wait(WNOHANG));\n                  console.log('child', child);\n                });\n                console.log('connect command', { ws, dbg });\n                sockets.add(dbg);\n                ws2dbg(ws,dbg);\n\n                const cwd = process.cwd();\n                let connected;\n\n                dbg.process(msg => {\n                  if(!connected) {\n                    connected = true;\n                    ws.sendMessage({\n                      type: 'response',\n                      response: {\n                        command: 'start',\n                        args,\n                        cwd,\n                        address\n                      }\n                    });\n                  }\n                  try {\n                    console.log('Debugger.read() =', console.config({ compact: false, maxStringLength: 200 }), msg);\n                    msg = JSON.stringify(msg);\n                    if(typeof msg == 'string') {\n                      let ret;\n                      ret = ws.send(msg);\n                      console.log(`ws.send(${quote(msg, \"'\")}) = ${ret}`);\n                    } else {\n                      console.log('closed socket', dbg);\n                      sockets.delete(dbg);\n                      ws.sendMessage({\n                        type: 'end',\n                        reason: 'closed'\n                      });\n                    }\n                  } catch(error) {\n                    const { message, stack } = error;\n                    ws.sendMessage({\n                      type: 'error',\n                      error: { message, stack }\n                    });\n                    dbg.close();\n                  }\n                });\n                console.log('dbg', dbg);\n                break;\n              }\n              case 'file': {\n                const { path } = rest;\n                const data = ReadFile(path, 'utf-8');\n                //ws.send(JSON.stringify({ type: 'response', response: { command: 'file', path, data } }));\n\n                const lexer = new Lexer(data, path);\n                console.log('lexer', lexer);\n                const lines = [];\n\n                for(;;) {\n                  const { pos, size } = lexer;\n                  console.log('lexer', { pos, size });\n                  let result = lexer.next();\n                  if(result.done) break;\n                  const token = result.value;\n                  console.log('token', {\n                    lexeme: token.lexeme,\n                    id: token.id,\n                    loc: token.loc + ''\n                  });\n                  const { type, id, lexeme, loc } = token;\n                  const { line, column, file } = loc;\n                  //console.log('token', {lexeme,id,line});\n\n                  if(!lines[line - 1]) lines.push([]);\n                  let a = lines[line - 1];\n                  a.push([lexeme, id]);\n                }\n                console.log('lines', lines);\n                break;\n              }\n              default: {\n                const dbg=ws2dbg(ws);\n                console.log('send to debugger', { command, data });\n                console.log('send to debugger', dbg);\n\n                dbg.sendMessage(data);\n\n                //DebuggerProtocol.send(dbg, data);\n                break;\n              }\n            }\n          }\n        },\n        ...(url && url.host ? url : {})\n      })\n    );\n  }\n\n  console.log('XX');\n\n  delete globalThis.DEBUG;\n\n  let inputBuf = new ArrayBuffer(10);\n  ttySetRaw(0);\n\n  setReadHandler(0, () => {\n    let r = readSync(0, inputBuf, 0, inputBuf.byteLength);\n\n    if(r > 0) {\n      let a = new Uint8Array(inputBuf.slice(0, r));\n\n      //console.log('a', a);\n\n      for(let i = 0; i < a.length; i++) if(a[i] == 13) a[i] = 10;\n\n      if(a.length == 1 && a[0] == 127) a = new Uint8Array([8, 0x20, 8]);\n\n      if(a.length == 1 && a[0] == 27) showSessions();\n      else writeSync(1, a.buffer);\n    }\n  });\n\n  function showSessions() {\n    let sessions = getSessions();\n    console.log('sessions', console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 0 }), sessions);\n  }\n\n  //setInterval(() => console.log('interval'), 5000);\n\n  globalThis.server = createWS(`wss://${address}:8998/ws`, {}, true);\n\n  define(globalThis, {\n    get connections() {\n      return [...globalThis.sockets];\n    },\n    get socklist() {\n      return [...globalThis.sockets];\n    },\n    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, createServer },\n    TrivialSyntaxHighlighter,\n    NewDebugger,\n    LaunchDebugger,\n    StartDebugger,\n    ConnectDebugger,\n    DebuggerDispatcher,\n    DebuggerProtocol,\n    GetFunctionName,\n    FindFunctions,\n    LoadAST,\n    Table,\n    List,\n    get file() {\n      return this.files[this.script];\n    },\n    files: propertyLookup(\n      (globalThis.fileCache = {}),\n      memoize((file, source) => {\n        source ??= tryCatch(\n          () => TrivialSyntaxHighlighter(ReadFile(file)),\n          s => s,\n          () => ReadFile(file)\n        );\n        return define(\n          {\n            source,\n            indexlist: [...source.matchAll(/^[^\\n]*/gm)].map(m => m.index)\n          },\n          lazyProperties(\n            {\n              line(i, j) {\n                if(i === undefined) return '';\n                const { source, indexlist } = this;\n                j ??= i + 1;\n                const m = mod(indexlist.length - 1);\n                const [start, end] = [indexlist[m(i)], indexlist[m(j)]];\n                let line = source.slice(start, (end ?? 0) - 1);\n\n                if([...line.matchAll(/\\x1b([^A-Za-z]*[A-Za-z])/g)].last != '\\x1b[0m') line += '\\x1b[0m';\n\n                return line;\n              },\n              match(re) {\n                if(typeof re == 'string') re = new RegExp(re, 'gi');\n\n                return this.functions.then(fns =>\n                  define(\n                    fns.filter(({ name }) => re.test(name)),\n                    { [Symbol.toStringTag]: 'FunctionList', file }\n                  )\n                );\n              }\n            },\n            {\n              // estree: () => ,\n              async functions() {\n                return (globalThis.functionCache = [...FindFunctions((globalThis.ast = await LoadAST(file)))].map(([name, loc, params, expression, path]) =>\n                  define(\n                    {\n                      name,\n                      params,\n                      ...loc,\n                      expression\n                    },\n                    { path }\n                  )\n                ));\n              }\n            },\n            { async: false }\n          )\n        );\n      })\n    ),\n    async repeat(cond, fn, ...args) {\n      let r;\n      if(typeof cond == 'number') {\n        let n = cond;\n        cond = (r, i) => i >= n || r === true;\n      }\n      for(let i = 0; ; i++) {\n        r = await fn(...args);\n\n        if(cond(r, i)) break;\n      }\n      return r;\n    },\n    repl: StartREPL()\n  });\n\n  function quit(why) {\n    console.log(`quit('${why}')`);\n\n    let cfg = { inspectOptions: console.options };\n    WriteJSON(`.${base}-config`, cfg);\n    // repl.cleanup(why);\n  }\n}\n\ntry {\n  main(...scriptArgs.slice(1));\n} catch(error) {\n  console.log(`FAIL: ${error?.message ?? error}\\n${error?.stack}`);\n} finally {\n  //console.log('SUCCESS');\n}\n",
 			"file": "debugger-server.js",
+			"file_size": 29603,
+			"file_write_time": 133730886695370493,
 			"settings":
 			{
-				"buffer_size": 29603,
+				"buffer_size": 29462,
 				"line_ending": "Unix"
 			},
 			"undo_stack":
 			[
+				[
+					3,
+					1,
+					"insert",
+					{
+						"characters": "te"
+					},
+					"AwAAADk+AAAAAAAAOj4AAAAAAAAAAAAAOj4AAAAAAAA6PgAAAAAAAI8AAABdLAogICAgICAgICAgWycuZW90JywgJ2FwcGxpY2F0aW9uL3ZuZC5tcy1mb250b2JqZWN0J10sCiAgICAgICAgICBbJy5saWInLCAnYXBwbGljYXRpb24veC1hcmNoaXZlJ10sCiAgICAgICAgICBbJy5iejInLCAnYXBwbGljYXRpb24veC1iemlwMiddLDo+AAAAAAAAOz4AAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAADIPgAAAAAAADk+AAAAAAAAAAAAAAAA8L8"
+				]
+			]
+		},
+		{
+			"contents": "import { LoadConfig, SaveConfig } from './config.js';\nimport { GLFW } from './draw-utils.js';\nimport { SaveSVG } from './image-helpers.js';\nimport { WriteJSON } from './io-helpers.js';\nimport { HSLA } from './lib/color.js';\nimport { memoize } from './lib/misc.js';\nimport SvgPath from './lib/svg/path.js';\nimport { TCPClient } from './midi-tcp.js';\nimport { EnumParam, NumericParam, ParamNavigator } from './param.js';\nimport { Mouse, MouseFlags, TextStyle, Window } from './qjs-opencv/js/cvHighGUI.js';\nimport { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';\nimport { BitsToNames, FindKey, GetOpt, Modulo, Once, Range, WeakMapper } from './qjs-opencv/js/cvUtils.js';\nimport { VideoSource } from './qjs-opencv/js/cvVideo.js';\nimport Console from 'console';\nimport * as cv from 'opencv';\nimport { CLAHE, Affine3, BoostDesc, BriefDescriptorExtractor, Canny, COLOR_BayerBG2BGR, COLOR_BayerBG2BGRA, COLOR_BayerBG2BGR_EA, COLOR_BayerBG2BGR_VNG, COLOR_BayerBG2GRAY, COLOR_BayerBG2RGB, COLOR_BayerBG2RGBA, COLOR_BayerBG2RGB_EA, COLOR_BayerBG2RGB_VNG, COLOR_BayerGB2BGR, COLOR_BayerGB2BGRA, COLOR_BayerGB2BGR_EA, COLOR_BayerGB2BGR_VNG, COLOR_BayerGB2GRAY, COLOR_BayerGB2RGB, COLOR_BayerGB2RGBA, COLOR_BayerGB2RGB_EA, COLOR_BayerGB2RGB_VNG, COLOR_BayerGR2BGR, COLOR_BayerGR2BGRA, COLOR_BayerGR2BGR_EA, COLOR_BayerGR2BGR_VNG, COLOR_BayerGR2GRAY, COLOR_BayerGR2RGB, COLOR_BayerGR2RGBA, COLOR_BayerGR2RGB_EA, COLOR_BayerGR2RGB_VNG, COLOR_BayerRG2BGR, COLOR_BayerRG2BGRA, COLOR_BayerRG2BGR_EA, COLOR_BayerRG2BGR_VNG, COLOR_BayerRG2GRAY, COLOR_BayerRG2RGB, COLOR_BayerRG2RGBA, COLOR_BayerRG2RGB_EA, COLOR_BayerRG2RGB_VNG, COLOR_BGR2Lab, COLOR_BGR2Luv, COLOR_BGR2YCrCb, COLOR_Lab2BGR, COLOR_Lab2LBGR, COLOR_Lab2LRGB, COLOR_Lab2RGB, COLOR_LBGR2Lab, COLOR_LBGR2Luv, COLOR_LRGB2Lab, COLOR_LRGB2Luv, COLOR_Luv2BGR, COLOR_Luv2LBGR, COLOR_Luv2LRGB, COLOR_Luv2RGB, COLOR_mRGBA2RGBA, COLOR_RGB2Lab, COLOR_RGB2Luv, COLOR_RGB2YCrCb, COLOR_RGBA2mRGBA, COLOR_YCrCb2BGR, COLOR_YCrCb2RGB, COLOR_YUV420p2BGR, COLOR_YUV420p2BGRA, COLOR_YUV420p2GRAY, COLOR_YUV420p2RGB, COLOR_YUV420p2RGBA, COLOR_YUV420sp2BGR, COLOR_YUV420sp2BGRA, COLOR_YUV420sp2GRAY, COLOR_YUV420sp2RGB, COLOR_YUV420sp2RGBA, Contour, Draw, FastFeatureDetector, FastLineDetector, GaussianBlur, GFTTDetector, HarrisLaplaceFeatureDetector, HoughCircles, HoughLines, HoughLinesP, HuMoments, KeyPoint, Laplacian, Line, LineSegmentDetector, Mahalanobis, Mat, MSDDetector, Point, PointIterator, Rect, RotatedRect, Scharr, SimpleBlobDetector, Size, SliceIterator, Sobel, StarDetector, Subdiv2D, TickMeter, UMat, VideoCapture, VideoWriter } from 'opencv';\nimport process from 'process';\nimport inspect from 'inspect';\nimport * as std from 'std';\n\nlet rainbow;\nlet zoom = 1;\nlet debug = false;\nlet basename = (process ? process.argv[1] : scriptArgs[1]).replace(/\\.js$/, '');\n\nlet simplifyMethods = {\n  NTH_POINT: c => c.simplifyNthPoint(2),\n  RADIAL_DISTANCE: c => c.simplifyRadialDistance(10),\n  PERPENDICULAR_DISTANCE: c => c.simplifyPerpendicularDistance(20),\n  REUMANN_WITKAM: c => c.simplifyReumannWitkam(),\n  OPHEIM: c => c.simplifyOpheim(),\n  LANG: c => c.simplifyLang(),\n  DOUGLAS_PEUCKER: c => c.simplifyDouglasPeucker()\n};\n\nfunction Hierarchy(array) {\n  if(array instanceof Int32Array)\n    this.index = function(id) {\n      return this.array.slice(id * 4, id * 4 + 4);\n    };\n  else\n    this.index = function(id) {\n      return this.array[id];\n    };\n  this.array = array;\n}\n\n/* prettier-ignore */\nObject.assign(Hierarchy.prototype, {\n    parent(id) { const a = this.index(id); return a[cv.HIER_PARENT]; },\n    child(id) { const a = this.index(id); return a[cv.HIER_CHILD]; },\n    next(id) { const a = this.index(id); return a[cv.HIER_NEXT]; },\n    prev(id) { const a = this.index(id); return a[cv.HIER_PREV]; }\n  });\n\nfunction getConstants(names) {\n  return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));\n}\n\nfunction findConstant(value, keyCond = k => /^CV/.test(k)) {\n  return FindKey(cv, (v, k) => v == value && keyCond(k));\n}\n\nfunction findType(value) {\n  return findConstant(value, k => /^CV_[0-9]+[A-Z]+C[0-9]/.test(k));\n}\n\nfunction getBitDepth(mat) {\n  switch (mat.depth) {\n    case cv.CV_8U:\n    case cv.CV_8S:\n      return 8;\n    case cv.CV_16U:\n    case cv.CV_16S:\n      return 16;\n    case cv.CV_32F:\n      return 32;\n    case cv.CV_64F:\n      return 64;\n  }\n}\n\nconst MakeMatFor = WeakMapper((processor, ...args) => new Mat(...args));\n\nfunction minMax(mat) {\n  const ret = cv.minMaxLoc(mat);\n  return [ret.minVal, ret.maxVal];\n}\n\nfunction modifierMap(keyCode) {\n  return [\n    ['shift', 0x10000],\n    ['alt', 0x80000],\n    ['ctrl', 0x40000]\n  ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);\n}\n\nfunction drawContour(mat, contour, color, thickness = 1, lineType = cv.LINE_AA) {\n  cv.drawContours(mat, [contour], 0, color, thickness, lineType);\n}\n\nfunction* getParents(hier, id) {\n  while(id != -1) {\n    yield id;\n\n    id = hier.parent(id);\n  }\n}\n\nfunction getContourDepth(hier, id) {\n  return [...getParents(hier, id)].length;\n}\n\nfunction findRoot(hier) {\n  return hier.findIndex(h => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1);\n}\n\nfunction* getToplevel(hier) {\n  for(let [i, h] of hier.entries()) if(h[cv.HIER_PARENT] == -1) yield i;\n}\n\nfunction* walkContours(hier, id) {\n  id = id || findRoot(hier);\n  let h;\n\n  while((h = hier[id])) {\n    yield id;\n\n    if(h[cv.HIER_CHILD] != -1) yield* walkContours(hier, h[cv.HIER_CHILD]);\n\n    id = h[cv.HIER_NEXT];\n  }\n}\n\nfunction main(...args) {\n  let start;\n  let running = true;\n  let paused = false;\n\n  globalThis.console = new Console({\n    colors: true,\n    depth: 1,\n    maxArrayLength: 30,\n    compact: 1,\n    hideKeys: [Symbol.toStringTag]\n  });\n  let f = std.open('test-video.log', 'w');\n  console.log('f.write', f.write);\n  globalThis.log = new Console(f, {\n    colors: true,\n    depth: 1,\n    maxArrayLength: 30,\n    compact: 1\n  });\n\n  const { DISPLAY } = globalThis.process ? globalThis.process.env : std.getenviron();\n  log.info('DISPLAY', DISPLAY);\n\n  let opts = GetOpt(\n    {\n      help: [\n        false,\n        () => {\n          console.log(`Usage: ${getArgv()[0]} [OPTIONS] <video|device>`);\n          exit(0);\n        },\n        'h'\n      ],\n      opengl: [false, null, 'g'],\n      input: [true, (file, current) => [...(current || []), file], 'i'],\n      driver: [\n        true,\n        (arg, current, options, results) => {\n          let driverId = arg in VideoSource.backends ? arg : current;\n          log.info('driver', { arg, current, driverId });\n          if(driverId === undefined) {\n            const input = results['input'];\n            let args = [arg];\n            if(input) {\n              args = results['input'].concat(args);\n              results['input'] = undefined;\n            }\n            results['@'] = results['@'].concat(args);\n          }\n          return driverId;\n        },\n        'd'\n      ],\n      size: [true, null, 's'],\n      trackbars: [false, null, 't'],\n      'no-trackbars': [false, null, 'T'],\n      '@': 'input,driver'\n    },\n    args\n  );\n\n  log.info('opts:', opts);\n  log.info('opts.size:', opts.size);\n\n  const makeRainbow = steps =>\n    Range(0, 360, 360 / steps)\n      .slice(0, -1)\n      .map(hue => new HSLA(hue, 100, 50))\n      .map(h => h.toRGBA());\n\n  const printFlags = flags => [...BitsToNames(MouseFlags)];\n\n  const videos = opts['input'] ? [opts['input']] : opts['@'];\n  log.info('Creating VideoSource:', videos);\n  let video = new VideoSource(...videos);\n\n  if(opts['size']) {\n    video.size = new Size(...opts['size'].split('x'));\n  }\n  log.info('video.size', video.size);\n\n  let win;\n\n  if(opts.opengl) {\n    win = new GLFW(video.size.width, video.size.height, {});\n  } else {\n    win = new Window('gray', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO /*| cv.WINDOW_KEEPRATIO | */);\n\n    win.setMouseCallback(function (event, x, y, flags) {\n      event = Mouse.printEvent(event);\n      flags = Mouse.printFlags(flags);\n\n      //console.debug('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));\n      //console.debug('Mouse :', { MouseEvents, MouseFlags });\n    });\n  }\n\n  win.resize(video.size);\n\n  let thickness = 1;\n  let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);\n  let tSize = font.size(video.time);\n\n  let tPos = new Point(...tSize.div(2))\n    .floor()\n    .mul(-1)\n    .add(50, video.get('frame_height') - tSize.y * 0.8);\n\n  tPos.x = 5;\n\n  // let bgr = new Mat();\n  log.info('backend:', video.backend);\n  log.info('grab():', video.grab);\n  log.info('fps:', video.fps);\n  let frameCount = video.get('frame_count');\n  let { frameShow, ...config } = LoadConfig();\n  log.info('frameShow:', frameShow);\n\n  let contours, hier;\n  let contoursDepth;\n  let lines, circles;\n  let outputMat, outputName;\n\n  let params = {\n    ksize: new NumericParam(config.ksize || 3, 1, 13, 2),\n    thresh1: new NumericParam(config.thresh1 || 40, 0, 100),\n    thresh2: new NumericParam(config.thresh2 || 90, 0, 100),\n    threshc: new NumericParam(config.threshc || 50, 0, 100),\n    angleResolution: new NumericParam(config.angleResolution || 2, 0.5, 180),\n    minLineLength: new NumericParam(config.minLineLength || 3, 0, 50),\n    maxLineGap: new NumericParam(config.maxLineGap || 1, 0, 50),\n    apertureSize: new NumericParam(config.apertureSize || 3, 3, 7, 2),\n    L2gradient: new NumericParam(config.L2gradient || 0, 0, 1),\n    dilations: new NumericParam(config.dilations || 0, 0, 10),\n    erosions: new NumericParam(config.erosions || 0, 0, 10),\n    mode: new EnumParam(config.mode || 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),\n    method: new EnumParam(config.method || 0, ['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS']),\n    maskColor: new EnumParam(config.maskColor || false, ['OFF', 'ON']),\n    lineWidth: new NumericParam(config.lineWidth || 1, 0, 10),\n    fontThickness: new NumericParam(config.fontThickness || 1, 0, 10)\n  };\n  let paramNav = new ParamNavigator(params, config.currentParam);\n  let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];\n  log.info('win.imageRect (1)', win.imageRect);\n\n  if(opts['trackbars']) {\n    params.apertureSize.createTrackbar('apertureSize', win);\n    params.thresh1.createTrackbar('thresh1', win);\n    params.thresh2.createTrackbar('thresh2', win);\n    log.info('win.imageRect (2)', win.imageRect);\n  }\n\n  // cv.createButton('apertureSize', arg => log.info(\"Button apertureSize\", arg), 0, false);\n\n  //log.info('paramNav.param:', paramNav.param);\n  //await params.apertureSize.createTrackbar('apertureSize', win);\n\n  //std.exit(0);\n  rainbow = makeRainbow(256);\n\n  let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));\n\n  let dst0Size, firstSize, videoSize;\n  let clahe = new CLAHE(4, new Size(8, 8));\n  let framePos;\n  let invert = false;\n\n  let pipeline = new Pipeline(\n    [\n      Processor(function AcquireFrame(src, dst) {\n        const dstEmpty = dst.empty;\n        if(dst.empty) dst0Size = dst.size;\n        // log.info('video', video.read, video.constructor.name);\n        framePos = video.get('pos_frames');\n        //log.info('video', video.read, video.constructor.name);\n        video.read(dst);\n        //log.info('dst', dst);\n        win.show(dst);\n        if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;\n        if(dstEmpty) firstSize = new Size(...videoSize);\n        if(dst.size && !videoSize.equals(dst.size)) throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);\n      }),\n      Processor(function Grayscale(src, dst) {\n        let channels = [];\n        cv.cvtColor(src, dst, cv.COLOR_BGR2Lab);\n        cv.split(dst, channels);\n        channels[0].copyTo(dst);\n      }),\n      Processor(function Norm(src, dst) {\n        clahe.apply(src, dst);\n      }),\n      Processor(function Blur(src, dst) {\n        cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);\n      }),\n      Processor(function EdgeDetect(src, dst) {\n        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);\n        ////log.info('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);\n      }),\n      Processor(function Morph(src, dst) {\n        cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.dilations);\n        cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.erosions);\n      }),\n      Processor(function Contours(src, dst) {\n        cv.findContours(src, (contours = []), h => (hier = h), cv[params.mode], cv[params.method]);\n        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);\n\n        if(+params.maskColor) {\n          let edge = [dst.toString(), pipeline.images[0].toString()];\n          dst.and(pipeline.images[0]);\n        }\n      }),\n      Processor(function HoughLines(src, dst) {\n        let edges = pipeline.outputOf('EdgeDetect');\n        let mat = new Mat(0, 0, cv.CV_32SC4);\n\n        cv.HoughLinesP(edges, mat, 2, (+params.angleResolution * Math.PI) / 180, +params.threshc, +params.minLineLength, +params.maxLineGap);\n        lines = [...mat]; //.array;\n        // log.info('mat', mat);\n        //  log.info('lines', lines.slice(0, 10));\n        // log.info('lines.length', lines.length);\n        src.copyTo(dst);\n      })\n    ],\n    (i, n) => {\n      if(frameShow == i) {\n        let mat = pipeline.getImage(i);\n\n        outputName = pipeline.processors[frameShow].name;\n        outputMat = mat;\n      }\n    }\n  );\n\n  log.info(`pipeline.images = { ` + pipeline.images.map(image => '\\n  ' + image) + '\\n}');\n\n  log.info('Pipeline processor names:', pipeline.names);\n  let meter = new TickMeter();\n  let prevTime;\n  let frameDelay = Math.floor(1000 / video.fps);\n  //log.info('frameDelay:', frameDelay);\n\n  if(frameShow === undefined) frameShow = Modulo(-1, pipeline.size);\n\n  log.info(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);\n\n  if(opts['trackbars'])\n    cv.createTrackbar('frame', 'gray', frameShow, pipeline.size - 1, function(value, count, name, window) {\n      //log.info('Trackbar', { value, count, name, window });\n      frameShow = value;\n    });\n\n  const resizeOutput = Once(() => {\n    let size = outputMat.size.mul(zoom);\n    win.resize(size.width, Math.floor(size.height * 1.5));\n  });\n\n  let out = new Mat();\n  let size;\n  let clientRect = win.imageRect;\n\n  const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);\n  const MakeSurface = () => Once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);\n  const MakeComposite = Once(() => new Mat());\n  let surface = MakeSurface();\n  let keyCode,\n    keyTime = Date.now(),\n    modifiers,\n    modifierList;\n\n  let paramNames = Object.keys(params);\n  let paramIndex = -1;\n  let controlMap = memoize(controlNumber => {\n    let paramName = paramNames[++paramIndex];\n    let param = params[paramName];\n\n    console.log('control #' + controlNumber.toString(16) + ' mapped to ' + paramName);\n    return value => (param.alpha = value / 127);\n  });\n\n  let midi = new TCPClient('tcp://127.0.0.1:6999', event => {\n    const { type, param1, param2, channel } = event;\n\n    let control = (channel << 4) | param1;\n    let value = param2;\n\n    console.log('MIDI event', { control, value });\n\n    controlMap(control)(value);\n  });\n\n  log.info('midi client:', midi);\n\n  while(running) {\n    meter.reset();\n    meter.start();\n    let deadline = Date.now() + frameDelay;\n    //console.log('prevTime', prevTime);\n\n    let frameNo = video.get('pos_frames');\n    if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));\n\n    let gray = pipeline();\n\n    //console.log('#0 deadline - Date.now()', deadline - Date.now());\n\n    if(!win.imageRect.equals(clientRect)) {\n      log.info(`resized from ${clientRect} to ${win.imageRect}`);\n      clientRect = win.imageRect;\n    }\n\n    //console.log('#1 deadline - Date.now()', deadline - Date.now());\n    showOutput();\n    //console.log('#2 deadline - Date.now()', deadline - Date.now());\n\n    while(true) {\n      let now = Date.now();\n      let sleepMsecs = deadline - now;\n\n      sleepMsecs -= 2;\n      let key;\n      sleepMsecs = Math.max(1, sleepMsecs);\n      //console.log('sleepMsecs',sleepMsecs);   \n      //\n      if((key = cv.waitKeyEx(sleepMsecs)) != -1) {\n        keyCode = key;\n        keyTime = Date.now();\n        modifiers = Object.fromEntries(modifierMap(keyCode));\n        modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);\n        let ch = String.fromCodePoint(keyCode & 0xff);\n        log.info(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);\n      }\n      let keyChar = String.fromCodePoint(key & 0xfff);\n\n      switch (keyChar) {\n        case '<' /* < */:\n          paramNav.prev();\n          break;\n        case '>' /* > */:\n          paramNav.next();\n          break;\n\n        case '\\x2b' /* + */:\n          paramNav.param.increment();\n          break;\n        case '\\x2d' /* - */:\n        case '\\x2f' /* numpad - */:\n          paramNav.param.decrement();\n          break;\n\n        case '1': /* 1 */\n        case '2': /* 2 */\n        case '3': /* 3 */\n        case '4': /* 4 */\n        case '5': /* 5 */\n        case '6': /* 6 */\n        case '7': /* 7 */\n        case '8': /* 8 */\n        case '9': /* 9 */\n        case '0' /* 0 */:\n          let v = keyCode & 0xf || 10;\n          paramNav.param.alpha = v / 10;\n          break;\n        case '§' /* § */:\n          paramNav.param.alpha = 0;\n          break;\n        case 'Q': /* Q */\n        case 'q': /* q */\n\n        case '\\x1b':\n          running = false;\n          break;\n        case ' ':\n          paused = !paused;\n          break;\n        case 'n': /* n */\n        case 'N' /* N */:\n          frameShow = Modulo(frameShow + 1, pipeline.size);\n          break;\n        case 'p': /* p */\n        case 'P' /* P */:\n          frameShow = Modulo(frameShow - 1, pipeline.size);\n          break;\n        case '\\u0f50' /* home */:\n          video.set('pos_frames', 0);\n          break;\n        case '\\u0f57' /* end */:\n          video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));\n          break;\n        case '\\u0f51': /* left */\n        case '\\u0f53': /* right */\n        case '\\u0f52': /* up */\n        case '\\u0f54': /* down */ {\n          const method = keyCode & 0x1 ? 'Frames' : 'Msecs';\n          const mod = parseInt(['ctrl', 'shift'].map(n => modifiers[n] | 0).join(''), 2);\n\n          const distance = (keyCode & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);\n\n          const offset = keyCode & 0x2 ? +distance : -distance;\n\n          //log.info('seek', { method, distance, offset });\n          video['seek' + method](offset);\n          let pos = video.position(method);\n\n          log.info('seek' + method + ' ' + offset + ` distance = ${distance} pos = ${video.position('frames')} time = \\x1b[1;36m${video.position('ms')}\\x1b[0m (${video.position('%').toFixed(2)}%)`);\n          break;\n        }\n        case 'i' /* invert */:\n          invert = !invert;\n          break;\n\n        case 's': /* save */ {\n          log.info('contours.length', contours.length);\n          saveContours(contours, outputMat.size);\n          saveLines(lines, outputMat.size);\n          break;\n        }\n        default: {\n          if(keyCode !== undefined && key != -1) {\n            //log.info('unhandled', console.config({ compact: 2, numberBase: 16 }), { key, keyCode, modifiers });\n            //\n\n          }\n          break;\n        }\n      }\n      if(sleepMsecs <= 1) break;\n    }\n\n    std.gc();\n\n    if(paused) video.seekFrames(-1);\n\n    meter.stop();\n\n    prevTime = meter.timeSec;\n  }\n\n  function showOutput() {\n    let over = surface(outputMat.rows, outputMat.cols, cv.CV_8UC4);\n    let now = Date.now();\n\n    out = outputMat;\n    if(outputMat.channels == 1) {\n      cv.cvtColor(out, out, cv.COLOR_GRAY2BGRA);\n    } else {\n      cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);\n    }\n    const processor = pipeline.processors[frameShow];\n\n    if(processor.functionName == 'HoughLines') {\n      for(let line of lines) {\n        const { a, b } = line;\n        Draw.line(over, line.a, line.b, { r: 255, g: 0, b: 0, a: 255 }, 2, cv.LINE_AA, 0);\n      }\n    } else if(frameShow == 0 || frameShow == 7) {\n      cv.drawContours(over, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);\n    } else {\n      let ids = [...getToplevel(hier)];\n\n      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));\n      let hierObj = new Hierarchy(hier);\n    }\n    font.draw(over, video.time + ' ⏩', tPos, { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);\n\n    function drawParam(param, y, color) {\n      const name = paramNav.nameOf(param);\n      const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');\n      const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';\n      const text = `${arrow}${name}` + (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') + ` = ${value}`;\n      color = color || {\n        r: 0xb7,\n        g: 0x35,\n        b: 255,\n        a: 255\n      };\n      y = tPos.y - 20 - (y | 0);\n      font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);\n      font.draw(over, text, [tPos.x, y], color, +params.fontThickness);\n    }\n\n    let elapsed = now - keyTime;\n    let maskRect;\n    if((keyCode & 0x3d) == 0x3c && elapsed < 2000) {\n      let { index, size } = paramNav;\n      let start = 0;\n      if(index > 4) {\n        start = index - 4;\n      }\n      let trailing = size - (index + 1);\n      if(trailing > 4) {\n        size -= trailing - 4;\n      }\n      let y = 0;\n      let h = 0;\n      for(let i = size - 1; i >= start; i--) h += 20;\n      maskRect = new Rect(tPos.x, tPos.y - 20 - h, 200, h);\n\n      for(let i = size - 1; i >= start; i--) {\n        const pos = Modulo(i, size);\n        const [name, param] = paramNav.at(pos);\n        drawParam(\n          param,\n          y,\n          paramNav.index == pos && {\n            r: 255,\n            g: 255,\n            b: 0,\n            a: 255\n          }\n        );\n        y += 20;\n      }\n    } else {\n      drawParam(paramNav.param);\n    }\n\n    font.draw(\n      over,\n      `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),\n      [5, 5 + tSize.y],\n      {\n        r: 255,\n        g: 255,\n        b: 0,\n        a: 255\n      },\n      +params.fontThickness\n    );\n\n    //resizeOutput();\n\n    const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;\n    if(maskRect && showOverlay) {\n      Draw.rectangle(out, maskRect, [0, 0, 0, 255], -1);\n      Draw.rectangle(out, maskRect, [255, 255, 255, 255], 1);\n    }\n    let composite = MakeMatFor(showOutput);\n\n    if(invert) {\n      //      over.xor([255,255,255,0]);\n      for(let pixel of over) {\n        if(pixel[3] > 0) {\n          pixel[0] = 255 - pixel[0];\n          pixel[1] = 255 - pixel[1];\n          pixel[2] = 255 - pixel[2];\n        }\n      }\n    }\n    cv.addWeighted(out, 1, over, showOverlay ? 1 : 0, 0, composite);\n    if(maskRect && showOverlay) {\n      Draw.rectangle(composite, maskRect, [255, 255, 255, 255], 1);\n    }\n\n    win.show(composite);\n  }\n\n  function saveContours(contours, size) {\n    let points = contours.reduce((acc, contour, i) => {\n      //log.info('contour #' + i, contour);\n      //contour =simplifyMethods.PERPENDICULAR_DISTANCE(contour);\n      //contour = simplifyMethods.RADIAL_DISTANCE(contour);\n      let array = contour.toArray();\n      //log.info('array #' + i, array.length);\n      if(array.length >= 3) {\n        let sp = new SvgPath();\n        sp.abs();\n\n        for(let i = 0; i < array.length; i += 1) {\n          const { x, y } = array[i];\n          sp[i == 0 ? 'to' : 'line'](x, y);\n        }\n        let rsp = sp.toRelative();\n        acc.push(rsp.str(2, ' ', ','));\n      }\n      return acc;\n    }, []);\n    let children = points.map(d => ({\n      tagName: 'path',\n      attributes: { d }\n    }));\n    let viewBox = [0, 0, ...size].join(' ');\n    let doc = {\n      tagName: 'svg',\n      children: [{ tagName: 'g', attributes: { stroke: 'black', fill: 'none' }, children }],\n      attributes: {\n        xmlns: 'http://www.w3.org/2000/svg',\n        viewBox\n      }\n    };\n    WriteJSON('contours-' + framePos + '.json', doc);\n    SaveSVG('contours-' + framePos + '.svg', doc);\n  }\n\n  function saveLines(lines, size) {\n    let viewBox = [0, 0, ...size].join(' ');\n    let children = lines\n      .map(coords => new Line(...coords))\n      .map(([x1, y1, x2, y2]) => ({\n        tagName: 'line',\n        attributes: { x1, y1, x2, y2 }\n      }));\n    let doc = {\n      tagName: 'svg',\n      children: [{ tagName: 'g', attributes: { stroke: 'black', fill: 'none' }, children }],\n      attributes: {\n        xmlns: 'http://www.w3.org/2000/svg',\n        viewBox\n      }\n    };\n\n    WriteJSON('lines-' + framePos + '.json', doc);\n    SaveSVG('lines-' + framePos + '.svg', doc);\n  }\n\n  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth, minLineLength, maxLineGap } = params;\n  SaveConfig(\n    Object.entries({\n      frameShow,\n      ksize,\n      thresh1,\n      thresh2,\n      apertureSize,\n      L2gradient,\n      dilations,\n      erosions,\n      mode,\n      method,\n      lineWidth,\n      minLineLength,\n      maxLineGap,\n      currentParam: paramNav.index\n    }).reduce((a, [k, v]) => ({ ...a, [k]: +v }), {})\n  );\n\n  for(let mat of Mat.list || []) {\n    let stack = Mat.backtrace(mat)\n      .filter(frame => frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName)))\n      .map(frame => frame.toString())\n      .join('\\n  ');\n\n    log.info('mat=' + mat.toString() + '\\n  ' + stack);\n  }\n  log.info('props:', video.dump());\n}\n\ntry {\n  main(...scriptArgs.slice(1));\n} catch(error) {\n  console.log('FAIL: ', error && error.message, error && error.stack ? '\\n' + error.stack : '');\n  std.exit(1);\n}\n\nconsole.log('SUCCESS');\n",
+			"file": "test-video.js",
+			"file_size": 26246,
+			"file_write_time": 133731172011237859,
+			"settings":
+			{
+				"buffer_size": 26245,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					1,
+					1,
+					"insert",
+					{
+						"characters": "\t\t"
+					},
+					"AgAAALo/AAAAAAAAuz8AAAAAAAAAAAAAuz8AAAAAAAC9PwAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAuj8AAAAAAAC6PwAAAAAAAAAAAAAAAPC/"
+				]
 			]
 		}
 	],
@@ -372,7 +434,7 @@
 	],
 	"find":
 	{
-		"height": 38.0
+		"height": 24.0
 	},
 	"find_in_files":
 	{
@@ -390,6 +452,7 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"waitKey",
 			"setLog",
 			"MOVE ",
 			"InitBo",
@@ -516,8 +579,7 @@
 			"r:",
 			"isTouch",
 			"AddPoint",
-			"TouchEvents",
-			"anchorPoints"
+			"TouchEvents"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -569,6 +631,53 @@
 			[
 				{
 					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1247,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1247,
+								1247
+							]
+						],
+						"settings":
+						{
+							"auto_complete": false,
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"auto_indent": false,
+							"function_name_status_row": 45,
+							"gutter": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"tab_width": 2,
+							"translate_tabs_to_spaces": true,
+							"word_wrap": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
 					"file": "eagle-shell.js",
 					"semi_transient": false,
 					"settings":
@@ -608,12 +717,12 @@
 						"translation.y": 13216.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 4,
 					"stack_multiselect": false,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
+					"buffer": 2,
 					"file": "list.html",
 					"semi_transient": false,
 					"settings":
@@ -653,26 +762,166 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"stack_multiselect": false,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 3,
 					"file": "debugger-server.js",
-					"selected": true,
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 29603,
+						"buffer_size": 29462,
 						"regions":
 						{
+							"col_0087FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										7343,
+										7356
+									],
+									[
+										18218,
+										18231
+									],
+									[
+										18442,
+										18455
+									]
+								],
+								"scope": "col_0087FFFF"
+							},
+							"col_0087FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0087FFFF_circle.png",
+								"regions":
+								[
+									[
+										7302,
+										7302
+									],
+									[
+										18193,
+										18193
+									],
+									[
+										18419,
+										18419
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_00AFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										3715,
+										3728
+									]
+								],
+								"scope": "col_00AFFFFF"
+							},
+							"col_00AFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_00AFFFFF_circle.png",
+								"regions":
+								[
+									[
+										3668,
+										3668
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_D700FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										3691,
+										3705
+									]
+								],
+								"scope": "col_D700FFFF"
+							},
+							"col_D700FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_D700FFFF_circle.png",
+								"regions":
+								[
+									[
+										3668,
+										3668
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF0000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										6839,
+										6853
+									]
+								],
+								"scope": "col_FF0000FF"
+							},
+							"col_FF0000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
+								"regions":
+								[
+									[
+										6804,
+										6804
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF8700FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										6773,
+										6787
+									]
+								],
+								"scope": "col_FF8700FF"
+							},
+							"col_FF8700FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF8700FF_circle.png",
+								"regions":
+								[
+									[
+										6745,
+										6745
+									]
+								],
+								"scope": "col_gutter"
+							}
 						},
 						"selection":
 						[
 							[
-								15688,
-								15688
+								15931,
+								15931
 							]
 						],
 						"settings":
@@ -688,15 +937,61 @@
 									"selector": "punctuation.accessor"
 								}
 							],
-							"function_name_status_row": 533,
+							"function_name_status_row": 540,
 							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
 							"tab_size": 2,
-							"tabs_extra_last_activated": 1728632545.44,
+							"tabs_extra_last_activated": 1728648321.83,
 							"tabs_extra_last_activated_sheet_index": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 7981.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "test-video.js",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 26245,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								16317,
+								16317
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"function_name_status_row": 456,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1744456648.0,
+							"tabs_extra_last_activated_sheet_index": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 6436.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -766,6 +1061,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"test-vid",
+				"test-video.js"
+			],
 			[
 				"debugger-ser",
 				"debugger-server.js"
@@ -957,10 +1256,6 @@
 			[
 				"test-open",
 				"test-opencv.js"
-			],
-			[
-				"test-vid",
-				"test-video.js"
 			],
 			[
 				"test-opencv",
