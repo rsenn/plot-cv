@@ -520,13 +520,15 @@
 	"buffers":
 	[
 		{
-			"file": "out.gz",
+			"file": "soundcloud-tracks.js",
 			"settings":
 			{
-				"buffer_size": 80,
-				"encoding": "Hexadecimal",
+				"buffer_size": 1606,
 				"line_ending": "Unix"
-			}
+			},
+			"undo_stack":
+			[
+			]
 		}
 	],
 	"build_system": "",
@@ -705,10 +707,11 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Projects/plot-cv"
+		"/home/janos/Projects/plot-cv"
 	],
 	"file_history":
 	[
+		"/home/janos/Projects/plot-cv/out.gz",
 		"/home/roman/Projects/plot-cv/soundcloud-tracks.js",
 		"/home/roman/Projects/plot-cv/quickjs/qjs-lws/libwebsockets/include/libwebsockets/lws-context-vhost.h",
 		"/home/roman/Projects/plot-cv/quickjs/qjs-lws/test.js",
@@ -835,8 +838,7 @@
 		"/home/roman/Projects/plot-cv/quickjs/qjs-modules/inst/x86_64-linux-clang/usr/local/bin/list-exports.js",
 		"/home/roman/Projects/plot-cv/quickjs/qjs-modules/inst/x86_64-linux-release/usr/local/bin/resolve-imports.js",
 		"/home/roman/Projects/plot-cv/quickjs/qjs-modules/inst/x86_64-linux-release/usr/local/bin/list-exports.js",
-		"/home/roman/Projects/plot-cv/quickjs/qjs-modules/inst/x86_64-linux-llvm/usr/local/bin/resolve-imports.js",
-		"/home/roman/Projects/plot-cv/quickjs/qjs-modules/inst/x86_64-linux-llvm/usr/local/bin/list-exports.js"
+		"/home/roman/Projects/plot-cv/quickjs/qjs-modules/inst/x86_64-linux-llvm/usr/local/bin/resolve-imports.js"
 	],
 	"find":
 	{
@@ -877,12 +879,12 @@
 			[
 				{
 					"buffer": 0,
-					"file": "out.gz",
+					"file": "soundcloud-tracks.js",
 					"selected": true,
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 80,
+						"buffer_size": 1606,
 						"regions":
 						{
 						},
@@ -890,7 +892,7 @@
 						[
 							[
 								0,
-								0
+								1606
 							]
 						],
 						"settings":
@@ -907,9 +909,11 @@
 								}
 							],
 							"function_name_status_row": 0,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tabs_extra_last_activated": 1744500456.64,
-							"tabs_extra_last_activated_sheet_index": 0
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1744508243.38,
+							"tabs_extra_last_activated_sheet_index": 0,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -970,6 +974,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"sound",
+				"soundcloud-tracks.js"
+			],
 			[
 				"out",
 				"out.gz"
@@ -1477,10 +1485,6 @@
 			[
 				"directory",
 				"quickjs-directory.c"
-			],
-			[
-				"getden",
-				"include/getdents.h"
 			]
 		],
 		"width": 0.0
