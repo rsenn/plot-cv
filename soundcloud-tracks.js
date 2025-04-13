@@ -1,10 +1,11 @@
 // ==UserScript==
-// @name         Soundcloud
+// @name         SoundCloud grabber
 // @namespace    http://soundcloud.com/
 // @version      2025-04-12
-// @description  try to take over the world!
-// @author       You
+// @description  Get tracks from soundcloud
+// @author       Roman Senn <roman.l.senn@gmail.com>
 // @match        https://soundcloud.com/*
+// @match        https://www.youtube.com/*
 // @icon         https://soundcloud.com/favicon.ico
 // @grant        none
 // ==/UserScript==
@@ -15,8 +16,6 @@
   console.log('SoundCloud grabber loaded');
 
   window.addEventListener('load', e => {
-    //window.url = Object.assign(new URL(window.location + ''), { pathname: '' });
-
     window.a = GetTracks();
   });
 })();
@@ -27,15 +26,23 @@ Object.assign(window, {
 
 function GetTracks() {
   const re = /^[^:]*:\/\/[^/]*\//g;
+  const yt = /youtube/.test(window.location + '');
+
   return Object.assign(
-    [...document.querySelectorAll('a.soundTitle__title')].map(e => [e.href.replace(re, ''), e.innerText]),
+    [...document.querySelectorAll('a.soundTitle__title, a.yt-simple-endpoint')]
+      .map(yt ? e => [e.href, e.innerText, e] : e => [e.href, e.innerText])
+      .filter(yt ? ([url, title]) => /watch/.test(url) : ([url, title]) => url != '')
+      .map(yt ? ([url, ...rest]) => [url.replace(/\&.*/g, ''), ...rest] : ([url, ...rest]) => [url.replace(re, ''), ...rest])
+      .filter(([url, title]) => url != '' && title != ''),
     {
-      toString() {
-        const { length } = this;
+      toString(pad = false) {
         let maxlen = 0;
-        for(let i = 0; i < length; ++i) {
-          const len = this[i][0].length;
-          if(len > maxlen) maxlen = len;
+        if(pad) {
+          const { length } = this;
+          for(let i = 0; i < length; ++i) {
+            const len = this[i][0].length;
+            if(len > maxlen) maxlen = len;
+          }
         }
         return this.map(([url, title]) => url.padEnd(maxlen) + ' ' + title).join('\n');
       }

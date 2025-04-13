@@ -133,10 +133,10 @@ function CommandLine() {
 
   let repl;
   repl = globalThis.repl = new REPL('AST', false);
- console.log('config', config);
+  console.log('config', config);
 
   let cfg = ReadJSON(config);
- console.log('cfg', cfg);
+  console.log('cfg', cfg);
 
   if(cfg) Object.assign(console.options, cfg.inspectOptions);
 
@@ -1132,7 +1132,7 @@ async function ASTShell(...args) {
     hideKeys: ['loc', 'range']
   };
 
-  globalThis.console = new Console({  inspectOptions });
+  globalThis.console = new Console({ inspectOptions });
 
   globalThis.files = files = {};
 
