@@ -1,4 +1,4 @@
-import { AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetClass, GetBases, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl, nameOrIdPred, } from './clang-ast.js';
+import { AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetClass, GetBases, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl, nameOrIdPred, NamespaceOf, GetNamespace, } from './clang-ast.js';
 import { DirIterator, RecursiveDirIterator } from './dir-helpers.js';
 import { LoadHistory, ReadFile, ReadJSON, WriteFile, WriteJSON } from './io-helpers.js';
 import * as deep from './lib/deep.js';
@@ -1135,12 +1135,14 @@ function MakeId(name) {
 }
 
 function MakeQuickJSClass(node, ast = $) {
-  const cid = MakeId(decamelize(node.name, '_'));
+  const cid = MakeId(decamelize(node.name, '_')).toLowerCase();
   const cname = ast.namespaceOf(node) + '';
 
   const members = {
-    fields: [...node.members].filter(n => className(n) == 'Type' && !['protected', 'private'].includes(n.access)),
-    methods: [...node.members].filter(n => n.ast.kind == 'CXXMethodDecl'),
+    fields: [...node.members].filter(n => className(n) == 'Type' && !['protected', 'private'].includes(n.access) && !(n.storageClass == 'static' || n.ast.storageClass == 'static')),
+    static: [...node.members].filter(n => className(n) == 'Type' && (n.storageClass == 'static' || n.ast.storageClass == 'static')),
+    methods: [...node.members].filter(n => n.ast.kind == 'CXXMethodDecl' && !(n.storageClass == 'static' || n.ast.storageClass == 'static')),
+    functions: [...node.members].filter(n => n.ast.kind == 'CXXMethodDecl' && (n.storageClass == 'static' || n.ast.storageClass == 'static')),
     enums: [...node.members].filter(n => n.ast.kind == 'EnumDecl'),
     ctor_dtor: [...node.members].filter(n => !(n.ast.kind == 'CXXMethodDecl' || className(n) == 'Type')),
   };
@@ -1156,6 +1158,7 @@ function MakeQuickJSClass(node, ast = $) {
     pget: `static JSValue\njs_${cid}_get(JSContext* ctx, JSValueConst this_val, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
     pset: `static JSValue\njs_${cid}_set(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
     mfn: `static JSValue\njs_${cid}_method(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
+    sfn: `static JSValue\njs_${cid}_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
   };
   const methods = {},
     names = [];
@@ -1262,7 +1265,10 @@ function MakeQuickJSClass(node, ast = $) {
   }
 
   for(let field of members.fields) {
-    const { name, desugared, typeAlias, access } = field;
+    const { name, desugared, typeAlias, access, storageClass } = field;
+
+    if(storageClass == 'static') continue;
+    if(field.ast.storageClass == 'static') continue;
 
     const cname = 'PROP_' + MakeId(decamelize(name, '_')).toUpperCase().replaceAll('__', '_x');
 
@@ -1375,7 +1381,8 @@ async function ASTShell(...args) {
         return node;
       },
       getType(name_or_id) {
-        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
+        //let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
+        let result = this.getNamespace(name_or_id, this.data, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
 
         result ??= GetType(name_or_id, this.data);
 
@@ -1387,42 +1394,10 @@ async function ASTShell(...args) {
         return result;
       },
       getNamespace(arg, root = this.data, predicate = () => true) {
-        const a = Array.isArray(arg) ? arg : arg.split('::');
-
-        let [name] = a;
-
-        for(let [node, path] of deep.iterate(root, n => (typeof n == 'object' ? (n.name == name ? deep.YIELD_NO_RECURSE : n.name ? deep.NO_RECURSE : deep.RECURSE) : 0), deep.RETURN_VALUE_PATH)) {
-          if(a.length <= 1) {
-            if(!predicate(node, path)) continue;
-            return node;
-          }
-
-          let result = this.getNamespace(a.slice(1), node);
-
-          if(result) return result;
-        }
+        return GetNamespace(arg, root, predicate);
       },
       namespaceOf(node) {
-        let p = this.pathOf(node),
-          r = [],
-          i = 0;
-
-        while(p.length > 0) {
-          let n = deep.get(this.data, p);
-
-          if(i == 0 || n.kind == 'NamespaceDecl') r.push(n.name);
-          p = p.slice(0, -2);
-          ++i;
-        }
-
-        return define(
-          r.reverse(),
-          nonenumerable({
-            toString() {
-              return this.join('::');
-            },
-          }),
-        );
+        return NamespaceOf(node?.ast ?? node, this.data);
       },
       getClass(name_or_id) {
         return GetClass(name_or_id, this.data);
@@ -1555,6 +1530,8 @@ async function ASTShell(...args) {
     GetLoc,
     GetClass,
     GetBases,
+    GetNamespace,
+    NamespaceOf,
     GetType,
     GetTypeStr,
     GetTypeNode,

@@ -11,6 +11,7 @@ import { readObject } from 'util';
 
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
+const C = console.config({ compact: true });
 
 function FileTime(filename) {
   let st = fs.statSync(filename);
@@ -235,10 +236,10 @@ export class Type extends Node {
   static declarations = new Map();
   static node2type = getTypeFromNode.cache;
 
-  constructor(node, ast) {
+  constructor(node, ast, ns) {
     let name, desugared, typeAlias, qualType;
 
-    //console.log('Type', typeof node, typeof node == 'string' ? node : node.kind ?? node.name ?? node.qualType);
+    // console.log('Type.constructor', C, { node, ast });
 
     ast ??= globalThis['$']?.data;
 
@@ -325,7 +326,11 @@ export class Type extends Node {
     if(desugared === qualType) desugared = undefined;
     if(name == '') name = undefined;
 
-    if(name) {
+    //console.log('Type.constructor',C, {name,qualType});
+
+    if(ns) {
+      if(!Type.declarations.has(name)) Type.declarations.set(ns, this);
+    } else if(name) {
       if(!Type.declarations.has(name)) Type.declarations.set(name, this);
     } else if(qualType) {
       if(!Type.declarations.has(qualType)) Type.declarations.set(qualType, this);
@@ -352,6 +357,8 @@ export class Type extends Node {
     } else if(this.isEnum()) {
       this.desugared = 'int';
     }
+
+    // console.log('Type.constructor', C, this);
   }
 
   /* prettier-ignore */ get regExp() { return new RegExp(`(?:${this.qualType}${this.typeAlias ? '|' + this.typeAlias : ''})`.replace(/\*/g, '\\*'), 'g'); }
@@ -811,8 +818,8 @@ export class EnumDecl extends Type {
 }
 
 export class TypedefDecl extends Type {
-  constructor(node, ast) {
-    super(node, ast);
+  constructor(node, ast, ns) {
+    super(node, ast, ns);
 
     let inner = (node.inner ?? []).filter(n => !/Comment/.test(n.kind));
     let type;
@@ -827,14 +834,14 @@ export class TypedefDecl extends Type {
 
     //type ??= GetType(node, ast);
     assert(inner.length, 1);
-    // console.log('TypedefDecl.constructor', { node, typeId, type });
 
     if(type?.decl) type = type.decl;
     if(type?.kind && type.kind.endsWith('Type')) type = type.type;
 
+    //console.log('TypedefDecl.constructor', { name: node.name, type  });
+
     this.name = node.name;
-    this.type = type.kind ? TypeFactory(type, ast, false) : new Type(type, ast);
-    //console.log('TypedefDecl.constructor',     this.type);
+    this.type = type.kind ? TypeFactory(type, ast, false) : new Type(type, ast, ns);
   }
 
   /* prettier-ignore */ get size() { return this.type?.size; }
@@ -890,9 +897,15 @@ export class FunctionDecl extends Node {
       if(tmp) returnType = tmp;
     } catch(e) {}*/
 
-    //console.log('FunctionDecl.constructor', console.config({ compact: true }), { returnType });
+    //console.log('FunctionDecl.constructor', C, { name: this.name, returnType, storageClass });
 
-    this.returnType = returnType instanceof Node ? returnType : typeof returnType != 'string' ? TypeFactory(returnType, ast) : new Type(returnType, ast);
+    let t;
+
+    if(typeof returnType == 'string' && (t = GetNamespace(returnType, ast))) {
+      console.log('FunctionDecl.constructor', C, { returnType, t });
+      this.returnType = new Type(t, ast, NamespaceOf(t, ast));
+    } else this.returnType = returnType instanceof Node ? returnType : typeof returnType != 'string' ? TypeFactory(returnType, ast) : new Type(returnType, ast);
+
     this.parameters = parameters && parameters.map(({ name, type }) => [name, new Type(type, ast)]);
     this.body = body;
 
@@ -1131,7 +1144,8 @@ export class Location {
 export function TypeFactory(node, ast, cache = true) {
   let obj;
 
-  //console.log('TypeFactory:', node);
+  let ns = NamespaceOf(node, ast) + '';
+  //console.log('TypeFactory:', { name,node });
 
   assert(
     node?.kind,
@@ -1155,7 +1169,7 @@ export function TypeFactory(node, ast, cache = true) {
       obj = new FieldDecl(node, ast);
       break;
     case 'TypedefDecl':
-      obj = new TypedefDecl(node, ast);
+      obj = new TypedefDecl(node, ast, ns);
       break;
     case 'CXXConstructorDecl':
     case 'CXXMethodDecl':
@@ -2618,7 +2632,6 @@ export function isNode(obj) {
 }
 
 export function GetType(name_or_id, ast = $.data) {
-  //console.log('GetType:', name_or_id);
   let result, idx;
 
   if(typeof name_or_id == 'object' && name_or_id) {
@@ -2687,6 +2700,46 @@ export function* GetBases(node, ast = $.data) {
   if(node?.ast) node = node.ast;
   if(node?.kind != 'CXXRecordDecl') throw new TypeError(`argument 1 must be ClassDecl / CXXRecordDecl`);
   if(node?.bases) for(let base of node.bases) yield GetClass(base.type.qualType, ast);
+}
+
+export function GetNamespace(arg, root = $.data, predicate = () => true) {
+  const a = Array.isArray(arg) ? arg : arg.split('::');
+
+  let [name] = a;
+
+  for(let [node, path] of deep.iterate(root, n => (typeof n == 'object' ? (n.name == name ? deep.YIELD_NO_RECURSE : n.name ? deep.NO_RECURSE : deep.RECURSE) : 0), deep.RETURN_VALUE_PATH)) {
+    if(a.length <= 1) {
+      if(!predicate(node, path)) continue;
+      return node;
+    }
+
+    let result = GetNamespace(a.slice(1), node, predicate);
+
+    if(result) return result;
+  }
+}
+
+export function NamespaceOf(node, ast = $.data) {
+  let p = deep.pathOf(ast, node),
+    r = [],
+    i = 0;
+
+  while(p.length > 0) {
+    let n = deep.get(ast, p);
+
+    if(i == 0 || n.kind == 'NamespaceDecl') r.push(n.name);
+    p = p.slice(0, -2);
+    ++i;
+  }
+
+  return define(
+    r.reverse(),
+    nonenumerable({
+      toString() {
+        return this.join('::');
+      },
+    }),
+  );
 }
 
 export function GetFields(node) {
