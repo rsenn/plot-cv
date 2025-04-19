@@ -135,7 +135,6 @@
     "free-proxy": "^0.2.0",
     "hishim": "^0.0.3",
     "http": "0.0.0",
-    "proxy-lists": "https://github.com/chill117/proxy-lists",
     "proxynova": "^0.1.0",
     "quickjs-debugger": "^1.1.0",
     "quickjs-emscripten": "^0.23.0",
