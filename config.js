@@ -20,7 +20,7 @@ export function LoadConfig(name = process.argv[1].replace(/\.js$/, '.config.json
   configObj = Object.fromEntries(
     Object.entries(configObj)
       .map(([k, v]) => [k, +v])
-      .filter(([k, v]) => !isNaN(v))
+      .filter(([k, v]) => !isNaN(v)),
   );
   console.log('LoadConfig:', configObj);
   return configObj;

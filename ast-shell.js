@@ -1,15 +1,15 @@
-import { AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl } from './clang-ast.js';
+import { AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetClass, GetBases, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl, nameOrIdPred, } from './clang-ast.js';
 import { DirIterator, RecursiveDirIterator } from './dir-helpers.js';
 import { LoadHistory, ReadFile, ReadJSON, WriteFile, WriteJSON } from './io-helpers.js';
 import * as deep from './lib/deep.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
-import { define, defineGetter, getOpt, isObject, lazyProperty, memoize, pushUnique, toArrayBuffer, toString, weakMapper } from './lib/misc.js';
+import { define, properties, nonenumerable, defineGetter, getOpt, isObject, lazyProperty, memoize, pushUnique, toArrayBuffer, toString, weakMapper } from './lib/misc.js';
 import { extendArray } from 'extendArray';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import Tree from './lib/tree.js';
-import { split } from 'util';
+import { split, decamelize, camelize, className, mapWrapper } from 'util';
 import { Shell, Spawn } from './os-helpers.js';
 import * as Terminal from 'terminal';
 import { Console } from 'console';
@@ -41,7 +41,7 @@ let libdirs = [
   '/usr/libx32',
   '/usr/local/lib',
   '/usr/local/lib/i386-linux-gnu',
-  '/usr/local/lib/x86_64-linux-gnu'
+  '/usr/local/lib/x86_64-linux-gnu',
 ];
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
 let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
@@ -65,7 +65,7 @@ const traceProxy = (obj, handler) => {
         console.log('Util.traceProxy', key, (member + '').replace(/\n\s+/g, ' ').split(lineSplit)[0]);
       }
       return member;
-    }
+    },
   });
   return proxy;
 };
@@ -94,7 +94,7 @@ const StringGenerator =
     return Object.assign(iterator, {
       toString() {
         return ConcatIterator(this);
-      }
+      },
     });
   };
 
@@ -109,10 +109,10 @@ async function ImportModule(modulePath, ...args) {
       getMemberNames(module, Infinity, 0).reduce(
         (acc, item) => ({
           ...acc,
-          [item]: { value: module[item], enumerable: true }
+          [item]: { value: module[item], enumerable: true },
         }),
-        Object.getOwnPropertyDescriptors(module)
-      )
+        Object.getOwnPropertyDescriptors(module),
+      ),
     );
 
     if(!globalThis.modules) globalThis.modules = {};
@@ -133,10 +133,8 @@ function CommandLine() {
 
   let repl;
   repl = globalThis.repl = new REPL('AST', false);
-  console.log('config', config);
 
   let cfg = ReadJSON(config);
-  console.log('cfg', cfg);
 
   if(cfg) Object.assign(console.options, cfg.inspectOptions);
 
@@ -148,14 +146,14 @@ function CommandLine() {
         Compile(...args);
         return false;
       },
-      'compile source'
+      'compile source',
     ],
     l: [
       (...args) => {
         ProcessFile(...args);
         return false;
       },
-      'load source file'
+      'load source file',
     ],
     i: [
       (module, ...args) => {
@@ -165,8 +163,8 @@ function CommandLine() {
         } catch(e) {}
         import(module).then(m => (globalThis[module] = m));
       },
-      'import module'
-    ]
+      'import module',
+    ],
   });
   repl.show = value => {
     let first, str;
@@ -176,7 +174,7 @@ function CommandLine() {
       str = inspect(value, {
         ...(cfg?.inspectOptions ?? {}),
         ...repl.inspectOptions,
-        hideKeys: ['loc', 'range']
+        hideKeys: ['loc', 'range'],
       });
     std.out.puts(str + '\n');
   };
@@ -184,13 +182,12 @@ function CommandLine() {
   repl.loadSaveOptions();
   repl.inspectOptions ??= console.options;
 
-  let debugLog = fs.openSync('debug.log', 'a');
-  repl.debugLog = debugLog;
-
   globalThis.printNode = arg => {
     console.log(NodePrinter($.data).print(arg));
   };
 
+  /*let debugLog = fs.openSync('debug.log', 'a');
+  repl.debugLog = debugLog;
   repl.debug = (...args) => {
     let s = '';
     for(let arg of args) {
@@ -200,7 +197,7 @@ function CommandLine() {
     }
     fs.writeSync(debugLog, s + '\n');
     if(debugLog.flush) debugLog.flush();
-  };
+  };*/
 
   repl.addCleanupHandler(() => {
     Terminal.mousetrackingDisable();
@@ -210,7 +207,7 @@ function CommandLine() {
       hist
         .filter(entry => (entry + '').trim() != '')
         .map(entry => entry.replace(/\n/g, '\\n') + '\n')
-        .join('')
+        .join(''),
     );
 
     let cfg = { inspectOptions: console.options };
@@ -254,7 +251,7 @@ function Structs(nodes) {
       //deep.find(node, n => typeof n.line == 'number'),
       new Location(GetLoc(node)),
       ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
-      new Map(node.inner.map((field, i) => (/Attr/.test(field.kind) ? [Symbol(field.kind), field.id] : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind])))
+      new Map(node.inner.map((field, i) => (/Attr/.test(field.kind) ? [Symbol(field.kind), field.id] : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind]))),
     ]);
   /*.map(node => types(node))*/
 }
@@ -283,7 +280,7 @@ function Table(list, pred = (n, l) => true) {
       function Params(n) {
         let params = GetParams(n);
         return params ? params.map(p => PrintAst(p)).join(',') : undefined;
-      }
+      },
     ];
   }
   keys = ['n', ...keys, 'location'];
@@ -326,7 +323,7 @@ function Table(list, pred = (n, l) => true) {
     pad(
       names.reduce((acc, n) => ({ ...acc, [n]: '' }), {}),
       '─',
-      '─┼─'
+      '─┼─',
     ) +
     '\n' +
     rows.reduce((acc, row) => {
@@ -559,7 +556,7 @@ function InspectStruct(decl, includes, compiler = 'clang') {
     define(result, {
       toString(sep = ' ') {
         return this.map(line => line.join(sep).replace('.', ' ')).join('\n');
-      }
+      },
     });
   }
 
@@ -655,9 +652,9 @@ function GenerateGetSet(name, offset, type, ffiPrefix) {
     `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(
       size,
       signed,
-      floating
+      floating,
     )}; }`,
-    `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`
+    `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`,
   ];
 }
 
@@ -735,7 +732,7 @@ export class FFI_Function {
         [...args]
           .map(field => (typeof field != 'string' ? '' : field))
           .map((field, col) => field.padEnd(columns[col] ?? 0))
-          .join('')
+          .join(''),
       );
 
     push('/**');
@@ -815,7 +812,7 @@ function FdReader(fd, bufferSize = 1024) {
 export async function CommandRead(args) {
   let child = Spawn(args, {
     block: false,
-    stdio: ['inherit', 'pipe', 'inherit']
+    stdio: ['inherit', 'pipe', 'inherit'],
   });
 
   let output = '',
@@ -1122,6 +1119,182 @@ function MakeFFI(node, lib, exp, fp) {
   }
 }
 
+function MakeId(name) {
+  let s = '';
+
+  for(let ch of name) {
+    if(/[A-Za-z0-9_]/.test(ch)) {
+      s += ch;
+      continue;
+    }
+
+    s += '__' + ch.codePointAt(0).toString(16).padStart(2, '0');
+  }
+
+  return s;
+}
+
+function MakeQuickJSClass(node, ast = $) {
+  const cid = MakeId(decamelize(node.name, '_'));
+  const cname = ast.namespaceOf(node) + '';
+
+  const members = {
+    fields: [...node.members].filter(n => className(n) == 'Type' && !['protected', 'private'].includes(n.access)),
+    methods: [...node.members].filter(n => n.ast.kind == 'CXXMethodDecl'),
+    enums: [...node.members].filter(n => n.ast.kind == 'EnumDecl'),
+    ctor_dtor: [...node.members].filter(n => !(n.ast.kind == 'CXXMethodDecl' || className(n) == 'Type')),
+  };
+
+  let inst = `  ${cname}* ptr;\n\n  if(!(ptr = static_cast<${cname}*>(JS_GetOpaque2(ctx, this_val, js_${cid}_class_id))))\n    return JS_EXCEPTION;\n\n`;
+
+  inst += `  switch(magic) {\n`;
+
+  const out = {
+    menum: `enum {\n`,
+    penum: `enum {\n`,
+    fns: `static const JSCFunctionListEntry js_${cid}_proto_funcs[] = {\n`,
+    pget: `static JSValue\njs_${cid}_get(JSContext* ctx, JSValueConst this_val, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
+    pset: `static JSValue\njs_${cid}_set(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
+    mfn: `static JSValue\njs_${cid}_method(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
+  };
+  const methods = {},
+    names = [];
+
+  for(let method of members.methods) {
+    if(names.indexOf(method.name) == -1) names.push(method.name);
+
+    methods[method.name] ??= [];
+    methods[method.name].push(method);
+  }
+
+  for(let name of names) {
+    const [method] = methods[name];
+
+    const { parameters, returnType } = method;
+    const cname = 'METHOD_' + MakeId(decamelize(name, '_')).toUpperCase().replaceAll('__', '_x');
+
+    out.fns += `  JS_CFUNC_MAGIC_DEF("${name}", ${parameters.length},  js_${cid}_method, ${cname}),\n`;
+    out.menum += `  ${cname},\n`;
+    out.mfn += `    case ${cname}: {\n`;
+
+    if(parameters.length > 0) {
+      const types = {};
+
+      for(let [name, param] of parameters) {
+        const { desugared, qualType } = param;
+
+        console.log('', { name, desugared, qualType });
+        let type = desugared ?? qualType;
+
+        switch (type) {
+          case 'int':
+            type = 'int32_t';
+            break;
+          case 'unsigned int':
+            type = 'uint32_t';
+            break;
+        }
+
+        types[type] ??= [];
+        types[type].push(name);
+      }
+
+      for(let type in types) {
+        out.mfn += `      ${type} ${types[type].join(', ')};\n`;
+      }
+
+      out.mfn += `\n`;
+
+      let i = 0;
+
+      for(let [name, param] of parameters) {
+        const { desugared, qualType } = param;
+        let type = desugared ?? qualType;
+
+        const jstype = { int: 'Int32', 'unsigned int': 'Uint32', double: 'Float64', float: 'Float64', int32_t: 'Int32', uint32_t: 'Uint32', int64_t: 'Int64', uint64_t: 'Index' }[type];
+
+        out.mfn += `      JS_To${jstype}(ctx, &${name}, argv[${i}]);\n`;
+
+        // console.log('', { name, desugared, typeAlias });
+        ++i;
+      }
+
+      out.mfn += `\n`;
+    }
+
+    let params = [];
+
+    for(let [name, param] of parameters) params.push(name ?? 'other');
+
+    let call = `ptr->${name}(` + params.join(', ') + `)`;
+
+    if(returnType) {
+      switch (returnType + '') {
+        case 'void':
+          break;
+
+        case 'float':
+        case 'double':
+          call = `ret = JS_NewFloat64(ctx, ${call})`;
+          break;
+
+        case 'int':
+        case 'int32_t':
+          call = `ret = JS_NewInt32(ctx, ${call})`;
+          break;
+
+        case 'unsigned int':
+        case 'uint32_t':
+          call = `ret = JS_NewUint32(ctx, ${call})`;
+          break;
+
+        case 'long':
+        case 'unsigned long':
+        case 'int64_t':
+        default:
+          call = `ret = JS_NewInt64(ctx, ${call})`;
+          break;
+      }
+    }
+
+    out.mfn += `      ${call};\n`;
+    out.mfn += `      break;\n    }\n`;
+  }
+
+  for(let field of members.fields) {
+    const { name, desugared, typeAlias, access } = field;
+
+    const cname = 'PROP_' + MakeId(decamelize(name, '_')).toUpperCase().replaceAll('__', '_x');
+
+    out.fns += `  JS_CGETSET_MAGIC_DEF("${name}", js_${cid}_get, js_${cid}_set, ${cname}),\n`;
+    out.penum += `  ${cname},\n`;
+    out.pget += `    case ${cname}: {\n      break;\n    }\n`;
+    out.pset += `    case ${cname}: {\n      break;\n    }\n`;
+  }
+
+  for(let en of members.enums) {
+    const { name, members } = en;
+
+    //out.fns += `  /* enum ${name} */\n`;
+
+    for(let [name, [, value]] of members) {
+      out.fns += `  JS_PROP_INT64_DEF("${name}", ${value}, JS_PROP_CONFIGURABLE),\n`;
+    }
+  }
+
+  out.fns += `  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "${cname}", JS_PROP_CONFIGURABLE),\n`;
+
+  out.fns += `};\n`;
+  out.menum += `};\n`;
+  out.penum += `};\n`;
+
+  out.pget += `  }\n\n  return ret;\n};\n`;
+  out.pset += `  }\n\n  return ret;\n};\n`;
+  out.mfn += `  }\n\n  return ret;\n};\n`;
+
+  return out.menum + `\n` + out.mfn + `\n` + (members.fields.length > 0 ? out.penum + `\n` + out.pget + `\n` + out.pset + `\n` : '') + out.fns;
+}
+
 async function ASTShell(...args) {
   let inspectOptions = {
     depth: 2,
@@ -1129,7 +1302,7 @@ async function ASTShell(...args) {
     compact: false,
     depth: Infinity,
     maxArrayLength: Infinity,
-    hideKeys: ['loc', 'range']
+    hideKeys: ['loc', 'range'],
   };
 
   globalThis.console = new Console({ inspectOptions });
@@ -1153,9 +1326,9 @@ async function ASTShell(...args) {
       'no-remove-empty': [false, null, 'E'],
       'output-dir': [true, null, 'd'],
       compiler: ['clang', null, 'c'],
-      '@': 'input'
+      '@': 'input',
     },
-    args
+    args,
   );
 
   defs = params.define || [];
@@ -1169,7 +1342,7 @@ async function ASTShell(...args) {
     libs,
     /* prettier-ignore */ get flags() {
       return [ ...(params.target? [`--target=${params.target}`] : []),  ...includes.filter(v => typeof v == 'string').map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
-    }
+    },
   });
 
   async function Compile(file, ...args) {
@@ -1188,22 +1361,7 @@ async function ASTShell(...args) {
 
     globalThis.files[file] = r;
 
-    function nameOrIdPred(name_or_id, pred = n => true) {
-      if(/^(struct|union)\s/.test(name_or_id)) {
-        let idx = name_or_id.indexOf(' ');
-        let tag = name_or_id.substring(0, idx);
-        let name = name_or_id.substring(idx + 1);
-        return node => node.name == name && node.tagUsed == tag;
-      }
-
-      if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
-
-      return name_or_id instanceof RegExp
-        ? node => name_or_id.test(node.name) && pred(node)
-        : name_or_id.startsWith('0x')
-        ? node => node.id == name_or_id && pred(node)
-        : node => node.name == name_or_id && pred(node);
-    }
+    let ast2path = mapWrapper(new WeakMap());
 
     define(r, {
       select(name_or_id, pred = n => true) {
@@ -1217,7 +1375,9 @@ async function ASTShell(...args) {
         return node;
       },
       getType(name_or_id) {
-        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
+        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
+
+        result ??= GetType(name_or_id, this.data);
 
         if(result) {
           let type = TypeFactory(result, this.data);
@@ -1226,7 +1386,47 @@ async function ASTShell(...args) {
 
         return result;
       },
+      getNamespace(arg, root = this.data, predicate = () => true) {
+        const a = Array.isArray(arg) ? arg : arg.split('::');
 
+        let [name] = a;
+
+        for(let [node, path] of deep.iterate(root, n => (typeof n == 'object' ? (n.name == name ? deep.YIELD_NO_RECURSE : n.name ? deep.NO_RECURSE : deep.RECURSE) : 0), deep.RETURN_VALUE_PATH)) {
+          if(a.length <= 1) {
+            if(!predicate(node, path)) continue;
+            return node;
+          }
+
+          let result = this.getNamespace(a.slice(1), node);
+
+          if(result) return result;
+        }
+      },
+      namespaceOf(node) {
+        let p = this.pathOf(node),
+          r = [],
+          i = 0;
+
+        while(p.length > 0) {
+          let n = deep.get(this.data, p);
+
+          if(i == 0 || n.kind == 'NamespaceDecl') r.push(n.name);
+          p = p.slice(0, -2);
+          ++i;
+        }
+
+        return define(
+          r.reverse(),
+          nonenumerable({
+            toString() {
+              return this.join('::');
+            },
+          }),
+        );
+      },
+      getClass(name_or_id) {
+        return GetClass(name_or_id, this.data);
+      },
       getFunction(name_or_id) {
         let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
 
@@ -1239,20 +1439,23 @@ async function ASTShell(...args) {
       },
       getLoc(node) {
         return CompleteLocation(node);
-      }
+      },
     });
 
     defineGetter(
       r,
       'tree',
-      memoize(() => new Tree(r.data))
+      memoize(() => new Tree(r.data)),
     );
     return define(r, {
       pathOf(needle, maxDepth = 10) {
+        let p = ast2path(needle?.ast ?? needle);
+        if(p) return p;
+
         if('ast' in needle) needle = needle.ast;
 
         for(let [node, path] of deep.iterate(r.data, n => typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, maxDepth)) if(node === needle) return new Pointer(path);
-      }
+      },
     });
   }
 
@@ -1291,6 +1494,7 @@ async function ASTShell(...args) {
     ReadFile,
     WriteFile,
     MakeFFI,
+    MakeQuickJSClass,
     ParseECMAScript,
     PrintECMAScript,
     ProcessFile,
@@ -1301,7 +1505,7 @@ async function ASTShell(...args) {
     GetParams,
     List,
     Shell,
-    ParseStructs
+    ParseStructs,
   });
 
   Pointer.prototype.chain = function(step, limit = Infinity) {
@@ -1349,6 +1553,8 @@ async function ASTShell(...args) {
     NodeType,
     NodeName,
     GetLoc,
+    GetClass,
+    GetBases,
     GetType,
     GetTypeStr,
     GetTypeNode,
@@ -1363,7 +1569,7 @@ async function ASTShell(...args) {
     GetImports,
     GetIdentifiers,
     Namespaces,
-    UnsetLoc
+    UnsetLoc,
   });
   //globalThis.Util = Util;
   globalThis.F = arg => $.getFunction(arg);
@@ -1379,7 +1585,7 @@ async function ASTShell(...args) {
     };
   });
 
-  console.log('Loading history');
+  //console.log('Loading history');
 
   const unithist = `.${base}-unithistory`;
   let items = [],
