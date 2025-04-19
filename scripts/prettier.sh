@@ -14,7 +14,7 @@ prettier() {
     $OPTS \
     --parser ${PARSER:-babel} \
     --jsx-single-quote \
-    --trailing-comma none \
+    --trailing-comma all \
     --write \
     --print-width ${WIDTH:-120} \
     --semi \

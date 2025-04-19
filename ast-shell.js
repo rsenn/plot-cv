@@ -1213,7 +1213,7 @@ async function ASTShell(...args) {
         let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
 
         node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
-        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
+        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE_PATH)[0];
         return node;
       },
       getType(name_or_id) {

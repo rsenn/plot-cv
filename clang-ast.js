@@ -1272,7 +1272,6 @@ export async function AstDump(compiler, source, args, force) {
     },
     json() {
       const binary = /\.bjson$/i.test(this.file);
-      console.log('json()', this.file, { binary });
 
       return binary ? ReadBJSON(this.file, null) : JSON.parse(fs.readFileSync(this.file, 'utf-8'));
     },
