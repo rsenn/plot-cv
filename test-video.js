@@ -13,7 +13,7 @@ import { BitsToNames, FindKey, GetOpt, Modulo, Once, Range, WeakMapper } from '.
 import { VideoSource } from './qjs-opencv/js/cvVideo.js';
 import Console from 'console';
 import * as cv from 'opencv';
-import { CLAHE, Affine3, BoostDesc, BriefDescriptorExtractor, Canny, COLOR_BayerBG2BGR, COLOR_BayerBG2BGRA, COLOR_BayerBG2BGR_EA, COLOR_BayerBG2BGR_VNG, COLOR_BayerBG2GRAY, COLOR_BayerBG2RGB, COLOR_BayerBG2RGBA, COLOR_BayerBG2RGB_EA, COLOR_BayerBG2RGB_VNG, COLOR_BayerGB2BGR, COLOR_BayerGB2BGRA, COLOR_BayerGB2BGR_EA, COLOR_BayerGB2BGR_VNG, COLOR_BayerGB2GRAY, COLOR_BayerGB2RGB, COLOR_BayerGB2RGBA, COLOR_BayerGB2RGB_EA, COLOR_BayerGB2RGB_VNG, COLOR_BayerGR2BGR, COLOR_BayerGR2BGRA, COLOR_BayerGR2BGR_EA, COLOR_BayerGR2BGR_VNG, COLOR_BayerGR2GRAY, COLOR_BayerGR2RGB, COLOR_BayerGR2RGBA, COLOR_BayerGR2RGB_EA, COLOR_BayerGR2RGB_VNG, COLOR_BayerRG2BGR, COLOR_BayerRG2BGRA, COLOR_BayerRG2BGR_EA, COLOR_BayerRG2BGR_VNG, COLOR_BayerRG2GRAY, COLOR_BayerRG2RGB, COLOR_BayerRG2RGBA, COLOR_BayerRG2RGB_EA, COLOR_BayerRG2RGB_VNG, COLOR_BGR2Lab, COLOR_BGR2Luv, COLOR_BGR2YCrCb, COLOR_Lab2BGR, COLOR_Lab2LBGR, COLOR_Lab2LRGB, COLOR_Lab2RGB, COLOR_LBGR2Lab, COLOR_LBGR2Luv, COLOR_LRGB2Lab, COLOR_LRGB2Luv, COLOR_Luv2BGR, COLOR_Luv2LBGR, COLOR_Luv2LRGB, COLOR_Luv2RGB, COLOR_mRGBA2RGBA, COLOR_RGB2Lab, COLOR_RGB2Luv, COLOR_RGB2YCrCb, COLOR_RGBA2mRGBA, COLOR_YCrCb2BGR, COLOR_YCrCb2RGB, COLOR_YUV420p2BGR, COLOR_YUV420p2BGRA, COLOR_YUV420p2GRAY, COLOR_YUV420p2RGB, COLOR_YUV420p2RGBA, COLOR_YUV420sp2BGR, COLOR_YUV420sp2BGRA, COLOR_YUV420sp2GRAY, COLOR_YUV420sp2RGB, COLOR_YUV420sp2RGBA, Contour, Draw, FastFeatureDetector, FastLineDetector, GaussianBlur, GFTTDetector, HarrisLaplaceFeatureDetector, HoughCircles, HoughLines, HoughLinesP, HuMoments, KeyPoint, Laplacian, Line, LineSegmentDetector, Mahalanobis, Mat, MSDDetector, Point, PointIterator, Rect, RotatedRect, Scharr, SimpleBlobDetector, Size, SliceIterator, Sobel, StarDetector, Subdiv2D, TickMeter, UMat, VideoCapture, VideoWriter } from 'opencv';
+import { CLAHE, Affine3, BoostDesc, BriefDescriptorExtractor, Canny, COLOR_BayerBG2BGR, COLOR_BayerBG2BGRA, COLOR_BayerBG2BGR_EA, COLOR_BayerBG2BGR_VNG, COLOR_BayerBG2GRAY, COLOR_BayerBG2RGB, COLOR_BayerBG2RGBA, COLOR_BayerBG2RGB_EA, COLOR_BayerBG2RGB_VNG, COLOR_BayerGB2BGR, COLOR_BayerGB2BGRA, COLOR_BayerGB2BGR_EA, COLOR_BayerGB2BGR_VNG, COLOR_BayerGB2GRAY, COLOR_BayerGB2RGB, COLOR_BayerGB2RGBA, COLOR_BayerGB2RGB_EA, COLOR_BayerGB2RGB_VNG, COLOR_BayerGR2BGR, COLOR_BayerGR2BGRA, COLOR_BayerGR2BGR_EA, COLOR_BayerGR2BGR_VNG, COLOR_BayerGR2GRAY, COLOR_BayerGR2RGB, COLOR_BayerGR2RGBA, COLOR_BayerGR2RGB_EA, COLOR_BayerGR2RGB_VNG, COLOR_BayerRG2BGR, COLOR_BayerRG2BGRA, COLOR_BayerRG2BGR_EA, COLOR_BayerRG2BGR_VNG, COLOR_BayerRG2GRAY, COLOR_BayerRG2RGB, COLOR_BayerRG2RGBA, COLOR_BayerRG2RGB_EA, COLOR_BayerRG2RGB_VNG, COLOR_BGR2Lab, COLOR_BGR2Luv, COLOR_BGR2YCrCb, COLOR_Lab2BGR, COLOR_Lab2LBGR, COLOR_Lab2LRGB, COLOR_Lab2RGB, COLOR_LBGR2Lab, COLOR_LBGR2Luv, COLOR_LRGB2Lab, COLOR_LRGB2Luv, COLOR_Luv2BGR, COLOR_Luv2LBGR, COLOR_Luv2LRGB, COLOR_Luv2RGB, COLOR_mRGBA2RGBA, COLOR_RGB2Lab, COLOR_RGB2Luv, COLOR_RGB2YCrCb, COLOR_RGBA2mRGBA, COLOR_YCrCb2BGR, COLOR_YCrCb2RGB, COLOR_YUV420p2BGR, COLOR_YUV420p2BGRA, COLOR_YUV420p2GRAY, COLOR_YUV420p2RGB, COLOR_YUV420p2RGBA, COLOR_YUV420sp2BGR, COLOR_YUV420sp2BGRA, COLOR_YUV420sp2GRAY, COLOR_YUV420sp2RGB, COLOR_YUV420sp2RGBA, Contour, Draw, FastFeatureDetector, FastLineDetector, GaussianBlur, GFTTDetector, HarrisLaplaceFeatureDetector, HoughCircles, HoughLines, HoughLinesP, HuMoments, KeyPoint, Laplacian, Line, LineSegmentDetector, Mahalanobis, Mat, MSDDetector, Point, PointIterator, Rect, RotatedRect, Scharr, SimpleBlobDetector, Size, SliceIterator, Sobel, StarDetector, Subdiv2D, TickMeter, UMat, VideoCapture, VideoWriter, } from 'opencv';
 import process from 'process';
 import inspect from 'inspect';
 import * as std from 'std';
@@ -30,7 +30,7 @@ let simplifyMethods = {
   REUMANN_WITKAM: c => c.simplifyReumannWitkam(),
   OPHEIM: c => c.simplifyOpheim(),
   LANG: c => c.simplifyLang(),
-  DOUGLAS_PEUCKER: c => c.simplifyDouglasPeucker()
+  DOUGLAS_PEUCKER: c => c.simplifyDouglasPeucker(),
 };
 
 function Hierarchy(array) {
@@ -91,7 +91,7 @@ function modifierMap(keyCode) {
   return [
     ['shift', 0x10000],
     ['alt', 0x80000],
-    ['ctrl', 0x40000]
+    ['ctrl', 0x40000],
   ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);
 }
 
@@ -142,7 +142,7 @@ function main(...args) {
     depth: 1,
     maxArrayLength: 30,
     compact: 1,
-    hideKeys: [Symbol.toStringTag]
+    hideKeys: [Symbol.toStringTag],
   });
   let f = std.open('test-video.log', 'w');
   console.log('f.write', f.write);
@@ -150,7 +150,7 @@ function main(...args) {
     colors: true,
     depth: 1,
     maxArrayLength: 30,
-    compact: 1
+    compact: 1,
   });
 
   const { DISPLAY } = globalThis.process ? globalThis.process.env : std.getenviron();
@@ -164,7 +164,7 @@ function main(...args) {
           console.log(`Usage: ${getArgv()[0]} [OPTIONS] <video|device>`);
           exit(0);
         },
-        'h'
+        'h',
       ],
       opengl: [false, null, 'g'],
       input: [true, (file, current) => [...(current || []), file], 'i'],
@@ -184,14 +184,14 @@ function main(...args) {
           }
           return driverId;
         },
-        'd'
+        'd',
       ],
       size: [true, null, 's'],
       trackbars: [false, null, 't'],
       'no-trackbars': [false, null, 'T'],
-      '@': 'input,driver'
+      '@': 'input,driver',
     },
-    args
+    args,
   );
 
   log.info('opts:', opts);
@@ -272,7 +272,7 @@ function main(...args) {
     method: new EnumParam(config.method || 0, ['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS']),
     maskColor: new EnumParam(config.maskColor || false, ['OFF', 'ON']),
     lineWidth: new NumericParam(config.lineWidth || 1, 0, 10),
-    fontThickness: new NumericParam(config.fontThickness || 1, 0, 10)
+    fontThickness: new NumericParam(config.fontThickness || 1, 0, 10),
   };
   let paramNav = new ParamNavigator(params, config.currentParam);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -354,7 +354,7 @@ function main(...args) {
         //  log.info('lines', lines.slice(0, 10));
         // log.info('lines.length', lines.length);
         src.copyTo(dst);
-      })
+      }),
     ],
     (i, n) => {
       if(frameShow == i) {
@@ -363,7 +363,7 @@ function main(...args) {
         outputName = pipeline.processors[frameShow].name;
         outputMat = mat;
       }
-    }
+    },
   );
 
   log.info(`pipeline.images = { ` + pipeline.images.map(image => '\n  ' + image) + '\n}');
@@ -550,12 +550,10 @@ function main(...args) {
           break;
         }
         default: {
-          if(keyCode !== undefined && key != -1)
-            log.info('unhandled', console.config({ compact: 2, numberBase: 16 }), {
-              key,
-              keyCode,
-              modifiers
-            });
+          if(keyCode !== undefined && key != -1) {
+            //log.info('unhandled', console.config({ compact: 2, numberBase: 16 }), { key, keyCode, modifiers });
+            //
+          }
           break;
         }
       }
@@ -607,7 +605,7 @@ function main(...args) {
         r: 0xb7,
         g: 0x35,
         b: 255,
-        a: 255
+        a: 255,
       };
       y = tPos.y - 20 - (y | 0);
       font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);
@@ -641,8 +639,8 @@ function main(...args) {
             r: 255,
             g: 255,
             b: 0,
-            a: 255
-          }
+            a: 255,
+          },
         );
         y += 20;
       }
@@ -658,9 +656,9 @@ function main(...args) {
         r: 255,
         g: 255,
         b: 0,
-        a: 255
+        a: 255,
       },
-      +params.fontThickness
+      +params.fontThickness,
     );
 
     //resizeOutput();
@@ -712,7 +710,7 @@ function main(...args) {
     }, []);
     let children = points.map(d => ({
       tagName: 'path',
-      attributes: { d }
+      attributes: { d },
     }));
     let viewBox = [0, 0, ...size].join(' ');
     let doc = {
@@ -720,8 +718,8 @@ function main(...args) {
       children: [{ tagName: 'g', attributes: { stroke: 'black', fill: 'none' }, children }],
       attributes: {
         xmlns: 'http://www.w3.org/2000/svg',
-        viewBox
-      }
+        viewBox,
+      },
     };
     WriteJSON('contours-' + framePos + '.json', doc);
     SaveSVG('contours-' + framePos + '.svg', doc);
@@ -733,15 +731,15 @@ function main(...args) {
       .map(coords => new Line(...coords))
       .map(([x1, y1, x2, y2]) => ({
         tagName: 'line',
-        attributes: { x1, y1, x2, y2 }
+        attributes: { x1, y1, x2, y2 },
       }));
     let doc = {
       tagName: 'svg',
       children: [{ tagName: 'g', attributes: { stroke: 'black', fill: 'none' }, children }],
       attributes: {
         xmlns: 'http://www.w3.org/2000/svg',
-        viewBox
-      }
+        viewBox,
+      },
     };
 
     WriteJSON('lines-' + framePos + '.json', doc);
@@ -764,8 +762,8 @@ function main(...args) {
       lineWidth,
       minLineLength,
       maxLineGap,
-      currentParam: paramNav.index
-    }).reduce((a, [k, v]) => ({ ...a, [k]: +v }), {})
+      currentParam: paramNav.index,
+    }).reduce((a, [k, v]) => ({ ...a, [k]: +v }), {}),
   );
 
   for(let mat of Mat.list || []) {

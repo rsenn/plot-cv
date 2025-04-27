@@ -33,9 +33,13 @@ currentLine.id = 'currentLine';
 currentSource.subscribe(source => console.log('currentSource set to', source));
 currentLine.subscribe(line => console.log('currentLine set to', line));
 currentLine.subscribe(line => {
-  const numLines = Math.floor(Element.find('main').offsetHeight / Element.find('.source > pre').offsetHeight);
-  let pos = Math.max(0, line - (numLines >>> 1));
-  window.location.hash = `#line-${pos}`;
+  let e;
+
+  if((e = Element.find('main'))) {
+    const numLines = Math.floor(e.offsetHeight / Element.find('.source > pre').offsetHeight);
+    let pos = Math.max(0, line - (numLines >>> 1));
+    window.location.hash = `#line-${pos}`;
+  }
 });
 
 const doRender = memoize(RenderUI);
@@ -110,7 +114,9 @@ const SourceFile = props => {
   const file = useTrkl(currentSource);
 
   console.log('file', { cwd, file });
+
   const filename = file; /*? path.relative(cwd, file, cwd) : null*/
+
   let text =
     (file &&
       !/^<.*>$/.test(file) &&
@@ -139,10 +145,14 @@ async function LoadSource(filename) {
 }
 
 function Start(args, address) {
+  if(!address) {
+    globalThis.address = address = '127.0.0.1:' + (Math.floor(Math.random() * 4096) + 8192);
+  }
+
   return Initiate('start', address, false, args);
 }
 
-function Connect(address) {
+function Connect(address = globalThis.address) {
   return Initiate('connect', address, true);
 }
 
@@ -222,7 +232,7 @@ Object.assign(globalThis, {
   StackTrace,
   SendRequest
 });
-Object.assign(globalThis, { responses, currentLine, currentSource, TokenizeJS });
+Object.assign(globalThis, { currentLine, currentSource, TokenizeJS });
 Object.assign(globalThis, { CreateSocket, Start, Initiate, LoadSource, GetVariables });
 Object.assign(globalThis, {
   WebSocketURL,
@@ -255,6 +265,7 @@ Object.assign(globalThis, {
   RPCConnect,
   RPCListen
 });
+
 async function CreateSocket(endpoint) {
   let url = WebSocketURL('/ws');
   let rws = (globalThis.rws = new ReconnectingWebSocket(url, 'ws', {
@@ -275,67 +286,25 @@ async function CreateSocket(endpoint) {
   //
   await rws.connect(endpoint);
 
-  /* (async function ReadSocket() {
-    for await(let msg of ws) {
-      let data;
-      try {
-        data = JSON.parse(msg.data);
-      } catch(e) {
-        console.log('WS ERROR parsing', msg.data);
-      }
-      globalThis.response = data;
-      if(data) {
-        console.log('ws received ', data);
-        const { response, request_seq } = data;
-        if(response) {
-          const { command } = response;
-          if(['start', 'connect'].indexOf(command) >= 0) {
-            cwd = response.cwd;
-            console.log('command:', command);
-            console.log('response:', response);
-            if(response.args[0]) {
-              currentSource(response.args[0]);
-            } else {
-              UpdatePosition();
-            }
-            RenderUI();
-            continue;
-          }
-          if(command == 'start') {
-            cwd = response.cwd;
-            console.log('start', response);
-            RenderUI(response.args[0]);
-            continue;
-          }
-        }
-        if(responses[request_seq]) responses[request_seq](data);
-      } else {
-        console.log('WS', ws);
-      }
-      if(['end', 'error'].indexOf(data.type) >= 0) {
-        document.body.innerHTML = '';
-        continue;
-      }
-    }
-  })();
-*/
   let dispatch = (globalThis.dispatch = new DebuggerDispatcher({
     async process(callback) {
       for await(let msg of rws) {
         let data = JSON.parse(msg);
+
         process.env.DEBUG && console.log('WS received:', data);
+
         callback(data);
       }
     }
   }));
 
+  responses = globalThis.responses = dispatch.responses;
+
   ws.sendMessage = function(msg) {
     process.env.DEBUG && console.log('WS sending:', msg);
     return this.send(JSON.stringify(msg));
   };
-  /* if(url.searchParams.has('port')) await Connect();
-  else await Start([url.searchParams.get('script') ?? 'quickjs/qjs-modules/tests/test_dom.js']); // 'test-video.js', 'nightwatch.mp4']);
-*/
+
   return rws;
 }
 
@@ -354,10 +323,6 @@ async function UpdatePosition() {
   currentLine(line);
 
   RenderUI();
-
-  // doRender(currentSource);
-
-  //window.location.hash = `#line-${line}`;
 }
 
 async function StepIn() {
@@ -393,16 +358,6 @@ async function StackTrace() {
   return body;
 }
 
-/*
-  {
-    "type": "breakpoints",
-    "breakpoints": {
-      "path": "lib/ecmascript/parser2.js",
-      "breakpoints": [ { "line": 470, "column": 0 }, { "line": 2151, "column": 0 }, { "line": 2401, "column": 0 } ]
-    }
-  }
-*/
-
 function SendRequest(command, args = {}) {
   const request_seq = ++seq;
 
@@ -411,20 +366,8 @@ function SendRequest(command, args = {}) {
   return new Promise((resolve, reject) => (responses[request_seq] = resolve));
 }
 
-/*const Button = ({image}) => {
-const ref = useClick(e => {
-  console.log('click!!!!');
-});
- return  h('button', { ref, class: 'button' }, h('img', { src: image }));
-}*/
-/*const ButtonBar=  ({children}) => 
-h('div', {class: 'button-bar' }, children);*/
-
 function RenderUI() {
   console.log('RenderUI');
-  /* if(currentSource() != file) 
-    currentSource(file);*/
-
   const component = h(Fragment, {}, [
     h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
       h(Button, { image: 'static/svg/continue.svg', fn: Continue }),

@@ -7,9 +7,8 @@
  *          do encoding string conversions too. The resulting
  *          documents are then serialized.
  * usage: testWriter
- * test: testWriter && for i in 1 2 3 4 ; do diff $(srcdir)/writer.xml writer$$i.tmp || break ; done
- * author: Alfred Mickautsch
- * copy: see Copyright for the status of this software.
+ * test: testWriter && for i in 1 2 3 4 ; do diff $(srcdir)/writer.xml writer$$i.tmp || break ;
+ * done author: Alfred Mickautsch copy: see Copyright for the status of this software.
  */
 #include <stdio.h>
 #include <string.h>
@@ -130,7 +129,9 @@ testXmlwriterFilename(const char* uri) {
 
   /* Write a comment as child of ORDER */
   tmp = ConvertInput("<\xE4\xF6\xFC>", MY_ENCODING);
-  rc = xmlTextWriterWriteFormatComment(writer, "This is another comment with special chars: %s", tmp);
+  rc = xmlTextWriterWriteFormatComment(writer,
+                                       "This is another comment with special chars: %s",
+                                       tmp);
   if(rc < 0) {
     printf("testXmlwriterFilename: Error at xmlTextWriterWriteFormatComment\n");
     return;
@@ -373,7 +374,9 @@ testXmlwriterMemory(const char* file) {
 
   /* Write a comment as child of ORDER */
   tmp = ConvertInput("<\xE4\xF6\xFC>", MY_ENCODING);
-  rc = xmlTextWriterWriteFormatComment(writer, "This is another comment with special chars: %s", tmp);
+  rc = xmlTextWriterWriteFormatComment(writer,
+                                       "This is another comment with special chars: %s",
+                                       tmp);
   if(rc < 0) {
     printf("testXmlwriterMemory: Error at xmlTextWriterWriteFormatComment\n");
     return;
@@ -619,7 +622,9 @@ testXmlwriterDoc(const char* file) {
 
   /* Write a comment as child of ORDER */
   tmp = ConvertInput("<\xE4\xF6\xFC>", MY_ENCODING);
-  rc = xmlTextWriterWriteFormatComment(writer, "This is another comment with special chars: %s", tmp);
+  rc = xmlTextWriterWriteFormatComment(writer,
+                                       "This is another comment with special chars: %s",
+                                       tmp);
   if(rc < 0) {
     printf("testXmlwriterDoc: Error at xmlTextWriterWriteFormatComment\n");
     return;
@@ -868,7 +873,9 @@ testXmlwriterTree(const char* file) {
 
   /* Write a comment as child of ORDER */
   tmp = ConvertInput("<\xE4\xF6\xFC>", MY_ENCODING);
-  rc = xmlTextWriterWriteFormatComment(writer, "This is another comment with special chars: %s", tmp);
+  rc = xmlTextWriterWriteFormatComment(writer,
+                                       "This is another comment with special chars: %s",
+                                       tmp);
   if(rc < 0) {
     printf("testXmlwriterTree: Error at xmlTextWriterWriteFormatComment\n");
     return;

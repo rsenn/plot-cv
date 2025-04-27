@@ -24,7 +24,7 @@ define(Array.prototype, {
   startsWith(start) {
     for(let i = 0; i < start.length; i++) if(this[i] !== start[i]) return false;
     return true;
-  }
+  },
 });
 
 async function main(...args) {
@@ -41,9 +41,9 @@ async function main(...args) {
       'system-includes': [false, null, 's'],
       'no-remove-empty': [false, null, 'E'],
       'output-dir': [true, null, 'd'],
-      '@': 'input'
+      '@': 'input',
     },
-    args
+    args,
   );
   console.log('main', params);
 
@@ -63,8 +63,8 @@ async function main(...args) {
         WORD: 'unsigned short',
         DWORD: 'unsigned long',
         ULONG: 'unsigned long',
-        CONST: 'const'
-      })
+        CONST: 'const',
+      }),
     );
 
     args = args.concat(['-D_WIN32=1', '-DWINAPI=', '-D__declspec(x)=', '-include', '/usr/x86_64-w64-mingw32/include/wtypesbase.h', '-I/usr/x86_64-w64-mingw32/include']);
@@ -113,7 +113,7 @@ async function main(...args) {
             });
             return ast;
           }
-        }
+        },
       ];
 
       for(let fn of loadFunctions) {
@@ -144,8 +144,8 @@ async function main(...args) {
                   if('col' in this) s += ':' + this.col;
                 }
                 return s;
-              }
-            }
+              },
+            },
           );
         if('id' in n) {
           idmap[n.id] = entry;
@@ -184,7 +184,7 @@ async function main(...args) {
             .filter(([p, n]) => /Decl/.test(n.kind + '') && isNumeric(p[p.length - 1]))
             .map(([p]) => p) ||*/
           typedefs.map(([p]) => p),
-          namedNodes.map(([p]) => p)
+          namedNodes.map(([p]) => p),
         ).map(p => [p.split('.'), flat.get(p)]);
 
         if(params.debug) console.log('loc_name:', loc_name);
@@ -193,7 +193,7 @@ async function main(...args) {
           loc_name
             .filter(([p, n]) => !/(ParmVar|FieldDecl)/.test(n.kind))
             .map(([p, n]) => [n.name, n])
-            .sort((a, b) => a[0].localeCompare(b[0]))
+            .sort((a, b) => a[0].localeCompare(b[0])),
         );
 
         if(params.debug) console.log('namedDecls:', namedDecls);
@@ -208,7 +208,7 @@ async function main(...args) {
             GetTypeStr(n),
             n.kind,
             p.join('.').replace(/\.?inner\./g, '/'),
-            l + ''
+            l + '',
           ]);
 
         if(params.debug) console.log('loc ∩ name:', loc_name.length);

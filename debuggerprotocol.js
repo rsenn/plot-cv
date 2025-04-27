@@ -88,12 +88,8 @@ export class DebuggerProtocol {
       case 'StoppedEvent': {
         if(event.reason == 'entry') {
           this.sendMessage('stopOnException', { stopOnException: true });
-          this.sendMessage('breakpoints', {
-            breakpoints: { path: 'test-ecmascript2.js', breakpoints: [{ line: 47, column: 3 }] }
-          });
-          this.sendMessage('breakpoints', {
-            path: 'test-ecmascript2.js'
-          });
+          this.sendMessage('breakpoints', { breakpoints: { path: 'test-ecmascript2.js', breakpoints: [{ line: 47, column: 3 }] } });
+          this.sendMessage('breakpoints', { path: 'test-ecmascript2.js' });
           this.sendRequest(stepMode);
         } else {
           this.sendRequest('stackTrace');

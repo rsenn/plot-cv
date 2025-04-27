@@ -1,5 +1,6 @@
 import { ReadFile, WriteFile } from './io-helpers.js';
 import { memoize } from './lib/misc.js';
+import { inspect } from 'inspect';
 import process from 'process';
 
 let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));
@@ -19,7 +20,7 @@ export function LoadConfig(name = process.argv[1].replace(/\.js$/, '.config.json
   configObj = Object.fromEntries(
     Object.entries(configObj)
       .map(([k, v]) => [k, +v])
-      .filter(([k, v]) => !isNaN(v))
+      .filter(([k, v]) => !isNaN(v)),
   );
   console.log('LoadConfig:', configObj);
   return configObj;

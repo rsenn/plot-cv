@@ -1,6 +1,7 @@
 /*
  * Compile with:
- * gcc -fvisibility=hidden -shared -I /usr/local/include/quickjs/ -g -ggdb -O -Wall popenAndRead.c -o popen.so -lquickjs
+ * gcc -fvisibility=hidden -shared -I /usr/local/include/quickjs/ -g -ggdb -O -Wall
+ * popenAndRead.c -o popen.so -lquickjs
  */
 #include <quickjs.h>
 #include <cutils.h>
@@ -14,7 +15,10 @@
  *   stringToArrayBuffer(str)
  */
 static JSValue
-module_string_to_array_buffer(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
+module_string_to_array_buffer(JSContext* ctx,
+                              JSValueConst this_val,
+                              int argc,
+                              JSValueConst argv[]) {
   const char* str;
   size_t len;
   JSValue ret;
@@ -81,7 +85,8 @@ module_popen_and_read(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
     /* create new ArrayBuffer from that */
     params[0] = JS_NewArrayBufferCopy(ctx, buffer, count);
 
-    /* call the JS callback handler with the ArrayBuffer as parameter and an undefined 'this' value */
+    /* call the JS callback handler with the ArrayBuffer as parameter and an undefined 'this'
+     * value */
     retval = JS_Call(ctx, argv[1], JS_UNDEFINED, 1, params);
 
     /* return value is 'live', free it up */

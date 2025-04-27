@@ -51,89 +51,59 @@ export function TrivialSyntaxHighlighter(input) {
   return s;
 }
 
-/*export function ECMAScriptSyntaxHighlighter(input, filename) {
-  const lexer = new ECMAScriptLexer(input, filename);
-  let prev = 0,
-    s = '';
-  consumeSync(lexer.values(), ({ id, type, lexeme }) => {
-    let color = {
-      shebang: 32,
-      comment: 32,
-      regexpLiteral: 35,
-      templateLiteral: 35,
-      templateLiteralHead: 35,
-      templateLiteralPart: 35,
-      templateLiteralTail: 35,
-      punctuator: 36,
-      numericLiteral: 36,
-      stringLiteral: 36,
-      booleanLiteral: 31,
-      nullLiteral: 35,
-      keyword: 31,
-      identifier: 33,
-      privateIdentifier: 33,
-      whitespace: false
-    }[type];
-
-    if(lexeme.indexOf('\n') != -1) color = 0;
-
-    if(color !== false) {
-      if(prev != color) lexeme = '\x1b[' + (color ? '1;' : '') + color + 'm' + lexeme;
-      prev = color;
-    }
-
-    s += lexeme;
-  });
-
-  if(prev) s += '\x1b[0m';
-  return s;
-}
-*/
 export class DebuggerDispatcher {
   #seq = 0;
-  #responses = {};
+  responses = {};
   #callback = null;
   #promise = null;
   onclose = () => console.log('CLOSED');
   onerror = ({ errno, message }) => console.log('ERROR', { errno, message });
 
   constructor(conn) {
-    console.log('DebuggerDispatcher', { conn });
+    if(process.env.DEBUG) console.log('DebuggerDispatcher', { conn });
 
     let ret;
 
     try {
-      let v = conn.process(async msg => {
-        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m', msg);
+      let v = conn
+        .process(async msg => {
+          if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m', msg);
 
-        const { type, event, request_seq, body } = msg;
+          const { type, event, request_seq, body } = msg;
 
-        switch (type) {
-          case 'response':
-            let fn = this.#responses[request_seq] ?? this.#callback;
-            if(typeof fn == 'function') await fn.call(this, msg);
-            break;
-          case 'event':
-            const prop = 'on' + event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
+          switch (type) {
+            case 'response':
+              let fn = this.responses[request_seq] ?? this.#callback;
 
-            for(let receiver of [this, conn]) {
-              if(!receiver[prop]) continue;
-              if(receiver[prop]) {
-                const callback = receiver[prop];
-                if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m  ', { prop, event });
-                //if((await callback.call(receiver, event)) === false) if(receiver[prop] === callback) delete receiver[prop];
-                callback.call(receiver, event);
-                delete receiver[prop];
+              delete this.responses[request_seq];
+
+              if(typeof fn == 'function') await fn.call(this, msg);
+              break;
+
+            case 'event':
+              const prop = 'on' + event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
+
+              for(let receiver of [this, conn]) {
+                if(!receiver[prop]) continue;
+                if(receiver[prop]) {
+                  const callback = receiver[prop];
+                  if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m  ', { prop, event });
+                  //if((await callback.call(receiver, event)) === false) if(receiver[prop] === callback) delete receiver[prop];
+                  callback.call(receiver, event);
+                  delete receiver[prop];
+                }
               }
-            }
-            break;
-          default:
-            //console.log('DebuggerDispatcher', { msg });
-            if(conn.onmessage) await conn.onmessage(msg);
-            break;
-        }
-      });
-      console.log('process(handler) returned:', v);
+              break;
+
+            default:
+              //console.log('DebuggerDispatcher', { msg });
+              if(conn.onmessage) await conn.onmessage(msg);
+              break;
+          }
+        })
+        .catch(e => console.log('process() exception:', e));
+
+      if(process.env.DEBUG) console.log('process(handler) returned:', v);
 
       isFunction(v.then) && v.then(r => (ret = r));
     } catch(err) {
@@ -142,7 +112,7 @@ export class DebuggerDispatcher {
     } finally {
       if(ret == 0) isFunction(this.onclose) && this.onclose();
       if(ret < 0) isFunction(this.onerror) && this.onerror(error());
-      console.log('process(handler) function returned:', ret);
+      if(process.env.DEBUG) console.log('process(handler) function returned:', ret);
     }
 
     define(this, { sendMessage: conn.sendMessage });
@@ -183,12 +153,16 @@ export class DebuggerDispatcher {
     return this.sendMessage({ type: 'stopOnException', stopOnException });
   }
 
-  breakpoints(path, breakpoints) {
+  async breakpoints(path, breakpoints) {
     if(Array.isArray(breakpoints)) {
       if(typeof breakpoints[0] == 'number') breakpoints = breakpoints.map(n => ({ line: n }));
     }
     const msg = breakpoints ? { type: 'breakpoints', breakpoints: { path, breakpoints } } : { type: 'breakpoints', path };
-    this.sendMessage(msg);
+
+    let ret = await this.sendMessage(msg);
+
+    //console.log('breakpoints(1)', { msg, ret });
+
     return msg;
   }
 
@@ -222,15 +196,13 @@ export class DebuggerDispatcher {
     });
   }
 
-  async sendRequest(command, args = {}) {
-    const request_seq = ++this.#seq;
-
+  async sendRequest(command, args = {}, request_seq = ++this.#seq) {
     await this.sendMessage({ type: 'request', request: { request_seq, command, args } });
 
     return new Promise(
       (resolve, reject) =>
-        (this.#responses[request_seq] = response => {
-          delete this.#responses[request_seq];
+        (this.responses[request_seq] = response => {
+          delete this.responses[request_seq];
           resolve(response);
         })
     );
@@ -239,71 +211,6 @@ export class DebuggerDispatcher {
 
 Object.assign(DebuggerDispatcher.prototype, { [Symbol.toStringTag]: 'DebuggerDispatcher' });
 Object.setPrototypeOf(DebuggerDispatcher.prototype, null);
-
-/*function TestWorker() {
-  globalThis.console = new Console({
-    colors: true,
-    compact: 1,
-    prefix: '\x1b[38;5;220mPARENT\x1b[0m'
-  });
-  worker = new Worker('./ws-worker.js');
-  counter = 0;
-  worker.onmessage = WorkerMessage;
-  setReadHandler(0, () => {
-    let line = process.stdin.getline();
-    worker.postMessage({ line });
-  });
-}
-
-let sock, connection;
-function WorkerMessage(e) {
-  var ev = e.data;
-  const { message, id } = ev;
-  switch (ev.type) {
-    case 'message': {
-      switch (message.type) {
-        case 'start': {
-          console.log('START', message.start);
-          const { args, connect, address } = message.start;
-          let child = StartDebugger(args, connect, address);
-          sleep(1000);
-          sock = ConnectDebugger(address);
-          break;
-        }
-        default: {
-          console.log('From WORKER', ev);
-          connection.sendMessage(message);
-          break;
-        }
-      }
-      break;
-    }
-    case 'num': {
-      assert(ev.num, counter);
-      counter++;
-      if(counter == 10) {
-        let sab = new SharedArrayBuffer(10);
-        let buf = new Uint8Array(sab);
-        worker.postMessage({ type: 'sab', buf: buf });
-        counter = 0;
-      }
-      break;
-    }
-    case 'sab_done': {
-      let buf = ev.buf;
-      assert(buf[2], 10);
-      worker.postMessage({ type: 'abort' });
-      break;
-    }
-    case 'done': {
-      break;
-    }
-  }
-}
-
-function send(id, body) {
-  worker.postMessage({ type: 'send', id, body });
-}*/
 
 export function* GetArguments(node) {
   for(let param of node.params) {
@@ -361,23 +268,12 @@ export function* FindFunctions(ast) {
     let name = GetFunctionName(ast, p);
     let parent = deep.get(ast, p.slice(0, -1));
 
-    /*    try {
-      if(p.last == 'value') name = deep.get(ast, p.slice(0, -1).concat(['key', 'name']));
-    } catch(e) {}
-
-    if(parent.type == 'Property') {
-      if(parent.key.type == 'Literal') {
-        name ??= parent.key.value;
-      }
-    }*/
-
     if(v.async) name = 'async ' + name;
 
     if(v.loc.start) {
       let { line, column } = v.loc.start;
       ++column;
-
-      /*if(name)*/ yield [name, { line, column }, [...GetArguments(v)], v.expression, p];
+      yield [name, { line, column }, [...GetArguments(v)], v.expression, p];
     }
   }
 }

@@ -16,6 +16,7 @@ import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import { Console } from 'console';
 import { Location } from 'location';
 import process from 'process';
+import * as path from 'path';
 import extendArray from 'extendArray';
 import { AF_INET, AsyncSocket, IPPROTO_TCP, SOCK_STREAM, SockAddr } from 'sockets';
 import { err as stderr } from 'std';
@@ -178,27 +179,26 @@ export function StartDebugger(args, connect, address) {
 
   if(!connect) listeners[address] = child;
 
-  console.log('StartDebugger', { args, connect, address, env }, child);
+  if(process.env.DEBUG) console.log('StartDebugger', { args, connect, address, env }, child);
 
   children.add(child.pid);
 
   return define(child, { args });
 }
 
-export function ConnectDebugger(address, skipToMain = true, callback) {
+export async function ConnectDebugger(address, skipToMain = true, callback) {
   const addr = new SockAddr(AF_INET, ...address.split(':'));
   const sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-  const ret = sock.connect(addr);
+  const ret = await sock.connect(addr);
 
   if(typeof callback != 'function' && typeof callback == 'object') callback = callback.onMessage;
-  console.log('ConnectDebugger', { address, skipToMain, sock });
+
+  if(process.env.DEBUG) console.log('ConnectDebugger', { address, skipToMain, sock });
 
   if(ret >= 0) {
-    sock.ndelay(true);
-    console.log('Connected', +sock, 'to', sock.remote);
+    if(process.env.DEBUG) console.log('Connected', +sock, 'to', sock.remote);
     sockets.add(sock);
-    //console.log('sockets', sockets);
   }
 
   const dbg = this ?? {};
@@ -207,6 +207,8 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
     sock,
     addr,
     async process(callback) {
+      if(process.env.DEBUG) console.log('Debugger process()', callback);
+
       let ret,
         lenBuf = new ArrayBuffer(9);
 
@@ -227,11 +229,15 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
             offset += ret;
           }
           if(ret <= 0) break;
+
           let s = toString(dataBuf);
           let obj = JSON.parse(s);
 
+          if(process.env.DEBUG) console.log('process() read:', obj);
+
           const funcName = '\x1b[38;5;208mPROCESS\x1b[0m';
-          console.log(funcName + ' \x1b[38;5;196mbefore callback\x1b[0m');
+
+          if(process.env.DEBUG) console.log(funcName + ' \x1b[38;5;196mbefore callback\x1b[0m', obj);
           let result = callback(obj);
           await result;
         }
@@ -244,12 +250,15 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
     },
     async sendMessage(msg) {
       if(typeof msg != 'string') msg = JSON.stringify(msg);
-      const ret = await sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg);
+      const ret = sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg);
+
       if(process.env.DEBUG) console.log('\x1b[38;5;33mSEND\x1b[0m[' + sock.fd + '] (' + ret + ') ' + msg);
+
+      return ret;
     }
   });
 
-  console.log('ConnectDebugger', console.config({ depth: 1, compact: 0 }), dbg);
+  if(process.env.DEBUG) console.log('ConnectDebugger', console.config({ depth: 1, compact: 0 }), dbg);
 
   LaunchDebugger(dbg, skipToMain);
 
@@ -257,7 +266,8 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
 }
 
 function LaunchDebugger(dbg, skipToMain = true) {
-  console.log('LaunchDebugger', console.config({ depth: 1, compact: 0 }), { dbg, skipToMain });
+  if(process.env.DEBUG) console.log('LaunchDebugger', console.config({ depth: 1, compact: 0 }), { dbg, skipToMain });
+
   if(skipToMain) {
     dbg.onstopped = once(async (...args) => {
       let st = await dispatch.stackTrace();
@@ -280,8 +290,7 @@ function LaunchDebugger(dbg, skipToMain = true) {
     });
   }
   //dbg.onstopped ??= OnStopped;
-
-  let dispatch = (globalThis.dispatch = new DebuggerDispatcher(dbg));
+  let dispatch = (dbg.dispatch = globalThis.dispatch = new DebuggerDispatcher(dbg));
 
   Object.assign(globalThis, bindMethods(dispatch, DebuggerDispatcher.prototype, {}));
   Object.assign(globalThis, {
@@ -336,18 +345,25 @@ decorate(
         if(!(typeof args[0] == 'string')) args.unshift(globalThis.script);
 
         let [file, breakpoints] = args;
+
         file = absolute(file);
 
         if(types.isPromise(breakpoints)) breakpoints = await breakpoints;
+        if(Array.isArray(breakpoints)) breakpoints = breakpoints.map(b => filterKeys(b, ['name', 'line', 'column']));
 
-        if(Array.isArray(breakpoints)) {
-          breakpoints = breakpoints.map(b => filterKeys(b, ['name', 'line', 'column']));
-        }
+        let ret = await member.call(this, file, breakpoints);
 
-        return await member.call(this, file, breakpoints);
+        if(ret.path) ret.path = relative(ret.path);
+        if(ret?.breakpoints?.path) ret.breakpoints.path = relative(ret.breakpoints.path);
+
+        // console.log('breakpoints =', ret);
+
+        return ret;
       },
       async stackTrace(frame) {
-        return (await member.call(this, frame)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
+        let ret = (await member.call(this, frame)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
+        console.log('stackTrace =', ret);
+        return ret;
       },
       async scopes(n) {
         let stack = await this.stackTrace();
@@ -372,7 +388,6 @@ decorate(
         const { filename, line } = stack[0];
 
         define(globalThis, { file: filename, line });
-
         return [event, stack];
       },
       async variables(n, depth = 0) {
@@ -416,7 +431,7 @@ const mkaddr = (
     `127.0.0.1:${port--}`
 )();
 
-function NewDebugger(args, skipToMain = false, address) {
+async function NewDebugger(args, skipToMain = false, address) {
   address ??= mkaddr();
 
   const child = (globalThis.child = globalThis.listeners[address] || StartDebugger(args, false, address));
@@ -433,7 +448,8 @@ function NewDebugger(args, skipToMain = false, address) {
     args,
     kill: () => (children.delete(child.pid), kill(child.pid, SIGTERM))
   });
-  ConnectDebugger.call(dbg, address, skipToMain);
+
+  await ConnectDebugger.call(dbg, address, skipToMain);
 
   return dbg; //dispatch;
 }
@@ -509,6 +525,7 @@ function main(...args) {
 
   let protocol = new WeakMap();
   let ws2dbg = (globalThis.ws2dbg = mapWrapper(new WeakMap()));
+  let dbg2ws = (globalThis.dbg2ws = mapWrapper(new WeakMap()));
 
   let sockets = (globalThis.sockets ??= new Set());
   //console.log(name, params['@']);
@@ -590,9 +607,9 @@ function main(...args) {
 
           Object.defineProperties(ws, {
             sendMessage: {
-              value: function sendMessage(msg) {
-                let ret = this.send(JSON.stringify(msg));
-                console.log(`ws.sendMessage(`, console.config({ compact: 0 }), msg, `) = ${ret}`);
+              value: async function sendMessage(msg) {
+                let ret = await this.send(JSON.stringify(msg));
+                console.log(`ws.sendMessage(`, console.config({ compact: 1 }), msg, `) = ${ret}`);
                 return ret;
               },
               enumerable: false
@@ -642,13 +659,13 @@ function main(...args) {
           return resp;
         },
         onMessage(ws, data) {
-        dbg = ws2dbg(ws);
+          dbg = ws2dbg(ws);
 
           // showSessions();
 
           handleCommand(ws, data);
 
-          function handleCommand(ws, data) {
+          async function handleCommand(ws, data) {
             let obj = JSON.parse(data);
 
             console.log('onMessage(x)', obj);
@@ -657,10 +674,12 @@ function main(...args) {
             // console.log('onMessage', command, rest);
             const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = rest;
 
-            switch (command) {
+            switch (obj.type ?? command) {
               case 'start': {
-               dbg= globalThis.dbg = { child: StartDebugger(args, connect, address) };
+                dbg = globalThis.dbg = { child: StartDebugger(args, connect, address) };
+
                 ws2dbg(ws, dbg);
+                dbg2ws(dbg, ws);
 
                 const [stdin, stdout, stderr] = child.stdio;
                 for(let fd of [stdout, stderr]) {
@@ -727,58 +746,26 @@ function main(...args) {
 
                 break;
               }
+
               case 'connect': {
-                dbg = globalThis.dbg=ConnectDebugger(address, (dbg, sock) => {
+                dbg = globalThis.dbg = await ConnectDebugger.call(globalThis.dbg, address, false, (dbg, sock) => {
                   console.log('wait(WNOHANG) =', child.wait(WNOHANG));
                   console.log('child', child);
                 });
+
                 ws2dbg(ws, dbg);
+                dbg2ws(dbg, ws);
+
                 console.log('connect command', { ws, dbg });
                 sockets.add(dbg.sock);
 
                 const cwd = process.cwd();
                 let connected;
 
-                dbg.process(msg => {
-                  if(!connected) {
-                    connected = true;
-                    ws.sendMessage({
-                      type: 'response',
-                      response: {
-                        command: 'start',
-                        args,
-                        cwd,
-                        address
-                      }
-                    });
-                  }
-                  try {
-                    console.log('Debugger.read() =', console.config({ compact: false, maxStringLength: 200 }), msg);
-                    msg = JSON.stringify(msg);
-                    if(typeof msg == 'string') {
-                      let ret;
-                      ret = ws.send(msg);
-                      console.log(`ws.send(${quote(msg, "'")}) = ${ret}`);
-                    } else {
-                      console.log('closed socket', dbg);
-                      sockets.delete(dbg.sock);
-                      ws.sendMessage({
-                        type: 'end',
-                        reason: 'closed'
-                      });
-                    }
-                  } catch(error) {
-                    const { message, stack } = error;
-                    ws.sendMessage({
-                      type: 'error',
-                      error: { message, stack }
-                    });
-                    dbg.close();
-                  }
-                });
                 console.log('dbg', dbg);
                 break;
               }
+
               case 'file': {
                 const { path } = rest;
                 const data = ReadFile(path, 'utf-8');
@@ -810,12 +797,35 @@ function main(...args) {
                 console.log('lines', lines);
                 break;
               }
+
+              case 'request': {
+                const { request } = obj;
+                const { request_seq, command, args } = request;
+
+                let response = await dbg.dispatch.sendRequest(command, args, request_seq);
+
+                if(command == 'stackTrace') {
+                  response.body = response.body.map(frame => {
+                    if(frame.filename) frame.filename = path.relative(frame.filename);
+
+                    return frame;
+                  });
+                }
+                console.log('Request', { request, response });
+
+                ws.sendMessage(response);
+
+                break;
+              }
+
               default: {
+                /*  console.log('send to debugger', { obj });
+                dbg.sendMessage(obj);*/
                 const dbg = ws2dbg(ws);
                 const { pid } = dbg.child;
-                console.log('send to debugger', { pid, command, data });
+                console.log('send to debugger', { pid, obj });
 
-                dbg.sendMessage(data);
+                dbg.sendMessage(obj);
 
                 //DebuggerProtocol.send(dbg, data);
                 break;

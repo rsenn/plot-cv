@@ -45,7 +45,10 @@ void
 session_callback(jack_session_event_t* event, void* arg) {
   char retval[100];
   printf("session notification\n");
-  printf("path %s, uuid %s, type: %s\n", event->session_dir, event->client_uuid, event->type == JackSessionSave ? "save" : "quit");
+  printf("path %s, uuid %s, type: %s\n",
+         event->session_dir,
+         event->client_uuid,
+         event->type == JackSessionSave ? "save" : "quit");
 
   snprintf(retval, 100, "jack_simple_session_client %s", event->client_uuid);
   event->command_line = strdup(retval);
@@ -126,7 +129,8 @@ main(int argc, char* argv[]) {
   /* create two ports */
 
   input_port = jack_port_register(client, "input", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-  output_port = jack_port_register(client, "output", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+  output_port =
+      jack_port_register(client, "output", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
 
   if((input_port == NULL) || (output_port == NULL)) {
     fprintf(stderr, "no more JACK ports available\n");

@@ -1,10 +1,13 @@
 import { Repeater } from './lib/repeater/repeater.js';
 import { eq, tests } from './lib/tinytest.js';
-import('console').then(({ Console }) => (globalThis.console = new Console({ inspectOptions: { compact: 2 } })));
+
+//import('console').then(({ Console }) => (globalThis.console = new Console({ inspectOptions: { compact: 2 } })));
 
 tests({
   async 'next() value'() {
     const gen = new Repeater(async (push, stop) => push(await push(undefined)));
+
+    throw new Error('test');
 
     await gen.next();
     eq((await gen.next('value#1')).value, 'value#1');
@@ -90,6 +93,7 @@ tests({
         push(Infinity);
         stop();
       }
+      stop('end');
     });
 
     eq((await gen.next('value#1')).value, 0);

@@ -1,10 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { RecursiveDirIterator } from './dir-helpers.js';
-import { ArgumentType, CompileCommand, MakeCommand, MakeCommands } from './lib/compileCommand.js';
+import { ArgumentType, ArgumentIs, CommandType, CompileCommand, MakeCommand, MakeCommands } from './lib/compileCommand.js';
 import { arraysInCommon, define, mapFunction, types } from './lib/misc.js';
 import { Console } from 'console';
-import process from 'process';
 
 const commands = (globalThis.commands = []);
 const cmdMap = (globalThis.cmdMap = mapFunction(new WeakMap()));
@@ -35,15 +34,7 @@ const sourcesMap = (globalThis.sourcesMap = outputFile => {
 });
 
 const depMap = (globalThis.depMap = inputFile =>
-  Object.values(
-    commands.reduce(
-      (acc, cmd) =>
-        [...(cmd.sources ?? cmd.dependencies)].indexOf(inputFile) != -1
-          ? ((acc[cmd.outputFile] ??= cmd), acc)
-          : acc,
-      {}
-    )
-  ));
+  Object.values(commands.reduce((acc, cmd) => ([...(cmd.sources ?? cmd.dependencies)].indexOf(inputFile) != -1 ? ((acc[cmd.outputFile] ??= cmd), acc) : acc), {})));
 
 const transformMap = (globalThis.transformMap = (input, output, map) => {
   let fn = mapFunction(map);
@@ -84,14 +75,7 @@ const binutils = (globalThis.binutils = {
       .map(m => m[0].split(/:/))
       .filter(entry => entry.length > 1)
       .map(([file, data]) => [file, data.slice(0, 16), data.slice(17, 18), data.slice(19)])
-      .reduce(
-        (acc, [file, addr, type, name]) => (
-          (acc[file] ??= []),
-          acc[file].push({ addr: parseInt(addr.trim() || '0'), type, name }),
-          acc
-        ),
-        {}
-      )
+      .reduce((acc, [file, addr, type, name]) => ((acc[file] ??= []), acc[file].push({ addr: parseInt(addr.trim() || '0'), type, name }), acc), {})
 });
 
 function main(...arglist) {
@@ -107,9 +91,9 @@ function main(...arglist) {
       maxStringLength: Infinity
     }
   });
-  let file =
-    arglist[0] ??
-    '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-debug/compile_commands.json';
+  let file = arglist[0] ?? '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-debug/compile_commands.json';
+
+  console.log('file', file);
 
   let builddir = path.dirname(file);
   let json = fs.readFileSync(file, 'utf-8');
@@ -137,9 +121,7 @@ function main(...arglist) {
     directories.add(directory);
     prevDirectory = directory;
   }
-  let common = arraysInCommon(commands).filter(
-    (arg, i) => i > 0 && ['mode', 'output'].indexOf(ArgumentType(arg)) == -1
-  );
+  let common = arraysInCommon(commands).filter((arg, i) => i > 0 && ['mode', 'output'].indexOf(ArgumentType(arg)) == -1);
 
   let i = 0;
   for(let cmd of commands) {
@@ -160,14 +142,16 @@ function main(...arglist) {
   const { defines, includePaths, flags } = commonCmd;
 
   define(globalThis, {
+    CompileCommand,
+    ArgumentType,
+    ArgumentIs,
+    CommandType,
     get CFLAGS() {
       return [...defines.map(d => '-D' + d), ...includePaths.map(i => '-I' + i), ...flags];
     }
   });
 
-  let linkFiles = [...directories].flatMap(dir => [
-    ...RecursiveDirIterator(dir, (entry, file) => /link\.txt$/.test(file))
-  ]);
+  let linkFiles = [...directories].flatMap(dir => [...RecursiveDirIterator(dir, (entry, file) => /link\.txt$/.test(file))]);
 
   console.log('linkFiles', linkFiles);
 
