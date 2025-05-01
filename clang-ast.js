@@ -232,6 +232,46 @@ export function FindType(typeName, ast = $.data) {
   return new Type(typeName, ast);
 }
 
+export class PointerType extends Node {
+  constructor(pointee, ast, ns) {
+    super(pointee, ast, ns);
+    define(this, properties({ pointee }, { enumerable: false }));
+  }
+
+  static fromString(str, ast, ns) {
+    const t = str.replace(/^(volatile\s+|const\s+|)*(.*)\s*\*\s*$/g, '$2');
+
+    if(t != str) {
+      const type = Type.declarations.get(t) ?? new Type(t, ast, ns);
+      return new PointerType(type, ast, ns);
+    }
+  }
+
+  toString() {
+    return this.pointee + ` *`;
+  }
+}
+
+export class ReferenceType extends Node {
+  constructor(pointee, ast, ns) {
+    super(pointee, ast, ns);
+    define(this, properties({ pointee }, { enumerable: false }));
+  }
+
+  static fromString(str, ast, ns) {
+    const t = str.replace(/^(volatile\s+|const\s+|)*(.*)\s*\&\s*$/g, '$2');
+
+    if(t != str) {
+      const type = Type.declarations.get(t) ?? new Type(t, ast, ns);
+      return new ReferenceType(type, ast, ns);
+    }
+  }
+
+  toString() {
+    return this.pointee + ` &`;
+  }
+}
+
 export class Type extends Node {
   static declarations = new Map();
   static node2type = getTypeFromNode.cache;
@@ -274,16 +314,24 @@ export class Type extends Node {
         name = TrimSubscripts(name, subscripts);
         //console.log('Type', { name, subscripts });
 
-        node = GetType(name, ast);
+        if(ast) {
+          node = GetType(name, ast) ?? GetClass(name, ast);
 
-        if(!node) {
-          throw new Error(`No such type '${name}'`);
-          node = {};
-        } else {
-          console.log(`Found type ${name}`, node);
+          if(!node) {
+            throw new Error(`No such type '${name}'`);
+            node = {};
+          } else {
+            console.log(`Found type ${name}`, node);
+          }
         }
       }
     } else {
+      const t = node?.qualType;
+      console.log('Type.constructor', { t, ast, ns });
+
+      if(/\*\s*$/.test(t)) return PointerType.fromString(t, ast, ns);
+      if(/\&\s*$/.test(t)) return ReferenceType.fromString(t, ast, ns);
+
       if('path' in node && 'value' in node) node = node.value;
     }
 
@@ -373,6 +421,11 @@ export class Type extends Node {
     return /(?:\(\*\)\(|\*$)/.test(desugared) || /\*$/.test(qualType);
   }
 
+  isReference() {
+    const { desugared, qualType } = this;
+    return /(?:\(\&\)\(|\&$)/.test(desugared) || /\&$/.test(qualType);
+  }
+
   isFunction() {
     const str = this + '';
     return /\(.*\)$/.test(str) && !/\(\*\)\(/.test(str);
@@ -399,7 +452,16 @@ export class Type extends Node {
 
   get pointer() {
     const str = this + '';
-    const name = str.replace(/(\*$|\(\*\))/, '');
+    const name = str.replace(/\s*(\*$|\(\*\))/, '');
+
+    if(name == str) return undefined;
+
+    return name;
+  }
+
+  get reference() {
+    const str = this + '';
+    const name = str.replace(/\s*(\&$|\(\&\))/, '');
 
     if(name == str) return undefined;
 
@@ -958,7 +1020,7 @@ export class BuiltinType extends Type {
   }
 }
 
-export class PointerType extends Node {
+/*export class PointerType extends Node {
   constructor(node, ast) {
     super(node, ast);
     assert(node.inner.length, 1);
@@ -971,7 +1033,7 @@ export class PointerType extends Node {
     const { pointee, type } = this;
     return super.toJSON({ pointee, type });
   }
-}
+}*/
 
 export class ConstantArrayType extends Node {
   constructor(node, ast) {
@@ -2631,7 +2693,7 @@ export function isNode(obj) {
   return isObject(obj) && typeof obj.kind == 'string';
 }
 
-export function GetType(name_or_id, ast = $.data) {
+export function GetType(name_or_id, ast = globalThis['$']?.data) {
   let result, idx;
 
   if(typeof name_or_id == 'object' && name_or_id) {

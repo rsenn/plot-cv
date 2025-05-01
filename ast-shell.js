@@ -1,4 +1,4 @@
-import { AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetClass, GetBases, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl, nameOrIdPred, NamespaceOf, GetNamespace, } from './clang-ast.js';
+import { AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetClass, GetBases, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl, nameOrIdPred, NamespaceOf, GetNamespace, PointerType, ReferenceType, } from './clang-ast.js';
 import { DirIterator, RecursiveDirIterator } from './dir-helpers.js';
 import { LoadHistory, ReadFile, ReadJSON, WriteFile, WriteJSON } from './io-helpers.js';
 import * as deep from './lib/deep.js';
@@ -1135,8 +1135,13 @@ function MakeId(name) {
 }
 
 function MakeQuickJSClass(node, ast = $) {
-  const cid = MakeId(decamelize(node.name, '_')).toLowerCase();
+  const cid = MakeId(decamelize(node.name, '')).toLowerCase();
   const cname = ast.namespaceOf(node) + '';
+
+  const [decl, assign] = [
+    (cname, vname = 'ptr') => `  ${cname}* ${vname};\n`,
+    (cname, vname = 'ptr') => `  if(!(${vname} = static_cast<${cname}*>(JS_GetOpaque2(ctx, this_val, js_${cid}_class_id))))\n    return JS_EXCEPTION;\n`,
+  ];
 
   const members = {
     fields: [...node.members].filter(n => className(n) == 'Type' && !['protected', 'private'].includes(n.access) && !(n.storageClass == 'static' || n.ast.storageClass == 'static')),
@@ -1147,7 +1152,7 @@ function MakeQuickJSClass(node, ast = $) {
     ctor_dtor: [...node.members].filter(n => !(n.ast.kind == 'CXXMethodDecl' || className(n) == 'Type')),
   };
 
-  let inst = `  ${cname}* ptr;\n\n  if(!(ptr = static_cast<${cname}*>(JS_GetOpaque2(ctx, this_val, js_${cid}_class_id))))\n    return JS_EXCEPTION;\n\n`;
+  let inst = decl(cname) + '\n' + assign(cname) + '\n';
 
   inst += `  switch(magic) {\n`;
 
@@ -1182,11 +1187,11 @@ function MakeQuickJSClass(node, ast = $) {
 
     if(parameters.length > 0) {
       const types = {};
+      let i = 0;
 
-      for(let [name, param] of parameters) {
+      for(let [name = `arg${i}`, param] of parameters) {
         const { desugared, qualType } = param;
 
-        console.log('', { name, desugared, qualType });
         let type = desugared ?? qualType;
 
         switch (type) {
@@ -1197,26 +1202,35 @@ function MakeQuickJSClass(node, ast = $) {
             type = 'uint32_t';
             break;
         }
+        console.log('', { name, param, type });
 
         types[type] ??= [];
         types[type].push(name);
+
+        ++i;
       }
 
+      const to_jstype = type => ({ int: 'Int32', 'unsigned int': 'Uint32', double: 'Float64', float: 'Float64', int32_t: 'Int32', uint32_t: 'Uint32', int64_t: 'Int64', uint64_t: 'Index' }[type]);
+
       for(let type in types) {
-        out.mfn += `      ${type} ${types[type].join(', ')};\n`;
+        const jstype = to_jstype(type);
+
+        if(jstype == undefined) out.mfn += `    ` + decl((type.reference ?? type) + '*', types[type].join(', '));
+        else out.mfn += `      ${type} ${types[type].join(', ')};\n`;
       }
 
       out.mfn += `\n`;
 
-      let i = 0;
+      i = 0;
 
-      for(let [name, param] of parameters) {
+      for(let [name = `arg${i}`, param] of parameters) {
         const { desugared, qualType } = param;
         let type = desugared ?? qualType;
 
-        const jstype = { int: 'Int32', 'unsigned int': 'Uint32', double: 'Float64', float: 'Float64', int32_t: 'Int32', uint32_t: 'Uint32', int64_t: 'Int64', uint64_t: 'Index' }[type];
+        const jstype = to_jstype(type);
 
-        out.mfn += `      JS_To${jstype}(ctx, &${name}, argv[${i}]);\n`;
+        if(jstype == undefined) out.mfn += `    ` + assign((type.reference ?? type) + '*', name).replaceAll('\n', '\n    ');
+        else out.mfn += `      JS_To${jstype}(ctx, &${name}, argv[${i}]);\n`;
 
         // console.log('', { name, desugared, typeAlias });
         ++i;
@@ -1377,12 +1391,12 @@ async function ASTShell(...args) {
         let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
 
         node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
-        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE_PATH)[0];
+        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE_PATH)?.[0];
         return node;
       },
-      getType(name_or_id) {
-        //let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
-        let result = this.getNamespace(name_or_id, this.data, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
+      getType: memoize(function getType(name_or_id) {
+        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl|NamespaceDecl)/.test(n.kind) && /Decl/.test(n.kind));
+        //let result = this.getNamespace(name_or_id, this.data, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
 
         result ??= GetType(name_or_id, this.data);
 
@@ -1392,16 +1406,16 @@ async function ASTShell(...args) {
         }
 
         return result;
-      },
+      }),
       getNamespace(arg, root = this.data, predicate = () => true) {
         return GetNamespace(arg, root, predicate);
       },
       namespaceOf(node) {
         return NamespaceOf(node?.ast ?? node, this.data);
       },
-      getClass(name_or_id) {
+      getClass: memoize(function getClass(name_or_id) {
         return GetClass(name_or_id, this.data);
-      },
+      }),
       getFunction(name_or_id) {
         let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
 
@@ -1437,6 +1451,8 @@ async function ASTShell(...args) {
   Object.assign(globalThis, {
     SIZEOF_POINTER,
     Type,
+    PointerType,
+    ReferenceType,
     AstDump,
     SourceDependencies,
     NodePrinter,
