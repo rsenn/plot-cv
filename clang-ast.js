@@ -128,10 +128,10 @@ export function nameOrIdPred(name_or_id, pred = n => true) {
   if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
 
   return name_or_id instanceof RegExp
-    ? and( property('name',  regexp(name_or_id)), pred) 
+    ? and(property('name', regexp(name_or_id)), pred)
     : name_or_id.startsWith('0x')
-    ?  and( property('id',  string(name_or_id)), pred)
-    : and( property('name',  string(name_or_id)), pred)
+    ? and(property('id', string(name_or_id)), pred)
+    : and(property('name', string(name_or_id)), pred);
 }
 
 export class List extends Array {
@@ -487,14 +487,11 @@ export class Type extends Node {
     if(desugared) weakDefine(this, { desugared });
     if(typeAlias) define(this, nonenumerable({ typeAlias }));
 
- 
     if(this.isPointer()) {
-     
     } else if(this.isEnum()) {
       this.desugared = 'int';
     }
-
-   }
+  }
 
   /* prettier-ignore */ get regExp() { return new RegExp(`(?:${this.qualType}${this.typeAlias ? '|' + this.typeAlias : ''})`.replace(/\*/g, '\\*'), 'g'); }
 
@@ -559,7 +556,7 @@ export class Type extends Node {
     const target = this.pointer;
 
     if(target) {
-      const node = DeepFind(ast,   target);
+      const node = DeepFind(ast, target);
 
       if(node) return TypeFactory(node, ast);
 
@@ -1475,14 +1472,14 @@ export async function AstDump(compiler, source, args, force) {
   for(let p of paths) {
     if(!fs.existsSync(p)) continue;
 
-    let existsAndNotEmpty = fs.sizeSync(p) > 0;
+    const existsAndNotEmpty = fs.sizeSync(p) > 0;
 
-    if(existsAndNotEmpty) newer = Newer(output, ...sources);
+    if(existsAndNotEmpty) newer = Newer(p, ...sources);
 
     if(newer) output = p;
   }
 
-  //console.log('AstDump', console.config({compact: true }), { output });
+ //console.log('AstDump', console.config({compact: true }), { bjson, output, newer, force, paths });
 
   if(!force && newer) {
     console.log(`Loading cached '${output}'...`);
@@ -1537,6 +1534,9 @@ export async function AstDump(compiler, source, args, force) {
       if(!/\.bjson$/i.test(this.file)) {
         console.log(`Writing '${bjson}'...`);
         WriteBJSON(bjson, data);
+        console.log(`Deleting '${this.file}'...`);
+        fs.unlinkSync(this.file);
+        this.file = bjson;
       }
       return data;
     },
@@ -2827,11 +2827,7 @@ export function GetClass(name_or_id, ast = globalThis['$'].data) {
   let result =
     isString(name_or_id) && /::/.test(name_or_id)
       ? GetByName(name_or_id, ast, n => /RecordDecl/.test(n.kind) && n.completeDefinition)
-      : DeepFind(
-          ast,
-          nameOrIdPred(name_or_id, and(property('kind',  regexp( /RecordDecl/)),   property('completeDefinition'))),
-          deep.RETURN_VALUE,
-        );
+      : DeepFind(ast, nameOrIdPred(name_or_id, and(property('kind', regexp(/RecordDecl/)), property('completeDefinition'))), deep.RETURN_VALUE);
 
   if(result) {
     let type = TypeFactory(result, ast);
