@@ -8,6 +8,7 @@ import { Spawn } from './os-helpers.js';
 import { countSubstring } from './string-helpers.js';
 import { inspect } from 'inspect';
 import { readObject, mapFunction } from 'util';
+import { string, property, shift, and, regexp, notnot } from 'predicate';
 
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
@@ -19,6 +20,8 @@ const ast2np = (
 )();
 
 export function DeepFind(ast, pred, flags = deep.RETURN_VALUE) {
+  if(isString(pred)) pred = property('name', string(pred));
+
   const result = deep.find(ast, pred, deep.RETURN_VALUE_PATH);
 
   if(result) {
@@ -39,6 +42,8 @@ export function DeepFind(ast, pred, flags = deep.RETURN_VALUE) {
 
 export function* DeepSelect(ast, pred, flags = deep.RETURN_VALUE) {
   let m = ast2np(ast);
+
+  if(isString(pred)) pred = property('name', string(pred));
 
   for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH)) {
     DeepCachePath(ast, path, m);
@@ -123,10 +128,10 @@ export function nameOrIdPred(name_or_id, pred = n => true) {
   if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
 
   return name_or_id instanceof RegExp
-    ? node => name_or_id.test(node.name) && pred(node)
+    ? and( property('name',  regexp(name_or_id)), pred) 
     : name_or_id.startsWith('0x')
-    ? node => node.id == name_or_id && pred(node)
-    : node => node.name == name_or_id && pred(node);
+    ?  and( property('id',  string(name_or_id)), pred)
+    : and( property('name',  string(name_or_id)), pred)
 }
 
 export class List extends Array {
@@ -299,7 +304,7 @@ export function FindType(typeName, ast = globalThis['$'].data) {
     typeName = typeName.replace(new RegExp('^' + tokens[0] + '\\s*'), '');
   }
 
-  const nodes = DeepSelect(ast, n => n.name == tokens[0]).filter(node => node.inner && node.inner.length);
+  const nodes = DeepSelect(ast, tokens[0]).filter(node => node.inner && node.inner.length);
   console.log('nodes', nodes);
 
   return new Type(typeName, ast);
@@ -380,7 +385,7 @@ export class Type extends Node {
 
       if(Type.declarations.has(name)) return Type.declarations.get(name);
 
-      if(ast && typeof (tmp = DeepFind(ast, n => typeof n == 'object' && n && n.name == name)) == 'object' && tmp != null) {
+      if(ast && typeof (tmp = DeepFind(ast, name)) == 'object' && tmp != null) {
         tmp = 'kind' in tmp ? TypeFactory(tmp, ast) : new Type(tmp, ast);
 
         if(tmp) node = 'ast' in tmp ? tmp.ast : tmp;
@@ -406,8 +411,8 @@ export class Type extends Node {
           node = GetType(name, ast) ?? GetClass(name, ast);
 
           if(!node) {
-            throw new Error(`No such type '${name}'`);
-            node = {};
+            //throw new Error(`No such type '${name}'`);
+            //node = {};
           } else {
             console.log(`Found type ${name}`, node);
           }
@@ -442,7 +447,7 @@ export class Type extends Node {
 
     if(Type.declarations.has(name)) return Type.declarations.get(name);
 
-    console.log('Type.constructor', console.config({ depth: 2 }), { name, node });
+    //console.log('Type.constructor', console.config({ depth: 2 }), { name, node });
 
     desugared = type?.desugaredQualType ?? node?.desugaredQualType;
     typeAlias = type?.typeAliasDeclId ?? node?.typeAliasDeclId;
@@ -482,23 +487,14 @@ export class Type extends Node {
     if(desugared) weakDefine(this, { desugared });
     if(typeAlias) define(this, nonenumerable({ typeAlias }));
 
-    //define(this, nonenumerable({ desugared, typeAlias }));
-
+ 
     if(this.isPointer()) {
-      /*  let ptr = (name ?? this + '').replace(/\*$/, '').trimEnd();
-
-      if(ast) {
-        let node = DeepFind(ast, (n, p) => (p.length > 2 ? -1 : typeof n == 'object' && n && n.name == ptr));
-
-        if(node) new Type(node, ast);
-      }
-*/
+     
     } else if(this.isEnum()) {
       this.desugared = 'int';
     }
 
-    // console.log('Type.constructor', C, this);
-  }
+   }
 
   /* prettier-ignore */ get regExp() { return new RegExp(`(?:${this.qualType}${this.typeAlias ? '|' + this.typeAlias : ''})`.replace(/\*/g, '\\*'), 'g'); }
 
@@ -563,7 +559,7 @@ export class Type extends Node {
     const target = this.pointer;
 
     if(target) {
-      const node = DeepFind(ast, n => typeof n == 'object' && n && n.name == target);
+      const node = DeepFind(ast,   target);
 
       if(node) return TypeFactory(node, ast);
 
@@ -889,7 +885,7 @@ export class RecordDecl extends Type {
                   type = TypeFactory(node, ast, ns);
 
                   if(/structor/.test(kind)) define(type, nonenumerable({ ctordtor: /Constructor/.test(kind) ? 'constructor' : 'destructor' }));
-                } else if(kind.startsWith('Field') && !['protected','private'].includes(node.access)) {
+                } else if(kind.startsWith('Field') && !['protected', 'private'].includes(node.access)) {
                   type = TypeFactory(node, ast, ns);
                 } else if(node.type) {
                   type = new Type(node.type, ast, ns);
@@ -1057,7 +1053,7 @@ export class FunctionDecl extends Node {
     } else if(typeof returnType == 'string' && returnType.endsWith('*')) {
       this.returnType = PointerType.fromString(returnType, ast, ns);
     } else if(typeof returnType == 'string' && (t = GetNamespace(returnType, ast))) {
-      console.log('FunctionDecl.constructor', C, { returnType, t });
+      //console.log('FunctionDecl.constructor', C, { returnType, t });
       this.returnType = new Type(t, ast, NamespaceOf(t, ast));
     } else this.returnType = returnType instanceof Node ? returnType : typeof returnType != 'string' ? TypeFactory(returnType, ast) : new Type(returnType, ast);
 
@@ -2833,7 +2829,7 @@ export function GetClass(name_or_id, ast = globalThis['$'].data) {
       ? GetByName(name_or_id, ast, n => /RecordDecl/.test(n.kind) && n.completeDefinition)
       : DeepFind(
           ast,
-          nameOrIdPred(name_or_id, n => /RecordDecl/.test(n.kind) && n.completeDefinition),
+          nameOrIdPred(name_or_id, and(property('kind',  regexp( /RecordDecl/)),   property('completeDefinition'))),
           deep.RETURN_VALUE,
         );
 

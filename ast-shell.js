@@ -1304,7 +1304,7 @@ function MakeQuickJSClass(node, ast = $) {
 
     //out.fns += `  /* enum ${name} */\n`;
 
-    for(let [name,  value] of members) {
+    for(let [name, value] of members) {
       out.fns += `  JS_PROP_INT64_DEF("${name}", ${value}, JS_PROP_CONFIGURABLE),\n`;
     }
   }
@@ -1336,7 +1336,7 @@ async function ASTShell(...args) {
 
   globalThis.files = files = {};
 
-  base = path.basename(args[0], '.js').replace(/\.[a-z]*$/, '');
+  base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   cmdhist = `.${base}-cmdhistory`;
   config = `.${base}-config`;
 
