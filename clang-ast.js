@@ -568,7 +568,7 @@ export class Type extends Node {
   /* prettier-ignore */ get signed() { return /(?:^|[^n])signed/.test(this+'') || !this.unsigned; }
 
   isCompound() {
-    return /(?:struct|union)\s/.test(this + '');
+    return /^(class|struct|enum)$/.test(this.tag+'') || /(?:struct|union)\s/.test(this + '');
   }
 
   isFloatingPoint() {
@@ -1259,7 +1259,7 @@ export class Location {
       line = this.#line;
     const { printFile = true, onlyOffset = false } = opts;
 
-    if(line !== undefined && col !== undefined && !onlyOffset) return [file ?? '<builtin>', line, col].slice(printFile ? 0 : 1).join(':');
+    if(line !== undefined && !onlyOffset) return [file ?? '<builtin>', line, ...(col !== undefined ? [col]:[]) ].slice(printFile ? 0 : 1).join(':');
     return `${printFile && file ? file + '@' : ''}${this.#offset}`;
   }
 
@@ -1362,7 +1362,7 @@ export async function SpawnCompiler(compiler, input, outfile, args = []) {
 
   if(args.indexOf('-ast-dump=json') != -1) {
     args.unshift(compiler ?? 'clang');
-    args = ['sh', '-c', 'exec ' + args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : '')];
+    args = [process?.env?.SHELL ?? 'sh', '-c', 'exec ' + args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : '')];
   } else {
     if(outfile) {
       args.unshift(outfile);
@@ -1371,7 +1371,7 @@ export async function SpawnCompiler(compiler, input, outfile, args = []) {
     args.unshift(compiler ?? 'clang');
   }
 
-  //console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : ''));
+  console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : ''));
 
   let child = Spawn(args.shift(), args, {
     block: false,
