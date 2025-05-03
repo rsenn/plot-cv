@@ -160,7 +160,10 @@ export class PaVersionInfo extends ArrayBuffer {
 
   [inspectKey]() {
     const { versionMajor, versionMinor, versionSubMinor, versionControlRevision, versionText } = this;
-    return `\x1b[1;31mPaVersionInfo\x1b[0m ` + inspect({ versionMajor, versionMinor, versionSubMinor, versionControlRevision, versionText }, { colors: true });
+    return (
+      `\x1b[1;31mPaVersionInfo\x1b[0m ` +
+      inspect({ versionMajor, versionMinor, versionSubMinor, versionControlRevision, versionText }, { colors: true })
+    );
   }
 }
 
@@ -240,7 +243,10 @@ export class PaHostApiInfo extends ArrayBuffer {
   [inspectKey]() {
     const { type, name, deviceCount, defaultInputDevice, defaultOutputDevice } = this;
 
-    return `\x1b[1;31mPaHostApiInfo\x1b[0m ` + inspect({ type, name, deviceCount, defaultInputDevice, defaultOutputDevice }, { colors: true });
+    return (
+      `\x1b[1;31mPaHostApiInfo\x1b[0m ` +
+      inspect({ type, name, deviceCount, defaultInputDevice, defaultOutputDevice }, { colors: true })
+    );
   }
 }
 
@@ -407,12 +413,32 @@ export class PaDeviceInfo extends ArrayBuffer {
   }
 
   [inspectKey]() {
-    const { name, hostApi, maxInputChannels, maxOutputChannels, defaultLowInputLatency, defaultLowOutputLatency, defaultHighInputLatency, defaultHighOutputLatency, defaultSampleRate } = this;
+    const {
+      name,
+      hostApi,
+      maxInputChannels,
+      maxOutputChannels,
+      defaultLowInputLatency,
+      defaultLowOutputLatency,
+      defaultHighInputLatency,
+      defaultHighOutputLatency,
+      defaultSampleRate,
+    } = this;
     return (
       `\x1b[1;31mPaDeviceInfo\x1b[0m ` +
       inspect(
-        { name, hostApi, maxInputChannels, maxOutputChannels, defaultLowInputLatency, defaultLowOutputLatency, defaultHighInputLatency, defaultHighOutputLatency, defaultSampleRate },
-        { colors: true }
+        {
+          name,
+          hostApi,
+          maxInputChannels,
+          maxOutputChannels,
+          defaultLowInputLatency,
+          defaultLowOutputLatency,
+          defaultHighInputLatency,
+          defaultHighOutputLatency,
+          defaultSampleRate,
+        },
+        { colors: true },
       )
     );
   }
@@ -487,7 +513,10 @@ export class PaStreamParameters extends ArrayBuffer {
 
   [inspectKey]() {
     const { device, channelCount, sampleFormat, suggestedLatency, hostApiSpecificStreamInfo } = this;
-    return `\x1b[1;31mPaStreamParameters\x1b[0m ` + inspect({ device, channelCount, sampleFormat, suggestedLatency, hostApiSpecificStreamInfo }, { colors: true });
+    return (
+      `\x1b[1;31mPaStreamParameters\x1b[0m ` +
+      inspect({ device, channelCount, sampleFormat, suggestedLatency, hostApiSpecificStreamInfo }, { colors: true })
+    );
   }
 }
 
@@ -672,7 +701,14 @@ export function Pa_HostApiTypeIdToHostApiIndex(type) {
  *
  * @return   {Number}        A non-negative PaDeviceIndex ranging from 0 to (Pa_GetDeviceCount()-1) or, a PaErrorCode (which are always negative) if PortAudio is not initialized or an error is encountered.
  */
-define('Pa_HostApiDeviceIndexToDeviceIndex', dlsym(libportaudio, 'Pa_HostApiDeviceIndexToDeviceIndex'), null, 'int', 'int', 'int');
+define(
+  'Pa_HostApiDeviceIndexToDeviceIndex',
+  dlsym(libportaudio, 'Pa_HostApiDeviceIndexToDeviceIndex'),
+  null,
+  'int',
+  'int',
+  'int',
+);
 export function Pa_HostApiDeviceIndexToDeviceIndex(hostApi, hostApiDeviceIndex) {
   return call('Pa_HostApiDeviceIndexToDeviceIndex', hostApi, hostApiDeviceIndex);
 }
@@ -759,13 +795,45 @@ export function Pa_IsFormatSupported(inputParameters, outputParameters, sampleRa
  *
  * @return   {Number}
  */
-define('Pa_OpenStream', dlsym(libportaudio, 'Pa_OpenStream'), null, 'int', 'void *', 'void *', 'void *', 'double', 'unsigned long', 'unsigned long', 'void *', 'void *');
-export function Pa_OpenStream(stream, inputParameters, outputParameters, sampleRate, framesPerBuffer, streamFlags, streamCallback, userData) {
+define(
+  'Pa_OpenStream',
+  dlsym(libportaudio, 'Pa_OpenStream'),
+  null,
+  'int',
+  'void *',
+  'void *',
+  'void *',
+  'double',
+  'unsigned long',
+  'unsigned long',
+  'void *',
+  'void *',
+);
+export function Pa_OpenStream(
+  stream,
+  inputParameters,
+  outputParameters,
+  sampleRate,
+  framesPerBuffer,
+  streamFlags,
+  streamCallback,
+  userData,
+) {
   let cb;
 
   typeof stream == 'function' && ((cb = stream), (stream = new ArrayBuffer(16)));
 
-  Pa_Result = call('Pa_OpenStream', stream, inputParameters, outputParameters, sampleRate, framesPerBuffer, streamFlags, streamCallback, userData);
+  Pa_Result = call(
+    'Pa_OpenStream',
+    stream,
+    inputParameters,
+    outputParameters,
+    sampleRate,
+    framesPerBuffer,
+    streamFlags,
+    streamCallback,
+    userData,
+  );
 
   cb && cb(GetStream());
 
@@ -786,9 +854,41 @@ export function Pa_OpenStream(stream, inputParameters, outputParameters, sampleR
  *
  * @return   {Number}
  */
-define('Pa_OpenDefaultStream', dlsym(libportaudio, 'Pa_OpenDefaultStream'), null, 'int', 'void *', 'int', 'int', 'unsigned long', 'double', 'unsigned long', 'void *', 'void *');
-export function Pa_OpenDefaultStream(stream, numInputChannels, numOutputChannels, sampleFormat, sampleRate, framesPerBuffer, streamCallback, userData) {
-  return call('Pa_OpenDefaultStream', stream, numInputChannels, numOutputChannels, sampleFormat, sampleRate, framesPerBuffer, streamCallback, userData);
+define(
+  'Pa_OpenDefaultStream',
+  dlsym(libportaudio, 'Pa_OpenDefaultStream'),
+  null,
+  'int',
+  'void *',
+  'int',
+  'int',
+  'unsigned long',
+  'double',
+  'unsigned long',
+  'void *',
+  'void *',
+);
+export function Pa_OpenDefaultStream(
+  stream,
+  numInputChannels,
+  numOutputChannels,
+  sampleFormat,
+  sampleRate,
+  framesPerBuffer,
+  streamCallback,
+  userData,
+) {
+  return call(
+    'Pa_OpenDefaultStream',
+    stream,
+    numInputChannels,
+    numOutputChannels,
+    sampleFormat,
+    sampleRate,
+    framesPerBuffer,
+    streamCallback,
+    userData,
+  );
 }
 
 /**
@@ -811,7 +911,14 @@ export function Pa_CloseStream(stream) {
  *
  * @return   {Number}
  */
-define('Pa_SetStreamFinishedCallback', dlsym(libportaudio, 'Pa_SetStreamFinishedCallback'), null, 'int', 'void *', 'void *');
+define(
+  'Pa_SetStreamFinishedCallback',
+  dlsym(libportaudio, 'Pa_SetStreamFinishedCallback'),
+  null,
+  'int',
+  'void *',
+  'void *',
+);
 export function Pa_SetStreamFinishedCallback(stream, streamFinishedCallback) {
   return call('Pa_SetStreamFinishedCallback', GetStream(stream), streamFinishedCallback);
 }

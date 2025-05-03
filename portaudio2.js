@@ -63,7 +63,7 @@ class PaStreamParameters extends ArrayBuffer {
   toString() {
     const { device, channelCount, sampleFormat, suggestedLatency, hostApiSpecificStreamInfo } = this;
     return `PaStreamParameters {\n\t.device = ${device},\n\t.channelCount = ${channelCount},\n\t.sampleFormat = ${sampleFormat},\n\t.suggestedLatency = ${suggestedLatency},\n\t.hostApiSpecificStreamInfo = 0x${hostApiSpecificStreamInfo.toString(
-      16
+      16,
     )}\n}`;
   }
 }

@@ -100,7 +100,18 @@ function Pm_GetDeviceInfo(id) {
  *
  * @return   {Number}
  */
-define('Pm_OpenInput', dlsym(libportmidi, 'Pm_OpenInput'), null, 'int', 'void *', 'int', 'void *', 'int', 'void *', 'void *');
+define(
+  'Pm_OpenInput',
+  dlsym(libportmidi, 'Pm_OpenInput'),
+  null,
+  'int',
+  'void *',
+  'int',
+  'void *',
+  'int',
+  'void *',
+  'void *',
+);
 function Pm_OpenInput(stream, inputDevice, inputDriverInfo, bufferSize, time_proc, time_info) {
   return call('Pm_OpenInput', stream, inputDevice, inputDriverInfo, bufferSize, time_proc, time_info);
 }
@@ -117,7 +128,19 @@ function Pm_OpenInput(stream, inputDevice, inputDriverInfo, bufferSize, time_pro
  *
  * @return   {Number}
  */
-define('Pm_OpenOutput', dlsym(libportmidi, 'Pm_OpenOutput'), null, 'int', 'void *', 'int', 'void *', 'int', 'void *', 'void *', 'int');
+define(
+  'Pm_OpenOutput',
+  dlsym(libportmidi, 'Pm_OpenOutput'),
+  null,
+  'int',
+  'void *',
+  'int',
+  'void *',
+  'int',
+  'void *',
+  'void *',
+  'int',
+);
 function Pm_OpenOutput(stream, outputDevice, outputDriverInfo, bufferSize, time_proc, time_info, latency) {
   return call('Pm_OpenOutput', stream, outputDevice, outputDriverInfo, bufferSize, time_proc, time_info, latency);
 }
