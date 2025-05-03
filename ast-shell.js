@@ -15,6 +15,7 @@ import * as Terminal from 'terminal';
 import { Console } from 'console';
 import { REPL } from 'repl';
 import { inspect } from 'inspect';
+import { and } from 'predicate';
 //import PortableSpawn from './lib/spawn.js';
 
 extendArray(Array.prototype);
@@ -1471,14 +1472,14 @@ async function ASTShell(...args) {
     let ast2path = mapWrapper(new WeakMap());
 
     define(r, {
-      select(name_or_id, pred = n => true) {
-        return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
+      select(name_or_id, pred = n => true, ...args) {
+        return DeepSelect(this.data, nameOrIdPred(name_or_id, pred), ...args);
       },
-      getByIdOrName(name_or_id, pred = n => true) {
-        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
+      getByIdOrName(name_or_id, ...args) {
+        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, ...args));
 
-        node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
-        node ??= DeepFind(this.data, nameOrIdPred(name_or_id, pred));
+        node ??= this.classes.findLast(nameOrIdPred(name_or_id, ...args));
+        node ??= DeepFind(this.data, nameOrIdPred(name_or_id, ...args));
         return node;
       },
       getType: memoize(function getType(name_or_id) {
@@ -1551,6 +1552,7 @@ async function ASTShell(...args) {
   }
 
   Object.assign(globalThis, {
+    nameOrIdPred,
     DeepSelect,
     DeepGet,
     DeepFind,

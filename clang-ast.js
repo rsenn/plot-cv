@@ -116,22 +116,23 @@ function TrimSubscripts(str, sub) {
   return str.slice(0, subscript[0]).trimEnd();
 }
 
-export function nameOrIdPred(name_or_id, pred = n => true) {
+export function nameOrIdPred(name_or_id, ...args) {
   if(/^(struct|union)\s/.test(name_or_id)) {
     const idx = name_or_id.indexOf(' ');
     const tag = name_or_id.substring(0, idx);
     const name = name_or_id.substring(idx + 1);
 
+    return and(property('name', string(name)), property('tagUsed', string(tag)), ...args);
     return node => node.name == name && node.tagUsed == tag;
   }
 
   if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
 
   return name_or_id instanceof RegExp
-    ? and(property('name', regexp(name_or_id)), pred)
+    ? and(property('name', regexp(name_or_id)), ...args)
     : name_or_id.startsWith('0x')
-      ? and(property('id', string(name_or_id)), pred)
-      : and(property('name', string(name_or_id)), pred);
+      ? and(property('id', string(name_or_id)), ...args)
+      : and(property('name', string(name_or_id)), ...args);
 }
 
 export class List extends Array {
@@ -272,7 +273,6 @@ export class Node {
 }
 
 Object.setPrototypeOf(Node.prototype, null);
-
 
 const getTypeFromNode = memoize((node, ast) => new Type(node.type, ast), new WeakMap());
 
@@ -2885,7 +2885,7 @@ export function GetClass(name_or_id, ast = globalThis['$'].data) {
       ? GetByName(name_or_id, ast, n => /RecordDecl/.test(n.kind) && n.completeDefinition)
       : DeepFind(
           ast,
-          nameOrIdPred(name_or_id, and(property('kind', regexp(/RecordDecl/)), property('completeDefinition'))),
+          nameOrIdPred(name_or_id, property('kind', regexp(/RecordDecl/)), property('completeDefinition')),
           deep.RETURN_VALUE,
         );
 
