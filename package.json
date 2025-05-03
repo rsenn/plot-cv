@@ -47,6 +47,7 @@
   "dependencies": {
     "@babel/runtime": "^7.17.9",
     "@babel/runtime-corejs3": "^7.17.9",
+    "@cloudcmd/copy-file": "^4.0.0",
     "@s-ui/lint": "^3.43.0",
     "babel-loader": "^8.2.5",
     "babel-preset-env": "^1.7.0",

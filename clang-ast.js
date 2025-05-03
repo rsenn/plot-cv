@@ -22,7 +22,7 @@ const ast2np = (
 export function DeepFind(ast, pred, flags = deep.RETURN_VALUE) {
   if(isString(pred)) pred = property('name', string(pred));
 
-  const result = deep.find(ast, pred, deep.RETURN_VALUE_PATH);
+  const result = deep.find(ast, pred, deep.RETURN_VALUE_PATH, deep.TYPE_OBJECT | deep.TYPE_FUNCTION);
 
   if(result) {
     const [value, path] = result;
@@ -45,7 +45,7 @@ export function* DeepSelect(ast, pred, flags = deep.RETURN_VALUE) {
 
   if(isString(pred)) pred = property('name', string(pred));
 
-  for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH)) {
+  for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH, deep.TYPE_OBJECT | deep.TYPE_FUNCTION)) {
     DeepCachePath(ast, path, m);
 
     switch (flags) {
@@ -1479,7 +1479,7 @@ export async function AstDump(compiler, source, args, force) {
     if(newer) output = p;
   }
 
- //console.log('AstDump', console.config({compact: true }), { bjson, output, newer, force, paths });
+  //console.log('AstDump', console.config({compact: true }), { bjson, output, newer, force, paths });
 
   if(!force && newer) {
     console.log(`Loading cached '${output}'...`);
