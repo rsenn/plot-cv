@@ -244,12 +244,7 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log(
-      'Function ' + name + '(',
-      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
-      ') =',
-      result,
-    );
+    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
     return result;
   };
 }

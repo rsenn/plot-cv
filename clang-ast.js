@@ -1253,8 +1253,12 @@ export class Location {
 
     if('line' in loc) this.#line = loc.line;
     if('col' in loc) this.#column = loc.col;
-    if('file' in loc) this.file = loc.file;
     if('offset' in loc) this.#offset = loc.offset;
+    if('file' in loc) {
+      const haveFilename=typeof loc.file == 'string';
+
+     Object.defineProperty(this, 'file', { value: loc.file,  enumerable: true, writable: !haveFilename, configurable: true });
+    }
   }
 
   update(other) {

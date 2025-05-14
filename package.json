@@ -49,6 +49,7 @@
     "@babel/runtime-corejs3": "^7.17.9",
     "@cloudcmd/copy-file": "^4.0.0",
     "@s-ui/lint": "^3.43.0",
+    "@webaudiomodules/sdk": "^0.0.12",
     "babel-loader": "^8.2.5",
     "babel-preset-env": "^1.7.0",
     "body-parser": "^1.19.0",
@@ -84,6 +85,7 @@
     "serialport": "^9.0.1",
     "slimerjs": "^1.0.0",
     "through": "^2.3.8",
+    "tunajs": "^1.0.15",
     "uppie": "^1.1.4",
     "ws": "^7.3.1"
   },
@@ -126,6 +128,7 @@
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
+    "@webaudiomodules/api": "^2.0.0-alpha.6",
     "acorn": "^8.1.1",
     "ansi-colors": "^4.1.1",
     "ansi-escapes": "^4.3.1",
