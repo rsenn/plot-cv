@@ -62,14 +62,17 @@ export function* DeepSelect(ast, pred, flags = deep.RETURN_VALUE) {
   }
 }
 
-export function DeepCachePath(ast, path, m = ast2np(ast)) {
+export function DeepCachePath(ast, path, m) {
+  m ??= ast2np(ast);
   const l = path.length;
   let n = ast;
 
   for(let i = 0; i < l; ++i) {
     n = n[path[i]];
 
-    if(typeof n == 'object') m.set(n, path.slice(0, i + 1));
+    if(typeof n == 'object') {
+      if(!m.get(n)) m.set(n, path.slice(0, i + 1));
+    }
   }
 }
 
@@ -152,8 +155,7 @@ export class List extends Array {
 
     if(typeof callback == 'object' && callback != null && callback instanceof RegExp) {
       var re = callback;
-      callback = elem =>
-        typeof elem == 'object' && elem != null && (re.test(elem.name) || (GetLoc(elem) && re.test(GetLoc(elem).file)));
+      callback = elem => typeof elem == 'object' && elem != null && (re.test(elem.name) || (GetLoc(elem) && re.test(GetLoc(elem).file)));
     }
 
     for(let elem of this) {
@@ -234,10 +236,7 @@ export class Node {
   /* prettier-ignore */ get loc() { return new Location(GetLoc(this.ast)); }
 
   get file() {
-    const loc =
-      this.ast.loc ??
-      DeepFind(this.ast, (v, k) => k == 'loc') ??
-      DeepFind(t.ast, (v, k) => typeof v == 'object' && v != null && 'file' in v);
+    const loc = this.ast.loc ?? DeepFind(this.ast, (v, k) => k == 'loc') ?? DeepFind(t.ast, (v, k) => typeof v == 'object' && v != null && 'file' in v);
     if(loc) return loc.file;
   }
 
@@ -447,9 +446,7 @@ export class Type extends Node {
 
     let type = /*'type' in node ?*/ node?.type ?? node;
 
-    name = /*node?.kind == 'TypedefDecl' ? node.name :*/ (node?.ast ?? node)?.kind
-      ? NamespaceOf(node?.ast ?? node, ast) + ''
-      : node?.qualType;
+    name = /*node?.kind == 'TypedefDecl' ? node.name :*/ (node?.ast ?? node)?.kind ? NamespaceOf(node?.ast ?? node, ast) + '' : node?.qualType;
     qualType = type?.qualType ?? node?.qualType;
 
     if(Type.declarations.has(name)) return Type.declarations.get(name);
@@ -605,11 +602,7 @@ export class Type extends Node {
   isString() {
     const { desugared, qualType } = this;
 
-    return (
-      /^(const |)char \*$/.test(desugared) ||
-      /^(const |)char \*$/.test(qualType) ||
-      /^(const |)char$/.test(this.pointer)
-    );
+    return /^(const |)char \*$/.test(desugared) || /^(const |)char \*$/.test(qualType) || /^(const |)char$/.test(this.pointer);
   }
 
   get ffi() {
@@ -710,9 +703,7 @@ export class Type extends Node {
 
     if((match = /^[^\(]*\(([^\)]*)\).*/.exec(desugared))) if (match[1] == '*') return SIZEOF_POINTER;
 
-    match = /^(unsigned\s+|signed\s+|const\s+|volatile\s+|long\s+|short\s+)*([^\[]*[^ \[\]]) *\[?([^\]]*).*$/g.exec(
-      desugared,
-    );
+    match = /^(unsigned\s+|signed\s+|const\s+|volatile\s+|long\s+|short\s+)*([^\[]*[^ \[\]]) *\[?([^\]]*).*$/g.exec(desugared);
 
     if(match) {
       switch (match[2]) {
@@ -785,8 +776,7 @@ export class Type extends Node {
   }
 
   [Symbol.toPrimitive](hint) {
-    if(hint == 'default' || hint == 'string')
-      return (this.qualType ?? this.desugaredQualType ?? this?.ast?.name ?? '').replace(/\s+(\*+)$/, '$1'); //this+'';
+    if(hint == 'default' || hint == 'string') return (this.qualType ?? this.desugaredQualType ?? this?.ast?.name ?? '').replace(/\s+(\*+)$/, '$1'); //this+'';
 
     return this;
   }
@@ -800,11 +790,8 @@ export class Type extends Node {
   static get(name_or_id, ast = globalThis['$'].data) {
     let type;
     const node =
-      ast.inner.find(
-        typeof name_or_id == 'number'
-          ? node => /(?:Decl|Type)/.test(node.kind) && +node.id == name_or_id
-          : node => /(?:Decl|Type)/.test(node.kind) && node.name == name_or_id,
-      ) ?? GetType(name_or_id, ast);
+      ast.inner.find(typeof name_or_id == 'number' ? node => /(?:Decl|Type)/.test(node.kind) && +node.id == name_or_id : node => /(?:Decl|Type)/.test(node.kind) && node.name == name_or_id) ??
+      GetType(name_or_id, ast);
 
     if(node) {
       if(node.type) type = getTypeFromNode(node, ast);
@@ -898,8 +885,7 @@ export class RecordDecl extends Type {
                 } else if(kind.startsWith('CXX')) {
                   type = TypeFactory(node, ast, ns);
 
-                  if(/structor/.test(kind))
-                    define(type, nonenumerable({ ctordtor: /Constructor/.test(kind) ? 'constructor' : 'destructor' }));
+                  if(/structor/.test(kind)) define(type, nonenumerable({ ctordtor: /Constructor/.test(kind) ? 'constructor' : 'destructor' }));
                 } else if(kind.startsWith('Field') && !['protected', 'private'].includes(node.access)) {
                   type = TypeFactory(node, ast, ns);
                 } else if(node.type) {
@@ -1070,13 +1056,7 @@ export class FunctionDecl extends Node {
     } else if(typeof returnType == 'string' && (t = GetNamespace(returnType, ast))) {
       //console.log('FunctionDecl.constructor', C, { returnType, t });
       this.returnType = new Type(t, ast, NamespaceOf(t, ast));
-    } else
-      this.returnType =
-        returnType instanceof Node
-          ? returnType
-          : typeof returnType != 'string'
-            ? TypeFactory(returnType, ast)
-            : new Type(returnType, ast);
+    } else this.returnType = returnType instanceof Node ? returnType : typeof returnType != 'string' ? TypeFactory(returnType, ast) : new Type(returnType, ast);
 
     this.parameters = parameters && parameters.map(({ name, type }) => [name, new Type(type, ast)]);
     this.body = body;
@@ -1255,9 +1235,9 @@ export class Location {
     if('col' in loc) this.#column = loc.col;
     if('offset' in loc) this.#offset = loc.offset;
     if('file' in loc) {
-      const haveFilename=typeof loc.file == 'string';
+      const haveFilename = typeof loc.file == 'string';
 
-     Object.defineProperty(this, 'file', { value: loc.file,  enumerable: true, writable: !haveFilename, configurable: true });
+      Object.defineProperty(this, 'file', { value: loc.file, enumerable: true, writable: !haveFilename, configurable: true });
     }
   }
 
@@ -1287,8 +1267,7 @@ export class Location {
       line = this.#line;
     const { printFile = true, onlyOffset = false } = opts;
 
-    if(line !== undefined && !onlyOffset)
-      return [file ?? '<builtin>', line, ...(col !== undefined ? [col] : [])].slice(printFile ? 0 : 1).join(':');
+    if(line !== undefined && !onlyOffset) return [file ?? '<builtin>', line, ...(col !== undefined ? [col] : [])].slice(printFile ? 0 : 1).join(':');
     return `${printFile && file ? file + '@' : ''}${this.#offset}`;
   }
 
@@ -1391,11 +1370,7 @@ export async function SpawnCompiler(compiler, input, outfile, args = []) {
 
   if(args.indexOf('-ast-dump=json') != -1) {
     args.unshift(compiler ?? 'clang');
-    args = [
-      process?.env?.SHELL ?? 'sh',
-      '-c',
-      'exec ' + args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : ''),
-    ];
+    args = [process?.env?.SHELL ?? 'sh', '-c', 'exec ' + args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : '')];
   } else {
     if(outfile) {
       args.unshift(outfile);
@@ -1404,10 +1379,7 @@ export async function SpawnCompiler(compiler, input, outfile, args = []) {
     args.unshift(compiler ?? 'clang');
   }
 
-  console.log(
-    'SpawnCompiler',
-    args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : ''),
-  );
+  console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : ''));
 
   let child = Spawn(args.shift(), args, {
     block: false,
@@ -1432,9 +1404,7 @@ export async function SpawnCompiler(compiler, input, outfile, args = []) {
   done = true;
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
   errorLines = errorLines.filter(line => /error:/.test(line));
-  const numErrors =
-    [...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])][0] ||
-    errorLines.length;
+  const numErrors = [...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])][0] || errorLines.length;
   if(numErrors) {
     console.log('errors:', errors);
     throw new Error(errorLines.join('\n'));
@@ -1530,13 +1500,7 @@ export async function AstDump(compiler, source, args, force) {
 
     console.log(`Compiling...`, console.config({ compact: Infinity, depth: 0 }), { source, compiler });
 
-    const child = await SpawnCompiler(compiler, source, paths[0], [
-      '-Xclang',
-      '-ast-dump=json',
-      '-fsyntax-only',
-      '-I.',
-      ...args,
-    ]);
+    const child = await SpawnCompiler(compiler, source, paths[0], ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
 
     let { exitcode, errors, ...result } = child;
 
@@ -1595,9 +1559,7 @@ export async function AstDump(compiler, source, args, force) {
     filter(pred, pred2 = (used, implicit) => used && !implicit) {
       return this.data.inner.filter(
         node =>
-          ((node.loc.file !== undefined &&
-            ((this.matchFiles && this.matchFiles.test(node.loc.file ?? '')) ||
-              !this.nomatchFiles.test(node.loc.file ?? ''))) ||
+          ((node.loc.file !== undefined && ((this.matchFiles && this.matchFiles.test(node.loc.file ?? '')) || !this.nomatchFiles.test(node.loc.file ?? ''))) ||
             (pred2 ? pred2(node.isUsed, node.isImplicit) : false)) &&
           pred(node),
       );
@@ -1775,8 +1737,7 @@ export function GetTypeNode(node, ast = globalThis['$'].data) {
   for(let n = [node]; n[0]; n = n[0].inner) {
     let i;
 
-    if((i = n.find(node => /Type/.test(node.kind))))
-      if(i?.decl?.id) return ast.inner.find(node => node.id == i.decl.id);
+    if((i = n.find(node => /Type/.test(node.kind)))) if (i?.decl?.id) return ast.inner.find(node => node.id == i.decl.id);
   }
 }
 
@@ -2136,9 +2097,7 @@ export function NodePrinter(ast) {
           }
           put(') ');
           i = 0;
-          for(let inner of (function_decl.inner ?? []).filter(
-            n => n.kind != 'ParmVarDecl' && !/Comment/.test(n.kind),
-          )) {
+          for(let inner of (function_decl.inner ?? []).filter(n => n.kind != 'ParmVarDecl' && !/Comment/.test(n.kind))) {
             if(i++ > 0) put(' ');
             printer.print(inner);
           }
@@ -2344,8 +2303,7 @@ export function NodePrinter(ast) {
           const { valueCategory, name } = unary_expr_or_type_trait_expr;
 
           put(name);
-          if(unary_expr_or_type_trait_expr.inner)
-            for(let inner of unary_expr_or_type_trait_expr.inner) printer.print(inner);
+          if(unary_expr_or_type_trait_expr.inner) for(let inner of unary_expr_or_type_trait_expr.inner) printer.print(inner);
         }
         UnaryOperator(unary_operator) {
           const { valueCategory, isPostfix, opcode, canOverflow } = unary_operator;
@@ -2563,9 +2521,7 @@ export function NodePrinter(ast) {
           let i = 0,
             param,
             initializer;
-          let l = cxx_constructor_decl?.inner
-            ? [...cxx_constructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'))
-            : [];
+          let l = cxx_constructor_decl?.inner ? [...cxx_constructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')) : [];
           put(`${name}(`);
           while(l.length && l[0].kind == 'ParmVarDecl' && (param = l.shift())) {
             /*if(param.name)*/ {
@@ -2636,9 +2592,7 @@ export function NodePrinter(ast) {
         CXXDestructorDecl(cxx_destructor_decl) {
           const { isImplicit, name, mangledName, type, inline, explicitlyDefaulted } = cxx_destructor_decl;
 
-          let l = cxx_destructor_decl.inner
-            ? [...cxx_destructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'))
-            : [];
+          let l = cxx_destructor_decl.inner ? [...cxx_destructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')) : [];
           put(`${name}(`);
 
           put(`)`);
@@ -2663,9 +2617,7 @@ export function NodePrinter(ast) {
           let i = 0,
             param,
             initializer;
-          let inner = cxx_method_decl.inner
-            ? [...cxx_method_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'))
-            : [];
+          let inner = cxx_method_decl.inner ? [...cxx_method_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')) : [];
           if(storageClass) put(`${storageClass} `);
           put(`${returnType}\n`);
           put(`${name}(`);
@@ -2866,11 +2818,7 @@ export function GetType(name_or_id, ast = globalThis['$']?.data) {
           wantKind = /^EnumDecl/;
           break;
       }
-      let results = types.filter(
-        name_or_id.startsWith('0x')
-          ? node => node.id == name_or_id && wantKind.test(node.kind)
-          : node => node.name == name_or_id && wantKind.test(node.kind),
-      );
+      let results = types.filter(name_or_id.startsWith('0x') ? node => node.id == name_or_id && wantKind.test(node.kind) : node => node.name == name_or_id && wantKind.test(node.kind));
       if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1) idx = 0;
       result = results[idx];
 
@@ -2887,11 +2835,7 @@ export function GetClass(name_or_id, ast = globalThis['$'].data) {
   let result =
     isString(name_or_id) && /::/.test(name_or_id)
       ? GetByName(name_or_id, ast, n => /RecordDecl/.test(n.kind) && n.completeDefinition)
-      : DeepFind(
-          ast,
-          nameOrIdPred(name_or_id, property('kind', regexp(/RecordDecl/)), property('completeDefinition')),
-          deep.RETURN_VALUE,
-        );
+      : DeepFind(ast, nameOrIdPred(name_or_id, property('kind', regexp(/RecordDecl/)), property('completeDefinition')), deep.RETURN_VALUE);
 
   if(result) {
     let type = TypeFactory(result, ast);
@@ -2918,14 +2862,14 @@ export function* GetBases(node, ast = globalThis['$'].data) {
   if(node?.bases) for(let base of node.bases) yield GetClass(base.type.qualType, ast);
 }
 
-export function GetByName(arg, ast = globalThis['$'].data, predicate = () => true) {
+export function GetByName(arg, ast = globalThis['$'].data, ...args) {
   const ns = isString(arg) ? arg.split('::') : arg;
   let node = ast;
 
   while(ns.length >= 1) {
     const arg = ns.shift();
 
-    for(let v of DeepSelect(node, n => isObject(n) && n.name == arg && predicate(n))) {
+    for(let v of DeepSelect(node, nameOrIdPred(arg, ...args))) {
       if(ns.length == 0) return v;
 
       let r;
@@ -2939,12 +2883,7 @@ export function GetNamespace(arg, root = globalThis['$'].data, predicate = () =>
 
   let [name] = a;
 
-  for(let [node, path] of DeepSelect(
-    root,
-    n =>
-      typeof n == 'object' ? (n.name == name ? deep.YIELD_NO_RECURSE : n.name ? deep.NO_RECURSE : deep.RECURSE) : 0,
-    deep.RETURN_VALUE_PATH,
-  )) {
+  for(let [node, path] of DeepSelect(root, n => (typeof n == 'object' ? (n.name == name ? deep.YIELD_NO_RECURSE : n.name ? deep.NO_RECURSE : deep.RECURSE) : 0), deep.RETURN_VALUE_PATH)) {
     if(a.length <= 1) {
       if(!predicate(node, path)) continue;
       return node;
@@ -2956,10 +2895,10 @@ export function GetNamespace(arg, root = globalThis['$'].data, predicate = () =>
   }
 }
 
-export function NamespaceOf(node, ast = globalThis['$'].data) {
+export function NamespaceOf(node, path, ast = globalThis['$'].data) {
   if(isObject(node) && node.ast) node = node.ast;
 
-  let p = DeepPathOf(ast, node),
+  let p = path ?? DeepPathOf(ast, node),
     r = [],
     i = 0;
 
@@ -2982,9 +2921,7 @@ export function NamespaceOf(node, ast = globalThis['$'].data) {
 }
 
 export function GetFields(node) {
-  let fields = [...DeepSelect(node, (v, k) => / at /.test(v) && k == 'qualType', deep.RETURN_VALUE_PATH)].map(
-    ([v, p]) => [v.split(/(?:\s*[()]| at )/g)[2], p.slice(0, -2)],
-  );
+  let fields = [...DeepSelect(node, (v, k) => / at /.test(v) && k == 'qualType', deep.RETURN_VALUE_PATH)].map(([v, p]) => [v.split(/(?:\s*[()]| at )/g)[2], p.slice(0, -2)]);
 
   return fields.map(([loc, ptr]) =>
     loc
