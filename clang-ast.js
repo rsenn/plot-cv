@@ -22,7 +22,7 @@ const ast2np = (
 export function DeepFind(ast, pred, flags = deep.RETURN_VALUE) {
   if(isString(pred)) pred = property('name', string(pred));
 
-  const result = deep.find(ast, pred, deep.RETURN_VALUE_PATH, deep.TYPE_OBJECT | deep.TYPE_FUNCTION);
+  const result = deep.find(ast, pred, deep.RETURN_VALUE_PATH, deep.TYPE_OBJECT, ['inner']);
 
   if(result) {
     const [value, path] = result;
@@ -45,7 +45,7 @@ export function* DeepSelect(ast, pred, flags = deep.RETURN_VALUE) {
 
   if(isString(pred)) pred = property('name', string(pred));
 
-  for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH, deep.TYPE_OBJECT | deep.TYPE_FUNCTION)) {
+  for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH, deep.TYPE_OBJECT , ['inner'])) {
     DeepCachePath(ast, path, m);
 
     switch (flags) {
