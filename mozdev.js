@@ -6,7 +6,7 @@ export function FetchClass(url) {
   const u = new URL(url.replace(/\/[^\/]*$/, ''));
   const base = u.pathname;
   const re = new RegExp('^' + base + '/');
-  const doc = new Parser().parseFromString(urlGet(url));
+  const doc = globalThis.doc = new Parser().parseFromString(urlGet(url));
 
   const keys = {
     Constructor: 'constructor',
@@ -28,7 +28,12 @@ export function FetchClass(url) {
   const summaryList = summary =>
     simplifyList([...summary.nextSibling.querySelectorAll('li')].map(e => [e.innerText, e.querySelector('a').getAttribute('href').replace(re, '')]).filter(([name]) => !/\sDeprecated$/.test(name)));
 
-  const summaries = summaryElements.reduce((a, e) => ({ ...a, [keys[e.innerText] ?? e.innerText]: summaryList(e) }), Object.setPrototypeOf({}, null));
+  const summaries = summaryElements.reduce((a, e) => {
+
+if(keys[e.innerText]  in a)return a;
+
+    return ({ ...a, [keys[e.innerText] ?? e.innerText]: summaryList(e) });
+  }, Object.setPrototypeOf({}, null));
 
   const makeURL = p => u + '/' + p;
 
