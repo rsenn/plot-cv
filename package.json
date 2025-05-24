@@ -128,7 +128,7 @@
     "quickjs-debugger": "^1.1.0",
     "quickjs-emscripten": "^0.23.0",
     "quickjs-emscripten-sync": "^1.5.2",
-    "sandbox-worker": "^1.2.0",
+    "sandbox-worker": "^1.2.0"
   },
   "engines": {
     "node": ">= 14"
