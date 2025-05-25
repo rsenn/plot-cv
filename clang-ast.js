@@ -2173,10 +2173,17 @@ export function NodePrinter(ast) {
           /*const { referencedDecl } = member_expr.inner[0];
         put(referencedDecl.name);*/
           for(let inner of member_expr.inner) {
-            let type = new Type(inner.type, this.ast);
+
+
+let{qualType}=inner.type;
+
+const isPointer=qualType.endsWith('*');
+
+console.log('MemberExpr', {name,qualType,isPointer});
+            //let type = new Type(inner.type, this.ast);
 
             printer.print(inner);
-            put(type.isPointer() ? '->' : '.');
+            put(isPointer ? '->' : '.');
           }
           put(name);
         }
