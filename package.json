@@ -128,6 +128,7 @@
     "escodegen": "^2.1.0",
     "eslint": "^8.14.0",
     "esm-quickjs-emscripten": "^0.11.4",
+    "estree-util-to-js": "^2.0.0",
     "free-proxy": "^0.2.0",
     "hishim": "^0.0.3",
     "http": "0.0.0",
