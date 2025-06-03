@@ -45,7 +45,7 @@ export function* DeepSelect(ast, pred, flags = deep.RETURN_VALUE) {
 
   if(isString(pred)) pred = property('name', string(pred));
 
-  for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH, deep.TYPE_OBJECT , ['inner'])) {
+  for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH, deep.TYPE_OBJECT, ['inner'])) {
     DeepCachePath(ast, path, m);
 
     switch (flags) {
@@ -2173,13 +2173,11 @@ export function NodePrinter(ast) {
           /*const { referencedDecl } = member_expr.inner[0];
         put(referencedDecl.name);*/
           for(let inner of member_expr.inner) {
+            let { qualType } = inner.type;
 
+            const isPointer = qualType.endsWith('*');
 
-let{qualType}=inner.type;
-
-const isPointer=qualType.endsWith('*');
-
-console.log('MemberExpr', {name,qualType,isPointer});
+            console.log('MemberExpr', { name, qualType, isPointer });
             //let type = new Type(inner.type, this.ast);
 
             printer.print(inner);
