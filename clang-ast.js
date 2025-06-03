@@ -45,10 +45,10 @@ export function* DeepSelect(ast, pred, flags = deep.RETURN_VALUE) {
 
   if(isString(pred)) pred = property('name', string(pred));
 
-  for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH, deep.TYPE_OBJECT, ['inner'])) {
+  for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH | (flags & (~deep.RETURN_PATH_VALUE)), deep.TYPE_OBJECT, ['inner'])) {
     DeepCachePath(ast, path, m);
 
-    switch (flags) {
+    switch (flags& deep.RETURN_PATH_VALUE) {
       case deep.RETURN_VALUE_PATH:
         yield [value, path];
         break;
@@ -1906,6 +1906,7 @@ export function NodePrinter(ast) {
 
           printer.print(value);
           put(': ');
+          
           for(let node of rest) printer.print(node);
         }
         CharacterLiteral(character_literal) {
@@ -2170,16 +2171,14 @@ export function NodePrinter(ast) {
         }
         MemberExpr(member_expr) {
           const { valueCategory, name, isArray, referencedMemberDecl } = member_expr;
-          /*const { referencedDecl } = member_expr.inner[0];
-        put(referencedDecl.name);*/
+          
           for(let inner of member_expr.inner) {
             let { qualType } = inner.type;
 
             const isPointer = qualType.endsWith('*');
 
-            console.log('MemberExpr', { name, qualType, isPointer });
-            //let type = new Type(inner.type, this.ast);
-
+            //console.log('MemberExpr', { name, qualType, isPointer });
+ 
             printer.print(inner);
             put(isPointer ? '->' : '.');
           }
