@@ -1,98 +1,75 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
   <head>
-    <meta charset="utf-8">
-　　<title>self dest</title> 
-
+    <meta charset="utf-8" />
+    <title>Predator clock</title>
     <style>
-      #clock_prede{
-        position:absolute;
-        top:150px;
-        left:30px;
-        height:70px;
-        width:50px;
+      #clock_prede {
+        position: absolute;
+        top: 150px;
+        left: 30px;
+        height: 70px;
+        width: 50px;
       }
     </style>
-
-
-
     <script type="text/javascript">
-   function move2(){
+      function move2() {
+        var image_tracker = 'f';
+        var now = new Date();
+        var second3 = now.getSeconds();
+        var image = document.getElementById('clock_picthree');
 
-    var image_tracker = 'f';
-
-    var now = new Date();
-    var second3 = now.getSeconds();
-
-    var image = document.getElementById('clock_picthree');
-    if(image_tracker == 'f'){
-      //image.src = './repredator/pre7.png';
-      alert(image.src);
-      image.src = 'pre7.png';
-      image_tracker = 't';
-
-    }else{  
-      //image.src = './repredator/pre5.png';
-      alert(image.src);
-      image.src = 'pre5.png';
-      image_tracker = 'f';
- 
-    }
-
-    //image.src
-    
-
-   
-
-  }
-   </script>
-
-
-
-
+        if(image_tracker == 'f') {
+          //image.src = './repredator/pre7.png';
+          alert(image.src);
+          image.src = 'pre7.png';
+          image_tracker = 't';
+        } else {
+          //image.src = './repredator/pre5.png';
+          alert(image.src);
+          image.src = 'pre5.png';
+          image_tracker = 'f';
+        }
+        //image.src
+      }
+    </script>
   </head>
-
-<body bgcolor="000000">
-
-   <!--  <p syle = "backgroud-color:#FFFFFF"> -->
- <font color ="red" size="13">
-   <!-- time -->
-   <div id="clock_time"></div>
-   <!-- date -->
-   <div id="clock_date"></div>
-
-   <div id="prenumber" align="right">
-   <img src = "repredator/pre2.png" id="myIng2" onclick="changeImg()" width="50" height="50"> '<-' push here,aroud here!!
-   </div>
-   <div id="human_number" align="right">666</div><br>
- 
-
-   <script type="text/javascript" src="clock.js"></script><br>
-
-  <!-- image.src = 'repredator/pre' + second3 + '\.png'; -->
-
-  ..<img src = "repredator/pre1.png" id="watH1" alt="watch1" width="100" height="100"><img src = "repredator/pre2.png"  id="watH2" alt="watch2"  width="100" height="100"><img src = "repredator/pre3.png"   id="watM1" alt="watch3"  width="100" height="100"><img src = "repredator/pre4.png" id="watM2" alt="watch4"  width="100" height="100">
-  <br>
-
-  <div id="clock_pictwo"></div> <br>
-  <div id="clock_picone" align="right"></div><br>
-
-
-
-  <div id = "clock_picthree">
-  clock three testing..
-    <img src = "repredator/pre1.png" alt="clock_prede"  width="50" height="50">
-  </div><br>
-
-   
-   <fo//rm><p>
-     <input type="button" id="sBtn" value="boom" onclick="move3()">
-   </p></form>
-
- </font>
- <!-- </p> -->
-
-</body>
-
+  <body bgcolor="000000">
+    <!--  <p syle = "backgroud-color:#FFFFFF"> -->
+    <font color="red" size="13">
+      <!-- time -->
+      <div id="clock_time"></div>
+      <!-- date -->
+      <div id="clock_date"></div>
+      <div id="prenumber" align="right"><img src="repredator/pre2.png" id="myIng2" onclick="changeImg()" width="50" height="50" /> '&lt;-' push here,aroud here!!</div>
+      <div id="human_number" align="right">666</div>
+      <br />
+      <script type="text/javascript" src="clock.js"></script>
+      <br />
+      <!-- image.src = 'repredator/pre' + second3 + '\.png'; -->
+      ..<img src="repredator/pre1.png" id="watH1" alt="watch1" width="100" height="100" /><img src="repredator/pre2.png" id="watH2" alt="watch2" width="100" height="100" /><img
+        src="repredator/pre3.png"
+        id="watM1"
+        alt="watch3"
+        width="100"
+        height="100"
+      /><img src="repredator/pre4.png" id="watM2" alt="watch4" width="100" height="100" />
+      <br />
+      <div id="clock_pictwo"></div>
+      <br />
+      <div id="clock_picone" align="right"></div>
+      <br />
+      <div id="clock_picthree">
+        clock three testing..
+        <img src="repredator/pre1.png" alt="clock_prede" width="50" height="50" />
+      </div>
+      <br />
+      <form>
+        <p>
+          <input type="button" id="sBtn" value="boom" onclick="move3()" />
+        </p>
+      </form>
+    </font>
+    <!-- </p> -->
+  </body>
 </html>
