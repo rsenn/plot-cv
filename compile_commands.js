@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { RecursiveDirIterator } from './dir-helpers.js';
-import { ArgumentType, ArgumentIs, CommandType, CompileCommand, MakeCommand, MakeCommands } from './lib/compileCommand.js';
+import { PathTransformer, ArgumentType, ArgumentIs, CommandType, CompileCommand, MakeCommand, MakeCommands } from './lib/compileCommand.js';
 import { arraysInCommon, define, mapFunction, types } from './lib/misc.js';
 import { Console } from 'console';
 
@@ -59,7 +59,7 @@ const workDir = (globalThis.workDir = workDir => {
         return path.isAbsolute(p) ? path.relative(workDir, p) : p;
       }
       return toRel(p);
-    }
+    },
   };
 });
 
@@ -75,8 +75,10 @@ const binutils = (globalThis.binutils = {
       .map(m => m[0].split(/:/))
       .filter(entry => entry.length > 1)
       .map(([file, data]) => [file, data.slice(0, 16), data.slice(17, 18), data.slice(19)])
-      .reduce((acc, [file, addr, type, name]) => ((acc[file] ??= []), acc[file].push({ addr: parseInt(addr.trim() || '0'), type, name }), acc), {})
+      .reduce((acc, [file, addr, type, name]) => ((acc[file] ??= []), acc[file].push({ addr: parseInt(addr.trim() || '0'), type, name }), acc), {}),
 });
+
+Object.assign(globalThis, { PathTransformer });
 
 function main(...arglist) {
   const { stdout, stderr } = process;
@@ -88,8 +90,8 @@ function main(...arglist) {
       depth: Infinity,
       compact: false,
       maxArrayLength: Infinity,
-      maxStringLength: Infinity
-    }
+      maxStringLength: Infinity,
+    },
   });
   let file = arglist[0] ?? '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-debug/compile_commands.json';
 
@@ -114,7 +116,7 @@ function main(...arglist) {
         file,
         get dependencies() {
           return targetMap(cmd.dependencies);
-        }
+        },
       });
     }
 
@@ -148,7 +150,7 @@ function main(...arglist) {
     CommandType,
     get CFLAGS() {
       return [...defines.map(d => '-D' + d), ...includePaths.map(i => '-I' + i), ...flags];
-    }
+    },
   });
 
   let linkFiles = [...directories].flatMap(dir => [...RecursiveDirIterator(dir, (entry, file) => /link\.txt$/.test(file))]);
@@ -169,7 +171,7 @@ function main(...arglist) {
         file,
         get dependencies() {
           return targetMap(cmd.dependencies);
-        }
+        },
       });
     }
     console.log('cmd', cmd);

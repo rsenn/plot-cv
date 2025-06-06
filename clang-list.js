@@ -19,7 +19,7 @@ define(Array.prototype, {
     return -1;
   },
   tail() {
-    return this[this.lengtGh - 1];
+    return this[this.length - 1];
   },
   startsWith(start) {
     for(let i = 0; i < start.length; i++) if(this[i] !== start[i]) return false;
@@ -67,14 +67,7 @@ async function main(...args) {
       }),
     );
 
-    args = args.concat([
-      '-D_WIN32=1',
-      '-DWINAPI=',
-      '-D__declspec(x)=',
-      '-include',
-      '/usr/x86_64-w64-mingw32/include/wtypesbase.h',
-      '-I/usr/x86_64-w64-mingw32/include',
-    ]);
+    args = args.concat(['-D_WIN32=1', '-DWINAPI=', '-D__declspec(x)=', '-include', '/usr/x86_64-w64-mingw32/include/wtypesbase.h', '-I/usr/x86_64-w64-mingw32/include']);
   }
   console.log('args', { defs, includes });
   args = args.concat(defs.map(d => `-D${d}`));
@@ -130,11 +123,7 @@ async function main(...args) {
       //console.log("ast:", ast);
 
       let tree = new Tree(ast);
-      let flat = /*tree.flat();*/ deep.flatten(
-        ast,
-        new Map(),
-        (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && isObject(v) /*&& 'kind' in v*/,
-      );
+      let flat = /*tree.flat();*/ deep.flatten(ast, new Map(), (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && isObject(v) /*&& 'kind' in v*/);
       let locations = [];
       let l = Object.setPrototypeOf({}, { toString() {} });
       //let path = new WeakMap();
@@ -227,11 +216,7 @@ async function main(...args) {
         for(let decl of decls.filter(([path, node, id, name, type, kind]) => !/ParmVar/.test(kind))) {
           const line = decl
             .slice(2)
-            .map((field, i) =>
-              (abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) + '').padEnd(
-                [6, 25, 20, 20, 40, 0][i],
-              ),
-            )
+            .map((field, i) => (abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) + '').padEnd([6, 25, 20, 20, 40, 0][i]))
             .join(' ');
 
           console.log(line);
