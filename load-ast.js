@@ -9,8 +9,8 @@ globalThis.console = new Console({
     compact: 2,
     customInspect: true,
     maxArrayLength: 200,
-    prefix: '\x1b[2K\x1b[G\x1b[1;33mWORKER\x1b[0m '
-  }
+    prefix: '\x1b[2K\x1b[G\x1b[1;33mWORKER\x1b[0m ',
+  },
 });
 
 const worker = Worker.parent;
@@ -40,7 +40,7 @@ async function loadAST(source) {
   if(!existsSync(source)) return null;
   const { stdout, wait } = Spawn('meriyah', ['-l', source], {
     block: false,
-    stdio: ['inherit', 'pipe', 'inherit']
+    stdio: ['inherit', 'pipe', 'inherit'],
   });
 
   let s = '';

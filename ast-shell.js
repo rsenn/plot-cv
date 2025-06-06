@@ -1,10 +1,10 @@
-import { AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetClass, GetBases, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl, nameOrIdPred, NamespaceOf, GetNamespace, } from './clang-ast.js';
+import { DeepFind, DeepSelect, DeepPathOf, DeepGet, AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetClass, GetBases, GetByName, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl, nameOrIdPred, NamespaceOf, GetNamespace, PointerType, ReferenceType, FieldDecl, NameFor, } from './clang-ast.js';
 import { DirIterator, RecursiveDirIterator } from './dir-helpers.js';
 import { LoadHistory, ReadFile, ReadJSON, WriteFile, WriteJSON } from './io-helpers.js';
 import * as deep from './lib/deep.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
-import { define, properties, nonenumerable, defineGetter, getOpt, isObject, lazyProperty, memoize, pushUnique, toArrayBuffer, toString, weakMapper } from './lib/misc.js';
+import { define, properties, nonenumerable, defineGetter, getOpt, isObject, lazyProperty, memoize, pushUnique, toArrayBuffer, toString, weakMapper, } from './lib/misc.js';
 import { extendArray } from 'extendArray';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
@@ -15,6 +15,7 @@ import * as Terminal from 'terminal';
 import { Console } from 'console';
 import { REPL } from 'repl';
 import { inspect } from 'inspect';
+import { and } from 'predicate';
 //import PortableSpawn from './lib/spawn.js';
 
 extendArray(Array.prototype);
@@ -168,7 +169,8 @@ function CommandLine() {
   });
   repl.show = value => {
     let first, str;
-    if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first)) str = Table(value);
+    if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first))
+      str = Table(value);
     else if(typeof value == 'string') str = value;
     else
       str = inspect(value, {
@@ -230,14 +232,15 @@ function* IncludeAll(dir, maxDepth = Infinity, pred = entry => /\.[ch]$/.test(en
 }
 
 function SelectLocations(node) {
-  return deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
+  return [...DeepSelect(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined))];
 }
 
 function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
     let file = loc.file ?? (loc.includedFrom && loc.includedFrom.file);
 
-    if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
+    if(typeof loc.line == 'number')
+      return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
     return `${file ? file : ''}@${loc.offset}`;
   }
 }
@@ -251,7 +254,13 @@ function Structs(nodes) {
       //deep.find(node, n => typeof n.line == 'number'),
       new Location(GetLoc(node)),
       ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
-      new Map(node.inner.map((field, i) => (/Attr/.test(field.kind) ? [Symbol(field.kind), field.id] : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind]))),
+      new Map(
+        node.inner.map((field, i) =>
+          /Attr/.test(field.kind)
+            ? [Symbol(field.kind), field.id]
+            : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind],
+        ),
+      ),
     ]);
   /*.map(node => types(node))*/
 }
@@ -285,7 +294,13 @@ function Table(list, pred = (n, l) => true) {
   }
   keys = ['n', ...keys, 'location'];
   const names = keys.map(k => (typeof k == 'function' ? k.name : k));
-  let rows = items.map(([i, l, n]) => Object.fromEntries([['n', i], ...keys.slice(1, -1).map((k, j) => [names[j + 1], (typeof k == 'string' ? n[k] : k(n)) ?? '']), ['location', l]]));
+  let rows = items.map(([i, l, n]) =>
+    Object.fromEntries([
+      ['n', i],
+      ...keys.slice(1, -1).map((k, j) => [names[j + 1], (typeof k == 'string' ? n[k] : k(n)) ?? '']),
+      ['location', l],
+    ]),
+  );
   let sizes = {};
 
   for(let row of rows) {
@@ -624,7 +639,17 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield '';
 
   yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members]
-    .map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}')
+    .map(
+      ([field, member]) =>
+        '\\n\\t.' +
+        field +
+        ' = ' +
+        (member.isPointer() ? '0x' : '') +
+        '${' +
+        field +
+        (member.isPointer() ? '.toString(16)' : '') +
+        '}',
+    )
     .join(',')}\\n}\`;\n  }`;
   yield '}';
 }
@@ -867,7 +892,9 @@ export async function LibraryExports(file) {
 }
 
 function SaveLibraries() {
-  const layers = Object.values([...project.schematic.layers, ...project.board.layers].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {}));
+  const layers = Object.values(
+    [...project.schematic.layers, ...project.board.layers].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {}),
+  );
 }
 
 function ProcessFile(file, debug = true) {
@@ -925,7 +952,10 @@ function ParseECMAScript(file, params = {}) {
 
     if(err !== null) {
       console.log('parseProgram ERROR message:', err?.message);
-      console.log('parseProgram ERROR stack:\n  ' + new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '));
+      console.log(
+        'parseProgram ERROR stack:\n  ' +
+          new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '),
+      );
 
       throw err;
     } else {
@@ -982,7 +1012,7 @@ function PrintCArray(strings) {
 function Namespaces(nodePath, ast = $.data) {
   let ptr = new Pointer(nodePath);
   let ptrs = ptr.chain(2);
-  let get = deep.get(ast);
+  let get = p => DeepGet(ast, p);
 
   let ns = ptrs.map(p => get(p)).filter(n => n.kind == 'NamespaceDecl');
   return ns;
@@ -1001,7 +1031,7 @@ MemberNames.PROPERTIES = 4;
 function GetImports(ast = $.data) {
   const r = [];
 
-  for(let [n, p] of deep.select($.data, n => (n.type ?? n.kind).startsWith('Import'))) r.push(n);
+  for(let [n, p] of DeepSelect($.data, n => (n.type ?? n.kind).startsWith('Import'))) r.push(n);
 
   return r;
 }
@@ -1009,7 +1039,9 @@ function GetImports(ast = $.data) {
 function GetIdentifiers(nodes, key = null) {
   const r = [];
 
-  for(let node of nodes) for (let n of deep.select(node, (n, k) => (n.type ?? n.kind) == 'Identifier' && (key === null || k == key), deep.RETURN_VALUE)) r.push(n.name);
+  for(let node of nodes)
+    for(let n of DeepSelect(node, (n, k) => (n.type ?? n.kind) == 'Identifier' && (key === null || k == key)))
+      r.push(n.name);
 
   return r;
 }
@@ -1020,13 +1052,15 @@ function MemberNames(members, flags = 0) {
   if(members.members) members = members.members;
 
   if(!Array.isArray(members)) {
-    for(let ptr of deep.select(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH).map(path => new Pointer(path))) {
+    for(let ptr of [...DeepSelect(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH)].map(
+      path => new Pointer(path),
+    )) {
       let ptrs = ptr.chain(2);
 
       console.log('ptrs:', ptrs);
 
-      let names = ptrs.map(p => deep.get(members, [...p, 'name'], deep.NO_THROW));
-      let kinds = ptrs.map(p => deep.get(members, [...p, 'kind'], deep.NO_THROW));
+      let names = ptrs.map(p => DeepGet(members, [...p, 'name'], deep.NO_THROW));
+      let kinds = ptrs.map(p => DeepGet(members, [...p, 'kind'], deep.NO_THROW));
 
       console.log('kinds:', kinds);
       console.log('names:', names);
@@ -1034,12 +1068,14 @@ function MemberNames(members, flags = 0) {
       ret.push(names.filter(name => name).join('.'));
     }
   } else {
-    const memberNamePointers = deep.select(members, n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null, deep.RETURN_VALUE_PATH).map(([node, ptr]) => ptr);
+    const memberNamePointers = [
+      ...DeepSelect(members, n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null),
+    ].map(([node, ptr]) => ptr);
     //console.log('memberNamePointers', memberNamePointers);
 
     for(let ptr of memberNamePointers.map(path => new Pointer(path))) {
       let ptrs = ptr.chain(3),
-        names = ptrs.map(p => deep.get(members, [...p, 0]));
+        names = ptrs.map(p => DeepGet(members, [...p, 0]));
 
       ret.push(names.filter(name => name).join('.'));
     }
@@ -1051,7 +1087,8 @@ function MemberNames(members, flags = 0) {
 }
 
 function UnsetLoc(node, pred = (v, p) => true) {
-  for(let [v, p] of deep.select(node, (v, k) => k == 'loc' || k == 'range', deep.RETURN_VALUE_PATH)) if(pred(deep.get(node, [...p].slice(0, -1)), [...p].last)) deep.unset(node, p);
+  for(let [v, p] of DeepSelect(node, (v, k) => k == 'loc' || k == 'range', deep.RETURN_VALUE_PATH))
+    if(pred(DeepGet(node, [...p].slice(0, -1)), [...p].last)) deep.unset(node, p);
 
   return node;
 }
@@ -1122,6 +1159,8 @@ function MakeFFI(node, lib, exp, fp) {
 function MakeId(name) {
   let s = '';
 
+  name = name.replaceAll('::', '_');
+
   for(let ch of name) {
     if(/[A-Za-z0-9_]/.test(ch)) {
       s += ch;
@@ -1135,30 +1174,61 @@ function MakeId(name) {
 }
 
 function MakeQuickJSClass(node, ast = $) {
-  const cid = MakeId(decamelize(node.name, '_')).toLowerCase();
+  const cid = MakeId(decamelize(node.name, '')).toLowerCase();
   const cname = ast.namespaceOf(node) + '';
 
+  const [decl, assign] = [
+    (cname, vname = 'ptr') => `  ${cname}* ${vname};`,
+    (cname, vname = 'ptr') =>
+      `  if(!(${vname} = static_cast<${cname}*>(JS_GetOpaque2(ctx, this_val, js_${cid}_class_id))))\n    return JS_EXCEPTION;`,
+  ];
+
   const members = {
-    fields: [...node.members].filter(n => className(n) == 'Type' && !['protected', 'private'].includes(n.access) && !(n.storageClass == 'static' || n.ast.storageClass == 'static')),
-    static: [...node.members].filter(n => className(n) == 'Type' && (n.storageClass == 'static' || n.ast.storageClass == 'static')),
-    methods: [...node.members].filter(n => n.ast.kind == 'CXXMethodDecl' && !(n.storageClass == 'static' || n.ast.storageClass == 'static')),
-    functions: [...node.members].filter(n => n.ast.kind == 'CXXMethodDecl' && (n.storageClass == 'static' || n.ast.storageClass == 'static')),
+    fields: [...node.members].filter(
+      n =>
+        className(n) == 'FieldDecl' &&
+        !['protected', 'private'].includes(n.access) &&
+        !(n.storageClass == 'static' || n.ast.storageClass == 'static'),
+    ),
+    static: [...node.members].filter(
+      n => className(n) == 'Type' && (n.storageClass == 'static' || n.ast.storageClass == 'static'),
+    ),
+    methods: [...node.members].filter(
+      n =>
+        n.ast.kind == 'CXXMethodDecl' &&
+        !['protected', 'private'].includes(n.access) &&
+        !(n.storageClass == 'static' || n.ast.storageClass == 'static'),
+    ),
+    functions: [...node.members].filter(
+      n =>
+        n.ast.kind == 'CXXMethodDecl' &&
+        !['protected', 'private'].includes(n.access) &&
+        (n.storageClass == 'static' || n.ast.storageClass == 'static'),
+    ),
     enums: [...node.members].filter(n => n.ast.kind == 'EnumDecl'),
     ctor_dtor: [...node.members].filter(n => !(n.ast.kind == 'CXXMethodDecl' || className(n) == 'Type')),
   };
 
-  let inst = `  ${cname}* ptr;\n\n  if(!(ptr = static_cast<${cname}*>(JS_GetOpaque2(ctx, this_val, js_${cid}_class_id))))\n    return JS_EXCEPTION;\n\n`;
+  let inst = decl(cname) + '\n\n' + assign(cname) + '\n';
 
-  inst += `  switch(magic) {\n`;
+  inst += `\n  switch(magic) {\n`;
 
   const out = {
     menum: `enum {\n`,
     penum: `enum {\n`,
     fns: `static const JSCFunctionListEntry js_${cid}_proto_funcs[] = {\n`,
-    pget: `static JSValue\njs_${cid}_get(JSContext* ctx, JSValueConst this_val, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
-    pset: `static JSValue\njs_${cid}_set(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
-    mfn: `static JSValue\njs_${cid}_method(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
-    sfn: `static JSValue\njs_${cid}_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
+    pget:
+      `static JSValue\njs_${cid}_get(JSContext* ctx, JSValueConst this_val, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` +
+      inst,
+    pset:
+      `static JSValue\njs_${cid}_set(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` +
+      inst,
+    mfn:
+      `static JSValue\njs_${cid}_method(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` +
+      inst,
+    sfn:
+      `static JSValue\njs_${cid}_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` +
+      inst,
   };
   const methods = {},
     names = [];
@@ -1171,7 +1241,8 @@ function MakeQuickJSClass(node, ast = $) {
   }
 
   for(let name of names) {
-    const [method] = methods[name];
+    const methodlist = methods[name];
+    const [method] = methodlist;
 
     const { parameters, returnType } = method;
     const cname = 'METHOD_' + MakeId(decamelize(name, '_')).toUpperCase().replaceAll('__', '_x');
@@ -1181,13 +1252,14 @@ function MakeQuickJSClass(node, ast = $) {
     out.mfn += `    case ${cname}: {\n`;
 
     if(parameters.length > 0) {
-      const types = {};
+      const types = {},
+        tm = new Map();
+      let i = 0;
 
-      for(let [name, param] of parameters) {
+      for(let [name = `arg${i}`, param] of parameters) {
         const { desugared, qualType } = param;
 
-        console.log('', { name, desugared, qualType });
-        let type = desugared ?? qualType;
+        let type = desugared ?? qualType ?? param;
 
         switch (type) {
           case 'int':
@@ -1197,26 +1269,49 @@ function MakeQuickJSClass(node, ast = $) {
             type = 'uint32_t';
             break;
         }
+        console.log('', { name, param, type });
 
         types[type] ??= [];
         types[type].push(name);
+
+        tm.set(type + '', type);
+
+        ++i;
       }
 
+      const to_jstype = type =>
+        ({
+          int: 'Int32',
+          'unsigned int': 'Uint32',
+          double: 'Float64',
+          float: 'Float64',
+          int32_t: 'Int32',
+          uint32_t: 'Uint32',
+          int64_t: 'Int64',
+          uint64_t: 'Index',
+        })[type];
+
       for(let type in types) {
-        out.mfn += `      ${type} ${types[type].join(', ')};\n`;
+        const jstype = to_jstype(type);
+        let t = tm.get(type);
+
+        if(jstype == undefined) out.mfn += `    ` + decl(t?.pointee ?? t ?? type, types[type].join(', ')) + '\n';
+        else out.mfn += `      ${type} ${types[type].join(', ')};\n`;
       }
 
       out.mfn += `\n`;
 
-      let i = 0;
+      i = 0;
 
-      for(let [name, param] of parameters) {
+      for(let [name = `arg${i}`, param] of parameters) {
         const { desugared, qualType } = param;
-        let type = desugared ?? qualType;
+        let type = desugared ?? qualType ?? param;
 
-        const jstype = { int: 'Int32', 'unsigned int': 'Uint32', double: 'Float64', float: 'Float64', int32_t: 'Int32', uint32_t: 'Uint32', int64_t: 'Int64', uint64_t: 'Index' }[type];
+        const jstype = to_jstype(type);
 
-        out.mfn += `      JS_To${jstype}(ctx, &${name}, argv[${i}]);\n`;
+        if(jstype == undefined)
+          out.mfn += `    ` + assign(type?.pointee ?? type, name).replaceAll('\n', '\n    ') + '\n';
+        else out.mfn += `      JS_To${jstype}(ctx, &${name}, argv[${i}]);\n`;
 
         // console.log('', { name, desugared, typeAlias });
         ++i;
@@ -1283,7 +1378,7 @@ function MakeQuickJSClass(node, ast = $) {
 
     //out.fns += `  /* enum ${name} */\n`;
 
-    for(let [name, [, value]] of members) {
+    for(let [name, value] of members) {
       out.fns += `  JS_PROP_INT64_DEF("${name}", ${value}, JS_PROP_CONFIGURABLE),\n`;
     }
   }
@@ -1298,7 +1393,14 @@ function MakeQuickJSClass(node, ast = $) {
   out.pset += `  }\n\n  return ret;\n};\n`;
   out.mfn += `  }\n\n  return ret;\n};\n`;
 
-  return out.menum + `\n` + out.mfn + `\n` + (members.fields.length > 0 ? out.penum + `\n` + out.pget + `\n` + out.pset + `\n` : '') + out.fns;
+  return (
+    out.menum +
+    `\n` +
+    out.mfn +
+    `\n` +
+    (members.fields.length > 0 ? out.penum + `\n` + out.pget + `\n` + out.pset + `\n` : '') +
+    out.fns
+  );
 }
 
 async function ASTShell(...args) {
@@ -1315,7 +1417,7 @@ async function ASTShell(...args) {
 
   globalThis.files = files = {};
 
-  base = path.basename(args[0], '.js').replace(/\.[a-z]*$/, '');
+  base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   cmdhist = `.${base}-cmdhistory`;
   config = `.${base}-config`;
 
@@ -1370,19 +1472,22 @@ async function ASTShell(...args) {
     let ast2path = mapWrapper(new WeakMap());
 
     define(r, {
-      select(name_or_id, pred = n => true) {
-        return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
+      select(name_or_id, pred = n => true, ...args) {
+        return DeepSelect(this.data, nameOrIdPred(name_or_id, pred), ...args);
       },
-      getByIdOrName(name_or_id, pred = n => true) {
-        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
+      getByIdOrName(name_or_id, ...args) {
+        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, ...args));
 
-        node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
-        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE_PATH)[0];
+        node ??= this.classes.findLast(nameOrIdPred(name_or_id, ...args));
+        node ??= DeepFind(this.data, nameOrIdPred(name_or_id, ...args));
         return node;
       },
-      getType(name_or_id) {
-        //let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
-        let result = this.getNamespace(name_or_id, this.data, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
+      getType: memoize(function getType(name_or_id) {
+        let result = this.getByIdOrName(
+          name_or_id,
+          n => !/(FunctionDecl|NamespaceDecl)/.test(n.kind) && /Decl/.test(n.kind),
+        );
+        //let result = this.getNamespace(name_or_id, this.data, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
 
         result ??= GetType(name_or_id, this.data);
 
@@ -1392,18 +1497,20 @@ async function ASTShell(...args) {
         }
 
         return result;
-      },
+      }),
       getNamespace(arg, root = this.data, predicate = () => true) {
         return GetNamespace(arg, root, predicate);
       },
       namespaceOf(node) {
         return NamespaceOf(node?.ast ?? node, this.data);
       },
-      getClass(name_or_id) {
+      getClass: memoize(function getClass(name_or_id) {
         return GetClass(name_or_id, this.data);
-      },
+      }),
       getFunction(name_or_id) {
-        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+        let result = isNode(name_or_id)
+          ? name_or_id
+          : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
 
         if(result) return new FunctionDecl(result, this.data);
       },
@@ -1425,18 +1532,37 @@ async function ASTShell(...args) {
     return define(r, {
       pathOf(needle, maxDepth = 10) {
         let p = ast2path(needle?.ast ?? needle);
+        if(!p) {
+          p = DeepPathOf(this.data, needle?.ast ?? needle);
+          ast2path(needle?.ast ?? needle, (p = new Pointer(p)));
+        }
         if(p) return p;
 
         if('ast' in needle) needle = needle.ast;
 
-        for(let [node, path] of deep.iterate(r.data, n => typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, maxDepth)) if(node === needle) return new Pointer(path);
+        for(let [node, path] of DeepSelect(
+          r.data,
+          n => typeof n == 'object' && n != null,
+          deep.RETURN_VALUE_PATH,
+          maxDepth,
+        ))
+          if(node === needle) return new Pointer(path);
       },
     });
   }
 
   Object.assign(globalThis, {
+    nameOrIdPred,
+    DeepSelect,
+    DeepGet,
+    DeepFind,
+    DeepPathOf,
     SIZEOF_POINTER,
     Type,
+    PointerType,
+    ReferenceType,
+    FieldDecl,
+    NameFor,
     AstDump,
     SourceDependencies,
     NodePrinter,
@@ -1530,6 +1656,7 @@ async function ASTShell(...args) {
     GetLoc,
     GetClass,
     GetBases,
+    GetByName,
     GetNamespace,
     NamespaceOf,
     GetType,
@@ -1601,7 +1728,10 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log('FAIL: ' + error.message, '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
+    console.log(
+      'FAIL: ' + error.message,
+      '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '),
+    );
     console.log('FAIL');
     std.exit(1);
   }

@@ -182,8 +182,8 @@ export function* StatFiles(gen) {
       {
         toString() {
           return this.file;
-        }
-      }
+        },
+      },
     );
     Object.defineProperty(obj, 'size', {
       get: memoize(() => {
@@ -197,9 +197,9 @@ export function* StatFiles(gen) {
           },
           get portrait() {
             return this.height > this.width;
-          }
+          },
         });
-      })
+      }),
     });
     yield obj;
   }
@@ -227,7 +227,7 @@ export function CopyToClipboard(text) {
 
     let child = spawn('xclip', ['-in', '-verbose'], {
       env,
-      stdio: ['pipe', 'inherit', 'inherit']
+      stdio: ['pipe', 'inherit', 'inherit'],
     });
     let [pipe] = child.stdio;
 
@@ -244,7 +244,12 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
+    console.log(
+      'Function ' + name + '(',
+      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
+      ') =',
+      result,
+    );
     return result;
   };
 }
