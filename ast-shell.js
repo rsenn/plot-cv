@@ -4,7 +4,7 @@ import { LoadHistory, ReadFile, ReadJSON, WriteFile, WriteJSON } from './io-help
 import * as deep from './lib/deep.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
-import { define, properties, nonenumerable, defineGetter, getOpt, isObject, lazyProperty, memoize, pushUnique, toArrayBuffer, toString, weakMapper, } from './lib/misc.js';
+import { define, properties, nonenumerable, defineGetter, getOpt, isObject, lazyProperty, memoize, pushUnique, toArrayBuffer, toString, weakMapper } from './lib/misc.js';
 import { extendArray } from 'extendArray';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
@@ -169,8 +169,7 @@ function CommandLine() {
   });
   repl.show = value => {
     let first, str;
-    if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first))
-      str = Table(value);
+    if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first)) str = Table(value);
     else if(typeof value == 'string') str = value;
     else
       str = inspect(value, {
@@ -239,8 +238,7 @@ function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
     let file = loc.file ?? (loc.includedFrom && loc.includedFrom.file);
 
-    if(typeof loc.line == 'number')
-      return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
+    if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
     return `${file ? file : ''}@${loc.offset}`;
   }
 }
@@ -254,13 +252,7 @@ function Structs(nodes) {
       //deep.find(node, n => typeof n.line == 'number'),
       new Location(GetLoc(node)),
       ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
-      new Map(
-        node.inner.map((field, i) =>
-          /Attr/.test(field.kind)
-            ? [Symbol(field.kind), field.id]
-            : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind],
-        ),
-      ),
+      new Map(node.inner.map((field, i) => (/Attr/.test(field.kind) ? [Symbol(field.kind), field.id] : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind]))),
     ]);
   /*.map(node => types(node))*/
 }
@@ -294,13 +286,7 @@ function Table(list, pred = (n, l) => true) {
   }
   keys = ['n', ...keys, 'location'];
   const names = keys.map(k => (typeof k == 'function' ? k.name : k));
-  let rows = items.map(([i, l, n]) =>
-    Object.fromEntries([
-      ['n', i],
-      ...keys.slice(1, -1).map((k, j) => [names[j + 1], (typeof k == 'string' ? n[k] : k(n)) ?? '']),
-      ['location', l],
-    ]),
-  );
+  let rows = items.map(([i, l, n]) => Object.fromEntries([['n', i], ...keys.slice(1, -1).map((k, j) => [names[j + 1], (typeof k == 'string' ? n[k] : k(n)) ?? '']), ['location', l]]));
   let sizes = {};
 
   for(let row of rows) {
@@ -639,17 +625,7 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield '';
 
   yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members]
-    .map(
-      ([field, member]) =>
-        '\\n\\t.' +
-        field +
-        ' = ' +
-        (member.isPointer() ? '0x' : '') +
-        '${' +
-        field +
-        (member.isPointer() ? '.toString(16)' : '') +
-        '}',
-    )
+    .map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}')
     .join(',')}\\n}\`;\n  }`;
   yield '}';
 }
@@ -892,9 +868,7 @@ export async function LibraryExports(file) {
 }
 
 function SaveLibraries() {
-  const layers = Object.values(
-    [...project.schematic.layers, ...project.board.layers].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {}),
-  );
+  const layers = Object.values([...project.schematic.layers, ...project.board.layers].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {}));
 }
 
 function ProcessFile(file, debug = true) {
@@ -952,10 +926,7 @@ function ParseECMAScript(file, params = {}) {
 
     if(err !== null) {
       console.log('parseProgram ERROR message:', err?.message);
-      console.log(
-        'parseProgram ERROR stack:\n  ' +
-          new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '),
-      );
+      console.log('parseProgram ERROR stack:\n  ' + new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '));
 
       throw err;
     } else {
@@ -1039,9 +1010,7 @@ function GetImports(ast = $.data) {
 function GetIdentifiers(nodes, key = null) {
   const r = [];
 
-  for(let node of nodes)
-    for(let n of DeepSelect(node, (n, k) => (n.type ?? n.kind) == 'Identifier' && (key === null || k == key)))
-      r.push(n.name);
+  for(let node of nodes) for (let n of DeepSelect(node, (n, k) => (n.type ?? n.kind) == 'Identifier' && (key === null || k == key))) r.push(n.name);
 
   return r;
 }
@@ -1052,9 +1021,7 @@ function MemberNames(members, flags = 0) {
   if(members.members) members = members.members;
 
   if(!Array.isArray(members)) {
-    for(let ptr of [...DeepSelect(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH)].map(
-      path => new Pointer(path),
-    )) {
+    for(let ptr of [...DeepSelect(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH)].map(path => new Pointer(path))) {
       let ptrs = ptr.chain(2);
 
       console.log('ptrs:', ptrs);
@@ -1068,9 +1035,7 @@ function MemberNames(members, flags = 0) {
       ret.push(names.filter(name => name).join('.'));
     }
   } else {
-    const memberNamePointers = [
-      ...DeepSelect(members, n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null),
-    ].map(([node, ptr]) => ptr);
+    const memberNamePointers = [...DeepSelect(members, n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null)].map(([node, ptr]) => ptr);
     //console.log('memberNamePointers', memberNamePointers);
 
     for(let ptr of memberNamePointers.map(path => new Pointer(path))) {
@@ -1087,8 +1052,7 @@ function MemberNames(members, flags = 0) {
 }
 
 function UnsetLoc(node, pred = (v, p) => true) {
-  for(let [v, p] of DeepSelect(node, (v, k) => k == 'loc' || k == 'range', deep.RETURN_VALUE_PATH))
-    if(pred(DeepGet(node, [...p].slice(0, -1)), [...p].last)) deep.unset(node, p);
+  for(let [v, p] of DeepSelect(node, (v, k) => k == 'loc' || k == 'range', deep.RETURN_VALUE_PATH)) if(pred(DeepGet(node, [...p].slice(0, -1)), [...p].last)) deep.unset(node, p);
 
   return node;
 }
@@ -1179,32 +1143,14 @@ function MakeQuickJSClass(node, ast = $) {
 
   const [decl, assign] = [
     (cname, vname = 'ptr') => `  ${cname}* ${vname};`,
-    (cname, vname = 'ptr') =>
-      `  if(!(${vname} = static_cast<${cname}*>(JS_GetOpaque2(ctx, this_val, js_${cid}_class_id))))\n    return JS_EXCEPTION;`,
+    (cname, vname = 'ptr') => `  if(!(${vname} = static_cast<${cname}*>(JS_GetOpaque2(ctx, this_val, js_${cid}_class_id))))\n    return JS_EXCEPTION;`,
   ];
 
   const members = {
-    fields: [...node.members].filter(
-      n =>
-        className(n) == 'FieldDecl' &&
-        !['protected', 'private'].includes(n.access) &&
-        !(n.storageClass == 'static' || n.ast.storageClass == 'static'),
-    ),
-    static: [...node.members].filter(
-      n => className(n) == 'Type' && (n.storageClass == 'static' || n.ast.storageClass == 'static'),
-    ),
-    methods: [...node.members].filter(
-      n =>
-        n.ast.kind == 'CXXMethodDecl' &&
-        !['protected', 'private'].includes(n.access) &&
-        !(n.storageClass == 'static' || n.ast.storageClass == 'static'),
-    ),
-    functions: [...node.members].filter(
-      n =>
-        n.ast.kind == 'CXXMethodDecl' &&
-        !['protected', 'private'].includes(n.access) &&
-        (n.storageClass == 'static' || n.ast.storageClass == 'static'),
-    ),
+    fields: [...node.members].filter(n => className(n) == 'FieldDecl' && !['protected', 'private'].includes(n.access) && !(n.storageClass == 'static' || n.ast.storageClass == 'static')),
+    static: [...node.members].filter(n => className(n) == 'Type' && (n.storageClass == 'static' || n.ast.storageClass == 'static')),
+    methods: [...node.members].filter(n => n.ast.kind == 'CXXMethodDecl' && !['protected', 'private'].includes(n.access) && !(n.storageClass == 'static' || n.ast.storageClass == 'static')),
+    functions: [...node.members].filter(n => n.ast.kind == 'CXXMethodDecl' && !['protected', 'private'].includes(n.access) && (n.storageClass == 'static' || n.ast.storageClass == 'static')),
     enums: [...node.members].filter(n => n.ast.kind == 'EnumDecl'),
     ctor_dtor: [...node.members].filter(n => !(n.ast.kind == 'CXXMethodDecl' || className(n) == 'Type')),
   };
@@ -1217,18 +1163,10 @@ function MakeQuickJSClass(node, ast = $) {
     menum: `enum {\n`,
     penum: `enum {\n`,
     fns: `static const JSCFunctionListEntry js_${cid}_proto_funcs[] = {\n`,
-    pget:
-      `static JSValue\njs_${cid}_get(JSContext* ctx, JSValueConst this_val, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` +
-      inst,
-    pset:
-      `static JSValue\njs_${cid}_set(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` +
-      inst,
-    mfn:
-      `static JSValue\njs_${cid}_method(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` +
-      inst,
-    sfn:
-      `static JSValue\njs_${cid}_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` +
-      inst,
+    pget: `static JSValue\njs_${cid}_get(JSContext* ctx, JSValueConst this_val, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
+    pset: `static JSValue\njs_${cid}_set(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
+    mfn: `static JSValue\njs_${cid}_method(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
+    sfn: `static JSValue\njs_${cid}_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {\n  JSValue ret = JS_UNDEFINED;\n` + inst,
   };
   const methods = {},
     names = [];
@@ -1309,8 +1247,7 @@ function MakeQuickJSClass(node, ast = $) {
 
         const jstype = to_jstype(type);
 
-        if(jstype == undefined)
-          out.mfn += `    ` + assign(type?.pointee ?? type, name).replaceAll('\n', '\n    ') + '\n';
+        if(jstype == undefined) out.mfn += `    ` + assign(type?.pointee ?? type, name).replaceAll('\n', '\n    ') + '\n';
         else out.mfn += `      JS_To${jstype}(ctx, &${name}, argv[${i}]);\n`;
 
         // console.log('', { name, desugared, typeAlias });
@@ -1393,14 +1330,7 @@ function MakeQuickJSClass(node, ast = $) {
   out.pset += `  }\n\n  return ret;\n};\n`;
   out.mfn += `  }\n\n  return ret;\n};\n`;
 
-  return (
-    out.menum +
-    `\n` +
-    out.mfn +
-    `\n` +
-    (members.fields.length > 0 ? out.penum + `\n` + out.pget + `\n` + out.pset + `\n` : '') +
-    out.fns
-  );
+  return out.menum + `\n` + out.mfn + `\n` + (members.fields.length > 0 ? out.penum + `\n` + out.pget + `\n` + out.pset + `\n` : '') + out.fns;
 }
 
 async function ASTShell(...args) {
@@ -1483,10 +1413,7 @@ async function ASTShell(...args) {
         return node;
       },
       getType: memoize(function getType(name_or_id) {
-        let result = this.getByIdOrName(
-          name_or_id,
-          n => !/(FunctionDecl|NamespaceDecl)/.test(n.kind) && /Decl/.test(n.kind),
-        );
+        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl|NamespaceDecl)/.test(n.kind) && /Decl/.test(n.kind));
         //let result = this.getNamespace(name_or_id, this.data, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
 
         result ??= GetType(name_or_id, this.data);
@@ -1508,9 +1435,7 @@ async function ASTShell(...args) {
         return GetClass(name_or_id, this.data);
       }),
       getFunction(name_or_id) {
-        let result = isNode(name_or_id)
-          ? name_or_id
-          : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
 
         if(result) return new FunctionDecl(result, this.data);
       },
@@ -1540,13 +1465,7 @@ async function ASTShell(...args) {
 
         if('ast' in needle) needle = needle.ast;
 
-        for(let [node, path] of DeepSelect(
-          r.data,
-          n => typeof n == 'object' && n != null,
-          deep.RETURN_VALUE_PATH,
-          maxDepth,
-        ))
-          if(node === needle) return new Pointer(path);
+        for(let [node, path] of DeepSelect(r.data, n => typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, maxDepth)) if(node === needle) return new Pointer(path);
       },
     });
   }
@@ -1729,10 +1648,7 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(
-      'FAIL: ' + error.message,
-      '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '),
-    );
+    console.log('FAIL: ' + error.message, '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
     console.log('FAIL');
     std.exit(1);
   }
