@@ -1,5 +1,23 @@
 {
+  "name": "plot-cv",
+  "version": "1.0.0",
+  "main": "server.js",
   "type": "module",
+  "author": "Roman Senn <roman.l.senn@gmail.com>",
+  "license": "MIT",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "scripts": {
+    "deploy": "now --target production",
+    "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
+    "now-build": "next build",
+    "server": "env PORT=3000 nodemon --experimental-modules -w server.js server.js",
+    "start": "next start"
+  },
   "_moduleAliases": {
     "preact": "lib/dom/preactComponent.js",
     "prop-types": "lib/prop-types.js",
@@ -38,11 +56,6 @@
     "lib/xml/xpath.js": "quickjs/qjs-modules/lib/xpath.js",
     "lib/preact.js": "lib/preact.esm.js",
     "xlib/preact.mjs": "lib/preact.module.js"
-  },
-  "author": "Roman Senn <roman.l.senn@gmail.com>",
-  "license": "MIT",
-  "parserOptions": {
-    "sourceType": "module"
   },
   "dependencies": {
     "@cloudcmd/copy-file": "^4.0.0",
@@ -140,9 +153,6 @@
     "sandbox-worker": "^1.2.0",
     "ts-blank-space": "^0.6.1"
   },
-  "engines": {
-    "node": ">= 14"
-  },
   "eslintConfig": {
     "extends": [
       "./node_modules/@s-ui/lint/eslintrc.js"
@@ -159,16 +169,7 @@
       "git add"
     ]
   },
-  "main": "server.js",
-  "name": "plot-cv",
   "prettier": "./node_modules/@s-ui/lint/.prettierrc.js",
-  "scripts": {
-    "deploy": "now --target production",
-    "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
-    "now-build": "next build",
-    "server": "env PORT=3000 nodemon --experimental-modules -w server.js server.js",
-    "start": "next start"
-  },
   "stylelint": {
     "extends": "./node_modules/@s-ui/lint/stylelint.config.js"
   },
@@ -188,6 +189,5 @@
       ]
     },
     "release": "./data"
-  },
-  "version": "1.0.0"
+  }
 }

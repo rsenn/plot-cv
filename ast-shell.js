@@ -1695,6 +1695,7 @@ async function ASTShell(...args) {
   let items = [],
     hist = ReadJSON(unithist) || [];
 
+  console.log('sources:', sources);
   console.log('Loading sources:' + sources.map(s => ' ' + s).join(','));
 
   globalThis['_'] = items;
