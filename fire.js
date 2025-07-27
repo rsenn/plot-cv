@@ -4,7 +4,7 @@ import { CreateWebSocket, ReconnectingWebSocket, StreamReadIterator, WebSocketIt
 import { HSLA, RGBA } from './lib/color.js';
 import { LinkedList } from './lib/container/linkedList.js';
 import { CANVAS, crosskit } from './lib/crosskit.js';
-import { Element, isElement, SVG } from './lib/dom.js';
+import { Element, isElement, SVG } from './lib/dom-old.js';
 import { Component, createRef, Fragment, h, html, render, toChildArray, useLayoutEffect, useRef, useState, default as React } from './lib/dom/preactComponent.js';
 import { Intersection, isRect, Line, Matrix, Point, Rect, Size, TransformationList, Vector } from './lib/geom.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
