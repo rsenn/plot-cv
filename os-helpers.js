@@ -49,7 +49,9 @@ export function Execute(...args) {
 }
 
 export function URLWorker(script) {
-  const dataURL = s => `data:application/javascript;charset=utf-8;base64,` + btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+  const dataURL = s =>
+    `data:application/javascript;charset=utf-8;base64,` +
+    btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
 
   const url = dataURL(script);
   const w = new Worker(url);

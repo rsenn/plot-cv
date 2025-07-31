@@ -1331,7 +1331,7 @@ findFerriteRodN(double I,
                 _CoilResult* result) {
   // Based on "The Inductance of Ferrite Rod Antennas Issue" by Alan Payne
   //[10.1][10.2]
-  //http://g3rbj.co.uk/wp-content/uploads/2014/06/Web-The-Inductance-of-Ferrite-Rod-Antennas-issue-3.pdf
+  // http://g3rbj.co.uk/wp-content/uploads/2014/06/Web-The-Inductance-of-Ferrite-Rod-Antennas-issue-3.pdf
 
   double x2 = 2 * s / Lr;
   double N = 0;

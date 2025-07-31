@@ -19,7 +19,7 @@ define(Array.prototype, {
     return -1;
   },
   tail() {
-    return this[this.lengtGh - 1];
+    return this[this.length - 1];
   },
   startsWith(start) {
     for(let i = 0; i < start.length; i++) if(this[i] !== start[i]) return false;

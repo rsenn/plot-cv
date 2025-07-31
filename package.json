@@ -1,5 +1,23 @@
 {
+  "name": "plot-cv",
+  "version": "1.0.0",
+  "main": "server.js",
   "type": "module",
+  "author": "Roman Senn <roman.l.senn@gmail.com>",
+  "license": "MIT",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "scripts": {
+    "deploy": "now --target production",
+    "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
+    "now-build": "next build",
+    "server": "env PORT=3000 nodemon --experimental-modules -w server.js server.js",
+    "start": "next start"
+  },
   "_moduleAliases": {
     "preact": "lib/dom/preactComponent.js",
     "prop-types": "lib/prop-types.js",
@@ -39,20 +57,14 @@
     "lib/preact.js": "lib/preact.esm.js",
     "xlib/preact.mjs": "lib/preact.module.js"
   },
-  "author": "Roman Senn <roman.l.senn@gmail.com>",
-  "license": "MIT",
-  "parserOptions": {
-    "sourceType": "module"
-  },
   "dependencies": {
-    "@babel/runtime": "^7.17.9",
-    "@babel/runtime-corejs3": "^7.17.9",
+    "@cloudcmd/copy-file": "^4.0.0",
     "@s-ui/lint": "^3.43.0",
-    "babel-loader": "^8.2.5",
-    "babel-preset-env": "^1.7.0",
+    "@webaudiomodules/sdk": "^0.0.12",
     "body-parser": "^1.19.0",
     "bpg-decoder": "^0.0.7",
     "chrome-remote-interface": "^0.33.3",
+    "class-transformer": "^0.5.1",
     "core-js": "^3.22.2",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
@@ -63,31 +75,27 @@
     "module-alias": "^2.2.2",
     "next": "^12.2.5",
     "node-bpg": "^1.0.0",
-    "ol": "^6.15.1",
-    "ol-layerswitcher": "https://github.com/walkermatt/ol-layerswitcher",
-    "openlayers-ext": "^3.1.5",
+    "node-ssha256": "^0.1.1",
     "preact": "^10",
     "preact-compat": "^3",
     "preact-context": "^1.1.4",
     "preact-render-to-string": "^5.1.19",
     "preact-ssr-prepass": "^1",
     "promisify-child-process": "^4.1.1",
-    "puppeteer": "^24.7.2",
-    "puppeteer-core": "^24.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-sortable-hoc": "^2.0.0",
     "react-upload-gallery": "^0.4.1",
     "regenerator-runtime": "^0.13.9",
-    "serialport": "^9.0.1",
     "slimerjs": "^1.0.0",
     "through": "^2.3.8",
+    "tunajs": "^1.0.15",
     "uppie": "^1.1.4",
+    "web-streams-polyfill": "^4.1.0",
     "ws": "^7.3.1"
   },
   "oldDeps": {
     "@deque/dot": "^1.1.5",
-    "@serialport/stream": "^9.0.1",
     "preact-fluid": "^0.9.1",
     "sort-order": "^1.0.1",
     "columnify": "^1.5.4",
@@ -117,39 +125,33 @@
   },
   "description": "",
   "devDependencies": {
-    "@babel/core": "^7.0.0-0",
-    "@babel/plugin-proposal-class-properties": "^7.4.4",
-    "@babel/plugin-syntax-class-properties": "^7.2.0",
-    "@babel/plugin-transform-runtime": "^7.17.0",
-    "@babel/polyfill": "^7.4.4",
-    "@babel/preset-env": "^7.4.5",
-    "@babel/preset-react": "^7.0.0",
+    "@chialab/cjs-to-esm": "^0.18.0",
+    "@meriyah-utils/cjs-dependency-collector": "^1.0.2",
+    "@meriyah-utils/esm-to-cjs": "^1.0.2",
+    "@meriyah-utils/printer": "^1.0.2",
+    "@meriyah-utils/types": "^1.0.2",
+    "@meriyah-utils/walker": "^1.0.2",
+    "@webaudiomodules/api": "^2.0.0-alpha.6",
     "acorn": "^8.1.1",
     "ansi-colors": "^4.1.1",
     "ansi-escapes": "^4.3.1",
     "astring": "^1.7.4",
-    "babel-eslint": "^10.0.1",
-    "babel-node": "^0.0.1-security",
-    "babel-plugin-transform-commonjs": "^1.1.6",
-    "babel-preset-preact": "^2.0.0",
+    "cjs2esm": "^5.0.0",
     "define-function": "^2.0.0",
+    "escodegen": "^2.1.0",
     "eslint": "^8.14.0",
     "esm-quickjs-emscripten": "^0.11.4",
-    "ffi-cross": "^5.0.11",
+    "estree-util-to-js": "^2.0.0",
     "free-proxy": "^0.2.0",
     "hishim": "^0.0.3",
     "http": "0.0.0",
+    "meriyah": "^6.0.6",
     "proxynova": "^0.1.0",
     "quickjs-debugger": "^1.1.0",
     "quickjs-emscripten": "^0.23.0",
     "quickjs-emscripten-sync": "^1.5.2",
     "sandbox-worker": "^1.2.0",
-    "webpack": "^5.72.0",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.8.1"
-  },
-  "engines": {
-    "node": ">= 14"
+    "ts-blank-space": "^0.6.1"
   },
   "eslintConfig": {
     "extends": [
@@ -167,17 +169,7 @@
       "git add"
     ]
   },
-  "main": "server.js",
-  "name": "plot-cv",
   "prettier": "./node_modules/@s-ui/lint/.prettierrc.js",
-  "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "deploy": "now --target production",
-    "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
-    "now-build": "next build",
-    "server": "env PORT=3000 nodemon --experimental-modules -w server.js server.js",
-    "start": "next start"
-  },
   "stylelint": {
     "extends": "./node_modules/@s-ui/lint/stylelint.config.js"
   },
@@ -197,6 +189,5 @@
       ]
     },
     "release": "./data"
-  },
-  "version": "1.0.0"
+  }
 }
