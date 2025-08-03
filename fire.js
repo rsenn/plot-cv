@@ -9,8 +9,8 @@ import { Component, createRef, Fragment, h, html, render, toChildArray, useLayou
 import { Intersection, isRect, Line, Matrix, Point, Rect, Size, TransformationList, Vector } from './lib/geom.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { List } from './lib/list.js';
-import { chain, chainRight, define, getConstructorChain, getPrototypeChain, getset, gettersetter, isCFunction, isFunction, isJSFunction, isObject, isUndefined, keys, memoize, properties, propertyLookup, randInt, randStr, tryCatch, tryFunction, unique } from './lib/misc.js';
-import { AcquireReader, AcquireWriter, ArrayWriter, AsyncRead, AsyncWrite, ByteReader, ChunkReader, CreateTransformStream, CreateWritableStream, DebugTransformStream, isStream, LineBufferStream, LineReader, LogSink, PipeTo, PipeToRepeater, ReadAll, Reader, ReadFromIterator, readStream, RepeaterSink, RepeaterSource, StringReader, TextTransformStream, WritableRepeater, WriteIterator, WriteToRepeater } from './lib/stream/utils.js';
+import { chain, chainRight, define, getConstructorChain, getPrototypeChain, getset, gettersetter, isCFunction, isFunction, isJSFunction, isObject, isUndefined, keys, memoize, properties, propertyLookup, randInt, randStr, tryCatch, tryFunction, unique, } from './lib/misc.js';
+import { AcquireReader, AcquireWriter, ArrayWriter, AsyncRead, AsyncWrite, ByteReader, ChunkReader, CreateTransformStream, CreateWritableStream, DebugTransformStream, isStream, LineBufferStream, LineReader, LogSink, PipeTo, PipeToRepeater, ReadAll, Reader, ReadFromIterator, readStream, RepeaterSink, RepeaterSource, StringReader, TextTransformStream, WritableRepeater, WriteIterator, WriteToRepeater, } from './lib/stream/utils.js';
 import trkl from './lib/trkl.js';
 import miscfixed6x13 from './static/json/miscfixed6x13.js';
 import { wasmBrowserInstantiate } from './wasm-helpers.js';
@@ -22,10 +22,10 @@ const lstore = (globalThis.lstore = propertyLookup(
     tryFunction(
       v => JSON.parse(v ?? ''),
       v => v,
-      () => null
+      () => null,
     ),
-    o => JSON.stringify(o || null)
-  ))
+    o => JSON.stringify(o || null),
+  )),
 ));
 
 // For random numbers, use "x = 181 * x + 359" from
@@ -138,7 +138,7 @@ class DrawList extends LinkedList {
     return {
       x: n.x - p.x,
       y: n.y - p.y,
-      time: n.time - p.time
+      time: n.time - p.time,
     };
   }
 
@@ -215,7 +215,7 @@ function EventPositions(eventOrTouch) {
   let positions = unique(
     keys(eventOrTouch, 2)
       .filter(n => typeof n == 'string' && /[XY]$/.test(n))
-      .map(n => n.slice(0, -1))
+      .map(n => n.slice(0, -1)),
   );
 
   return positions.reduce((acc, key) => {
@@ -356,7 +356,7 @@ async function* TouchIterator(element, t) {
 
   for await(let event of streamify(['touchend', 'touchmove', 'mouseup', 'mousemove'], element, {
     passive: false,
-    capture: true
+    capture: true,
   })) {
     if(event.cancelable) event.preventDefault();
     event.stopPropagation();
@@ -400,16 +400,16 @@ function main() {
       getTransformationList,
       DecomposeTransformList,
       drawRect,
-      miscfixed6x13
+      miscfixed6x13,
     },
     properties(
       {
         cid: () => lstore.cid || (lstore.cid = randStr(16, '0123456789abcdef')),
         currentURL: () => new URL(import.meta.url),
-        currentFile: () => globalThis.currentURL.pathname.replace(/^\//, '')
+        currentFile: () => globalThis.currentURL.pathname.replace(/^\//, ''),
       },
-      { memoize: true }
-    )
+      { memoize: true },
+    ),
   );
 
   LoadWASM();
@@ -423,7 +423,7 @@ function main() {
     parent,
     w: width,
     h: height,
-    alpha: false
+    alpha: false,
   });
 
   function Reparent(canvas = document.getElementsByTagName('canvas')[0]) {
@@ -441,7 +441,7 @@ function main() {
     height,
     fill: 'black',
     stroke: 'black',
-    angle: 0
+    angle: 0,
   });
 
   const buffer = new ArrayBuffer(width * (height + 2));
@@ -588,7 +588,7 @@ function main() {
     PutArray(x - 1, y - 1, [
       [0, r, 0],
       [r, r, r],
-      [0, r, 0]
+      [0, r, 0],
     ]);
   }
 
@@ -620,7 +620,7 @@ function main() {
 
       SendWS({ type: 'hello', cid });
       /*SendWS({ type: 'rects', cid, rects: GetRects() });*/
-    }
+    },
   });
 
   let str = '';
@@ -660,7 +660,7 @@ function main() {
           prev += t;
           return t;
         },
-        { start: t }
+        { start: t },
       );
     })();
 
@@ -723,7 +723,7 @@ function main() {
   tryCatch(
     () => Loop(),
     () => null,
-    error => SendWS({ type: 'exception', cid: globalThis.cid, message: error.message, stack: error.stack })
+    error => SendWS({ type: 'exception', cid: globalThis.cid, message: error.message, stack: error.stack }),
   );
 }
 
@@ -737,20 +737,20 @@ function Init() {
         canvasElement: () => Element.find('canvas'),
         divElement: () => Element.find('body > div:first-child'),
         htmlElement: () => document.documentElement,
-        gfxRect: () => new Rect(0, 0, canvasElement.width, canvasElement.height)
+        gfxRect: () => new Rect(0, 0, canvasElement.width, canvasElement.height),
       },
-      { memoize: true }
+      { memoize: true },
     ),
     properties({
       windowRect: () => new Rect(0, 0, window.innerWidth, window.innerHeight),
       windowSize: () => new Size(window.innerWidth, window.innerHeight),
       scrollPos: () => new Point(window.scrollX, window.scrollY),
       bodyRect: () => Element.rect('body').round(0),
-      canvasRect: () => Element.rect('canvas').round(0)
+      canvasRect: () => Element.rect('canvas').round(0),
     }),
     properties({
-      transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })]
-    })
+      transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })],
+    }),
   );
 
   const SetLocked = ToggleClass(htmlElement, 'is-locked');
@@ -775,7 +775,7 @@ function Init() {
         xmlns: 'http://www.w3.org/2000/svg',
         viewBox: [...rect].join(' '),
         width: rect.width,
-        height: rect.height
+        height: rect.height,
       },
       [
         h('circle', {
@@ -784,10 +784,10 @@ function Init() {
           r,
           stroke,
           'stroke-width': width,
-          fill
+          fill,
         }),
-        h(SVGPolyline, { points: useTrkl(points), stroke, 'stroke-width': width })
-      ]
+        h(SVGPolyline, { points: useTrkl(points), stroke, 'stroke-width': width }),
+      ],
     );
   };
 
@@ -824,7 +824,7 @@ function ResizeHandler() {
     Element.setCSS(globalThis.svgElement, {
       width: canvasElement.offsetWidth + 'px',
       height: canvasElement.offsetHeight + 'px',
-      transform: 'rotate(90deg)'
+      transform: 'rotate(90deg)',
     });
 }
 
@@ -875,7 +875,7 @@ function NewWS(handlers) {
   define(globalThis, {
     get ws() {
       return rws.socket;
-    }
+    },
   });
 
   (async function() {
@@ -940,7 +940,7 @@ async function LoadWASM(file = 'fire/build/fire.wasm') {
   let t = Date.now();
   let {
     module,
-    instance: { exports }
+    instance: { exports },
   } = await wasmBrowserInstantiate(file);
 
   console.log(`WASM module loaded. Took ${Date.now() - t}ms`);
@@ -1029,7 +1029,7 @@ define(globalThis, {
   PipeToRepeater,
   Reader,
   ReadAll,
-  StreamReadIterator
+  StreamReadIterator,
 });
 
 define(globalThis, {
@@ -1061,7 +1061,7 @@ define(globalThis, {
   getset,
   gettersetter,
   chain,
-  chainRight
+  chainRight,
 });
 
 main();

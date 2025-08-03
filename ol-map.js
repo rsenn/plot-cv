@@ -1,7 +1,7 @@
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
 import { forwardRef, Fragment, h, Portal, React, ReactComponent, toChildArray } from './lib/dom/preactComponent.js';
 import { assert, define, isObject, lazyProperties, memoize, unique } from './lib/misc.js';
-import { addCoordinateTransforms, addProjection, CircleStyle, composeCssTransform, Feature, Fill, fromLonLat, GeoJSON, Geolocation, getVectorContext, Icon, Layer, LayerGroup, LineString, MultiPoint, OLMap, OSM, Overlay, Point, Polygon, Projection, RegularShape, Stroke, Style, TileLayer, transform, VectorLayer, VectorSource, View, XYZ, ZoomSlider } from './lib/ol.js';
+import { addCoordinateTransforms, addProjection, CircleStyle, composeCssTransform, Feature, Fill, fromLonLat, GeoJSON, Geolocation, getVectorContext, Icon, Layer, LayerGroup, LineString, MultiPoint, OLMap, OSM, Overlay, Point, Polygon, Projection, RegularShape, Stroke, Style, TileLayer, transform, VectorLayer, VectorSource, View, XYZ, ZoomSlider, } from './lib/ol.js';
 import { BiDirMap, ObjectWrapper } from './object-helpers.js';
 import { Coordinate, Markers, OpenlayersMap, ParseCoordinates, Pin, Popup, TransformCoordinates } from './ol-helpers.js';
 import { add, scale, toStringHDMS, wrapX } from './openlayers/src/ol/coordinate.js';
@@ -46,7 +46,7 @@ const cities = {
   basel: new Coordinate(7.588576, 47.559601),
   winterthur: new Coordinate(8.737565, 47.49995),
   hinterkappelen: new Coordinate(7.37736, 46.96792),
-  wankdorf: new Coordinate(7.46442, 46.96662)
+  wankdorf: new Coordinate(7.46442, 46.96662),
 };
 
 /*function Refresh() {
@@ -90,20 +90,20 @@ function FlyTo(location, done = () => {}) {
   view.animate(
     {
       center: location,
-      duration: duration
+      duration: duration,
     },
-    callback
+    callback,
   );
   view.animate(
     {
       zoom: zoom - 1,
-      duration: duration / 2
+      duration: duration / 2,
     },
     {
       zoom: zoom,
-      duration: duration / 2
+      duration: duration / 2,
     },
-    callback
+    callback,
   );
 }
 
@@ -119,14 +119,14 @@ function CreateMap() {
       image: new CircleStyle({
         radius: 6,
         fill: new Fill({
-          color: '#3399CC'
+          color: '#3399CC',
         }),
         stroke: new Stroke({
           color: '#fff',
-          width: 2
-        })
-      })
-    })
+          width: 2,
+        }),
+      }),
+    }),
   );
   let extentVector = [topLeft, topRight, bottomRight, bottomLeft, topLeft].map(a => TransformCoordinates(...a));
 
@@ -134,19 +134,19 @@ function CreateMap() {
     source: new VectorSource({
       features: [
         new Feature({
-          geometry: new LineString(extentVector)
+          geometry: new LineString(extentVector),
         }),
-        positionFeature
+        positionFeature,
       ],
-      wrapX: false
+      wrapX: false,
     }),
     style: new Style({
       stroke: new Stroke({
         color: '#ffd705',
         width: 4,
-        lineDash: [4, 8]
-      })
-    })
+        lineDash: [4, 8],
+      }),
+    }),
   });
 
   let map = OpenlayersMap.create();
@@ -154,9 +154,9 @@ function CreateMap() {
 
   const geolocation = new Geolocation({
     trackingOptions: {
-      enableHighAccuracy: true
+      enableHighAccuracy: true,
     },
-    projection: view.getProjection()
+    projection: view.getProjection(),
   });
 
   geolocation.on('change', function(e) {
@@ -170,8 +170,8 @@ function CreateMap() {
       anchorXUnits: 'fraction',
       anchorYUnits: 'fraction',
       src: 'static/svg/map-pin.svg',
-      scale: 1
-    })
+      scale: 1,
+    }),
   });
   globalThis.pins = Object.entries(cities).map(([name, geometry]) => Pin.create(name, mapPinStyle, geometry));
 
@@ -183,15 +183,15 @@ function CreateMap() {
       image: new CircleStyle({
         radius: 6,
         fill: new Fill({
-          color: '#3399CC'
+          color: '#3399CC',
         }),
         stroke: new Stroke({
           color: '#fff',
-          width: 2
-        })
-      })
+          width: 2,
+        }),
+      }),
     }),
-    [...new Coordinate(7.45425, 46.96483)]
+    [...new Coordinate(7.45425, 46.96483)],
   );
 
   Object.assign(globalThis, { hereMarker });
@@ -205,7 +205,7 @@ function CreateMap() {
     extentVector,
     positionFeature,
     geolocation,
-    parseDMS
+    parseDMS,
   });
   Object.defineProperties(globalThis, {
     zoom: {
@@ -214,8 +214,8 @@ function CreateMap() {
       },
       set(value) {
         view.setZoom(value);
-      }
-    }
+      },
+    },
   });
 
   let popup;
@@ -301,7 +301,7 @@ Object.assign(globalThis, {
     CircleStyle,
     RegularShape,
     addProjection,
-    LayerGroup
+    LayerGroup,
   },
 
   FlyTo,
@@ -328,7 +328,7 @@ Object.assign(globalThis, {
   ReactComponent,
   Portal,
   toChildArray,
-  ParseCoordinates
+  ParseCoordinates,
 });
 
 CreateMap();

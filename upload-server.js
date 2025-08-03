@@ -23,7 +23,7 @@ import extendArray from 'extendArray';
 import extendGenerator from 'extendGenerator';
 import extendAsyncGenerator from 'extendAsyncGenerator';
 import { RecursiveDirIterator } from './dir-helpers.js';
-import { MessageReceiver, MessageTransmitter, MessageTransceiver, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
+import { MessageReceiver, MessageTransmitter, MessageTransceiver, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen, } from './quickjs/qjs-net/js/rpc.js';
 import { PromiseWorker } from './promise-worker.js';
 
 const DEBUG = false;
@@ -96,7 +96,7 @@ const defaultDirs = (globalThis.defaultDirs = [
   ...glob('../*/eagle'),
   './uploads/*.{sch,brd,lbr}',
   '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}',
-  ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
+  ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')],
 ]);
 
 const allowedDirs = (globalThis.allowedDirs = new Map(
@@ -104,7 +104,7 @@ const allowedDirs = (globalThis.allowedDirs = new Map(
     .map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd))
     .map(d => path.resolve(d))
     .map(d => path.relative(d))
-    .map(d => [DirName(d), d])
+    .map(d => [DirName(d), d]),
 ));
 
 function GetDir(dir) {
@@ -118,7 +118,7 @@ function DirName(name) {
 
   p = path.slice(
     p,
-    p.split(new RegExp(path.sep + '+', 'g')).findIndex(it => it != '..')
+    p.split(new RegExp(path.sep + '+', 'g')).findIndex(it => it != '..'),
   );
   return p;
 }
@@ -158,13 +158,13 @@ const HTMLPage = ({ title, style, scripts = [], children, ...props }) => {
           'link',
           {
             rel: 'stylesheet',
-            href: 'static/css/list.css'
+            href: 'static/css/list.css',
           },
-          []
-        )
-      ].concat(scripts.map(script => h('script', { type: 'module', src: script })))
+          [],
+        ),
+      ].concat(scripts.map(script => h('script', { type: 'module', src: script }))),
     ),
-    h('body', {}, children ?? [])
+    h('body', {}, children ?? []),
   ]);
 };
 
@@ -179,11 +179,11 @@ const FilterForm = ({ ...props }) =>
         value: '.*' /*,
           onchange: e => {
             console.log('onchange', e);
-          }*/
+          }*/,
       },
-      []
+      [],
     ),
-    h('input', { type: 'submit', value: 'Submit', class: 'hidden' }, [])
+    h('input', { type: 'submit', value: 'Submit', class: 'hidden' }, []),
   ]);
 
 const HTMLTable = ({ rows, ...props }) => h('table', props, rows);
@@ -201,11 +201,11 @@ const FileObject = ({ file, stat = {}, ...props }) => {
   return h(HTMLTableRow, {}, [
     h(HTMLTableColumn, { class: 'mode' }, [
       //(stat.mode & 0b111111111).toString(8),
-      ModeStr(stat.mode)
+      ModeStr(stat.mode),
     ]),
     h(HTMLTableColumn, { class: 'file' }, [h(FileLink, { file: file + (isDir ? '/' : '') }, [])]),
     h(HTMLTableColumn, { class: 'size' }, [stat.size + '']),
-    h(HTMLTableColumn, { class: 'date' }, [DateStr(new Date(stat.atime))])
+    h(HTMLTableColumn, { class: 'date' }, [DateStr(new Date(stat.atime))]),
   ]);
 };
 
@@ -227,13 +227,13 @@ const FileTable = ({ files, ...props }) => {
         h(
           HTMLTableRow,
           {
-            columns: fields.map(field => h(HTMLTableColumn, { tag: 'th' }, [field]))
+            columns: fields.map(field => h(HTMLTableColumn, { tag: 'th' }, [field])),
           },
-          []
-        )
-      ].concat(files.map(file => h(FileObject, file, [])))
+          [],
+        ),
+      ].concat(files.map(file => h(FileObject, file, []))),
     },
-    []
+    [],
   );
 };
 
@@ -251,7 +251,7 @@ function ReadExiv2(file) {
       .filter(([k, v]) => /(GPS|[XY]Dim|[XY]Res|Date$|Make$|Model$)/.test(k))
       .map(([k, v]) => [k.replace(/.*\.attributes\./g, ''), v])
       .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([k, v]) => [k, isNaN(+v) ? (isNaN(Date.parse(v)) ? v : new Date(v)) : +v])
+      .map(([k, v]) => [k, isNaN(+v) ? (isNaN(Date.parse(v)) ? v : new Date(v)) : +v]),
   );
   return flat;
 }
@@ -274,7 +274,7 @@ function HeifConvert(src, dst, quality = 100) {
   console.log('HeifConvert', src, dst);
   let child = spawn('heif-convert', ['-q', quality + '', src, dst], {
     block: false,
-    stdio: ['inherit', 'inherit', 'inherit']
+    stdio: ['inherit', 'inherit', 'inherit'],
   });
 
   console.log('HeifConvert', child);
@@ -286,7 +286,7 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     width,
     height,
     dst,
-    rotate
+    rotate,
   });
   let child = spawn('convert', [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false, stdio: ['inherit', 'inherit', 'inherit'] });
 
@@ -304,8 +304,8 @@ function main(...args) {
       depth: Infinity,
       customInspect: true,
       maxArrayLength: 200,
-      protoChain: true
-    }
+      protoChain: true,
+    },
   });
   let params = getOpt(
     {
@@ -321,9 +321,9 @@ function main(...args) {
       port: [true, null, 'p'],
       'ssl-cert': [true, null],
       'ssl-private-key': [true, null],
-      '@': 'address,port'
+      '@': 'address,port',
     },
-    args
+    args,
   );
   if(params['no-tls'] === true) params.tls = false;
 
@@ -352,7 +352,7 @@ function main(...args) {
       } catch(e) {}
       import(module).then(m => (globalThis[module] = m));
     },
-    'import module'
+    'import module',
   ];
 
   let { log } = console;
@@ -373,8 +373,8 @@ function main(...args) {
     { ...console.options },
     {
       depth: Infinity,
-      compact: 1
-    }
+      compact: 1,
+    },
   );
   repl.inspectOptions.hideKeys.push(Symbol.inspect);
 
@@ -384,7 +384,7 @@ function main(...args) {
     {
       puts(s) {
         repl.printStatus(() => std.puts(s));
-      }
+      },
     } ?? std.open('upload-server.log', 'w+');
 
   let connections = new Set();
@@ -440,7 +440,7 @@ function main(...args) {
         ['.bat', 'text/x-msdos-batch'],
         ['.mm', 'text/x-objective-c'],
         ['.m', 'text/x-objective-c'],
-        ['.sh', 'text/x-shellscript']
+        ['.sh', 'text/x-shellscript'],
       ],
       mounts: [
         ['/', '.', 'directory.html'],
@@ -490,7 +490,7 @@ function main(...args) {
           if(typeof body == 'string')
             query = {
               ...query,
-              ...(JSON.parse(body) ?? {})
+              ...(JSON.parse(body) ?? {}),
             };
 
           let { action = 'list', charset = 'utf-8', binary = false, file, contents } = query ?? {};
@@ -508,7 +508,7 @@ function main(...args) {
             file = path.normalize(file);
             console.log(
               `allowedDirs:`,
-              allowedDirs //.map(dir => path.normalize(dir))
+              allowedDirs, //.map(dir => path.normalize(dir))
             );
 
             let allowed = [...allowedDirs.values()].map(path.absolute).some(dir => isin(file, dir));
@@ -571,17 +571,17 @@ function main(...args) {
                 {
                   title: 'File list',
                   style: `body, * { font-family: MiscFixedSC613,Fixed,"Courier New"; }`,
-                  scripts: ['filelist.js']
+                  scripts: ['filelist.js'],
                 },
                 [
                   h(FilterForm, {}, []),
                   h(FileTable, {
                     files: files.map(file => ({
                       file,
-                      stat: fs.statSync(file)
-                    }))
-                  })
-                ]
+                      stat: fs.statSync(file),
+                    })),
+                  }),
+                ],
               );
               yield renderToString(component);
               break;
@@ -688,7 +688,7 @@ function main(...args) {
             entries = entries.reduce((acc, [file, st]) => {
               let name = file + (st && st.isDirectory() ? '/' : '');
               let obj = {
-                name
+                name,
               };
               acc.push([
                 name,
@@ -699,10 +699,10 @@ function main(...args) {
                         mtime: toUnixTime(st.mtime),
                         time: toUnixTime(st.ctime),
                         mode: `0${(st.mode & 0x09ff).toString(8)}`,
-                        size: st.size
+                        size: st.size,
                       }
-                    : {}
-                )
+                    : {},
+                ),
               ]);
               return acc;
             }, []);
@@ -713,7 +713,7 @@ function main(...args) {
                 },
                 number(a, b) {
                   return a[1][key] - b[1][key];
-                }
+                },
               }[typeof entries[0][1][key]];
               entries = entries.sort(cmp);
             }
@@ -727,7 +727,7 @@ function main(...args) {
           console.log('files2 reply length:', s.length);
           console.log('files2 reply:', s.slice(-100));
           yield s;
-        }
+        },
       ],
       ...url,
 
@@ -741,7 +741,7 @@ function main(...args) {
             if(!isArrayBuffer(data) /*&& isObject(data)*/) data = JSON.stringify(data);
 
             return this.send(data);
-          }
+          },
         });
 
         if(!ws.uuid) {
@@ -754,7 +754,9 @@ function main(...args) {
 
         if(callbacks.onConnect) return callbacks.onConnect(ws, req);
       },
-      onClose(ws, reason) {
+      onClose(ws, code, reason) {
+        console.log('\x1b[1;31monClose\x1b[0m', { code, reason });
+
         connections.delete(ws);
 
         return callbacks.onClose(ws, reason);
@@ -821,7 +823,7 @@ function main(...args) {
                   done: progress,
                   name,
                   filename: this.filename,
-                  total: +headers['content-length']
+                  total: +headers['content-length'],
                 });
             },
 
@@ -920,7 +922,7 @@ function main(...args) {
               console.log(`onFinalize() form parser`, this.uuid);
               resp.write(`done: ${progress} bytes read\r\n`);
               resp.finish();
-            }
+            },
           });
         }
 
@@ -988,10 +990,12 @@ function main(...args) {
         return resp;
       },
       onMessage(ws, data) {
-        console.log(`onMessage [${ws.uuid}]: ${data}`);
+        //if(typeof data != 'string') data = toString(data);
+
+        console.log(`onMessage [${ws.uuid}]:`, data);
         return callbacks.onMessage(ws, data);
       },
-      ...(url && url.host ? url : {})
+      ...(url && url.host ? url : {}),
     });
   });
 
@@ -1004,18 +1008,18 @@ function main(...args) {
     },
     uuid(data) {
       return by_uuid[data];
-    }
+    },
   });
 
   globalThis.serv = new RPCServer(
     FactoryEndpoint(
       {
         Directory,
-        Match
+        Match,
       },
-      params.verbose
+      params.verbose,
     ),
-    params.verbose
+    params.verbose,
   );
 
   Object.assign(globalThis, {
@@ -1046,7 +1050,7 @@ function main(...args) {
       DeserializeSymbols,
       DeserializeValue,
       RPCConnect,
-      RPCListen
+      RPCListen,
     },
     repl,
     quit,
@@ -1084,7 +1088,7 @@ function main(...args) {
     ReadExiftool,
     HeifConvert,
     MagickResize,
-    Directory
+    Directory,
   });
 
   delete globalThis.DEBUG;
@@ -1114,9 +1118,9 @@ function main(...args) {
             ws.send(JSON.stringify(result));
             break;
         }
-      }
+      },
     },
-    true
+    true,
   );
 
   function quit(why) {
