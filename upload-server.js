@@ -307,7 +307,7 @@ function main(...args) {
       protoChain: true,
     },
   });
-  let params = getOpt(
+  let params = globalThis.params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       listen: [false, null, 'l'],
@@ -319,8 +319,8 @@ function main(...args) {
       'no-tls': [false, (v, pv, o) => ((o.tls = false), true), 'T'],
       address: [true, null, 'a'],
       port: [true, null, 'p'],
-      'ssl-cert': [true, null],
-      'ssl-private-key': [true, null],
+      'ssl-cert': [true, null, 's'],
+      'ssl-private-key': [true, null, 'k'],
       '@': 'address,port',
     },
     args,
