@@ -494,9 +494,9 @@ function main(...args) {
       address: [true, null, 'a'],
       port: [true, null, 'p'],
       quiet: [false, null, 'q'],
-      'ssl-cert': [true, null],
-      'ssl-private-key': [true, null],
-      'ssl-ca': [true, null],
+      'ssl-cert': [true, null, 's'],
+      'ssl-private-key': [true, null, 'k'],
+      'ssl-ca': [true, null, 'A'],
       '@': 'address,port'
     },
     args
