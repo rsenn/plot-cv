@@ -307,7 +307,7 @@ function main(...args) {
       protoChain: true,
     },
   });
-  let params = globalThis.params = getOpt(
+  let params = (globalThis.params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       listen: [false, null, 'l'],
@@ -324,7 +324,7 @@ function main(...args) {
       '@': 'address,port',
     },
     args,
-  );
+  ));
   if(params['no-tls'] === true) params.tls = false;
 
   const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;

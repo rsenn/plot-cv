@@ -1,5 +1,5 @@
 import { classNames } from './lib/classNames.js';
-import { Element } from './lib/dom.js';
+import { Element } from './lib/dom/element.js';
 import { useDimensions, useElement, useEvent, usePanZoom } from './lib/hooks.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { isObject, roundTo, tryCatch } from './lib/misc.js';
@@ -46,17 +46,17 @@ export const Ruler = ({ handleChange, style = {}, class: className }) => {
       'button',
       {
         onMouseDown: pressingDown,
-        onMouseUp: stopPressing
+        onMouseUp: stopPressing,
       },
-      ['Down']
+      ['Down'],
     ),
     h(
       'button',
       {
         onMouseDown: pressingUp,
-        onMouseUp: stopPressing
+        onMouseUp: stopPressing,
       },
-      ['Up']
+      ['Up'],
     ),
     h('div', {}, [roundTo(value, 0.001, 3)]),
     h(
@@ -68,10 +68,10 @@ export const Ruler = ({ handleChange, style = {}, class: className }) => {
         onChanged,
         longLength: 600,
         shortLength: 60,
-        horizontal: false
+        horizontal: false,
       },
-      []
-    )
+      [],
+    ),
   ]);
 };
 
@@ -99,7 +99,7 @@ export const MouseEvents = h => ({
 
   /*  onBlur: h,*/
   onMouseOut: h,
-  onMouseUp: h
+  onMouseUp: h,
 });
 
 export const Overlay = ({ className = 'overlay', title, tooltip, active = true, enable = trkl(true), visible = trkl(true), toggle, state, onPush, text, children, ...props }) => {
@@ -119,8 +119,8 @@ export const Overlay = ({ className = 'overlay', title, tooltip, active = true, 
             setPushed(state);
           },
           () => pushed,
-          setPushed
-        )
+          setPushed,
+        ),
       )
     : {};
   if(typeof title == 'string' && title.length > 0) props.title = title;
@@ -130,9 +130,9 @@ export const Overlay = ({ className = 'overlay', title, tooltip, active = true, 
     {
       className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive', !visible && 'hidden'),
       ...props,
-      ...events
+      ...events,
     },
-    children
+    children,
   );
 };
 
@@ -174,7 +174,7 @@ export const Button = allProps => {
     style,
     enable,
     visible,
-    ...props
+    ...props,
   });
 };
 
@@ -190,7 +190,7 @@ export const Toggle = ({ className, images, fn, state, style = {}, ...props }) =
     state,
     image,
     style,
-    ...props
+    ...props,
   });
 };
 
@@ -203,10 +203,10 @@ export const ButtonGroup = ({ className, index = trkl(), children, onChange = ()
             ...props,
             className: classNames('button', className),
             state: active === i /*,
-            onPush*/
+            onPush*/,
           })
-        : component
-    )
+        : component,
+    ),
   ];
 
   function onPush(event) {
@@ -234,9 +234,9 @@ export const ButtonGroup = ({ className, index = trkl(), children, onChange = ()
     'div',
     {
       className: 'button-group',
-      onMouseDown: onPush
+      onMouseDown: onPush,
     },
-    buttons
+    buttons,
   );
 };
 
@@ -295,9 +295,9 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
       ref,
       className: classNames('floating', hidden && 'hidden', className),
       ...props,
-      style
+      style,
     },
-    children
+    children,
   );
 };
 
@@ -342,8 +342,8 @@ export const Progress = ({ className, percent, ...props }) => {
         padding: 0,
         textAlign: 'center',
         zIndex: '99',
-        overflow: 'hidden'
-      }
+        overflow: 'hidden',
+      },
     },
     h(Fragment, {}, [
       h('div', {
@@ -352,9 +352,9 @@ export const Progress = ({ className, percent, ...props }) => {
           width: p + '%',
           position: 'absolute',
           background: 'hsla(210, 100%,50%,0.5)',
-          zIndex: '98'
+          zIndex: '98',
         },
-        innerHTML: '&nbsp;'
+        innerHTML: '&nbsp;',
       }),
       h(
         'div',
@@ -365,12 +365,12 @@ export const Progress = ({ className, percent, ...props }) => {
             width: '100%',
 
             zIndex: '98',
-            textShadow: 'white 1px 1px 2px'
-          }
+            textShadow: 'white 1px 1px 2px',
+          },
         },
-        [p + '%']
-      )
-    ])
+        [p + '%'],
+      ),
+    ]),
   );
 };
 
@@ -418,44 +418,46 @@ export const BoardIcon = props => html`
   </svg>
 `;
 
-export const LibraryIcon = props => html` <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-  <g>
+export const LibraryIcon = props =>
+  html` <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <g>
+      <path
+        d="M3.397 6.488v26.938c0 3.085 2.13 5.675 5.013 6.407V.105a6.561 6.561 0 00-5.012 6.38M30.122-.096H11.645v40.105h18.477a6.6 6.6 0 006.59-6.581V6.488a6.582 6.582 0 00-6.59-6.583"
+        fill="#444443"
+      />
+      <path d="M30.313 19.791h-12.5v-12.5h12.5v12.5z" fill="#dedd00" />
+    </g>
+  </svg>`;
+
+export const GCodeIcon = props =>
+  html`<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
     <path
-      d="M3.397 6.488v26.938c0 3.085 2.13 5.675 5.013 6.407V.105a6.561 6.561 0 00-5.012 6.38M30.122-.096H11.645v40.105h18.477a6.6 6.6 0 006.59-6.581V6.488a6.582 6.582 0 00-6.59-6.583"
+      d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817a6.422 6.422 0 011.76 4.433z"
+      fill="#fff"
+    />
+    <path
+      d="M33.079 6.25c-22.053 22.5-11.026 11.25 0 0zm2.38 23.837a2.728 2.728 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.707.733H12.765c-3.319 0-5.978-2.801-5.978-6.245V6.25a6.41 6.41 0 011.754-4.434C9.63.701 11.107 0 12.765 0h16.707A5.86 5.86 0 0133.7 1.816a6.421 6.421 0 011.759 4.434z"
+      fill="#fff"
+    />
+    <path
+      d="M33.079 6.25a3.82 3.82 0 00-1.059-2.656 3.481 3.481 0 00-2.548-1.091H12.765c-.968 0-1.868.374-2.538 1.09A3.785 3.785 0 009.175 6.25v27.505c0 2.06 1.612 3.742 3.591 3.742H25.91V29.82h7.17V6.25zm2.38 23.837a2.728 2.728 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.707.733H12.765c-3.319 0-5.978-2.801-5.978-6.245V6.25a6.41 6.41 0 011.754-4.434C9.63.701 11.107 0 12.765 0h16.707A5.86 5.86 0 0133.7 1.816a6.421 6.421 0 011.759 4.434v23.837z"
       fill="#444443"
     />
-    <path d="M30.313 19.791h-12.5v-12.5h12.5v12.5z" fill="#dedd00" />
-  </g>
-</svg>`;
-
-export const GCodeIcon = props => html`<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-  <path
-    d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817a6.422 6.422 0 011.76 4.433z"
-    fill="#fff"
-  />
-  <path
-    d="M33.079 6.25c-22.053 22.5-11.026 11.25 0 0zm2.38 23.837a2.728 2.728 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.707.733H12.765c-3.319 0-5.978-2.801-5.978-6.245V6.25a6.41 6.41 0 011.754-4.434C9.63.701 11.107 0 12.765 0h16.707A5.86 5.86 0 0133.7 1.816a6.421 6.421 0 011.759 4.434z"
-    fill="#fff"
-  />
-  <path
-    d="M33.079 6.25a3.82 3.82 0 00-1.059-2.656 3.481 3.481 0 00-2.548-1.091H12.765c-.968 0-1.868.374-2.538 1.09A3.785 3.785 0 009.175 6.25v27.505c0 2.06 1.612 3.742 3.591 3.742H25.91V29.82h7.17V6.25zm2.38 23.837a2.728 2.728 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.707.733H12.765c-3.319 0-5.978-2.801-5.978-6.245V6.25a6.41 6.41 0 011.754-4.434C9.63.701 11.107 0 12.765 0h16.707A5.86 5.86 0 0133.7 1.816a6.421 6.421 0 011.759 4.434v23.837z"
-    fill="#444443"
-  />
-  <path
-    d="M6.757 22.75c-.583-.583-.624-1.04-.624-6.87s.041-6.288.624-6.87c.606-.606 1.041-.625 14.366-.625s13.76.018 14.366.624c.583.583.624 1.041.624 6.87 0 5.83-.041 6.288-.624 6.871-.606.606-1.041.625-14.366.625s-13.76-.019-14.366-.625z"
-    fill="#fff"
-  />
-  <path
-    d="M6.757 22.75c-.583-.583-.624-1.04-.624-6.87s.041-6.288.624-6.87c.606-.606 1.041-.625 14.366-.625s13.76.018 14.366.624c.583.583.624 1.041.624 6.87 0 5.83-.041 6.288-.624 6.871-.606.606-1.041.625-14.366.625s-13.76-.019-14.366-.625zm5.622-5.777c0-1.041-.122-1.406-.469-1.406-.312 0-.468.313-.468.937 0 1.022-.463 1.197-1.385.522-.724-.529-.736-2.067-.021-2.59.314-.23.928-.323 1.444-.22.764.153.899.081.899-.483 0-.579-.181-.664-1.406-.664-.989 0-1.59.185-2.03.625-.44.44-.624 1.04-.624 2.03 0 1.891.763 2.654 2.654 2.654h1.406zm4.996.741c0-.564-.134-.636-.898-.483-1.172.234-1.99-.385-1.99-1.507 0-1.123.818-1.742 1.99-1.507.764.152.898.08.898-.484 0-.571-.182-.664-1.307-.664-1.827 0-2.752.91-2.752 2.709 0 1.833.783 2.6 2.654 2.6 1.225 0 1.405-.085 1.405-.664zm5.211-.015c.974-.915.997-2.893.044-3.907-.915-.974-2.893-.996-3.907-.044-.974.915-.997 2.893-.044 3.907.915.975 2.893.997 3.907.044zm-2.603-.59c-1.185-.439-1.104-2.54.11-2.857.844-.22 1.856.233 2.033.91.372 1.423-.765 2.456-2.143 1.946zm7.912.59c.975-.915.997-2.893.044-3.907-.528-.562-1.014-.723-2.186-.723h-1.507V18.378h1.463c1.073 0 1.657-.181 2.186-.679zm-2.712-1.975v-1.786l.859.212c1.136.281 1.405.582 1.405 1.574 0 .991-.269 1.292-1.405 1.573l-.86.212zm7.807 2.186c0-.339-.347-.469-1.249-.469-1.04 0-1.25-.104-1.25-.624 0-.506.21-.625 1.094-.625.763 0 1.093-.141 1.093-.468 0-.328-.33-.469-1.093-.469-.885 0-1.093-.119-1.093-.624 0-.506.208-.625 1.093-.625.763 0 1.093-.141 1.093-.468 0-.354-.382-.469-1.561-.469h-1.562V18.378h1.718c1.318 0 1.717-.109 1.717-.468z"
-    fill="#59f"
-  />
-</svg> `;
+    <path
+      d="M6.757 22.75c-.583-.583-.624-1.04-.624-6.87s.041-6.288.624-6.87c.606-.606 1.041-.625 14.366-.625s13.76.018 14.366.624c.583.583.624 1.041.624 6.87 0 5.83-.041 6.288-.624 6.871-.606.606-1.041.625-14.366.625s-13.76-.019-14.366-.625z"
+      fill="#fff"
+    />
+    <path
+      d="M6.757 22.75c-.583-.583-.624-1.04-.624-6.87s.041-6.288.624-6.87c.606-.606 1.041-.625 14.366-.625s13.76.018 14.366.624c.583.583.624 1.041.624 6.87 0 5.83-.041 6.288-.624 6.871-.606.606-1.041.625-14.366.625s-13.76-.019-14.366-.625zm5.622-5.777c0-1.041-.122-1.406-.469-1.406-.312 0-.468.313-.468.937 0 1.022-.463 1.197-1.385.522-.724-.529-.736-2.067-.021-2.59.314-.23.928-.323 1.444-.22.764.153.899.081.899-.483 0-.579-.181-.664-1.406-.664-.989 0-1.59.185-2.03.625-.44.44-.624 1.04-.624 2.03 0 1.891.763 2.654 2.654 2.654h1.406zm4.996.741c0-.564-.134-.636-.898-.483-1.172.234-1.99-.385-1.99-1.507 0-1.123.818-1.742 1.99-1.507.764.152.898.08.898-.484 0-.571-.182-.664-1.307-.664-1.827 0-2.752.91-2.752 2.709 0 1.833.783 2.6 2.654 2.6 1.225 0 1.405-.085 1.405-.664zm5.211-.015c.974-.915.997-2.893.044-3.907-.915-.974-2.893-.996-3.907-.044-.974.915-.997 2.893-.044 3.907.915.975 2.893.997 3.907.044zm-2.603-.59c-1.185-.439-1.104-2.54.11-2.857.844-.22 1.856.233 2.033.91.372 1.423-.765 2.456-2.143 1.946zm7.912.59c.975-.915.997-2.893.044-3.907-.528-.562-1.014-.723-2.186-.723h-1.507V18.378h1.463c1.073 0 1.657-.181 2.186-.679zm-2.712-1.975v-1.786l.859.212c1.136.281 1.405.582 1.405 1.574 0 .991-.269 1.292-1.405 1.573l-.86.212zm7.807 2.186c0-.339-.347-.469-1.249-.469-1.04 0-1.25-.104-1.25-.624 0-.506.21-.625 1.094-.625.763 0 1.093-.141 1.093-.468 0-.328-.33-.469-1.093-.469-.885 0-1.093-.119-1.093-.624 0-.506.208-.625 1.093-.625.763 0 1.093-.141 1.093-.468 0-.354-.382-.469-1.561-.469h-1.562V18.378h1.718c1.318 0 1.717-.109 1.717-.468z"
+      fill="#59f"
+    />
+  </svg> `;
 
 export const FileIcons = {
   sch: SchematicIcon,
   brd: BoardIcon,
   lbr: LibraryIcon,
-  ngc: GCodeIcon
+  ngc: GCodeIcon,
 };
 
 export const Conditional = ({ initialState, component = Fragment, className, children, signal, ...props }) => {
@@ -488,8 +490,8 @@ export const EditBox = ({ value = '', type = 'div', className, hidden = false, c
       type: 'text',
       value,
       className: classNames(className, hidden && 'hidden'),
-      ...props
-    })
+      ...props,
+    }),
   );
 };
 
@@ -507,10 +509,10 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   let icon = /brd$/i.test(id + className)
     ? h(BoardIcon, { ...iconProps, className: 'icon' })
     : /sch$/i.test(id + className)
-    ? h(SchematicIcon, { ...iconProps, className: 'icon' })
-    : /lbr$/i.test(id + className)
-    ? h(LibraryIcon, { ...iconProps, className: 'icon' })
-    : undefined;
+      ? h(SchematicIcon, { ...iconProps, className: 'icon' })
+      : /lbr$/i.test(id + className)
+        ? h(LibraryIcon, { ...iconProps, className: 'icon' })
+        : undefined;
   let fileExt = path.extname(name).replace(/^\./, '');
   if(!icon && FileIcons[fileExt]) icon = h(FileIcons[fileExt], { ...iconProps, className: 'icon' });
   if(id) {
@@ -528,8 +530,8 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
       h(
         'div',
         { className: 'description' },
-        d.map(line => h('pre', { className: 'description' }, [line]))
-      )
+        d.map(line => h('pre', { className: 'description' }, [line])),
+      ),
     ]);
   }
   icon = h('div', { ...iconProps, className: 'icon' }, icon);
@@ -538,8 +540,8 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
     { className, id, 'data-filename': name, label, onPush, icon, ...props },
     h(Progress, {
       className: !isNaN(loaded) ? 'visible' : 'hidden',
-      percent: loaded
-    })
+      percent: loaded,
+    }),
   );
 };
 
@@ -605,11 +607,11 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
           i,
           number,
           data,
-          ...item
+          ...item,
         }),
         name,
         description,
-        ...item
+        ...item,
       });
     });
 
@@ -676,7 +678,7 @@ export const FileList = ({
       current: currentInput,
       onChange: changeInput,
       onInput: changeInput,
-      value: filter()
+      value: filter(),
     }),
     h(Chooser, {
       tag: listTag,
@@ -688,8 +690,8 @@ export const FileList = ({
       items,
       tooltip: ToolTipFn,
       onChange: (...args) => onChange(...args),
-      ...props
-    })
+      ...props,
+    }),
   ]);
 };
 
@@ -703,17 +705,17 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
           className,
           width,
           aspect,
-          style: { overflow: 'visible' }
+          style: { overflow: 'visible' },
         },
-        children
+        children,
       )
     : h(
         'div',
         {
           className,
-          style: { width }
+          style: { width },
         },
-        children
+        children,
       );
 
 export const AspectRatioBox = (
@@ -725,7 +727,7 @@ export const AspectRatioBox = (
     outsideProps = {},
     style,
     ...props
-  } /* console.debug('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/
+  } /* console.debug('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/,
 ) =>
   h(Fragment, {}, [
     h(
@@ -735,19 +737,19 @@ export const AspectRatioBox = (
         style: {
           height: 0,
           paddingBottom: (1.0 / aspect) * 100 + '%',
-          ...style
-        }
+          ...style,
+        },
       },
       [
         h(
           'div',
           {
-            className: classNames('aspect-ratio-box-inside', insideClassName)
+            className: classNames('aspect-ratio-box-inside', insideClassName),
           },
-          children
-        )
-      ]
-    )
+          children,
+        ),
+      ],
+    ),
   ]);
 
 export const SizedAspectRatioBox = ({
@@ -772,7 +774,7 @@ export const SizedAspectRatioBox = ({
       className: classNames('aspect-ratio-box-size', className && className + '-size', sizeClassName),
       style: { position: 'relative', width, height, ...style },
       onClick,
-      id
+      id,
     },
     [
       h(
@@ -782,11 +784,11 @@ export const SizedAspectRatioBox = ({
           outsideProps,
           insideClassName: insideClassName || className,
           onClick,
-          ...props
+          ...props,
         },
-        children
-      )
-    ]
+        children,
+      ),
+    ],
   );
 
 export const TransformedElement = ({ type = 'div', id, aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
@@ -807,12 +809,12 @@ export const TransformedElement = ({ type = 'div', id, aspect, listener, style =
       style: {
         position: 'relative',
         ...style,
-        transform: transform.toString('px')
+        transform: transform.toString('px'),
       },
       aspect,
-      ...props
+      ...props,
     },
-    children
+    children,
   );
 };
 
@@ -837,8 +839,8 @@ export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, 
         justifyContent: 'stretch',
         alignItems: 'center',
         fontSize: '0.8em',
-        ...style
-      }
+        ...style,
+      },
     },
     [
       //h('label', { for: name }, label),
@@ -854,11 +856,11 @@ export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, 
           display: 'inline',
           width: 40,
           flex: '1 1 auto',
-          ...dim
+          ...dim,
         },
         ...props,
         value,
-        onInput
+        onInput,
       }),
       h('input', {
         name,
@@ -874,13 +876,13 @@ export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, 
           margin: 0,
           display: 'inline',
           textAlign: 'center',
-          flex: '0 1 auto'
+          flex: '0 1 auto',
         },
         ...props,
         value,
-        onInput
-      })
-    ]
+        onInput,
+      }),
+    ],
   );
 };
 
@@ -942,9 +944,9 @@ export const Canvas = ({ onInit, ...props }) => {
       onMouseDown: startDrawing,
       onMouseUp: stopDrawing,
       onMouseOut: stopDrawing,
-      onMouseMove: handleMouseMove
+      onMouseMove: handleMouseMove,
     },
-    []
+    [],
   );
 };
 
@@ -1042,7 +1044,7 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
         //Change r,g,b values from [0,1] to [0,255]
         return [255 * r, 255 * g, 255 * b];
       }
-    }
+    },
   });
 };
 
@@ -1061,8 +1063,8 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
         left: `${pos.x - radius}px`,
         top: `${pos.y - radius}px`,
         ...(visible ? {} : { display: 'none' }),
-        zIndex: 100000
-      }
+        zIndex: 100000,
+      },
     },
     h(
       'svg',
@@ -1071,16 +1073,16 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
         style: {
           position: 'relative',
           width: `${radius * 2}px`,
-          height: `${radius * 2}px`
-        }
+          height: `${radius * 2}px`,
+        },
       },
       h('path', {
         d: 'M11.004 22c-.007-9.184-.013-12.816 0-22M0 11.005c9.183-.007 12.816-.013 22 0M15.27 11A4.271 4.271 0 0111 15.27 4.271 4.271 0 016.729 11 4.271 4.271 0 0111 6.729a4.271 4.271 0 014.271 4.27zm3.645.015a7.932 7.931 0 01-7.932 7.932 7.932 7.931 0 01-7.931-7.932 7.932 7.931 0 017.931-7.931 7.932 7.931 0 017.932 7.931z',
         fill: 'none',
         stroke: '#000',
-        strokeWidth: 1
-      })
-    )
+        strokeWidth: 1,
+      }),
+    ),
   );
 };
 
@@ -1090,14 +1092,14 @@ export const MoveCursor = props =>
     {
       height: '22',
       width: '22',
-      xmlns: 'http://www.w3.org/2000/svg'
+      xmlns: 'http://www.w3.org/2000/svg',
     },
     [
       h('defs', {}),
       h('path', {
-        d: 'M19.173 11.722l-2.393 2.393 1.044 1.044L22 10.983l-4.176-4.177L16.78 7.85l3.132 3.133zM5.221 14.115l-3.132-3.132L5.22 7.851 4.177 6.806 0 10.983l4.177 4.177zm6.535-11.288l2.398 2.394 1.044-1.044L11.018 0 6.84 4.177 7.885 5.22l3.132-3.133zm-1.473 16.345L7.885 16.78l-1.044 1.044L11.017 22l4.181-4.177-1.044-1.044-3.136 3.132zm-7.455-7.45h16.345l.739-.74-.74-.739H2.829l-.74.74zm8.928-8.895l-.739-.739-.734.74v7.415h1.473zm-1.473 16.345l.734.74.74-.74v-7.455h-1.474z'
-      })
-    ]
+        d: 'M19.173 11.722l-2.393 2.393 1.044 1.044L22 10.983l-4.176-4.177L16.78 7.85l3.132 3.133zM5.221 14.115l-3.132-3.132L5.22 7.851 4.177 6.806 0 10.983l4.177 4.177zm6.535-11.288l2.398 2.394 1.044-1.044L11.018 0 6.84 4.177 7.885 5.22l3.132-3.133zm-1.473 16.345L7.885 16.78l-1.044 1.044L11.017 22l4.181-4.177-1.044-1.044-3.136 3.132zm-7.455-7.45h16.345l.739-.74-.74-.739H2.829l-.74.74zm8.928-8.895l-.739-.739-.734.74v7.415h1.473zm-1.473 16.345l.734.74.74-.74v-7.455h-1.474z',
+      }),
+    ],
   );
 
 export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), ...props }) => {
@@ -1130,7 +1132,7 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
         return false;
       }
       return true;
-    })
+    }),
   );
 
   useEvent('mousedown', event);
@@ -1168,11 +1170,11 @@ export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...p
         top: 0,
         left: 0,
         ...style,
-        ...dimensions
+        ...dimensions,
       },
-      ...props
+      ...props,
     },
-    children
+    children,
   );
 };
 
@@ -1183,7 +1185,7 @@ export const Zoomable = ({ type = 'div', style, children, ...props }) => {
     initialZoom: 4,
     //minX: 0, minY: 0, //maxX: window.innerWidth, maxY: window.innerHeight,
     onPan,
-    onZoom
+    onZoom,
   });
   function onPan(arg) {
     //console.log('onPan', arg);
@@ -1205,9 +1207,9 @@ export const Zoomable = ({ type = 'div', style, children, ...props }) => {
     type,
     {
       ...props,
-      ...panZoomHandlers
+      ...panZoomHandlers,
     },
-    h(type, { ref, style: { ...style, transform } }, children)
+    h(type, { ref, style: { ...style, transform } }, children),
   );
 };
 
@@ -1257,5 +1259,5 @@ export default {
   Slider,
   CrossHair,
   MoveCursor,
-  Fence
+  Fence,
 };

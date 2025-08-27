@@ -408,18 +408,13 @@ export class Type extends Node {
 
       if(!isPointer && !isReference && !node) {
         const subscripts = GetSubscripts(name);
-        name = TrimSubscripts(name, subscripts);
+        name ??= TrimSubscripts(name, subscripts);
         //console.log('Type', { name, subscripts });
 
         if(ast) {
           node = GetType(name, ast) ?? GetClass(name, ast);
 
-          if(!node) {
-            //throw new Error(`No such type '${name}'`);
-            //node = {};
-          } else {
-            console.log(`Found type ${name}`, node);
-          }
+          //if(node) console.log(`Found type ${name}`, node);
         }
       }
     } else {
@@ -441,12 +436,12 @@ export class Type extends Node {
 
     super(node);
 
-    if(node?.tagUsed && name) name = (node.tagUsed ? node.tagUsed + ' ' : '') + name;
     if(node?.kind && node.kind.startsWith('Enum')) name = 'enum ' + name;
 
     let type = /*'type' in node ?*/ node?.type ?? node;
 
-    name = /*node?.kind == 'TypedefDecl' ? node.name :*/ (node?.ast ?? node)?.kind ? NamespaceOf(node?.ast ?? node, ast) + '' : node?.qualType;
+    name = /^Typedef|Record/.test(node?.kind) ? node.name : (node?.ast ?? node)?.kind ? NamespaceOf(node?.ast ?? node, ast) + '' : node?.qualType;
+    if(node?.tagUsed && name) name = (node.tagUsed ? node.tagUsed + ' ' : '') + name;
     qualType = type?.qualType ?? node?.qualType;
 
     if(Type.declarations.has(name)) return Type.declarations.get(name);
@@ -525,6 +520,14 @@ export class Type extends Node {
 
   isInteger() {
     return !this.isPointer() && !this.isCompound() && !this.isFloatingPoint();
+  }
+
+  isStruct() {
+    return this.tag == 'struct';
+  }
+
+  isClass() {
+    return this.tag == 'class';
   }
 
   arrayOf() {
@@ -910,9 +913,7 @@ export class RecordDecl extends Type {
               /*          if(type instanceof EnumDecl) {
             for(let [name,[,value]] of type.members) {
           acc.push([name, type]);
-
             }
-
           } else */
               acc.push([name, type]);
 

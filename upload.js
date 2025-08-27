@@ -1,5 +1,4 @@
 import { createElement, isElement } from './dom-helpers.js';
-import * as dom from './lib/dom.js';
 import { createRef, h, render, default as React, Fragment } from './lib/dom/preactComponent.js';
 import * as geom from './lib/geom.js';
 import * as transformation from './lib/geom/transformation.js';
@@ -30,7 +29,7 @@ const LineReader = () => {
     },
     flush(controller) {
       if(buffer) controller.enqueue(buffer);
-    }
+    },
   });
 };
 
@@ -52,7 +51,7 @@ const ListJSON = async (dir = 'uploads') => {
   return resp.body.pipeThrough(new TextDecoderStream()).pipeThrough(LineReader());
 };
 
-Object.assign(globalThis, { isElement, createElement, React, dom, geom, transformation });
+Object.assign(globalThis, { isElement, createElement, React, geom, transformation });
 Object.assign(globalThis, {
   /*  ParseCoordinates,
   TransformCoordinates,
@@ -72,7 +71,7 @@ Object.assign(globalThis, {
   CreateWS,
   ListJSON,
   LineReader,
-  ReadIterator
+  ReadIterator,
 });
 
 export function prioritySort(arr, predicates = []) {
@@ -98,10 +97,10 @@ const Table = ({ children, rows, ...props }) => {
         ? h(
             'tr',
             {},
-            row.map(cell => (isComponent(cell) ? cell : h('td', {}, [cell])))
+            row.map(cell => (isComponent(cell) ? cell : h('td', {}, [cell]))),
           )
-        : row
-    )
+        : row,
+    ),
   );
 };
 
@@ -117,7 +116,7 @@ const PropertyList = ({ data, filter, ...props }) => {
     ([k, v]) => /FileSize/.test(k),
     ([k, v]) => /Model/.test(k),
     ([k, v]) => /Megapixels/.test(k),
-    ([k, v]) => /.*/.test(k)
+    ([k, v]) => /.*/.test(k),
   ]);
   return h('div', { class: 'property-list' }, [h(Table, { rows })]);
 };
@@ -140,12 +139,12 @@ const FileItem = ({ file, ref, ...props }) => {
       filter: ([k, v]) =>
         /*        /^(Make|Model|GPS|Date|Created|FileSize|Flash|Focal|Distance|ISO|Exposure|Lens|Shutter|White|FNumber|Aperture|Megapixels)/.test(
          */ /^(Orientation|ImageSize|Model|GPS(Position|DestBearing|GPSSpeed|GPSSpeedRef|ImgDir)|DateTimeOriginal|FileSize|Flash$|Distance|ISO|ExposureTime|Lens(Info)|FocalLength$|ShutterSpeed|ApertureValue|Megapixels)/.test(
-          k
-        )
+          k,
+        ),
     }),
     /*,
      */ h('img', upload?.thumbnail ? { src: `file?action=load&file=${upload.thumbnail}` } : {}),
-    upload?.exif?.GPSPosition ? h(Table, { class: 'gps' }, [...parseGPSLocation(upload.exif.GPSPosition).map((coord, i) => [i ? 'longitude' : 'latitude', coord])]) : null
+    upload?.exif?.GPSPosition ? h(Table, { class: 'gps' }, [...parseGPSLocation(upload.exif.GPSPosition).map((coord, i) => [i ? 'longitude' : 'latitude', coord])]) : null,
   ]);
 };
 
@@ -154,7 +153,7 @@ const FileList = ({ files, ref, ...props }) => {
   return h(
     'ul',
     { ref },
-    list.map(file => h(FileItem, { file }))
+    list.map(file => h(FileItem, { file })),
   );
 };
 
@@ -235,7 +234,7 @@ function FileAction(cmd, file, contents) {
   return fetch('file', {
     method: 'POST',
     body: JSON.stringify({ action: cmd, file, contents }),
-    headers: { ['Content-Type']: 'application/json' }
+    headers: { ['Content-Type']: 'application/json' },
   }).then(r => r.text());
 }
 
@@ -392,7 +391,7 @@ function XHRUpload(formData) {
 
         console.log('pc', pc);
       },
-      false
+      false,
     );
 
     xhr.open('POST', form.action, true);

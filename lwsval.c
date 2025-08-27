@@ -19,7 +19,8 @@
 #include <stdint.h>
 #include <limits.h>
 #include <stdlib.h>
-#include <libwebsockets.h>
+#include "quickjs/qjs-lws/build/x86_64-linux-debug/libwebsockets/lws_config.h"
+#include "quickjs/qjs-lws/libwebsockets/include/libwebsockets.h"
 #include <errno.h>
 #include <sys/ptrace.h>
 #include <sys/inotify.h>

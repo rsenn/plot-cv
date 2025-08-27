@@ -59,7 +59,7 @@ Object.assign(globalThis, {
   RPCClient,
   RPCSocket,
   RPCConnect,
-  RPCListen
+  RPCListen,
 });
 
 const signalName = n =>
@@ -96,7 +96,7 @@ const signalName = n =>
     'WINCH',
     'IO',
     'PWR',
-    'SYS'
+    'SYS',
   ][n];
 
 function checkChildExited(child) {
@@ -255,7 +255,7 @@ export async function ConnectDebugger(address, skipToMain = true, callback) {
       if(process.env.DEBUG) console.log('\x1b[38;5;33mSEND\x1b[0m[' + sock.fd + '] (' + ret + ') ' + msg);
 
       return ret;
-    }
+    },
   });
 
   if(process.env.DEBUG) console.log('ConnectDebugger', console.config({ depth: 1, compact: 0 }), dbg);
@@ -307,7 +307,7 @@ function LaunchDebugger(dbg, skipToMain = true) {
 
         return v;
       }
-    }
+    },
   });
 
   return dbg;
@@ -417,12 +417,12 @@ decorate(
           [Symbol.for('print')]: true,
           toString() {
             return Table(this, ['name', 'value', 'type', 'variablesReference']);
-          }
+          },
         });
-      }
-    }[prop] || member),
+      },
+    })[prop] || member,
 
-  DebuggerDispatcher.prototype
+  DebuggerDispatcher.prototype,
 );
 
 const mkaddr = (
@@ -446,7 +446,7 @@ async function NewDebugger(args, skipToMain = false, address) {
   define(dbg, {
     child,
     args,
-    kill: () => (children.delete(child.pid), kill(child.pid, SIGTERM))
+    kill: () => (children.delete(child.pid), kill(child.pid, SIGTERM)),
   });
 
   await ConnectDebugger.call(dbg, address, skipToMain);
@@ -468,7 +468,7 @@ function URLWorker(script) {
   const w = new Worker(url);
 
   return define(new Repeater((push, stop) => (w.onmessage = push)), {
-    postMessage: msg => w.postMessage(msg)
+    postMessage: msg => w.postMessage(msg),
   });
 }
 
@@ -478,7 +478,7 @@ function main(...args) {
   const config = ReadJSON(`.${base}-config`) ?? {};
 
   globalThis.console = new Console(stderr, {
-    inspectOptions: { depth: Infinity, compact: 1, maxArrayLength: Infinity, customInspect: true }
+    inspectOptions: { depth: Infinity, compact: 1, maxArrayLength: Infinity, customInspect: true },
   });
 
   let params = getOpt(
@@ -497,9 +497,9 @@ function main(...args) {
       'ssl-cert': [true, null, 's'],
       'ssl-private-key': [true, null, 'k'],
       'ssl-ca': [true, null, 'A'],
-      '@': 'address,port'
+      '@': 'address,port',
     },
-    args
+    args,
   );
   if(params['no-tls'] === true) params.tls = false;
   const {
@@ -510,7 +510,7 @@ function main(...args) {
     'ssl-ca': sslCA = '/etc/ssl/certs/ca-certificates.crt',
     quiet = false,
     debug = false,
-    tls = true
+    tls = true,
   } = params;
 
   const listen = params.connect && !params.listen ? false : true;
@@ -540,7 +540,7 @@ function main(...args) {
         : (level, str) => {
             if(/BIND_PROTOCOL|DROP_PROTOCOL|CHECK_ACCESS_RIGHTS|ADD_HEADERS/.test(str)) return;
             console.log(logLevels[level].padEnd(10), str.trim());
-          }
+          },
     );
 
     let options;
@@ -578,7 +578,7 @@ function main(...args) {
           ['.bat', 'text/x-msdos-batch'],
           ['.mm', 'text/x-objective-c'],
           ['.m', 'text/x-objective-c'],
-          ['.sh', 'text/x-shellscript']
+          ['.sh', 'text/x-shellscript'],
         ],
         mounts: [
           ['/proxy', 'ipv4:127.0.0.1:22', null, 'proxy-ws-raw-ws'],
@@ -597,7 +597,7 @@ function main(...args) {
               .sort()
               .map(f => f + '\n')
               .join('');
-          }
+          },
         ],
         ...url,
         ...callbacks,
@@ -612,9 +612,9 @@ function main(...args) {
                 console.log(`ws.sendMessage(`, console.config({ compact: 1 }), msg, `) = ${ret}`);
                 return ret;
               },
-              enumerable: false
+              enumerable: false,
             },
-            dbg: { value: null, writable: true, enumerable: false }
+            dbg: { value: null, writable: true, enumerable: false },
           });
 
           sockets.add(ws);
@@ -698,7 +698,7 @@ function main(...args) {
                     ws.sendMessage({
                       type: 'output',
                       channel: name,
-                      data
+                      data,
                     });
                   });
                 forward(stdout, 'stdout');
@@ -716,7 +716,7 @@ function main(...args) {
                     ws.sendMessage({
                       type: 'error',
                       command: 'start',
-                      message: `child process ${pid} ${exited}`
+                      message: `child process ${pid} ${exited}`,
                     });
                     clearInterval(tid);
                   }
@@ -728,7 +728,7 @@ function main(...args) {
                   ws.sendMessage({
                     type: 'error',
                     command: 'start',
-                    message: `unable to start debugger: ${exited}`
+                    message: `unable to start debugger: ${exited}`,
                   });
                   break;
                 }
@@ -740,8 +740,8 @@ function main(...args) {
                     command: 'start',
                     args,
                     cwd,
-                    address
-                  }
+                    address,
+                  },
                 });
 
                 break;
@@ -784,7 +784,7 @@ function main(...args) {
                   console.log('token', {
                     lexeme: token.lexeme,
                     id: token.id,
-                    loc: token.loc + ''
+                    loc: token.loc + '',
                   });
                   const { type, id, lexeme, loc } = token;
                   const { line, column, file } = loc;
@@ -833,8 +833,8 @@ function main(...args) {
             }
           }
         },
-        ...(url && url.host ? url : {})
-      })
+        ...(url && url.host ? url : {}),
+      }),
     );
   }
 
@@ -900,12 +900,12 @@ function main(...args) {
         source ??= tryCatch(
           () => TrivialSyntaxHighlighter(ReadFile(file)),
           s => s,
-          () => ReadFile(file)
+          () => ReadFile(file),
         );
         return define(
           {
             source,
-            indexlist: [...source.matchAll(/^[^\n]*/gm)].map(m => m.index)
+            indexlist: [...source.matchAll(/^[^\n]*/gm)].map(m => m.index),
           },
           lazyProperties(
             {
@@ -927,10 +927,10 @@ function main(...args) {
                 return this.functions.then(fns =>
                   define(
                     fns.filter(({ name }) => re.test(name)),
-                    { [Symbol.toStringTag]: 'FunctionList', file }
-                  )
+                    { [Symbol.toStringTag]: 'FunctionList', file },
+                  ),
                 );
-              }
+              },
             },
             {
               // estree: () => ,
@@ -941,17 +941,17 @@ function main(...args) {
                       name,
                       params,
                       ...loc,
-                      expression
+                      expression,
                     },
-                    { path }
-                  )
+                    { path },
+                  ),
                 ));
-              }
+              },
             },
-            { async: false }
-          )
+            { async: false },
+          ),
         );
-      })
+      }),
     ),
     async repeat(cond, fn, ...args) {
       let r;
@@ -966,7 +966,7 @@ function main(...args) {
       }
       return r;
     },
-    repl: StartREPL()
+    repl: StartREPL(),
   });
 
   function quit(why) {
