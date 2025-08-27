@@ -53,7 +53,7 @@ const ListJSON = async (dir = 'uploads') => {
 
 Object.assign(globalThis, { isElement, createElement, React, geom, transformation });
 Object.assign(globalThis, {
-  /*  ParseCoordinates,
+  /*ParseCoordinates,
   TransformCoordinates,
   Coordinate,
   Pin,
