@@ -5,11 +5,11 @@ import { className, define, entries, getOpt, glob, GLOB_BRACE, intersect, differ
 import { Table } from './cli-helpers.js';
 import { DirIterator, ReadDirRecursive, RecursiveDirIterator } from './dir-helpers.js';
 import { GetElements, GetInstances, GetParts, GetPositions, num2color, scientific } from './eagle-commands.js';
-import { CopyToClipboard, FdReader, Filter, FilterImages, IfDebug, LoadHistory, LogCall, LogIfDebug, ReadBJSON, ReadFd, ReadFile, ReadJSON, ReadXML, SortFiles, StatFiles, WriteBJSON, WriteFile, WriteJSON, WriteXML } from './io-helpers.js';
-import { BinaryTree, BoxHash, BucketMap, BucketStore, ComponentMap, CompositeMap, DenseSpatialHash2D, Deque, Enum, HashList, HashMap, HashMultimap, MultiBiMap, MultiKeyMap, Multimap, Shash, SortedMap, SpatialH, SpatialHash, SpatialHash2D, SpatialHashMap } from './lib/container.js';
+import { CopyToClipboard, FdReader, Filter, FilterImages, IfDebug, LoadHistory, LogCall, LogIfDebug, ReadBJSON, ReadFd, ReadFile, ReadJSON, ReadXML, SortFiles, StatFiles, WriteBJSON, WriteFile, WriteJSON, WriteXML, } from './io-helpers.js';
+import { BinaryTree, BoxHash, BucketMap, BucketStore, ComponentMap, CompositeMap, DenseSpatialHash2D, Deque, Enum, HashList, HashMap, HashMultimap, MultiBiMap, MultiKeyMap, Multimap, Shash, SortedMap, SpatialH, SpatialHash, SpatialHash2D, SpatialHashMap, } from './lib/container.js';
 import * as deep from './lib/deep.js';
 import { forwardRef, Fragment, h, React, ReactComponent, render, toChildArray } from './lib/dom/preactComponent.js';
-import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, setDebug, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleRef, EagleNode, makeEagleElement, DereferenceError, EagleNodeList, useTrkl, EagleDocument, EagleReference, makeEagleNode, Renderer, EagleProject, EagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath } from './lib/eagle.js';
+import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, setDebug, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleRef, EagleNode, makeEagleElement, DereferenceError, EagleNodeList, useTrkl, EagleDocument, EagleReference, makeEagleNode, Renderer, EagleProject, EagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, } from './lib/eagle.js';
 import { ElementNameToComponent, ElementToComponent, PinSizes } from './lib/eagle/components.js';
 import CircuitJS from './lib/eda/circuitjs.js';
 import { GetColorBands, GetFactor, GetMultipliers } from './lib/eda/colorCoding.js';
@@ -44,7 +44,7 @@ function Window(width = 1280, height = 900) {
     [glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE],
     [glfw.OPENGL_FORWARD_COMPAT, true],
     [glfw.RESIZABLE, true],
-    [glfw.SAMPLES, 4]
+    [glfw.SAMPLES, 4],
   ])
     glfw.Window.hint(prop, value);
 
@@ -80,7 +80,7 @@ function Window(width = 1280, height = 900) {
     },
     handleCursorEnter(cur) {
       repl.printStatus('handleCursorEnter', { cur });
-    }
+    },
   });
 
   window.handleCharMods = (char, mods) => {
@@ -122,7 +122,7 @@ function FindProjects(dirPtn = '../*/eagle', sortDirection = -1, sortField = 'mt
   const minIndex = name =>
     Math.min(
       entries.findIndex(file => file == name + '.sch'),
-      entries.findIndex(file => file == name + '.brd')
+      entries.findIndex(file => file == name + '.brd'),
     );
   const hasBoth = name => minIndex(name) >= 0;
 
@@ -164,7 +164,7 @@ function append(tag, attrs, children, parent, element) {
     attrs,
     children,
     parent,
-    element
+    element,
   });
 
   let obj;
@@ -211,7 +211,7 @@ function CollectParts(doc = project.schematic) {
       name,
       deviceset,
       device,
-      value: value ?? '-'
+      value: value ?? '-',
     }));
 }
 
@@ -222,7 +222,7 @@ function CollectElements(doc = project.board) {
       name,
       library,
       ['package']: pkg,
-      value
+      value,
     }));
 }
 
@@ -243,7 +243,7 @@ function ListParts(doc = project.schematic) {
 function ShowParts(doc = project.schematic) {
   return Table(
     CollectParts(doc).map(({ name, deviceset, device, value }) => [name, deviceset, device, value ?? '-']),
-    ['name', 'deviceset', 'device', 'value']
+    ['name', 'deviceset', 'device', 'value'],
   );
 }
 
@@ -252,7 +252,7 @@ function EaglePrint(file, output) {
   let argv = ['/opt/eagle-7.2.0/bin/eagle', '-N-', '-C', `PRINT landscape 0.8 -1 -0 -caption FILE '${output}' sheets all paper a4; QUIT`, file];
 
   return child_process.spawn(argv[0], argv, {
-    block: false
+    block: false,
   });
 }
 
@@ -263,8 +263,8 @@ function main(...args) {
       colors: true,
       depth: 10,
       compact: 0,
-      customInspect: true
-    }
+      customInspect: true,
+    },
   });
 
   let debugLog = fs.openSync('debug.log', 'a');
@@ -276,9 +276,9 @@ function main(...args) {
     {
       debug: [false, null, 'x'],
       'output-dir': [true, null, 'd'],
-      '@': 'input'
+      '@': 'input',
     },
-    args
+    args,
   );
 
   Object.assign(globalThis, { Console, GetGlobalFunctions, className });
@@ -397,7 +397,7 @@ function main(...args) {
     pick,
     fromXML,
     toXML,
-    writeXML
+    writeXML,
   });
 
   Object.assign(globalThis, {
@@ -417,7 +417,7 @@ function main(...args) {
     GetInstances,
     GetPositions,
     GetElements,
-    GetSheets
+    GetSheets,
   });
 
   Object.assign(globalThis, {
@@ -433,7 +433,7 @@ function main(...args) {
     CollectElements,
     CollectPartsElements,
     EaglePrint,
-    setDebug
+    setDebug,
   });
 
   Object.assign(globalThis, {
@@ -455,7 +455,7 @@ function main(...args) {
     DrawGraph,
     Window,
     DrawCircle,
-    DrawLine
+    DrawLine,
   });
 
   Object.assign(globalThis, {
@@ -491,7 +491,7 @@ function main(...args) {
       }
 
       return a;
-    }
+    },
   });
 
   Object.assign(globalThis, {
@@ -512,7 +512,7 @@ function main(...args) {
 
       lazyProperties(globalThis, {
         sch: () => project.schematic,
-        brd: () => project.board
+        brd: () => project.board,
       });
     },
     nextProject() {
@@ -520,14 +520,14 @@ function main(...args) {
         globalThis.newProject(globalThis.projectNames[++globalThis.projectIndex]);
         return globalThis.project;
       }
-    }
+    },
   });
 
   lazyProperties(globalThis, {
     projectNames() {
       this.projectIndex = -1;
       return FindProjects(undefined, 1);
-    }
+    },
   });
   // globalThis.docs = args.map(arg => (globalThis.doc = load(arg)));
 
@@ -552,7 +552,7 @@ function main(...args) {
     BBox,
     fs,
     Pointer,
-    deep
+    deep,
   });
 
   Object.assign(globalThis, {
@@ -583,7 +583,7 @@ function main(...args) {
     quit(arg) {
       repl.cleanup();
       process.exit(arg ?? 0);
-    }
+    },
   });
 
   Object.assign(globalThis, {
@@ -591,14 +591,14 @@ function main(...args) {
     ElementToComponent,
     EagleToGerber,
     GerberToGcode,
-    ExecTool
+    ExecTool,
   });
   Object.assign(globalThis, {
     renderToString(arg) {
       //  return renderToString(arg);
       return writeXML(fromXML(renderToString(arg)));
     },
-    renderToXML
+    renderToXML,
   });
 
   cmdhist = `.${base}-cmdhistory`;
@@ -631,7 +631,7 @@ function main(...args) {
         s += inspect(arg, {
           depth: Infinity,
           depth: 6,
-          compact: false
+          compact: false,
         });
       else s += arg;
     }
@@ -658,7 +658,7 @@ function main(...args) {
       hist
         .filter(entry => (entry + '').trim() != '')
         .map(entry => entry.replace(/\n/g, '\\\\n') + '\n')
-        .join('')
+        .join(''),
     );
 
     console.log(`EXIT (wrote ${hist.length} history entries)`);
@@ -702,9 +702,9 @@ function UpdateMeasures(board) {
         attributes: {
           ...line.toObject(),
           layer: 47,
-          width: 0
-        }
-      }))
+          width: 0,
+        },
+      })),
     );
     //console.log('no measures:', { bounds, lines }, [...plain]);
     //plain.remove(e => e.attributes.layer == '51');
@@ -949,7 +949,7 @@ function SaveLibraries() {
   console.log(
     'layerIds',
     console.config({ compact: 2 }),
-    layerIds.map(id => [id, layerMap[id].attributes.name])
+    layerIds.map(id => [id, layerMap[id].attributes.name]),
   );
 
   const libraryNames = unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
@@ -965,10 +965,10 @@ function SaveLibraries() {
         {
           tagName: 'description',
           attributes: {},
-          children: [`${name}.lbr library`]
-        }
+          children: [`${name}.lbr library`],
+        },
       ],
-      attributes: { name }
+      attributes: { name },
     };
 
     for(let lib of libs) {
@@ -987,7 +987,7 @@ function SaveLibraries() {
 
       xml.children.push({
         tagName: entity,
-        children: obj[entity]
+        children: obj[entity],
       });
     }
 
@@ -1000,7 +1000,7 @@ function SaveLibraries() {
         {
           tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"',
           attributes: {},
-          children: []
+          children: [],
         },
         {
           tagName: 'eagle',
@@ -1016,13 +1016,13 @@ function SaveLibraries() {
                   children: [
                     {
                       tagName: 'setting',
-                      attributes: { alwaysvectorfont: 'no' }
+                      attributes: { alwaysvectorfont: 'no' },
                     },
                     {
                       tagName: 'setting',
-                      attributes: { verticaltext: 'up' }
-                    }
-                  ]
+                      attributes: { verticaltext: 'up' },
+                    },
+                  ],
                 },
                 {
                   tagName: 'grid',
@@ -1035,20 +1035,20 @@ function SaveLibraries() {
                     display: 'yes',
                     altdistance: '0.025',
                     altunitdist: 'mm',
-                    altunit: 'mm'
-                  }
+                    altunit: 'mm',
+                  },
                 },
                 {
                   tagName: 'layers',
                   attributes: {},
-                  children: layers
+                  children: layers,
                 },
-                xml
-              ]
-            }
-          ]
-        }
-      ]
+                xml,
+              ],
+            },
+          ],
+        },
+      ],
     };
 
     //    console.log('xml', console.config({ compact: 3, depth: 9 }), xml);
@@ -1097,7 +1097,7 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
+    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || [],
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -1133,7 +1133,7 @@ async function testEagle(filename) {
           .slice(i + 1)
           .map((child2, i2) => [i2 + i + 1, child.raw === child2.raw])
           .filter(([index, equal]) => equal)
-          .map(([index]) => index)
+          .map(([index]) => index),
       );
       indexes = indexes.flat().reverse();
       let paths = indexes.map(i => pkg.path.down('children', i));
@@ -1190,8 +1190,8 @@ function SetSVGBackground(xml, color = '#ffffff') {
       attributes: {
         id: 'background-rect',
         fill: '#fff',
-        ...rect.toObject()
-      }
+        ...rect.toObject(),
+      },
     });
 
     return xml;
@@ -1215,7 +1215,7 @@ const SVGResave = FileFunction(
   ReadXML,
   WriteXML,
   n => n,
-  false
+  false,
 );
 
 function PutRowsColumns(rows) {
@@ -1413,7 +1413,7 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
     //console.log('ln',ln,elm.attributes.layer);
     console.log('segment/net', {
       segment: segmentIndex,
-      net: net.attributes.name
+      net: net.attributes.name,
     });
 
     circ.add('w', ...ln, 0);
@@ -1442,7 +1442,7 @@ function MakeGraph(board = project.board, ignore = /^(GND|[-+][0-9]+V)$/) {
     charge: 100,
     mass: 200,
     damping: 0.000005,
-    gravitate_to_origin: false
+    gravitate_to_origin: false,
   });
   let nodes = {};
   let nodeSignals = {};
