@@ -1,12 +1,13 @@
 import { Parser, URL } from 'dom';
 import { urlGet } from 'std';
 import { types, define, properties, nonenumerable } from 'util';
+import { fetch } from 'fetch';
 
 export function FetchClass(url) {
   const u = new URL(url.replace(/\/[^\/]*$/, ''));
   const base = u.pathname;
   const re = new RegExp('^' + base + '/');
-  const doc = globalThis.doc = new Parser().parseFromString(urlGet(url));
+  const doc = (globalThis.doc = new Parser().parseFromString(fetch(url)));
 
   const keys = {
     Constructor: 'constructor',
@@ -28,12 +29,14 @@ export function FetchClass(url) {
   const summaryList = summary =>
     simplifyList([...summary.nextSibling.querySelectorAll('li')].map(e => [e.innerText, e.querySelector('a').getAttribute('href').replace(re, '')]).filter(([name]) => !/\sDeprecated$/.test(name)));
 
-  const summaries = summaryElements.reduce((a, e) => {
+  const summaries = summaryElements.reduce(
+    (a, e) => {
+      if(keys[e.innerText] in a) return a;
 
-if(keys[e.innerText]  in a)return a;
-
-    return ({ ...a, [keys[e.innerText] ?? e.innerText]: summaryList(e) });
-  }, Object.setPrototypeOf({}, null));
+      return { ...a, [keys[e.innerText] ?? e.innerText]: summaryList(e) };
+    },
+    Object.setPrototypeOf({}, null),
+  );
 
   const makeURL = p => u + '/' + p;
 
