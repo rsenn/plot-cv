@@ -8,6 +8,7 @@
 // @match        https://www.youtube.com/*
 // @icon         https://soundcloud.com/favicon.ico
 // @grant        none
+// @updateURL    https://github.com/rsenn/plot-cv/raw/refs/heads/main/soundcloud-grabber.user.js
 // ==/UserScript==
 
 (function () {

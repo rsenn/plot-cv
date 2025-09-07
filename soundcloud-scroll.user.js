@@ -7,6 +7,7 @@
 // @match        https://soundcloud.com/*
 // @icon         https://soundcloud.com/favicon.ico
 // @grant        none
+// @updateURL    https://github.com/rsenn/plot-cv/raw/refs/heads/main/soundcloud-scroll.user.js
 //==/UserScript==
 
 function scrollToBottom() {

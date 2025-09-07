@@ -7,6 +7,7 @@
 // @match        https://bs.to/serie/*
 // @icon         https://bs.to/favicon.ico
 // @grant        none
+// @updateURL https://github.com/rsenn/plot-cv/raw/refs/heads/main/bs.to-show-iframe-src.user.js
 // ==/UserScript==
 
 (function () {
