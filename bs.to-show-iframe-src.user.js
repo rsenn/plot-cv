@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         BS.to show iframe video link
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      20250907
 // @description  try to take over the world!
 // @author       You
 // @match        https://bs.to/serie/*
 // @icon         https://bs.to/favicon.ico
 // @grant        none
-// @updateURL https://github.com/rsenn/plot-cv/raw/refs/heads/main/bs.to-show-iframe-src.user.js
+// @updateURL    https://github.com/rsenn/plot-cv/raw/refs/heads/main/bs.to-show-iframe-src.user.js
 // ==/UserScript==
 
 (function () {

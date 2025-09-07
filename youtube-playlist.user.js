@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Playlist script
 // @namespace    http://tampermonkey.net/
-// @version      2025-02-17
+// @version      20250907
 // @description  extract youtube playlists
 // @author       You
 // @match        https://www.youtube.com/playlist

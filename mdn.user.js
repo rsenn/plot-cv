@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MDN
 // @namespace    http://tampermonkey.net/
-// @version      2025-05-12
+// @version      20250907
 // @description  try to take over the world!
 // @author       You
 // @match        https://developer.mozilla.org/*
