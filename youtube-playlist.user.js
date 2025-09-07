@@ -9,9 +9,17 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    window.getVideos = () => Object.assign([...document.querySelectorAll("h3 a")].map(e => [ e.getAttribute('href').replace(/.*\bv=([^&]*).*/g, 'https://www.youtube.com/watch?v=$1'), e.getAttribute('title')]), { toString() { return this.map(l => l.join(' ')).join('\n'); } });
-    // Your code here...
+  window.getVideos = () =>
+    Object.assign(
+      [...document.querySelectorAll('h3 a')].map(e => [e.getAttribute('href').replace(/.*\bv=([^&]*).*/g, 'https://www.youtube.com/watch?v=$1'), e.getAttribute('title')]),
+      {
+        toString() {
+          return this.map(l => l.join(' ')).join('\n');
+        },
+      },
+    );
+  // Your code here...
 })();

@@ -1,4 +1,4 @@
-// ==UserScript==
+// ==UserScript==
 // @name         BS.to show iframe video link
 // @namespace    http://tampermonkey.net/
 // @version      0.1
@@ -9,46 +9,45 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    window.addEventListener('load', e=> {
-        console.log('Userscript loaded');
+  window.addEventListener('load', e => {
+    console.log('Userscript loaded');
 
-        let url,tid;
+    let url, tid;
 
-        tid = setInterval(() => {
-            let iframe;
+    tid = setInterval(() => {
+      let iframe;
 
-            if((iframe = document.querySelector('iframe[height="100%"]'))) {
-                let newurl = iframe.src;
+      if((iframe = document.querySelector('iframe[height="100%"]'))) {
+        let newurl = iframe.src;
 
-                if(newurl != url) {
+        if(newurl != url) {
+          ShowLink(newurl, iframe.parentElement);
 
-                    ShowLink(newurl, iframe.parentElement);
+          url = newurl;
 
-                    url = newurl;
+          clearInterval(tid);
+        }
+      } else {
+        console.log('periodic check');
+      }
+    }, 500);
+  });
 
-                    clearInterval(tid);
-                }
-            } else {
-                console.log('periodic check');
-            }
-        }, 500);
-    });
+  function ShowLink(url, container) {
+    let e = document.createElement('a');
 
-    function ShowLink(url, container) {
-        let e = document.createElement('a');
+    e.innerHTML = url;
 
-        e.innerHTML=url;
+    container.appendChild(e);
 
-        container.appendChild(e);
+    e.href = url;
+    e.target = '_blank';
+    e.style.padding = '1em';
+    e.style.marginTop = '0';
+  }
 
-        e.href = url;
-        e.target = '_blank';
-        e.style.padding = '1em';
-        e.style.marginTop = '0';
-    }
-
-    Object.assign(globalThis, { ShowLink });
+  Object.assign(globalThis, { ShowLink });
 })();

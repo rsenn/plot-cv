@@ -21,7 +21,7 @@
 })();
 
 Object.assign(window, {
-  GetTracks
+  GetTracks,
 });
 
 function GetTracks() {
@@ -45,8 +45,7 @@ function GetTracks() {
           }
         }
         return this.map(([url, title]) => url.padEnd(maxlen) + ' ' + title).join('\n');
-      }
-    }
+      },
+    },
   );
 }
-
