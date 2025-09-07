@@ -26,7 +26,9 @@
     return Object.entries(o).map(([name, value]) => fn(name, value));
   };
 
-  Object.assign(g, { Q, QA, QM });
+  const PD = async url => new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html');
+
+  Object.assign(g, { Q, QA, QM, PD });
 
   // Your code here...
 })(globalThis ?? window ?? this);

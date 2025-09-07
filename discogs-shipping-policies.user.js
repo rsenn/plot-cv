@@ -20,7 +20,7 @@ setHandler = (
     console.log(type, e);
     let price = getPrice();
     if(price) console.log('price', price.toFixed(22));
-  }
+  },
 ) => findAll('select, input').forEach(e => ['change', 'keydown'].forEach(n => (e['on' + n] = fn)));
 
 toArray = obj => (Array.isArray(obj) ? obj : [...obj]);
@@ -37,10 +37,10 @@ defineEntries = entries => dest =>
     entries.reduce(
       (acc, [k, get, set]) => ({
         ...acc,
-        [k]: { get, set: set ?? get, configurable: true }
+        [k]: { get, set: set ?? get, configurable: true },
       }),
-      {}
-    )
+      {},
+    ),
   );
 
 toFn =
@@ -104,7 +104,7 @@ propertiesFn = style => {
   fn = getterSetter(
     () => [...style],
     k => style.getPropertyValue(k),
-    style.setPropertyValue ? (k, v) => style.setPropertyValue(k, v) : () => {}
+    style.setPropertyValue ? (k, v) => style.setPropertyValue(k, v) : () => {},
   );
   return fn;
 };
@@ -131,7 +131,7 @@ propertyProxyFn =
   (obj = {}) =>
     new Proxy(obj, {
       get: (target, prop, receiver) => getSetFunction(prop) ?? Reflect.get(target, prop, receiver),
-      ownKeys: target => getSetFunction() ?? Reflect.ownKeys(target)
+      ownKeys: target => getSetFunction() ?? Reflect.ownKeys(target),
     });
 propertyProxy = (elem, obj = {}) => chainFn1(toStyle, propertyProxyFn)(elem)(obj);
 
@@ -181,8 +181,8 @@ nextOption = e =>
       keyCode: 40,
       srcElement: e,
       target: e,
-      currentTarget: e
-    })
+      currentTarget: e,
+    }),
   );
 numOptions = e => e.options.length;
 getOptionTexts = e => getOptions(e, a => a.innerText);
@@ -207,7 +207,7 @@ getSelectPos = (e = find('select')) => findOption(e)(getSelectValue());
 getSelectOption = (e = find('select')) => (e.options ? e.options[e.selectedIndex] : null);
 getSelectText = (e = find('select')) => getSelectOption(e)?.innerText;
 getValue = e => (/^select$/i.test(e.tagName) ? /* getElementsByTagName('')*/ SelectValue(e) : getInputValue(e));
-getText = trimFn(e => (({ select: getSelectText, input: getInputLabel }[e.tagName.toLowerCase()] ?? getCardText)(e))); //  /^select$/i.test(e.tagName) ? getSelectText(e) : getInputLabel(e)
+getText = trimFn(e => (({ select: getSelectText, input: getInputLabel })[e.tagName.toLowerCase()] ?? getCardText)(e)); //  /^select$/i.test(e.tagName) ? getSelectText(e) : getInputLabel(e)
 
 getSelections = e => getOptions(e, (t = (o, i) => [o.innerText, /*o.value,*/ o.selected]));
 setSelection = (e, i) => (getElement(e).selectedIndex = i); //getSelections(e, o => [e,o.innerText,o.value,i]).findIndex(([e,...s]) => s.some(t => t+'' == i+''));
@@ -233,7 +233,7 @@ defineTo = (parent, key, ...fns) =>
   Object.defineProperty(parent, key, {
     get: fns[0],
     set: fns[1] ?? fns[0],
-    configurable: true
+    configurable: true,
   });
 
 set = (obj, path, value) => setTo(get(obj, path.slice(0, -1)), path[path.length - 1], value);
@@ -244,13 +244,13 @@ getValues = () =>
     callIt(a => {
       let n = a();
       return ({ object: a => a, undefined: a => a }[typeof n] ?? toNumber)(n);
-    })
+    }),
   );
 setValues = v => recurse(y, (item, path, root) => item(get(v, path) + ''));
 
 defineGetter = (name, fn) =>
   Object.defineProperties(globalThis, {
-    [name]: { get: fn, configurable: true }
+    [name]: { get: fn, configurable: true },
   });
 defineGetter('rows', getRows);
 defineGetter('y', () => getSet(rows));

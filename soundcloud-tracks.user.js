@@ -34,11 +34,7 @@ function GetTracks() {
     [...document.querySelectorAll('a.soundTitle__title, a.ytd-video-renderer')]
       .map(yt ? e => [e.href, e.innerText, e] : e => [e.href, e.innerText])
       .filter(yt ? ([url, title, e]) => /watch/.test(url) && !/<div\s/.test(e.innerHTML) : ([url, title]) => url != '')
-      .map(
-        yt
-          ? ([url, ...rest]) => ['watch?v=' + url.replace(/.*v=/g, '').replace(/[\&&?].*/g, ''), ...rest]
-          : ([url, ...rest]) => [url.replace(re, ''), ...rest],
-      )
+      .map(yt ? ([url, ...rest]) => ['watch?v=' + url.replace(/.*v=/g, '').replace(/[\&&?].*/g, ''), ...rest] : ([url, ...rest]) => [url.replace(re, ''), ...rest])
       .filter(([url, title]) => url != '' && title != ''),
     {
       toString(pad = false) {

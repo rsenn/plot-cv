@@ -38,7 +38,7 @@ function memoize(fn, cache = new Map()) {
       cache.set(n, r);
       return r;
     },
-    { cache }
+    { cache },
   );
 }
 
@@ -66,13 +66,13 @@ window.fetchURL = url =>
       'sec-fetch-mode': 'cors',
       'sec-fetch-site': 'same-origin',
       'sec-gpc': '1',
-      'turbo-frame': 'user-profile-frame'
+      'turbo-frame': 'user-profile-frame',
     },
     referrer: window.location.href,
     referrerPolicy: 'strict-origin-when-cross-origin',
     method: 'GET',
     mode: 'cors',
-    credentials: 'include'
+    credentials: 'include',
   }).then(r => r.text());
 
 window.getPage = (url = window.href) => {
@@ -86,11 +86,11 @@ Object.defineProperty(window, 'href', {
     Object.defineProperty(url, 'query', {
       get: memoize(function () {
         return Object.fromEntries([...this.searchParams]);
-      })
+      }),
     });
     return url;
   }),
-  configurable: true
+  configurable: true,
 });
 
 window.makeQuery = obj => Object.entries(obj).reduce((s, [n, v], i) => s + (i == 0 ? '?' : '&') + n + '=' + v, '');

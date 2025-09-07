@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         discogs.js
+// @name         Discogs Helpers
 // @namespace    discogs
 // @version      20250907
 // @description  discogs.js
@@ -52,7 +52,7 @@ async function DiscogsHelpers(g = globalThis) {
       bottom: '0',
       right: '0',
       width: '50vw',
-      height: '100vh'
+      height: '100vh',
     });
     return overlay;
   });
@@ -69,7 +69,7 @@ async function DiscogsHelpers(g = globalThis) {
       boxShadow: '2px 2px 2px black',
       color: 'black',
       fontSize: '14pt',
-      fontFamily: 'fixed-width'
+      fontFamily: 'fixed-width',
     });
     return e;
   };
@@ -219,6 +219,6 @@ async function DiscogsHelpers(g = globalThis) {
     styleElement,
     orderIdCells,
     idFields,
-    idToURL
+    idToURL,
   });
 }
