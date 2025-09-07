@@ -11,12 +11,14 @@
 
 function scrollToBottom() {
   const scrollElem = document.documentElement;
-  let newScrollPos = scrollElem.scrollHeight - window.innerHeight;
-  let scrollOffset = newScrollPos - scrollElem.scrollTop;
+  const newScrollPos = scrollElem.scrollHeight - window.innerHeight;
+  const scrollOffset = newScrollPos - scrollElem.scrollTop;
+
   if(scrollOffset > 0) {
     console.log('TamperMonkey script: scrolling by', scrollOffset);
     scrollElem.scrollTop += scrollOffset;
   }
+
   return scrollOffset;
 }
 
@@ -78,6 +80,7 @@ window.addEventListener('keydown', e => {
 function once(fn, thisArg, memoFn) {
   let ret,
     ran = false;
+
   return function(...args) {
     if(!ran) {
       ran = true;
@@ -85,50 +88,56 @@ function once(fn, thisArg, memoFn) {
     } else if(typeof memoFn == 'function') {
       ret = memoFn(...args);
     }
+
     return ret;
   };
 }
 
 function debounceAsync(fn, wait = 0, options = {}) {
-  let lastCallAt;
-  let deferred;
-  let timer;
-  let pendingArgs = [];
-  const callFn = (thisObj, args) => {
-    return fn.call(thisObj, ...args);
-  };
+  let lastCallAt,
+    d,
+    timer,
+    pendingArgs = [];
+
+  const callFn = (thisObj, args) => fn.call(thisObj, ...args);
+
   function defer() {
-    const deferred = {};
-    deferred.promise = new Promise((resolve, reject) => {
-      deferred.resolve = resolve;
-      deferred.reject = reject;
+    const d = {};
+    d.promise = new Promise((resolve, reject) => {
+      d.resolve = resolve;
+      d.reject = reject;
     });
-    return deferred;
+    return d;
   }
+
   return function debounced(...args) {
     const currentWait = getWait(wait);
     const currentTime = new Date().getTime();
     const isCold = !lastCallAt || currentTime - lastCallAt > currentWait;
     lastCallAt = currentTime;
     if(isCold && options.leading) return options.accumulate ? Promise.resolve(callFn(this, [args])).then(result => result[0]) : Promise.resolve(callFn(this, args));
-    if(deferred) clearTimeout(timer);
-    else deferred = defer();
+    if(d) clearTimeout(timer);
+    else d = defer();
     pendingArgs.push(args);
     timer = setTimeout(flush.bind(this), currentWait);
+
     if(options.accumulate) {
       const argsIndex = pendingArgs.length - 1;
-      return deferred.promise.then(results => results[argsIndex]);
+      return d.promise.then(results => results[argsIndex]);
     }
-    return deferred.promise;
+
+    return d.promise;
   };
+
   function getWait(wait) {
     return typeof wait === 'function' ? wait() : wait;
   }
+
   function flush() {
-    const thisDeferred = deferred;
+    const thisDeferred = d;
     clearTimeout(timer);
     Promise.resolve(options.accumulate ? callFn(this, [pendingArgs]) : callFn(this, pendingArgs[pendingArgs.length - 1])).then(thisDeferred.resolve, thisDeferred.reject);
     pendingArgs = [];
-    deferred = null;
+    d = null;
   }
 }

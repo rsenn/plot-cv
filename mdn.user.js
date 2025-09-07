@@ -9,17 +9,22 @@
 // @grant        none
 // ==/UserScript==
 
-(function(g) {
-    'use strict';
+(function (g) {
+  'use strict';
 
-    console.log('MDN userscript loaded');
-    window.addEventListener('load', e => console.log('document loaded'));
+  console.log('MDN userscript loaded');
+  window.addEventListener('load', e => console.log('document loaded'));
 
-    const Q = s => document.querySelector(s);
-    const QA = s => { const r = document.querySelectorAll(s); return r ? [...r] : []; };
-    const QM = (o, fn) => { return Object.entries(o).map(([name, value]) => fn(name, value)); }
+  const Q = s => document.querySelector(s);
+  const QA = s => {
+    const r = document.querySelectorAll(s);
+    return r ? [...r] : [];
+  };
+  const QM = (o, fn) => {
+    return Object.entries(o).map(([name, value]) => fn(name, value));
+  };
 
-    Object.assign(g, { Q, QA, QM });
+  Object.assign(g, { Q, QA, QM });
 
-    // Your code here...
+  // Your code here...
 })(globalThis ?? window ?? this);
