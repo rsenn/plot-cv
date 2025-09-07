@@ -57,6 +57,7 @@
       "file_exclude_patterns": [
          "*.pdf",
         "*.log.*",
+        "*-*.svg",
         "*.ast.json*",
         "*.xz",
         "*.log",
