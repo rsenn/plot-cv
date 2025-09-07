@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         discogs.js
 // @namespace    discogs
-// @version      0.7
+// @version      20250907
 // @description  discogs.js
 // @author       You
 // @match        *://*/*

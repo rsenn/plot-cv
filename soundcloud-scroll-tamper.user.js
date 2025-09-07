@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scroll to bottom
 // @namespace    https://soundcloud.com/
-// @version      2025-03-11
+// @version      20250907
 // @description  Scrolls a soundcloud page to the bottom
 // @author       Roman Senn
 // @match        https://soundcloud.com/*

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Discogs shipping policies
 // @namespace    http://transistorisiert.ch/
-// @version      0.1
+// @version      20250907
 // @description  try to take over the world!
 // @author       You
 // @match        https://www.discogs.com/settings/shipping

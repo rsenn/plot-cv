@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub
 // @namespace    https://github.com/
-// @version      0.1
+// @version      20250907
 // @description  try to take over the world!
 // @author       You
 // @match        https://github.com/

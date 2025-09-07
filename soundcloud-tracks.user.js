@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SoundCloud grabber
 // @namespace    http://soundcloud.com/
-// @version      2025-04-12
+// @version      20250907
 // @description  Get tracks from soundcloud
 // @author       Roman Senn <roman.l.senn@gmail.com>
 // @match        https://soundcloud.com/*
