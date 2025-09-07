@@ -6,7 +6,7 @@
 // @author       You
 // @match        *://*/*
 // @exclude      none
-// @updateURL    http://127.0.0.1:3000/discogs.js
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=discogs.com
 // @grant        none
 // @run-at       document-end
 // @downloadURL  https://github.com/rsenn/plot-cv/raw/refs/heads/main/discogs.user.js
