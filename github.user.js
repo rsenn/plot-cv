@@ -7,6 +7,7 @@
 // @match        https://github.com/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
 // @grant        none
+// @downloadURL  https://github.com/rsenn/plot-cv/raw/refs/heads/main/github.user.js
 // @updateURL    https://github.com/rsenn/plot-cv/raw/refs/heads/main/github.user.js
 // ==/UserScript==
 

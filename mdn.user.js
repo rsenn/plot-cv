@@ -7,6 +7,7 @@
 // @match        https://developer.mozilla.org/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=developer.mozilla.org
 // @grant        none
+// @downloadURL  https://github.com/rsenn/plot-cv/raw/refs/heads/main/mdn.user.js
 // @updateURL    https://github.com/rsenn/plot-cv/raw/refs/heads/main/mdn.user.js
 // ==/UserScript==
 

@@ -7,6 +7,7 @@
 // @match        https://www.youtube.com/playlist
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
 // @grant        none
+// @downloadURL  https://github.com/rsenn/plot-cv/raw/refs/heads/main/youtube-playlist.user.js
 // @updateURL    https://github.com/rsenn/plot-cv/raw/refs/heads/main/youtube-playlist.user.js
 // ==/UserScript==
 
