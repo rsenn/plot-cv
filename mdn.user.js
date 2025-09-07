@@ -24,7 +24,7 @@
     return this.filter(f);
   };
 
-  function* Map(gen, fn = a => a) {
+  function* Mapper(gen, fn = a => a) {
     let i = 0;
     for(const item of gen) yield fn(item, i++, gen);
   }
@@ -37,19 +37,22 @@
 
   window.addEventListener('load', e => console.log('document loaded'));
 
-  /*const CFN = fns => (...args) => fns.every(fn => fn(...args));*/
+  /* prettier-ignore */ const CFN = (fns, m = 'every') => (...args) => fns[m].call(fns, fn => fn(...args));
+  /* prettier-ignore */ const ANDFN = (a, b) => (...args) => a(...args) && b(...args);
 
-  const ANDFN =
-    (a, b) =>
-    (...args) =>
-      a(...args) && b(...args);
-
-  const M = (s, fn = () => true) => {
-    for(const m of [...(s.matchAll(/([^.]+|\..*)/g) ?? [])].map(m => m[0])) {
+  const Matcher = (s, fn = () => true) => {
+    if(s.indexOf(',') != -1)
+      return CFN(
+        s.split(/,\s*/g).map(s => Matcher(s, fn)),
+        'some',
+      );
+    for(const m of [...(s.matchAll(/([^.,]+|\.[^,]*)/g) ?? [])].map(m => m[0])) {
+      let fn2;
       if(m.startsWith('.')) {
         const cl = new RegExp(`\\b${m.slice(1)}\\b`);
-        fn = ANDFN(fn, e => cl.test(e.className));
-      } else fn = ANDFN(fn, e => e.tagName == m);
+        fn2 = e => cl.test(e.className);
+      } else fn2 = e => e.tagName.toLowerCase() == m;
+      fn = ANDFN(fn, fn2);
     }
     return fn;
   };
@@ -78,7 +81,7 @@
   const ED = e => toArray(WU(e, true)).length;
 
   const Until = (it, cond) => {
-    if(typeof cond == 'string') cond = M(cond);
+    if(typeof cond == 'string') cond = Matcher(cond);
     else if(Array.isArray(cond)) cond = new RegExp(`^(${cond.join('|')})$`, 'i');
 
     if(isRegex(cond)) {
@@ -92,7 +95,7 @@
   for(const proto of [Object.getPrototypeOf(WU()), Object.getPrototypeOf(WR())]) {
     Object.assign(proto, {
       map(fn) {
-        return Map(this, fn);
+        return Mapper(this, fn);
       },
       toArray() {
         return toArray(this);
@@ -107,7 +110,7 @@
 
   const GlobalObjects = async () => QA('ul li a code', await GD('Web/JavaScript/Reference/Global_Objects')).map(e => e.parentElement.href);
 
-  Object.assign(g, { Q, QA, QM, FD, PD, GD, W, WU, WR, ED, WC, Map, toArray, Until, WebAPI, GlobalObjects });
+  Object.assign(g, { Q, QA, QM, FD, PD, GD, W, WU, WR, ED, Until, Matcher, Mapper, toArray, Until, WebAPI, GlobalObjects });
 
   // Your code here...
 })(window ?? this);
