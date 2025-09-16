@@ -16,7 +16,7 @@ Only testd on MacOSX.
 git clone https://github.com/ocornut/imgui.git
 mkdir build
 cd build
-export OpenCV_DIR=OPENCV_INSATLL_PATH
+export OpenCV_DIR=OPENCV_INSTALL_PATH
 cmake ..
 make
 ```
