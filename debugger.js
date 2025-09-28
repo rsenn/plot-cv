@@ -154,9 +154,8 @@ export class DebuggerDispatcher {
   }
 
   async breakpoints(path, breakpoints) {
-    if(Array.isArray(breakpoints)) 
-      if(typeof breakpoints[0] == 'number') breakpoints = breakpoints.map(n => ({ line: n }));
-    
+    if(Array.isArray(breakpoints)) if (typeof breakpoints[0] == 'number') breakpoints = breakpoints.map(n => ({ line: n }));
+
     const msg = breakpoints ? { type: 'breakpoints', breakpoints: { path, breakpoints } } : { type: 'breakpoints', path };
 
     let ret = await this.sendMessage(msg);
@@ -204,7 +203,7 @@ export class DebuggerDispatcher {
         (this.responses[request_seq] = response => {
           delete this.responses[request_seq];
           resolve(response);
-        })
+        }),
     );
   }
 }

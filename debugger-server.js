@@ -310,7 +310,7 @@ function LaunchDebugger(dbg, skipToMain = true) {
     },
   });
 
-  return define(dbg,{dispatch});
+  return define(dbg, { dispatch });
 }
 
 async function PrintStackFrame(frame) {
@@ -668,14 +668,18 @@ function main(...args) {
           async function handleCommand(ws, data) {
             let obj = JSON.parse(data);
 
-
             const { command, ...rest } = obj;
             // console.log('onMessage', command, rest);
             const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = rest;
 
             switch (obj.type ?? command) {
               case 'start': {
-                dbg = globalThis.dbg = { child: StartDebugger(args, connect, address), get ws() { return dbg2ws(this); } };
+                dbg = globalThis.dbg = {
+                  child: StartDebugger(args, connect, address),
+                  get ws() {
+                    return dbg2ws(this);
+                  },
+                };
 
                 ws2dbg(ws, dbg);
                 dbg2ws(dbg, ws);
@@ -798,11 +802,11 @@ function main(...args) {
               }
 
               case 'breakpoints': {
-                const {  breakpoints } = obj;
-                
+                const { breakpoints } = obj;
+
                 let response = await dbg.dispatch.breakpoints(...breakpoints);
 
-                console.log('breakpoints', { breakpoints,response });
+                console.log('breakpoints', { breakpoints, response });
 
                 ws.sendMessage(response);
 
@@ -830,7 +834,7 @@ function main(...args) {
               }
 
               default: {
-                           console.log('onMessage(x)', obj);
+                console.log('onMessage(x)', obj);
                 const dbg = ws2dbg(ws);
                 const { pid } = dbg.child;
                 console.log('send to debugger', { pid, obj });
