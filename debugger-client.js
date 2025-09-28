@@ -3,13 +3,13 @@ import { Button, Panel } from './components.js';
 import { DebuggerDispatcher, TrivialTokenizer } from './debugger.js';
 import { ReconnectingWebSocket, WebSocketURL } from './lib/async/websocket.js';
 import { classNames } from './lib/classNames.js';
-import { Element, RGBA } from './lib/dom.js';
+//import { Element, RGBA } from './lib/dom.js';
 import { Fragment, h, render, toChildArray } from './lib/dom/preactComponent.js';
 import { useFetch, useTrkl } from './lib/hooks.js';
 import { JSLexer } from './lib/jslexer.js';
 import { define, weakDefine, memoize, rand } from './lib/misc.js';
 import { trkl } from './lib/trkl.js';
-import { MessageReceiver, MessageTransmitter, MessageTransceiver, parseURL, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
+import { MessageReceiver, MessageTransmitter, MessageTransceiver, parseURL, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen, } from './quickjs/qjs-net/js/rpc.js';
 
 let cwd = '.';
 let responses = {};
@@ -19,10 +19,26 @@ let url;
 let seq = 0,
   numLines = trkl(0);
 
+function RGBA(r, g, b, a = 255) {
+  function toHex(n) {
+    return Number(n).toString(16).padStart(2, '0');
+  }
+  return {
+    r,
+    g,
+    b,
+    a,
+    hex() {
+      if(this.a == 255) return toHex(this.r) + toHex(this.g) + toHex(this.b);
+      return toHex(this.r) + toHex(this.g) + toHex(this.b) + toHex(this.a);
+    },
+  };
+}
+
 weakDefine(WebSocket.prototype, {
   sendMessage(msg) {
     return this.send(JSON.stringify(msg));
-  }
+  },
 });
 
 globalThis.process = { env: { DEBUG: true } };
@@ -35,8 +51,8 @@ currentLine.subscribe(line => console.log('currentLine set to', line));
 currentLine.subscribe(line => {
   let e;
 
-  if((e = Element.find('main'))) {
-    const numLines = Math.floor(e.offsetHeight / Element.find('.source > pre').offsetHeight);
+  if((e = document.querySelector('main'))) {
+    const numLines = Math.floor(e.offsetHeight / document.querySelector('.source > pre').offsetHeight);
     let pos = Math.max(0, line - (numLines >>> 1));
     window.location.hash = `#line-${pos}`;
   }
@@ -63,7 +79,7 @@ globalThis.addEventListener('keypress', e => {
     KeyI: StepIn,
     KeyO: StepOut,
     KeyC: Continue,
-    KeyP: Pause
+    KeyP: Pause,
   }[e.code];
   //console.log('keypress', e, handler);
 
@@ -79,11 +95,11 @@ const SourceLine = ({ lineno, text, active, children }) => {
     h(
       'pre',
       {
-        class: classNames('text', active && 'active')
+        class: classNames('text', active && 'active'),
         //innerHTML: `${lineno} ` + text
       },
-      toChildArray([h('span', { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) }, [`${lineno} `]), ...children])
-    )
+      toChildArray([h('span', { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) }, [`${lineno} `]), ...children]),
+    ),
   ]);
 };
 
@@ -100,12 +116,12 @@ const SourceText = ({ text, filename }) => {
         SourceLine,
         {
           lineno: (i + 1 + '').padStart(n),
-          active: activeLine == i + 1
+          active: activeLine == i + 1,
           //text: TrivialTokenizer(line).reduce((acc, [type, token]) => acc + `<span class="${type}">${token}</span>`, '')
         },
-        TrivialTokenizer(line).map(([type, token]) => h('span', { class: type }, [token]))
-      )
-    )
+        TrivialTokenizer(line).map(([type, token]) => h('span', { class: type }, [token])),
+      ),
+    ),
   );
 };
 
@@ -129,7 +145,7 @@ const SourceFile = props => {
   return /*h('div', { class: 'container' }, [*/ h(Fragment, {}, [
     //h('div', {}, []),
     h('div', { class: 'header' }, [filename]),
-    h(SourceText, { text, filename })
+    h(SourceText, { text, filename }),
   ]);
 };
 
@@ -174,7 +190,7 @@ const tokenColors = {
   keyword: new RGBA(255, 0, 0),
   identifier: new RGBA(255, 255, 0),
   privateIdentifier: new RGBA(255, 255, 0),
-  whitespace: new RGBA(255, 255, 255)
+  whitespace: new RGBA(255, 255, 255),
 };
 
 function* TokenizeJS(data, filename) {
@@ -230,7 +246,7 @@ Object.assign(globalThis, {
   Pause,
   Evaluate,
   StackTrace,
-  SendRequest
+  SendRequest,
 });
 Object.assign(globalThis, { currentLine, currentSource, TokenizeJS });
 Object.assign(globalThis, { CreateSocket, Start, Initiate, LoadSource, GetVariables });
@@ -263,7 +279,7 @@ Object.assign(globalThis, {
   DeserializeSymbols,
   DeserializeValue,
   RPCConnect,
-  RPCListen
+  RPCListen,
 });
 
 async function CreateSocket(endpoint) {
@@ -271,13 +287,13 @@ async function CreateSocket(endpoint) {
   let rws = (globalThis.rws = new ReconnectingWebSocket(url, 'ws', {
     onOpen() {
       console.log('ReconnectingWebSocket connected!');
-    }
+    },
   }));
 
   define(globalThis, {
     get ws() {
       return rws.socket;
-    }
+    },
   });
 
   //let ws = (globalThis.ws = rws.ws/*new WebSocketClient()*/);
@@ -295,7 +311,7 @@ async function CreateSocket(endpoint) {
 
         callback(data);
       }
-    }
+    },
   }));
 
   responses = globalThis.responses = dispatch.responses;
@@ -375,18 +391,18 @@ function RenderUI() {
       //h(Button, {image: 'static/svg/start.svg'}),
       h(Button, {
         image: 'static/svg/step-into.svg',
-        fn: StepIn
+        fn: StepIn,
       }),
       h(Button, {
         image: 'static/svg/step-out.svg',
-        fn: StepOut
+        fn: StepOut,
       }),
-      h(Button, { image: 'static/svg/step-over.svg', fn: Next })
+      h(Button, { image: 'static/svg/step-over.svg', fn: Next }),
       //   h(Button, { image: 'static/svg/restart.svg' }),
       //h(Button, {image: 'static/svg/stop.svg', enable: trkl(false)}),
     ]),
     h('main', {}, h(SourceFile, { file: currentSource })),
-    h('footer', {}, [])
+    h('footer', {}, []),
   ]);
   const { body } = document;
   render(component, body);

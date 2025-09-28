@@ -50,9 +50,9 @@ async function main(...args) {
       include: [true, null, 'I'],
       exclude: [true, null, 'X'],
       'no-remove-empty': [false, null, 'E'],
-      '@': 'input,output,xml'
+      '@': 'input,output,xml',
     },
-    scriptArgs.slice(1)
+    scriptArgs.slice(1),
   );
   console.log('main', args, params);
   if(params['@'].length == 0 && !params.input) {
@@ -106,9 +106,7 @@ async function main(...args) {
     let js;
     let json = JSON.stringify(xml, null, '  ');
 
-    await import('bjson.so')
-      .then(({ read, write }) => (json = write(xml)))
-      .catch(err => console.error(err));
+    await import('bjson.so').then(({ read, write }) => (json = write(xml))).catch(err => console.error(err));
 
     WriteFile(jsonfile, json);
 
@@ -146,8 +144,8 @@ async function main(...args) {
             multiline: false,
             breakLength: 80,
             indent: 2,
-            colors: false
-          })
+            colors: false,
+          }),
         )
         .join(',\n');
     } else {
@@ -158,7 +156,7 @@ async function main(...args) {
         multiline: true,
         breakLength: 80,
         indent: 2,
-        colors: false
+        colors: false,
       });
     }
     //console.log('newObj:', newObj);

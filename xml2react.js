@@ -61,7 +61,7 @@ function main(...args) {
   globalThis.console = new Console({
     colors: true,
     maxStringLength: 100,
-    depth: 2
+    depth: 2,
   });
 
   if(args.length == 0) args = ['/dev/stdin'];
