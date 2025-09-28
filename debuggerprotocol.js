@@ -12,15 +12,13 @@ export class DebuggerProtocol {
     this.files = {};
 
     this.on('message', this.handleMessage);
-    //    this.onmessage = this.handleMessage;
   }
 
   readCommand() {
     let line;
-    if((line = std.in.getline())) {
-      // console.log('Command:', line);
+
+    if((line = std.in.getline())) 
       this.sendRequest(line);
-    }
   }
 
   /*getFile(filename) {
@@ -46,13 +44,16 @@ export class DebuggerProtocol {
           const { id, name, filename, line } = frame;
           let code, location, wd;
           wd = process.cwd();
-          location = filename && filename[0] == '/' ? path.relative(filename, process.cwd()) : filename;
+          location = filename && filename[0] == '/' ? path.relative(filename) : filename;
+        
           if(typeof line == 'number') {
             code = this.getFile(location)?.[line - 1];
             location += ':' + line;
           }
+        
           console.log(`Stack Frame #${id}`, name.padEnd(20), location + (code ? `: ` + code : ''));
         }
+       
         break;
       }
     }
@@ -104,6 +105,7 @@ export class DebuggerProtocol {
   sendMessage(type, args) {
     const msg = args ? { type, ...args } : type;
     console.log('sendMessage', msg);
+    
     try {
       const json = JSON.stringify(msg);
 
@@ -120,9 +122,9 @@ export class DebuggerProtocol {
   }
 
   sendRequest(command, args = {}) {
-    const request_seq = this.getSeq();
-    const request = { command, request_seq, ...args };
-    switch (command) {
+    const request = { command, request_seq:this.getSeq(), ...args };
+
+        switch (command) {
       case 'variables': {
         if(!('args' in request)) request.args = {};
         if(!('variablesReference' in request.args)) request.args.variablesReference = 1;
@@ -175,14 +177,6 @@ export class DebuggerProtocol {
     return data;
   }
 
-  /*  parse(json) {
-    try {
-      this.emit('message', JSON.parse(json));
-    } catch(e) {
-      console.log('ERROR', e.message, '\nDATA\n', json, '\nSTACK\n', e.stack);
-      throw e;
-    }
-  }*/
 
   async readHandler() {
     let it = this.sock[Symbol.asyncIterator]();

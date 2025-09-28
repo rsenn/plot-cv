@@ -310,7 +310,7 @@ function LaunchDebugger(dbg, skipToMain = true) {
     },
   });
 
-  return dbg;
+  return define(dbg,{dispatch});
 }
 
 async function PrintStackFrame(frame) {
@@ -609,7 +609,7 @@ function main(...args) {
             sendMessage: {
               value: async function sendMessage(msg) {
                 let ret = await this.send(JSON.stringify(msg));
-                console.log(`ws.sendMessage(`, console.config({ compact: 1 }), msg, `) = ${ret}`);
+                console.log(`ws.sendMessage(`, console.config({ compact: true }), msg, `) = ${ret}`);
                 return ret;
               },
               enumerable: false,
@@ -668,7 +668,6 @@ function main(...args) {
           async function handleCommand(ws, data) {
             let obj = JSON.parse(data);
 
-            console.log('onMessage(x)', obj);
 
             const { command, ...rest } = obj;
             // console.log('onMessage', command, rest);
@@ -676,7 +675,7 @@ function main(...args) {
 
             switch (obj.type ?? command) {
               case 'start': {
-                dbg = globalThis.dbg = { child: StartDebugger(args, connect, address) };
+                dbg = globalThis.dbg = { child: StartDebugger(args, connect, address), get ws() { return dbg2ws(this); } };
 
                 ws2dbg(ws, dbg);
                 dbg2ws(dbg, ws);
@@ -798,6 +797,18 @@ function main(...args) {
                 break;
               }
 
+              case 'breakpoints': {
+                const {  breakpoints } = obj;
+                
+                let response = await dbg.dispatch.breakpoints(...breakpoints);
+
+                console.log('breakpoints', { breakpoints,response });
+
+                ws.sendMessage(response);
+
+                break;
+              }
+
               case 'request': {
                 const { request } = obj;
                 const { request_seq, command, args } = request;
@@ -819,8 +830,7 @@ function main(...args) {
               }
 
               default: {
-                /*  console.log('send to debugger', { obj });
-                dbg.sendMessage(obj);*/
+                           console.log('onMessage(x)', obj);
                 const dbg = ws2dbg(ws);
                 const { pid } = dbg.child;
                 console.log('send to debugger', { pid, obj });
