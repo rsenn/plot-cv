@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { read as readBJSON, write as writeBJSON } from 'bjson';
+//import { read as readBJSON, write as writeBJSON } from 'bjson';
 import { closeSync, readFileSync, statSync, writeFileSync, readSync } from 'fs';
 import { define, error, toString } from './lib/misc.js';
 
