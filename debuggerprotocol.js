@@ -11,13 +11,23 @@ export class DebuggerProtocol {
     this.requests = new Map();
     this.files = {};
 
-    this.on('message', this.handleMessage);
+    //this.on('message', this.handleMessage);
   }
 
-  readCommand() {
-    let line;
+  async getFile(filename) {
+    const { files } = this;
 
-    if((line = std.in.getline())) this.sendRequest(line);
+    if(!(filename in files)) {
+      let data = (await import('fs')).readFileSync(filename, 'utf-8');
+
+      if(typeof data == 'string') data = data.split(/\r?\n/g);
+
+      //console.log('getFile', {filename,data});
+
+      files[filename] = data;
+    }
+
+    return files[filename];
   }
 
   handleResponse(message) {
@@ -33,7 +43,6 @@ export class DebuggerProtocol {
         for(let frame of response.body) {
           const { id, name, filename, line } = frame;
           let code,
-            wd = process.cwd(),
             location = filename && filename[0] == '/' ? relative(filename) : filename;
 
           if(typeof line == 'number') {
@@ -86,8 +95,8 @@ export class DebuggerProtocol {
       case 'StoppedEvent': {
         if(event.reason == 'entry') {
           this.sendMessage('stopOnException', { stopOnException: true });
-          this.sendMessage('breakpoints', { breakpoints: { path: 'test-ecmascript2.js', breakpoints: [{ line: 47, column: 3 }] } });
-          this.sendMessage('breakpoints', { path: 'test-ecmascript2.js' });
+          /*this.sendMessage('breakpoints', { breakpoints: { path: 'test-ecmascript2.js', breakpoints: [{ line: 47, column: 3 }] } });
+          this.sendMessage('breakpoints', { path: 'test-ecmascript2.js' });*/
           this.sendRequest(stepMode);
         } else {
           this.sendRequest('stackTrace');

@@ -11,7 +11,7 @@ import { Socket, AF_INET, SOCK_STREAM, SockAddr, select } from './quickjs/qjs-ff
 define(Array.prototype, {
   contains(item) {
     return this.indexOf(item) != -1;
-  }
+  },
 });
 
 async function main(...args) {
@@ -21,8 +21,8 @@ async function main(...args) {
       maxArrayLength: 100,
       breakLength: 10000,
       compact: 3,
-      customInspect: true
-    }
+      customInspect: true,
+    },
   });
   console.log('console.options', console.options);
   let params = getOpt(
@@ -31,9 +31,9 @@ async function main(...args) {
       debug: [false, null, 'x'],
       address: [true, null, 'c'],
       port: [true, null, 'p'],
-      '@': 'address,port'
+      '@': 'address,port',
     },
-    args
+    args,
   );
   const { listen } = params;
 
@@ -66,9 +66,8 @@ async function main(...args) {
     debug.read();
     if(sock.eof) os.setReadHandler(+sock, null);
   });
-  os.setReadHandler(0, () => {
-    debug.readCommand();
-  });
+
+  os.setReadHandler(0, () => debug.sendRequest(std.in.getline()));
 
   /*  ret = sendRequest(+sock, 'next');
   retValue(ret);*/
@@ -99,6 +98,7 @@ async function main(...args) {
         if(!debug) debug = new DebuggerProtocol(sock);
         FD_CLR(sock.fd, wfds);
       }
+
       if(readable.indexOf(sock.fd) != -1) {
         if(listen) {
           let connection = sock.accept();
@@ -107,14 +107,14 @@ async function main(...args) {
           ndelay(connection);
         }
       }
+
       if(debug && readable.contains((debug.sock ?? sock).fd)) {
         debug.read();
       } else if(!debug && readable.contains(sock.fd)) {
         debug = new DebuggerProtocol(sock);
       }
-      if(readable.contains(0)) {
-        debug.readCommand();
-      }
+
+      if(readable.contains(0)) debug.sendRequest(std.in.getline());
     } while(!sock.destroyed);
     console.log('end');
   }
