@@ -22,3 +22,7 @@
 [submodule "node-debugprotocol-client"]
 	path = node-debugprotocol-client
 	url = https://github.com/gins3000/node-debugprotocol-client
+[submodule "openlayers"]
+	path = openlayers
+	url = git@github.com:rsenn/openlayers.git
+	branch = main
