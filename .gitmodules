@@ -6,9 +6,6 @@
 	path = quickjs
 	url = git@github.com:rsenn/quickjs.git
 	branch = main
-[submodule "openlayers"]
-	path = openlayers
-	url = https://github.com/openlayers/openlayers
 [submodule "ol-layerswitcher"]
 	path = ol-layerswitcher
 	url = https://github.com/walkermatt/ol-layerswitcher
