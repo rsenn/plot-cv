@@ -1,3 +1,9 @@
+import { Parser } from 'dom';
+
+export function parseHTML(str) {
+  return new Parser().parseFromString(str);
+}
+
 export function isElement(obj) {
   return ['tagName', 'parentElement', 'ownerDocument', 'attributes', 'children'].every(prop => prop in obj);
 }
@@ -61,7 +67,7 @@ export function iterateTree(root, whatToShow = -1, filter /* = { acceptNode: () 
     [Symbol.iterator]() {
       return;
       this;
-    }
+    },
   };
   return ret;
 }
