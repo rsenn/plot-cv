@@ -254,7 +254,7 @@ Object.assign(globalThis, {
   GetCurrentPos,
 });
 Object.assign(globalThis, { currentLine, currentSource, TokenizeJS });
-Object.assign(globalThis, { CreateSocket, Start, Initiate, LoadSource,GetScopes, GetVariables });
+Object.assign(globalThis, { CreateSocket, Start, Initiate, LoadSource, GetScopes, GetVariables });
 Object.assign(globalThis, {
   WebSocketURL,
   parseURL,
@@ -333,7 +333,6 @@ async function CreateSocket(endpoint) {
 async function GetScopes() {
   return (await SendRequest('scopes')).body;
 }
-
 
 async function GetVariables(ref = 0) {
   return (await SendRequest('variables', { variablesReference: ref })).body;
