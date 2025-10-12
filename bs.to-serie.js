@@ -19,7 +19,7 @@ function parseYear(s) {
   return result;
 }
 
-function processDocument(doc) {
+function processDocument(doc, url) {
   const e = doc.querySelector('.serie');
   const infos = doc.querySelector('.infos');
 
@@ -43,13 +43,18 @@ function processDocument(doc) {
   }
 
   a.unshift(['title', cleanString(doc.querySelector('title').innerText).replace(/(\s+\(1\)|) - Burning Series.*/g, '')]);
+  a.unshift(['url', url]);
 
   return Object.fromEntries(a);
 }
 
-async function main(file = 'sci-fi.txt') {
-  let urls = readFileSync(file, 'utf-8').split('\n').slice(0, -1);
-  let result = [];
+async function main(file) {
+  file ||= 'sci-fi.txt';
+
+  console.log(`Processing '${file}'...`);
+
+  const result = [],
+    urls = readFileSync(file, 'utf-8').trim().split('\n');
 
   Object.assign(globalThis, { urls, result });
 
@@ -60,7 +65,7 @@ async function main(file = 'sci-fi.txt') {
 
     verbose(`Fetched '${url}':`, doc);
 
-    const obj = processDocument(doc);
+    const obj = processDocument(doc, url);
 
     verbose('obj', obj);
 
@@ -68,7 +73,7 @@ async function main(file = 'sci-fi.txt') {
   }
 }
 
-main(...scriptArgs.slice(1));
+main(scriptArgs[1]);
 
 function verbose(...args) {
   if(process.env.DEBUG) console.log(console.config({ compact: true }), ...args);
