@@ -48,6 +48,20 @@ function processDocument(doc, url) {
   return Object.fromEntries(a);
 }
 
+async function processURL(url, result) {
+  verbose(`Fetching '${url}'...`);
+
+  const doc = await url2doc(url);
+
+  verbose(`Fetched '${url}':`, doc);
+
+  const obj = processDocument(doc, url);
+
+  verbose('obj', obj);
+
+  result.push(obj);
+}
+
 async function main(file) {
   file ||= 'sci-fi.txt';
 
@@ -59,17 +73,14 @@ async function main(file) {
   Object.assign(globalThis, { urls, result });
 
   for(const url of urls) {
-    verbose(`Fetching '${url}'...`);
+    try {
+      await processURL(url, result);
 
-    const doc = await url2doc(url);
-
-    verbose(`Fetched '${url}':`, doc);
-
-    const obj = processDocument(doc, url);
-
-    verbose('obj', obj);
-
-    result.push(obj);
+      //console.log('Results:', result.length);
+    } catch(error) {
+      console.log('ERROR', error);
+      throw error;
+    }
   }
 }
 
