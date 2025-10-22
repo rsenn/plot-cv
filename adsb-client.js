@@ -13,7 +13,7 @@ const PutsFunction = outFn => str => {
 const FileWriter = file => {
   let fd = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o644);
   return define(FdWriter(fd, file), {
-    close: () => os.close(fd)
+    close: () => os.close(fd),
   });
 };
 
@@ -35,7 +35,7 @@ function FdWriter(fd, name) {
     [Symbol.toStringTag]: `FileWriter< ${fd} >`,
     inspect() {
       return inspect({ fd }) ?? this[Symbol.toStringTag];
-    }
+    },
   });
   return fn;
 }
@@ -46,8 +46,8 @@ async function main(...args) {
       maxStringLength: 200,
       maxArrayLength: Infinity,
       compact: 1,
-      depth: Infinity
-    }
+      depth: Infinity,
+    },
   });
   setLog(/*(LLL_DEBUG-1)|*/ LLL_USER, (level, message) => console.log(logLevels[level].padEnd(16), message));
   //
@@ -89,7 +89,7 @@ async function main(...args) {
     'geo_altitude',
     'squawk',
     'spi',
-    'position_source'
+    'position_source',
   ];
   //
   for(;;) {
@@ -105,22 +105,19 @@ async function main(...args) {
 
     let file = std.open(PhaseFile(phase), 'a');
 
-    let response = await fetch(
-      'https://opensky-network.org/api/states/all?lamin=45.8389&lomin=5.9962&lamax=47.8229&lomax=10.5226',
-      {
-        sslCert: 'localhost.crt',
-        sslPrivateKey: 'localhost.key',
-        sslCA: '/etc/ssl/certs/ca-certificates.crt',
-        onMessage(req, res) {
-          console('URL:', req.url);
-          let buf;
-          for(let chunk of res) {
-            buf = buf ? concat(buf, chunk) : chunk;
-          }
-          //let obj = (new Function('return '+body+';'))();
+    let response = await fetch('https://opensky-network.org/api/states/all?lamin=45.8389&lomin=5.9962&lamax=47.8229&lomax=10.5226', {
+      sslCert: 'localhost.crt',
+      sslPrivateKey: 'localhost.key',
+      sslCA: '/etc/ssl/certs/ca-certificates.crt',
+      onMessage(req, res) {
+        console('URL:', req.url);
+        let buf;
+        for(let chunk of res) {
+          buf = buf ? concat(buf, chunk) : chunk;
         }
-      }
-    );
+        //let obj = (new Function('return '+body+';'))();
+      },
+    });
 
     function ProcessResponse(buf) {
       /*  let decoder = new TextDecoder('utf-8');
@@ -139,10 +136,10 @@ async function main(...args) {
         item.reduce(
           (acc, field, i) => ({
             ...acc,
-            [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field
+            [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field,
           }),
-          {}
-        )
+          {},
+        ),
       );
       obj.states.sort((a, b) => b.baro_altitude - a.baro_altitude);
 

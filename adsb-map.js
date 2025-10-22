@@ -111,7 +111,7 @@ const cities = {
   genf: new Coordinate(6.143158, 46.204391),
   zug: new Coordinate(8.515495, 47.166168),
   basel: new Coordinate(7.588576, 47.559601),
-  winterthur: new Coordinate(8.737565, 47.49995)
+  winterthur: new Coordinate(8.737565, 47.49995),
 };
 
 const tryFunction = (fn, resolve = a => a, reject = () => null) => {
@@ -219,7 +219,7 @@ function Connection(port, onConnect = () => {}) {
         console.log('onmessage ERROR stack:', error.stack);
       }
       console.log('states.length', states.length);
-    }
+    },
   });
 }
 
@@ -278,20 +278,20 @@ function FlyTo(location, done = () => {}) {
   view.animate(
     {
       center: location,
-      duration: duration
+      duration: duration,
     },
-    callback
+    callback,
   );
   view.animate(
     {
       zoom: zoom - 1,
-      duration: duration / 2
+      duration: duration / 2,
     },
     {
       zoom: zoom,
-      duration: duration / 2
+      duration: duration / 2,
     },
-    callback
+    callback,
   );
 }
 
@@ -304,25 +304,25 @@ const styles = [
   new Style({
     stroke: new Stroke({
       color: 'blue',
-      width: 3
+      width: 3,
     }),
     fill: new Fill({
-      color: 'rgba(0, 0, 255, 0.1)'
-    })
+      color: 'rgba(0, 0, 255, 0.1)',
+    }),
   }),
   new Style({
     image: new CircleStyle({
       radius: 5,
       fill: new Fill({
-        color: 'orange'
-      })
+        color: 'orange',
+      }),
     }),
     geometry: function(feature) {
       // return the coordinates of the first ring of the polygon
       const coordinates = feature.getGeometry().getCoordinates()[0];
       return new MultiPoint(coordinates);
-    }
-  })
+    },
+  }),
 ];
 
 const geojsonObject = {
@@ -330,8 +330,8 @@ const geojsonObject = {
   crs: {
     type: 'name',
     properties: {
-      name: 'EPSG:3857'
-    }
+      name: 'EPSG:3857',
+    },
   },
   features: [
     {
@@ -361,10 +361,10 @@ const geojsonObject = {
             [21.872, 2.544],
             [23.378, 0.15],
             [25.182, 2.56],
-            [25.801, 5.053]
-          ].map(([x, y]) => [x * 1e-3, y * 1e-3])
-        ]
-      }
+            [25.801, 5.053],
+          ].map(([x, y]) => [x * 1e-3, y * 1e-3]),
+        ],
+      },
     },
     {
       type: 'Feature',
@@ -376,10 +376,10 @@ const geojsonObject = {
             [-2e6, 8e6],
             [0, 8e6],
             [0, 6e6],
-            [-2e6, 6e6]
-          ].map(([x, y]) => [x * 1e-3, y * 1e-3])
-        ]
-      }
+            [-2e6, 6e6],
+          ].map(([x, y]) => [x * 1e-3, y * 1e-3]),
+        ],
+      },
     },
     {
       type: 'Feature',
@@ -391,10 +391,10 @@ const geojsonObject = {
             [500000, 7000000],
             [1500000, 7000000],
             [1500000, 6000000],
-            [500000, 6000000]
-          ]
-        ]
-      }
+            [500000, 6000000],
+          ],
+        ],
+      },
     },
     {
       type: 'Feature',
@@ -405,21 +405,21 @@ const geojsonObject = {
             [-2000000, -1000000],
             [-1000000, 1000000],
             [0, -1000000],
-            [-2000000, -1000000]
-          ]
-        ]
-      }
-    }
-  ]
+            [-2000000, -1000000],
+          ],
+        ],
+      },
+    },
+  ],
 };
 
 const source = (globalThis.source = new VectorSource({
-  features: [] // new GeoJSON().readFeatures(geojsonObject)
+  features: [], // new GeoJSON().readFeatures(geojsonObject)
 }));
 
 const vectorLayer = new VectorLayer({
   source: source,
-  style: styles
+  style: styles,
 });
 
 const iconMarkerStyle = new Style({
@@ -428,9 +428,9 @@ const iconMarkerStyle = new Style({
     //size: [100, 100],
     offset: [0, 0],
     opacity: 1,
-    scale: 0.35
+    scale: 0.35,
     //color: [10, 98, 240, 1]
-  })
+  }),
 });
 
 function CreateMap() {
@@ -439,7 +439,7 @@ function CreateMap() {
     zoom: 11,
     minZoom: 3,
     maxZoom: 20,
-    extent: TransformCoordinates(extent)
+    extent: TransformCoordinates(extent),
   });
 
   const positionFeature = new Feature();
@@ -448,54 +448,54 @@ function CreateMap() {
       image: new CircleStyle({
         radius: 6,
         fill: new Fill({
-          color: '#3399CC'
+          color: '#3399CC',
         }),
         stroke: new Stroke({
           color: '#fff',
-          width: 2
-        })
-      })
-    })
+          width: 2,
+        }),
+      }),
+    }),
   );
   let extentVector = [topLeft, topRight, bottomRight, bottomLeft, topLeft].map(a => TransformCoordinates(...a));
   let lineString = new LineString(extentVector);
 
   let feature = new Feature({
-    geometry: lineString
+    geometry: lineString,
   });
 
   let stroke = new Stroke({
     color: '#ffd705',
     width: 4,
-    lineDash: [4, 8]
+    lineDash: [4, 8],
   });
   const vector = new VectorLayer({
     source: new VectorSource({
       features: [feature, positionFeature],
-      wrapX: false
+      wrapX: false,
     }),
     style: new Style({
-      stroke
-    })
+      stroke,
+    }),
   });
 
   const geolocation = new Geolocation({
     // enableHighAccuracy must be set to true to have the heading value.
     trackingOptions: {
-      enableHighAccuracy: true
+      enableHighAccuracy: true,
     },
-    projection: view.getProjection()
+    projection: view.getProjection(),
   });
   const tileLayer = new TileLayer({
     source: new XYZ({
-      url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    })
+      url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    }),
   });
   const rasterLayer = new TileLayer({
     source: new XYZ({
       url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      maxZoom: 19
-    })
+      maxZoom: 19,
+    }),
   });
   /*  tileLayer.on('postrender', function(event) {
     const vectorContext = getVectorContext(event);
@@ -522,7 +522,7 @@ function CreateMap() {
   let map = new OLMap({
     target: 'mapdiv',
     layers: [tileLayer, rasterLayer /*,vector*/],
-    view
+    view,
   });
 
   const zoomslider = new ZoomSlider();
@@ -538,7 +538,7 @@ function CreateMap() {
     lineString,
     feature,
     stroke,
-    positionFeature
+    positionFeature,
   });
   Object.defineProperties(globalThis, {
     zoom: {
@@ -547,8 +547,8 @@ function CreateMap() {
       },
       set(value) {
         view.setZoom(value);
-      }
-    }
+      },
+    },
   });
 
   const svgContainer = (globalThis.svgContainer = document.createElement('div'));
@@ -581,8 +581,8 @@ xhr.send();*/
         svgContainer.style.transform = cssTransform;
         svgContainer.style.opacity = this.getOpacity();
         return svgContainer;
-      }
-    })
+      },
+    }),
   );
   map.addLayer(vectorLayer);
   return map;
@@ -600,7 +600,7 @@ function CreateSlider() {
       console.log('onDrag', left);
       return true;
       return !!position.snapped; // It is moved only when it is snapped.
-    }
+    },
   });
   draggable.snap = { step: 40 };
   draggable.containment = { left: 0, top: 20, width: window.offsetWidth, height: 0 };
@@ -641,7 +641,7 @@ Object.assign(globalThis, {
     addCoordinateTransforms,
     addProjection,
     transform,
-    fromLonLat
+    fromLonLat,
   },
   Connection,
   Time,
@@ -658,7 +658,7 @@ Object.assign(globalThis, {
   Coordinate,
   cities,
   FetchFile,
-  FetchJSON
+  FetchJSON,
 });
 
 let planes = (globalThis.planes = []);
@@ -681,16 +681,16 @@ const keys = [
   'geo_altitude',
   'squawk',
   'spi',
-  'position_source'
+  'position_source',
 ];
 
 function StateToObject(item) {
   return item.reduce(
     (acc, field, i) => ({
       ...acc,
-      [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field
+      [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field,
     }),
-    {}
+    {},
   );
 }
 
@@ -725,10 +725,10 @@ window.addEventListener('load', () => {
               item.reduce(
                 (acc, field, i) => ({
                   ...acc,
-                  [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field
+                  [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field,
                 }),
-                {}
-              )
+                {},
+              ),
             );
             obj.states.sort((a, b) => b.baro_altitude - a.baro_altitude);
 
@@ -763,7 +763,7 @@ class Plane extends Overlay {
       })(),
       position: transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857'),
       //offset: [-24,-24],
-      positioning: 'center-center'
+      positioning: 'center-center',
     };
     super(obj);
     Object.assign(this, obj);
@@ -789,15 +789,15 @@ class Aircraft extends Feature {
         src: 'static/svg/plane.svg',
         crossOrigin: '',
 
-        rotation: Math.PI / 4
+        rotation: Math.PI / 4,
       }),
       text: new TextStyle({
         text: name,
         scale: [0, 0],
         rotation: Math.PI / 4,
         textAlign: 'center',
-        textBaseline: 'top'
-      })
+        textBaseline: 'top',
+      }),
     });
 
   static fromState(state) {
@@ -837,9 +837,9 @@ class Aircraft extends Feature {
           offset: [0, 0],
           opacity: 1,
           scale,
-          rotation: (heading * Math.PI) / 180
-        })
-      })
+          rotation: (heading * Math.PI) / 180,
+        }),
+      }),
     );
   }
 }
@@ -953,7 +953,7 @@ class HTMLLayer {
       },
       ownKeys(target) {
         return [...element.getAttributeNames()] /*.concat(Reflect.ownKeys(target))*/;
-      }
+      },
     });
     layers.add(ret);
     return ret;
@@ -974,5 +974,5 @@ Object.assign(globalThis, {
   getStyles,
   setStyle,
   setStyles,
-  setAttributes
+  setAttributes,
 });

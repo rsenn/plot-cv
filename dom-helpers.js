@@ -1,4 +1,70 @@
-import { Parser } from 'dom';
+import { Entities, nodeTypes, Prototypes, Factory, Parser, Interface, Node, NODE_TYPES, NodeList, HTMLCollection, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, Serializer, GetType, MapItems, FindItemIndex, FindItem, ListAdapter, URLSearchParams, URL, } from 'dom';
+import { define, nonenumerable, enumerable, isPrototypeOf } from 'util';
+import { TextDecoder } from 'textcode';
+import { readFileSync } from 'fs';
+
+export function DOMDocument(arg, parser) {
+  if(isPrototypeOf(ArrayBuffer.prototype, arg)) arg = new TextDecoder().decode(arg);
+
+  if(typeof arg == 'string') arg = (parser ??= new Parser()).parseFromString(arg);
+
+  if(isPrototypeOf(Document.prototype, arg)) return arg;
+
+  throw new Error(`DOMObject argument 1 must be either string or Document`);
+}
+
+export function DOMObject(arg, filename) {
+  if(!arg && typeof filename == 'string') arg = readFileSync(filename, 'utf-8');
+
+  if(typeof arg == 'string' || isPrototypeOf(ArrayBuffer.prototype, arg)) {
+    const parser = new Parser();
+    arg = define({ document: DOMDocument(arg, parser) }, nonenumerable({ parser, source: arg }));
+  }
+
+  if(isPrototypeOf(Document.prototype, arg)) arg = { document: arg };
+
+  if(!isPrototypeOf(Document.prototype, arg.document)) throw new Error(`DOMObject argument 1 must be either string or Document`);
+
+  if(filename) define(arg, nonenumerable({ filename }));
+
+  return Object.setPrototypeOf(arg, DOMObject.prototype);
+}
+
+define(
+  DOMObject.prototype,
+  nonenumerable({
+    get top() {
+      return this;
+    },
+    get self() {
+      return this;
+    },
+    get parent() {
+      return this;
+    },
+    get frames() {
+      return this;
+    },
+    get globalThis() {
+      return this;
+    },
+    [Symbol.toStringTag]: 'Window',
+    URLSearchParams,
+    URL,
+    Text,
+    NodeList,
+    Node,
+    NamedNodeMap,
+    HTMLCollection,
+    Element,
+    Document,
+    Comment,
+    CSSStyleDeclaration,
+    Attr,
+  }),
+);
+
+Object.setPrototypeOf(DOMObject.prototype, null);
 
 export function parseHTML(str) {
   return new Parser().parseFromString(str);
