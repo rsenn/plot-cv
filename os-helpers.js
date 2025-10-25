@@ -1,33 +1,25 @@
 import { spawn } from 'child_process';
 import * as fs from 'fs';
+import { popen } from 'os';
 import { close, exec, pipe, waitpid, Worker } from 'os';
 import { btoa, define, properties } from 'util';
 import { Repeater } from './lib/repeater/repeater.js';
 import { fdopen, popen } from 'std';
 export { WNOHANG } from 'child_process';
 
-/*export function ExecTool(cmd, ...args) {
-  let child = Spawn(cmd, args, { stdio: [0, 'pipe', 2] });
-  let [stdin, stdout, stderr] = child.stdio;
-  let r;
-  let b = new ArrayBuffer(1024);
-  r = child.wait();
+export function ReadClipboard() {
+  const f = popen('xclip -out', 'r');
+  const r = f.readAsString();
+  f.close();
+  return r;
+}
 
-  let lpNumberOfBytesRead = new Uint32Array(2);
-  let str = '';
-  for(;;) {
-    let r = ReadFile(stdout, b, 1024, lpNumberOfBytesRead.buffer, 0);
-    if(lpNumberOfBytesRead[0] > 0) {
-      let data = b.slice(0, lpNumberOfBytesRead[0]);
-      str += toString(data);
-      console.log('str', str);
-    }
-    if(r == 0) break;
-  }
-
-  return str;
-  return parseInt(str);
-}*/
+export function WriteClipboard(s) {
+  const f = popen('xclip -in', 'w');
+  f.puts(s);
+  f.flush();
+  f.close();
+}
 
 export function Execute(...args) {
   let [rd, stdout] = pipe();
@@ -49,9 +41,7 @@ export function Execute(...args) {
 }
 
 export function URLWorker(script) {
-  const dataURL = s =>
-    `data:application/javascript;charset=utf-8;base64,` +
-    btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+  const dataURL = s => `data:application/javascript;charset=utf-8;base64,` + btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
 
   const url = dataURL(script);
   const w = new Worker(url);

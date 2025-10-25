@@ -9,13 +9,14 @@ import { extendArray } from 'extendArray';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import Tree from './lib/tree.js';
-import { split, decamelize, camelize, className, mapWrapper } from 'util';
+import { split, decamelize, camelize, className, mapWrapper, abbreviate } from 'util';
 import { Shell, Spawn } from './os-helpers.js';
 import * as Terminal from 'terminal';
 import { Console } from 'console';
 import { REPL } from 'repl';
 import { inspect } from 'inspect';
 import { and } from 'predicate';
+import { ECMAScriptParser } from './lib/ecmascript.js';
 //import PortableSpawn from './lib/spawn.js';
 
 extendArray(Array.prototype);
@@ -901,8 +902,8 @@ function ParseECMAScript(file, params = {}) {
     data = ReadFile(file, 'utf8');
     console.log('opened:', file);
   } else {
+    data = file;
     file = 'stdin';
-    data = source;
   }
 
   console.log('OK, data: ', abbreviate(escape(data)));
