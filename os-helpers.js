@@ -1,8 +1,7 @@
 import { spawn } from 'child_process';
 import * as fs from 'fs';
-import { popen } from 'os';
 import { close, exec, pipe, waitpid, Worker } from 'os';
-import { btoa, define, properties } from 'util';
+import { btoa, define, properties, setInterval, waitFor } from 'util';
 import { Repeater } from './lib/repeater/repeater.js';
 import { fdopen, popen } from 'std';
 export { WNOHANG } from 'child_process';
@@ -19,6 +18,27 @@ export function WriteClipboard(s) {
   f.puts(s);
   f.flush();
   f.close();
+}
+
+export function MonitorClipboard(cb, interval = 50) {
+  let s = ReadClipboard();
+
+  if(!cb)
+    return (
+      async *
+      function() {
+        for(;;) {
+          waitFor(interval);
+          const tmp = ReadClipboard();
+          if(tmp != s) yield((s = tmp));
+        }
+      }
+    )();
+
+  setInterval(() => {
+    const tmp = ReadClipboard();
+    if(tmp != s) cb((s = tmp));
+  }, interval);
 }
 
 export function Execute(...args) {
