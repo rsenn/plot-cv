@@ -24,16 +24,13 @@ export function MonitorClipboard(cb, interval = 50) {
   let s = ReadClipboard();
 
   if(!cb)
-    return (
-      async *
-      function() {
-        for(;;) {
-          waitFor(interval);
-          const tmp = ReadClipboard();
-          if(tmp != s) yield((s = tmp));
-        }
+    return (async function*() {
+      for(;;) {
+        await waitFor(interval);
+        const tmp = ReadClipboard();
+        if(tmp != s) yield (s = tmp);
       }
-    )();
+    })();
 
   setInterval(() => {
     const tmp = ReadClipboard();
