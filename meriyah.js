@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import { createWriteStream, readFileSync } from 'fs';
 import { getOpt, showHelp } from './lib/misc.js';
 import { parseScript } from './lib/meriyah.js';
