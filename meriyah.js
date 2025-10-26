@@ -1,6 +1,6 @@
 #!/usr/bin/env qjsm
 import { createWriteStream, readFileSync } from 'fs';
-import { getOpt, showHelp } from 'util';
+import { getOpt, showHelp } from './lib/misc.js';
 import { parseScript } from './lib/meriyah.js';
 import process from 'process';
 
@@ -20,9 +20,9 @@ params = getOpt(
     ranges: [false, null, 'r'],
     loc: [false, null, 'l'],
     indent: [true, null, 'i'],
-    '@': ''
+    '@': '',
   }),
-  argv.slice(2)
+  argv.slice(2),
 );
 
 const args = params['@'];
