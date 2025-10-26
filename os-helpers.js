@@ -7,14 +7,14 @@ import { fdopen, popen } from 'std';
 export { WNOHANG } from 'child_process';
 
 export function ReadClipboard() {
-  const f = popen('xclip -out', 'r');
+  const f = popen('xclip -out 2>/dev/null', 'r');
   const r = f.readAsString();
   f.close();
   return r;
 }
 
 export function WriteClipboard(s) {
-  const f = popen('xclip -in', 'w');
+  const f = popen('xclip -in 2>/dev/null', 'w');
   f.puts(s);
   f.flush();
   f.close();
