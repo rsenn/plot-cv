@@ -2,7 +2,7 @@ import { existsSync, reader, readerSync, readSync, writeSync } from 'fs';
 import { createServer, getSessions, LLL_INFO, LLL_NOTICE, LLL_USER, LLL_WARN, logLevels, setLog } from 'net';
 import { kill, setReadHandler, SIGTERM, sleep, ttySetRaw, Worker } from 'os';
 import { clearInterval, setInterval, setTimeout } from 'timers';
-import { atexit, bindMethods, btoa, define, keys, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, toString, tryCatch, types, mapWrapper } from 'util';
+import { atexit, bindMethods, btoa, define, keys, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, tryCatch, types, mapWrapper } from 'util';
 import { List, Table } from './cli-helpers.js';
 import { DebuggerDispatcher, FindFunctions, GetFunctionName, TrivialSyntaxHighlighter } from './debugger.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
@@ -20,7 +20,18 @@ import * as path from 'path';
 import extendArray from 'extendArray';
 import { AF_INET, AsyncSocket, IPPROTO_TCP, SOCK_STREAM, SockAddr } from 'sockets';
 import { err as stderr } from 'std';
+import { TextDecoder } from 'textcode';
 import { codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
+
+function toString(buf, start, len) {
+  if('buffer' in buf) buf = buf.buffer;
+  if(start !== undefined || len !== undefined) {
+    start ??= 0;
+    len ??= buf.byteLength;
+    buf = buf.slice(start, start + len);
+  }
+  return new TextDecoder().decode(buf);
+}
 
 function decorate(decorators, obj, ...args) {
   if(!Array.isArray(decorators)) decorators = [decorators];
@@ -60,6 +71,7 @@ Object.assign(globalThis, {
   RPCSocket,
   RPCConnect,
   RPCListen,
+  toString,
 });
 
 const signalName = n =>
@@ -231,6 +243,7 @@ export async function ConnectDebugger(address, skipToMain = true, callback) {
           if(ret <= 0) break;
 
           let s = toString(dataBuf);
+          console.log('s', s);
           let obj = JSON.parse(s);
 
           if(process.env.DEBUG) console.log('process() read:', obj);
