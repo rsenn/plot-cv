@@ -95,8 +95,11 @@ export function DeepGet(ast, path, ...args) {
 const C = console.config({ compact: true });
 
 function FileTime(filename) {
+try {
   let st = fs.statSync(filename);
   return st ? (st.mtime ?? st.time) : -1;
+} catch(e) {}
+  return -1;
 }
 
 function Newer(file, ...other) {

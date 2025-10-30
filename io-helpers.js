@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
-//import { read as readBJSON, write as writeBJSON } from 'bjson';
-import { closeSync, readFileSync, statSync, writeFileSync, readSync } from 'fs';
+import { read as readBJSON, write as writeBJSON } from 'bjson';
+import { closeSync, readFileSync, statSync, writeFileSync, readSync, gets } from 'fs';
 import { define, error, toString } from './lib/misc.js';
 
 let xml;
@@ -38,6 +38,17 @@ export function ReadFd(fd, binary) {
   }
 
   return s;
+}
+
+export function ReadLines(file) {
+
+  const fd = fs.openSync(file, 'r');
+let line, r=[];
+
+  while((line = gets(fd)))
+    r.push(line);
+
+  return r;
 }
 
 export function IsStdio(obj) {
