@@ -41,7 +41,7 @@ function Neighbourhood(m) {
 
   let neigh = new Mat();
 
-  pixelNeighborhood(skeleton, neigh);
+sjke  pixelNeighborhood(skeleton, neigh);
 
   return neigh;
 }

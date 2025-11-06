@@ -95,10 +95,10 @@ export function DeepGet(ast, path, ...args) {
 const C = console.config({ compact: true });
 
 function FileTime(filename) {
-try {
-  let st = fs.statSync(filename);
-  return st ? (st.mtime ?? st.time) : -1;
-} catch(e) {}
+  try {
+    let st = fs.statSync(filename);
+    return st ? (st.mtime ?? st.time) : -1;
+  } catch(e) {}
   return -1;
 }
 
@@ -1362,6 +1362,11 @@ export function TypeFactory(node, ast, cache = true) {
       //obj = new Type(node, ast);
       break;
   }
+
+  if(obj) {
+    if(obj[Symbol.toStringTag] != node.kind) Object.defineProperties(obj, { [Symbol.toStringTag]: { value: node.kind } });
+  }
+
   return obj;
 }
 
