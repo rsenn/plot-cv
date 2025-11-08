@@ -7,7 +7,7 @@ import Console from 'console';
 import * as glfw from 'glfw';
 import * as nvg from 'nanovg';
 import * as cv from 'opencv';
-import { CLAHE, Affine3, AffineFeature, AffineFeature2D, AgastFeatureDetector, BoostDesc, BriefDescriptorExtractor, Canny, COLOR_BayerBG2BGR, COLOR_BayerBG2BGRA, COLOR_BayerBG2BGR_EA, COLOR_BayerBG2BGR_VNG, COLOR_BayerBG2GRAY, COLOR_BayerBG2RGB, COLOR_BayerBG2RGBA, COLOR_BayerBG2RGB_EA, COLOR_BayerBG2RGB_VNG, COLOR_BayerGB2BGR, COLOR_BayerGB2BGRA, COLOR_BayerGB2BGR_EA, COLOR_BayerGB2BGR_VNG, COLOR_BayerGB2GRAY, COLOR_BayerGB2RGB, COLOR_BayerGB2RGBA, COLOR_BayerGB2RGB_EA, COLOR_BayerGB2RGB_VNG, COLOR_BayerGR2BGR, COLOR_BayerGR2BGRA, COLOR_BayerGR2BGR_EA, COLOR_BayerGR2BGR_VNG, COLOR_BayerGR2GRAY, COLOR_BayerGR2RGB, COLOR_BayerGR2RGBA, COLOR_BayerGR2RGB_EA, COLOR_BayerGR2RGB_VNG, COLOR_BayerRG2BGR, COLOR_BayerRG2BGRA, COLOR_BayerRG2BGR_EA, COLOR_BayerRG2BGR_VNG, COLOR_BayerRG2GRAY, COLOR_BayerRG2RGB, COLOR_BayerRG2RGBA, COLOR_BayerRG2RGB_EA, COLOR_BayerRG2RGB_VNG, COLOR_BGR2Lab, COLOR_BGR2Luv, COLOR_BGR2YCrCb, COLOR_Lab2BGR, COLOR_Lab2LBGR, COLOR_Lab2LRGB, COLOR_Lab2RGB, COLOR_LBGR2Lab, COLOR_LBGR2Luv, COLOR_LRGB2Lab, COLOR_LRGB2Luv, COLOR_Luv2BGR, COLOR_Luv2LBGR, COLOR_Luv2LRGB, COLOR_Luv2RGB, COLOR_mRGBA2RGBA, COLOR_RGB2Lab, COLOR_RGB2Luv, COLOR_RGB2YCrCb, COLOR_RGBA2mRGBA, COLOR_YCrCb2BGR, COLOR_YCrCb2RGB, COLOR_YUV420p2BGR, COLOR_YUV420p2BGRA, COLOR_YUV420p2GRAY, COLOR_YUV420p2RGB, COLOR_YUV420p2RGBA, COLOR_YUV420sp2BGR, COLOR_YUV420sp2BGRA, COLOR_YUV420sp2GRAY, COLOR_YUV420sp2RGB, COLOR_YUV420sp2RGBA, Contour, Draw, FastFeatureDetector, FastLineDetector, GaussianBlur, GFTTDetector, HarrisLaplaceFeatureDetector, HoughCircles, HoughLines, HoughLinesP, HuMoments, KeyPoint, Laplacian, Line, LineSegmentDetector, Mahalanobis, Mat, MSDDetector, Point, PointIterator, Rect, RotatedRect, Scharr, SimpleBlobDetector, Size, SliceIterator, Sobel, StarDetector, Subdiv2D, TickMeter, UMat, VideoCapture, VideoWriter } from 'opencv';
+import { CLAHE, Affine3, AffineFeature, AffineFeature2D, AgastFeatureDetector, BoostDesc, BriefDescriptorExtractor, Canny, COLOR_BayerBG2BGR, COLOR_BayerBG2BGRA, COLOR_BayerBG2BGR_EA, COLOR_BayerBG2BGR_VNG, COLOR_BayerBG2GRAY, COLOR_BayerBG2RGB, COLOR_BayerBG2RGBA, COLOR_BayerBG2RGB_EA, COLOR_BayerBG2RGB_VNG, COLOR_BayerGB2BGR, COLOR_BayerGB2BGRA, COLOR_BayerGB2BGR_EA, COLOR_BayerGB2BGR_VNG, COLOR_BayerGB2GRAY, COLOR_BayerGB2RGB, COLOR_BayerGB2RGBA, COLOR_BayerGB2RGB_EA, COLOR_BayerGB2RGB_VNG, COLOR_BayerGR2BGR, COLOR_BayerGR2BGRA, COLOR_BayerGR2BGR_EA, COLOR_BayerGR2BGR_VNG, COLOR_BayerGR2GRAY, COLOR_BayerGR2RGB, COLOR_BayerGR2RGBA, COLOR_BayerGR2RGB_EA, COLOR_BayerGR2RGB_VNG, COLOR_BayerRG2BGR, COLOR_BayerRG2BGRA, COLOR_BayerRG2BGR_EA, COLOR_BayerRG2BGR_VNG, COLOR_BayerRG2GRAY, COLOR_BayerRG2RGB, COLOR_BayerRG2RGBA, COLOR_BayerRG2RGB_EA, COLOR_BayerRG2RGB_VNG, COLOR_BGR2Lab, COLOR_BGR2Luv, COLOR_BGR2YCrCb, COLOR_Lab2BGR, COLOR_Lab2LBGR, COLOR_Lab2LRGB, COLOR_Lab2RGB, COLOR_LBGR2Lab, COLOR_LBGR2Luv, COLOR_LRGB2Lab, COLOR_LRGB2Luv, COLOR_Luv2BGR, COLOR_Luv2LBGR, COLOR_Luv2LRGB, COLOR_Luv2RGB, COLOR_mRGBA2RGBA, COLOR_RGB2Lab, COLOR_RGB2Luv, COLOR_RGB2YCrCb, COLOR_RGBA2mRGBA, COLOR_YCrCb2BGR, COLOR_YCrCb2RGB, COLOR_YUV420p2BGR, COLOR_YUV420p2BGRA, COLOR_YUV420p2GRAY, COLOR_YUV420p2RGB, COLOR_YUV420p2RGBA, COLOR_YUV420sp2BGR, COLOR_YUV420sp2BGRA, COLOR_YUV420sp2GRAY, COLOR_YUV420sp2RGB, COLOR_YUV420sp2RGBA, Contour, Draw, FastFeatureDetector, FastLineDetector, GaussianBlur, GFTTDetector, HarrisLaplaceFeatureDetector, HoughCircles, HoughLines, HoughLinesP, HuMoments, KeyPoint, Laplacian, Line, LineSegmentDetector, Mahalanobis, Mat, MSDDetector, Point, PointIterator, Rect, RotatedRect, Scharr, SimpleBlobDetector, Size, SliceIterator, Sobel, StarDetector, Subdiv2D, TickMeter, UMat, VideoCapture, VideoWriter, } from 'opencv';
 import * as std from 'std';
 import { inspect } from 'inspect';
 
@@ -26,7 +26,7 @@ function GLFW(...args) {
     [glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE],
     [glfw.OPENGL_FORWARD_COMPAT, true],
     [glfw.RESIZABLE, false],
-    [glfw.SAMPLES, 4]
+    [glfw.SAMPLES, 4],
   ];
 
   for(let [prop, value] of hints) glfw.Window.hint(prop, value);
@@ -60,7 +60,7 @@ function LoadConfig() {
   configObj = Object.fromEntries(
     Object.entries(configObj)
       .map(([k, v]) => [k, +v])
-      .filter(([k, v]) => !isNaN(v))
+      .filter(([k, v]) => !isNaN(v)),
   );
   console.log('LoadConfig:', inspect(configObj, { compact: false }));
   return configObj;
@@ -100,7 +100,7 @@ function Accumulator(callback) {
     },
     clear() {
       for(let key in accu) delete accu[key];
-    }
+    },
   });
   return self;
 }
@@ -112,8 +112,8 @@ async function main(...args) {
 
       breakLength: 100,
       compact: 0,
-      depth: Infinity
-    }
+      depth: Infinity,
+    },
   });
   let running = true;
 
@@ -164,7 +164,7 @@ async function main(...args) {
   window.show(screen);
   window.move(0, 0);
   window.resize(screenSize);
-  
+
   /* let mouseEvents = {
     [Symbol.asyncIterator]() {
       let resolve;
@@ -248,7 +248,7 @@ async function main(...args) {
   console.log('window:', window);
   let { frameShow = 1, paramIndex = 0 } = config;
 
- let params = {
+  let params = {
     thres: new NumericParam(config.thres || 229, 0, 255),
     type: new NumericParam(config.type || cv.THRESH_BINARY_INV, 0, 4),
     blur: new NumericParam(config.blur || 1, 1, 10, 2),
@@ -265,9 +265,9 @@ async function main(...args) {
     minRadius: new NumericParam(config.minRadius || 0, 1, 250),
     maxRadius: new NumericParam(config.maxRadius || 200, 1, 1000),
     startContour: new NumericParam(0, 0, 1000),
-    numContours: new NumericParam(1000, 0, 1000)
+    numContours: new NumericParam(1000, 0, 1000),
   };
- let contours = [],
+  let contours = [],
     mapping,
     neighborhood;
   let lineWidth = 1;
@@ -281,8 +281,6 @@ async function main(...args) {
   palette[2] = [0x60, 0x60, 0x60, 0xff];
   palette[3] = [0xff, 0xff, 0x0, 0xff];
   for(let i = 8; i < 16; i++) palette[i] = black;
-
-
 
   let pipeline = (globalThis.pipeline = new Pipeline(
     [
@@ -318,11 +316,11 @@ async function main(...args) {
 
         console.log('SkeletonTracing', console.config({ maxArrayLength: 5, depth: 3, compact: 2 }), {
           count,
-          contours
+          contours,
         });
 
-        /*   neighborhood.copyTo(dst);
-     dst.mul(31);*/
+        /*neighborhood.copyTo(dst);
+        dst.mul(31);*/
         mapping.convertTo(dst, cv.CV_8UC1, 255.0 / (contours.length - 1));
 
         cv.cvtColor(dst, dst, cv.COLOR_GRAY2BGR);
@@ -390,7 +388,7 @@ async function main(...args) {
       },
       function PixelNeighborhood(src, dst) {
         let neighborhood = new Mat(src.size, cv.CV_8UC1);
-    
+
         cv.imwrite('src.png', src);
 
         cv.pixelNeighborhood(src, neighborhood);
@@ -398,12 +396,10 @@ async function main(...args) {
         console.log('endpoints', endpoints);
         let linepoints = cv.pixelFindValue(src, 2);
         //console.log('linepoints', linepoints);
-      
 
-Object.assign(globalThis, {src,neighborhood,palette});
+        Object.assign(globalThis, { src, neighborhood, palette });
 
-      console.log('neighborhood', {neighborhood,palette});
-
+        console.log('neighborhood', { neighborhood, palette });
 
         cv.imwrite('neighborhood.png', neighborhood, palette);
 
@@ -509,7 +505,7 @@ Object.assign(globalThis, {src,neighborhood,palette});
           Draw.circle(dst, p, r + 2, [255, 0, 0], lineWidth, cv.LINE_AA);
           circles.push([x, y, r]);
         }
-      }
+      },
     ],
     i => {
       if(frameShow == i) {
@@ -524,7 +520,7 @@ Object.assign(globalThis, {src,neighborhood,palette});
         RedrawStatus();
         RedrawWindow();
       }
-    }
+    },
   ));
   function RedrawStatus() {
     //console.log(`pipeline.images =`, new Map(pipeline.imageEntries()));
@@ -536,7 +532,7 @@ Object.assign(globalThis, {src,neighborhood,palette});
     Draw.rectangle(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
     const inspectOptions = {
       colors: true,
-      hideKeys: ['callback']
+      hideKeys: ['callback'],
     };
     let text =
       `#${i}: ` +
@@ -586,7 +582,7 @@ Object.assign(globalThis, {src,neighborhood,palette});
   let paramAccumulator = paramNav.setCallback(
     new Accumulator((name, param) => {
       // console.log(`param '${name}' callback`, param);
-    })
+    }),
   );
   let processor = weakMapper(processor => ({ params: [], time: 0 }));
   pipeline.before = () => (paramAccumulator.clear(), processor.set(pipeline.getProcessor(), { start: Date.now() }));
