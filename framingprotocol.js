@@ -1,6 +1,6 @@
 import { AsyncSocket } from 'sockets';
 import { TextDecoder } from 'textcode';
-import { extend, define, properties, nonenumerable, declare, assign, wrapFunction } from 'util';
+import { ucfirst, extend, define, properties, nonenumerable, declare, assign, wrapFunction } from 'util';
 import extendFunction from 'extendFunction';
 
 extendFunction();
@@ -10,13 +10,15 @@ export async function connect(host = '127.0.0.1', port = 9999) {
   const lenBuf = new ArrayBuffer(9);
 
   let id,
-    obj = Object.setPrototypeOf({}, { [Symbol.toStringTag]: 'FramingProtocol' });
+    obj = Object.setPrototypeOf({}, Object.create(null, { [Symbol.toStringTag]: { value: 'FramingProtocol' } }));
 
   const encode = (
     (e = new TextEncoder()) =>
     s =>
       e.encode(s)?.buffer
   )();
+
+  const requests = {};
 
   extend(obj, {
     read: [
@@ -46,7 +48,33 @@ export async function connect(host = '127.0.0.1', port = 9999) {
       (message, [request]) => message({ type: 'request', request }),
       async (request, [command, args], request_seq = (id = (id ?? 0) + 1)) =>
         (await request({ command, args, request_seq })) && request_seq,
+      async (request, [command, args]) => {
+        const seq = await request(command, args);
+
+        return new Promise(resolve => {
+          requests[seq] = resolve;
+        });
+      },
     ].reduce(wrapFunction, obj.sendMessage),
+  });
+
+  extend(obj, {
+    continue: () => obj.sendMessage({ type: 'continue' }),
+    breakpoints: (path, breakpoints) =>
+      obj.sendMessage({ type: 'breakpoints', ...(breakpoints ? { breakpoints: { path, breakpoints } } : { path }) }),
+    stopOnException: flag => obj.sendMessage({ type: 'stopOnException', stopOnException: !!flag }),
+  });
+
+  extend(obj, {
+    pause: () => obj.sendRequest('pause'),
+    next: () => obj.sendRequest('next'),
+    stepIn: () => obj.sendRequest('stepIn'),
+    stepOut: () => obj.sendRequest('stepOut'),
+    evaluate: expression => obj.sendRequest('evaluate', { expression }),
+    stackTrace: () => obj.sendRequest('stackTrace'),
+    scopes: frameId => obj.sendRequest('scopes', { frameId }),
+    variables: (variablesReference, filter, start, count) =>
+      obj.sendRequest('variables', { variablesReference, filter }),
   });
 
   async function readFully(buf, length) {
@@ -61,6 +89,33 @@ export async function connect(host = '127.0.0.1', port = 9999) {
     return 1;
   }
 
+  extend(obj, {
+    async processResponses() {
+      const processors = {
+        response({ request_seq, body }) {
+          if(request_seq in requests) {
+            requests[request_seq](setType(body ?? {}, 'ResponseBody'));
+            delete requests[request_seq];
+            return true;
+          }
+        },
+        event({ event }) {
+          console.log('\r', setType(event, 'Event'));
+          return true;
+        },
+      };
+      for await(const response of obj) {
+        const { type, ...rest } = response;
+        const obj = setType(rest, type);
+        if(!(type in processors) || !processors[type](obj)) console.log(response.type, obj);
+      }
+    },
+  });
+
   await sock.connect(host, port);
   return obj;
+}
+
+function setType(obj, type) {
+  return Object.setPrototypeOf(obj, { [Symbol.toStringTag]: ucfirst(type) });
 }
