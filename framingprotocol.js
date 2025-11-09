@@ -1,9 +1,12 @@
 import { AsyncSocket } from 'sockets';
 import { TextDecoder } from 'textcode';
-import { ucfirst, extend, define, properties, nonenumerable, declare, assign, wrapFunction } from 'util';
+import { readFileSync } from 'fs';
+import { getOrCreate, ucfirst, extend, define, properties, nonenumerable, declare, assign, wrapFunction } from 'util';
 import extendFunction from 'extendFunction';
 
 extendFunction();
+
+const sourceFiles = getOrCreate(new Map(), file => '\n' + readFileSync(file, 'utf-8').split('\n'));
 
 export async function connect(host = '127.0.0.1', port = 9999) {
   const sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_IP);
@@ -79,36 +82,58 @@ export async function connect(host = '127.0.0.1', port = 9999) {
 
   async function readFully(buf, length) {
     let offset = 0;
-
     while(offset < length) {
       const received = await sock.recv(buf, offset, length - offset);
       if(received <= 0) return 0;
       offset += received;
     }
-
     return 1;
   }
 
   extend(obj, {
     async processResponses() {
       const processors = {
-        response({ request_seq, body }) {
+        response: ({ request_seq, body }) => {
           if(request_seq in requests) {
             requests[request_seq](setType(body ?? {}, 'ResponseBody'));
             delete requests[request_seq];
             return true;
           }
         },
-        event({ event }) {
-          console.log('\r', setType(event, 'Event'));
+        event: async ({ event: { type, ...event } }) => {
+          setType(event, type);
+
+          if(obj['on' + type]) if (await obj['on' + type](event)) return true;
+
+          console.log(event);
           return true;
         },
       };
+
       for await(const response of obj) {
         const { type, ...rest } = response;
-        const obj = setType(rest, type);
-        if(!(type in processors) || !processors[type](obj)) console.log(response.type, obj);
+        const resp = setType(rest, type);
+
+        if(!(type in processors) || !(await processors[type](resp))) console.log(response.type, resp);
       }
+    },
+    XonStoppedEvent: async event => {
+      console.log('onStoppedEvent', { event });
+      const st = await obj.stackTrace();
+
+      console.log('onStoppedEvent', { st });
+
+      const [top] = st;
+      const { id, name, filename, line, column } = top;
+
+      const s = sourceFiles(filename)[line];
+
+      const prefix = filename + ':' + line + ': ';
+
+      console.log(prefix + s);
+      console.log(' '.repeat(prefix.length) + ' ' + ' '.repeat(column) + '^');
+
+      return true;
     },
   });
 
