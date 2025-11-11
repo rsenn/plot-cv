@@ -6,7 +6,7 @@ import extendFunction from 'extendFunction';
 
 extendFunction();
 
-const sourceFiles = getOrCreate(new Map(), file => '\n' + readFileSync(file, 'utf-8').split('\n'));
+const sources = getOrCreate(new Map(), file => ('\n' + readFileSync(file, 'utf-8')).split('\n'));
 
 export async function connect(host = '127.0.0.1', port = 9999) {
   const sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_IP);
@@ -22,6 +22,8 @@ export async function connect(host = '127.0.0.1', port = 9999) {
   )();
 
   const requests = {};
+
+  extend(obj, { sources });
 
   extend(obj, {
     read: [
@@ -105,7 +107,7 @@ export async function connect(host = '127.0.0.1', port = 9999) {
 
           if(obj['on' + type]) if (await obj['on' + type](event)) return true;
 
-          console.log(event);
+          console.log(console.config({compact: true}),event);
           return true;
         },
       };
@@ -140,6 +142,30 @@ export async function connect(host = '127.0.0.1', port = 9999) {
   await sock.connect(host, port);
   return obj;
 }
+
+extend(globalThis, {
+  sources,
+  printSourceline({ filename, line, column }) {
+    const s = sources(filename)[line].trimEnd();
+
+    const prefix = filename + ':' + line + ': ';
+
+    console.log(prefix + colorizeSyntax(s));
+    console.log(' '.repeat(prefix.length) + ' '.repeat(column - 1) + '^');
+
+    return true;
+  },
+  colorizeSyntax(str) {
+    const re =
+      /(?<numeric>([0]o?[0-7](_?[0-7])*|[0][xX][0-9a-fA-F](_?[0-9a-fA-F])*|[0][bB][01](_?[01])*|([0]|[1-9](_?[0-9])*)\.([0-9](_?[0-9])*|)([eE][+-]?[0-9]+)?|\.[0-9](_?[0-9])*([eE][+-]?[0-9]+)?|([0]|[1-9](_?[0-9])*)([eE][+-]?[0-9]+)?)[lmn]?)(?<comment>\/\/[^\r\n]*|\/\*([^\*]|[\r\n]|(\*+([^/\*]|[\n\r])))*\*+\/)|(?<keyword>instanceof|debugger|function|continue|finally|extends|default|static|export|switch|import|typeof|return|delete|async|yield|await|throw|super|const|class|catch|while|break|from|enum|case|with|void|this|else|let|try|var|new|for|as|of|do|in|if)\b|(?<string>("([^\"\\\n\r]+|\\[\'\"\"\\abfnrtv]|\\(?:[1-7][0-7]{0,2}|[0-7]{1,3})|\\[x][0-9a-fA-F]{2}|\\[u][0-9a-fA-F]{4}|\\(\r\n|\r|\n))*")|('([^\'\\\n\r]+|\\[\'\"\"\\abfnrtv]|\\(?:[1-7][0-7]{0,2}|[0-7]{1,3})|\\[x][0-9a-fA-F]{2}|\\[u][0-9a-fA-F]{4}|\\(\r\n|\r|\n))*'))|(?<ident>\w+)|(?:\s+)|(?<punct>-->>=|>>>=|\?\?=|&&=|\|\|=|\*\*=|\.\.\.|<<=|-->>|>>=|>>>|===|!==|\?\?|\*\*|\?\.|$\{|=>|%=|-=|>=|\^=|\+=|--|<=|\|=|\+\+|==|&=|>>|\|\||\/=|<<|&&|\*=|!=|@|\{|\^|\+|:|\)|\||\?|;|\(|&|~|\]|\/|!|<|\[|\*|,|>|\}|%|-|\.|=)/g;
+
+    return str.replaceAll(re, (m, ...args) => {
+      const type = Object.entries(args.find(a => typeof a == 'object')).find(([k, v]) => v)?.[0];
+      if(type) m = `\x1b[1;${{ comment: 32, keyword: 31, identifier: 33, punct: 36, string: 36, numeric: 36 }[type] ?? 33}m${m}\x1b[0m`;
+      return m;
+    });
+  },
+});
 
 function setType(obj, type) {
   return Object.setPrototypeOf(obj, { [Symbol.toStringTag]: ucfirst(type) });
