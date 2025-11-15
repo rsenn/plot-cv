@@ -1,22 +1,32 @@
 #!/usr/bin/env qjsm
 import child_process from 'child_process';
 import * as fs from 'fs';
+
+
+import { EagleElement,EagleDocument, EagleProject } from './eagle.js';
+import { Node,Element } from 'dom';
+
 import { className, define, entries, getOpt, glob, GLOB_BRACE, intersect, difference, isObject, lazyProperties, memoize, range, unique, weakDefine } from 'util';
+
 import { Table } from './cli-helpers.js';
 import { DirIterator, ReadDirRecursive, RecursiveDirIterator } from './dir-helpers.js';
-import { GetElements, GetInstances, GetParts, GetPositions, num2color, scientific } from './eagle-commands.js';
+
 import { CopyToClipboard, FdReader, Filter, FilterImages, IfDebug, LoadHistory, LogCall, LogIfDebug, ReadBJSON, ReadFd, ReadFile, ReadJSON, ReadXML, SortFiles, StatFiles, WriteBJSON, WriteFile, WriteJSON, WriteXML, } from './io-helpers.js';
 import { BinaryTree, BoxHash, BucketMap, BucketStore, ComponentMap, CompositeMap, DenseSpatialHash2D, Deque, Enum, HashList, HashMap, HashMultimap, MultiBiMap, MultiKeyMap, Multimap, Shash, SortedMap, SpatialH, SpatialHash, SpatialHash2D, SpatialHashMap, } from './lib/container.js';
 import * as deep from './lib/deep.js';
 import { forwardRef, Fragment, h, React, ReactComponent, render, toChildArray } from './lib/dom/preactComponent.js';
-import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, setDebug, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleRef, EagleNode, makeEagleElement, DereferenceError, EagleNodeList, useTrkl, EagleDocument, EagleReference, makeEagleNode, Renderer, EagleProject, EagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, } from './lib/eagle.js';
+
+import { GetElements, GetInstances, GetParts, GetPositions, num2color, scientific } from './eagle-commands.js';
+import { EagleSVGRenderer, useTrkl, Renderer, ImmutablePath, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug,  EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes,  DereferenceError } from './lib/eagle.js';
+
 import { ElementNameToComponent, ElementToComponent, PinSizes } from './lib/eagle/components.js';
+
 import CircuitJS from './lib/eda/circuitjs.js';
 import { GetColorBands, GetFactor, GetMultipliers } from './lib/eda/colorCoding.js';
 import { GetExponent, GetMantissa, NumberToValue, ValueToNumber } from './lib/eda/values.js';
 import { EventEmitter, eventify, EventTarget } from './lib/events.js';
 import { BBox, Circle, Line, LineList, Matrix, Point, Rect, Rotation, Scaling, Size, TransformationList, Translation } from './lib/geom.js';
-import { Edge, Graph, Node } from './lib/fd-graph.js';
+import { Edge, Graph, Node as GraphNode } from './lib/fd-graph.js';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import renderToString from './lib/preact-render-to-string.js';
@@ -99,6 +109,9 @@ const GetGlobalFunctions = (() => {
 })();
 
 function toXML(obj) {
+  if(isObject(obj) && 'outerHTML' in obj)
+    return obj.outerHTML;
+  
   deep.forEach(obj, a => Array.isArray(a.children) && a.children.length == 0 && delete a.children);
   return writeXML(obj);
 }
@@ -284,13 +297,15 @@ function main(...args) {
   Object.assign(globalThis, { Console, GetGlobalFunctions, className });
 
   Object.assign(globalThis, {
-    child_process,
+    Node,Element,
+    EagleElement,
+    EagleDocument,
+    EagleProject,
     SaveLibraries,
     EagleSVGRenderer,
     SchematicRenderer,
     BoardRenderer,
     LibraryRenderer,
-    EagleNodeList,
     useTrkl,
     RAD2DEG,
     DEG2RAD,
@@ -321,17 +336,7 @@ function main(...args) {
     LinesToPath,
     MakeCoordTransformer,
     useAttributes,
-    EagleDocument,
-    EagleReference,
-    EagleRef,
-    makeEagleNode,
-    EagleNode,
     Renderer,
-    EagleProject,
-    EagleElement,
-    makeEagleElement,
-    EagleElementProxy,
-    EagleNodeMap,
     ImmutablePath,
     DereferenceError,
     GetNames,
@@ -387,7 +392,6 @@ function main(...args) {
     eventify,
     Graph,
     Edge,
-    Node,
     xml,
     XPath,
     ImmutableXPath,
