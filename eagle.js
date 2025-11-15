@@ -16,7 +16,9 @@ export const EagleClasses = {
     /* prettier-ignore */ get drawing() { return this.eagle.drawing; }
     /* prettier-ignore */ get board() { return this.eagle.drawing.board; }
     /* prettier-ignore */ get schematic() { return this.eagle.drawing.schematic; }
+    /* prettier-ignore */ get library() { return this.eagle.drawing.library; }
     /* prettier-ignore */ get layers() { return this.eagle.drawing.layers; }
+    /* prettier-ignore */ get type() { return this.eagle.drawing.type; }
   },
   Element: class EagleElement extends Element {
     constructor(node, parent) {
@@ -40,7 +42,7 @@ export const EagleClasses = {
        * Common Eagle Elements
        */
       eagle: class EagleElement extends this {
-        /* prettier-ignore */ get drawing() { return this.querySelector('drawing'); }
+        /* prettier-ignore */ get drawing() { return this.children[ Node.raw(this).children.findIndex(e => e.tagName == 'drawing')]; }
       },
       drawing: class DrawingElement extends this {
         /* prettier-ignore */ get settings() { return [...this.children].find(e => e.tagName == 'settings'); }
@@ -48,6 +50,8 @@ export const EagleClasses = {
         /* prettier-ignore */ get layers() { return [...this.children].find(e => e.tagName == 'layers'); }
         /* prettier-ignore */ get schematic() { return [...this.children].find(e => e.tagName == 'schematic'); }
         /* prettier-ignore */ get board() { return [...this.children].find(e => e.tagName == 'board'); }
+        /* prettier-ignore */ get library() { return [...this.children].find(e => e.tagName == 'board'); }
+        /* prettier-ignore */ get type() { return [...this.children].find(e => ['schematic', 'board', 'library'].includes(e.tagName))?.tagName; }
       },
       settings: class SettingsElement extends this {},
       setting: class SettingElement extends this {},
@@ -359,10 +363,64 @@ export const EagleClasses = {
         /* prettier-ignore */ get elements() { return [...this.children].find(e => e.tagName == 'elements'); }
         /* prettier-ignore */ get signals() { return [...this.children].find(e => e.tagName == 'signals'); }
       },
-      designrules: class DesignrulesElement extends this {},
-      param: class ParamElement extends this {},
-      autorouter: class AutorouterElement extends this {},
-      pass: class PassElement extends this {},
+      designrules: class DesignrulesElement extends this {
+        constructor(node, parent) {
+          super(node, parent);
+
+          return Collection(this);
+        }
+        /* prettier-ignore */ get name() { return this.getAttribute('name'); }
+        params = new NamedNodeMap(
+          {
+            get: name => [...this.children].find(e => e.tagName == 'param' && e.getAttribute('name') == name),
+            keys: () =>
+              [...this.children]
+                .filter(e => e.tagName == 'param')
+                .map(e => e.getAttribute('name'))
+          },
+          this,
+        );
+      },
+      param: class ParamElement extends this {
+        /* prettier-ignore */ get name() { return this.getAttribute('name'); }
+        /* prettier-ignore */ get value() { return this.getAttribute('value'); }
+      },
+      autorouter: class AutorouterElement extends this {
+        constructor(node, parent) {
+          super(node, parent);
+
+          return Collection(this);
+        }
+        passes = new NamedNodeMap(
+          {
+            get: name => [...this.children].find(e => e.tagName == 'pass' && e.getAttribute('name') == name),
+            keys: () =>
+              [...this.children]
+                .filter(e => e.tagName == 'pass')
+                .map(e => e.getAttribute('name'))
+          },
+          this,
+        );
+
+      },
+      pass: class PassElement extends this {
+        constructor(node, parent) {
+          super(node, parent);
+
+          return Collection(this);
+        }
+        /* prettier-ignore */ get name() { return this.getAttribute('name'); }
+        params = new NamedNodeMap(
+          {
+            get: name => [...this.children].find(e => e.tagName == 'param' && e.getAttribute('name') == name),
+            keys: () =>
+              [...this.children]
+                .filter(e => e.tagName == 'param')
+                .map(e => e.getAttribute('name'))
+          },
+          this,
+        );
+      },
       elements: class ElementsElement extends this {
         constructor(node, parent) {
           super(node, parent);
