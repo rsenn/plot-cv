@@ -4,7 +4,7 @@ import { propertyLookupHandlers, propertyLookup, lookupObject } from './lib/misc
 
 Object.assign(globalThis, {
   CreateWS,
-/*  BaseCache,
+  /*  BaseCache,
   CachedFetch,
   Implementations,
   lscache,
@@ -48,7 +48,6 @@ Object.assign(globalThis, {
   */
   now: () => +performance.now().toFixed(0),
 });
-
 
 globalThis.lsc = KVStorage();
 //console.log('lsc.pages', await lsc.pages, now());
@@ -121,11 +120,11 @@ function CreatePageList(pages) {
   );
 }
 
-function CreateWS() {
+function CreateWS(subprotocols = ['ws']) {
   const u = new URL(window.location.href);
   u.protocol = /https/.test(u.protocol) ? 'wss:' : 'ws:';
   u.pathname = '/ws';
-  let ws = new WebSocket(u + '');
+  let ws = new WebSocket(u + '', subprotocols);
 
   Object.assign(ws, {
     async onopen({ target }) {
