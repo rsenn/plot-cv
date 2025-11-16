@@ -1,4 +1,4 @@
-import { Entities, Prototypes, Factory, Parser, Interface, Node, NODE_TYPES, NodeList, HTMLCollection, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, Serializer, MapItems, FindItemIndex, FindItem, ListAdapter } from './lib/dom.js';
+import { Entities, Prototypes, Factory, Parser, Interface, Node, NODE_TYPES, NodeList, HTMLCollection, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, Serializer, MapItems, FindItemIndex, FindItem, ListAdapter, } from './lib/dom.js';
 import { define, nonenumerable, enumerable, isPrototypeOf } from './lib/misc.js';
 //import { TextDecoder } from 'textcode';
 import { readFileSync } from './lib/fs.js';

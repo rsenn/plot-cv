@@ -314,7 +314,7 @@ function CreateWS(endpoint = 'uploads') {
   u.protocol = /https/.test(u.protocol) ? 'wss:' : 'ws:';
   u.pathname = '/' + endpoint;
 
-  let ws = (globalThis.ws = new WebSocket(u + '', [ 'ws' ]));
+  let ws = (globalThis.ws = new WebSocket(u + '', ['ws']));
   console.log('CreateWS', ws);
   let tid;
   const restart = (delay = 10) => {

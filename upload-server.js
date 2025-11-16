@@ -503,8 +503,8 @@ function main(...args) {
 
           console.log(`*file`, { action, file });
 
-let dir=path.dirname(file);
-let base=path.basename(file);
+          let dir = path.dirname(file);
+          let base = path.basename(file);
 
           if(file) {
             file = path.absolute(file);
@@ -522,18 +522,18 @@ let base=path.basename(file);
             }
           }
 
-dir=allowedDirs.get(dir);
+          dir = allowedDirs.get(dir);
 
-file=path.join(dir,base);
+          file = path.join(dir, base);
 
           switch (action) {
             case 'load':
               let mime = GetMime(file);
-              console.log(`*file.load`, {  mime });
+              console.log(`*file.load`, { mime });
 
               let data = ReadFile(file, true);
 
-              console.log(`*file.load`, { data  });
+              console.log(`*file.load`, { data });
 
               yield data;
 
