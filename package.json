@@ -54,7 +54,7 @@
     "quickjs/qjs-ffi/lib/fcntl.js": "util",
     "node_modules/events/events.js": "events",
     "lib/xml/xpath.js": "quickjs/qjs-modules/lib/xpath.js",
-    "lib/preact.js": "lib/preact.esm.js",
+    "lib/preact.js": "lib/preact.mjs",
     "xlib/preact.mjs": "lib/preact.module.js"
   },
   "dependencies": {
