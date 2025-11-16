@@ -1,10 +1,10 @@
-import { MessageReceiver, MessageTransmitter, MessageTransceiver, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
+import { MessageReceiver, MessageTransmitter, MessageTransceiver, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen, } from './quickjs/qjs-net/js/rpc.js';
 import { BaseCache, CachedFetch, Implementations, lscache, brcache } from './lib/lscache.js';
 import { propertyLookupHandlers, propertyLookup, lookupObject } from './lib/misc.js';
 
 Object.assign(globalThis, {
   CreateWS,
-  BaseCache,
+/*  BaseCache,
   CachedFetch,
   Implementations,
   lscache,
@@ -37,17 +37,18 @@ Object.assign(globalThis, {
     DeserializeSymbols,
     DeserializeValue,
     RPCConnect,
-    RPCListen
+    RPCListen,
   },
   ListAll,
   GlobAll,
   Consume,
   KVStorage,
   CreateElement,
-  now: () => +performance.now().toFixed(0)
+  propertyLookupHandlers, propertyLookup, lookupObject,
+  */
+  now: () => +performance.now().toFixed(0),
 });
 
-Object.assign(globalThis, { propertyLookupHandlers, propertyLookup, lookupObject });
 
 globalThis.lsc = KVStorage();
 //console.log('lsc.pages', await lsc.pages, now());
@@ -59,7 +60,7 @@ function KVStorage(
     let r = [];
     for(let i = 0; i < localStorage.length; i++) r.push(localStorage.key(i));
     return r;
-  }
+  },
 ) {
   return lookupObject(
     async (k, v) => (v === undefined ? g(k) : s(k, v)),
@@ -67,8 +68,8 @@ function KVStorage(
     {
       has(k) {
         return K().indexOf(k) != -1;
-      }
-    }
+      },
+    },
   );
 }
 
@@ -116,7 +117,7 @@ function CreatePageList(pages) {
     'ul',
     {},
     pages.map(([page, title]) => CreateElement('li', {}, [CreateElement('a', { href: page }, [document.createTextNode(page)]), document.createTextNode(' • '), document.createTextNode(title)])),
-    document.body.firstElementChild
+    document.body.firstElementChild,
   );
 }
 
@@ -163,7 +164,7 @@ function CreateWS() {
     },
     onclose({ wasClean, code, reason }) {
       console.log('WS CLOSE', { wasClean, code, reason });
-    }
+    },
   });
 
   return ws;

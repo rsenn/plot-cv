@@ -2,6 +2,7 @@ import { spawn } from 'child_process';
 import { read as readBJSON, write as writeBJSON } from 'bjson';
 import { closeSync, readFileSync, statSync, writeFileSync, readSync, gets } from 'fs';
 import { define, error, toString } from './lib/misc.js';
+import { popen } from 'std';
 
 let xml;
 
@@ -41,12 +42,11 @@ export function ReadFd(fd, binary) {
 }
 
 export function ReadLines(file) {
-
   const fd = fs.openSync(file, 'r');
-let line, r=[];
+  let line,
+    r = [];
 
-  while((line = gets(fd)))
-    r.push(line);
+  while((line = gets(fd))) r.push(line);
 
   return r;
 }
@@ -99,6 +99,14 @@ export function LoadHistory(filename) {
 
   return (parse() ?? []).filter(entry => (entry + '').trim() != '');
   //.map(entry => entry.replace(/\\n/g, '\n'))
+}
+
+export function ReadShell(cmd) {
+  if(Array.isArray(cmd)) cmd = cmd.shift() + cmd.map(p => ` '${p}'`).join('');
+  const f = popen(cmd, 'r');
+  let s = f.readAsString();
+  f.close();
+  return s;
 }
 
 export function ReadJSON(filename) {
