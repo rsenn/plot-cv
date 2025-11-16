@@ -12,7 +12,7 @@ import { List } from './lib/list.js';
 import { chain, chainRight, define, getConstructorChain, getPrototypeChain, getset, gettersetter, isCFunction, isFunction, isJSFunction, isObject, isUndefined, keys, memoize, properties, propertyLookup, randInt, randStr, tryCatch, tryFunction, unique, } from './lib/misc.js';
 import { AcquireReader, AcquireWriter, ArrayWriter, AsyncRead, AsyncWrite, ByteReader, ChunkReader, CreateTransformStream, CreateWritableStream, DebugTransformStream, isStream, LineBufferStream, LineReader, LogSink, PipeTo, PipeToRepeater, ReadAll, Reader, ReadFromIterator, readStream, RepeaterSink, RepeaterSource, StringReader, TextTransformStream, WritableRepeater, WriteIterator, WriteToRepeater, } from './lib/stream/utils.js';
 import trkl from './lib/trkl.js';
-import miscfixed6x13 from './miscfixed6x13.js';
+import miscfixed6x13 from './static/json/miscfixed6x13.js';
 import { wasmBrowserInstantiate } from './wasm-helpers.js';
 
 console.log('fire.js loaded!')

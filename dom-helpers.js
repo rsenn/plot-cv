@@ -1,7 +1,7 @@
-import { Entities, nodeTypes, Prototypes, Factory, Parser, Interface, Node, NODE_TYPES, NodeList, HTMLCollection, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, Serializer, GetType, MapItems, FindItemIndex, FindItem, ListAdapter, URLSearchParams, URL, } from 'dom';
-import { define, nonenumerable, enumerable, isPrototypeOf } from 'util';
-import { TextDecoder } from 'textcode';
-import { readFileSync } from 'fs';
+import { Entities, Prototypes, Factory, Parser, Interface, Node, NODE_TYPES, NodeList, HTMLCollection, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, Serializer, MapItems, FindItemIndex, FindItem, ListAdapter } from './lib/dom.js';
+import { define, nonenumerable, enumerable, isPrototypeOf } from './lib/misc.js';
+//import { TextDecoder } from 'textcode';
+import { readFileSync } from './lib/fs.js';
 
 export function DOMDocument(arg, parser) {
   if(isPrototypeOf(ArrayBuffer.prototype, arg)) arg = new TextDecoder().decode(arg);
