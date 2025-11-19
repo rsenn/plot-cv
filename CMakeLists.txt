@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.0)
 project(plot-cv C CXX)
 
 message("Building project [1;31m${PROJECT_NAME}[0m")
