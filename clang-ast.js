@@ -1,17 +1,20 @@
 import * as fs from 'fs';
-import { ReadFile, ReadBJSON, WriteBJSON } from './io-helpers.js';
-import * as deep from './lib/deep.js';
-import { assert, bits, className, define, nonenumerable, properties, entries, errors, filter, isArray, isFunction, isObject, isString, keys, lazyProperties, matchAll, memoize, predicate, range, repeat, split, toString, types, unique, values, weakDefine, } from './lib/misc.js';
-import * as path from './lib/path.js';
-import { Pointer } from './lib/pointer.js';
+import * as deep from 'deep';
+import * as path from 'path';
+import * as BJSON from 'bjson'
+import { Pointer } from 'pointer';
 import { Spawn } from './os-helpers.js';
-import { countSubstring } from './string-helpers.js';
+//import { countSubstring } from './string-helpers.js';
 import { inspect } from 'inspect';
-import { readObject, mapFunction } from 'util';
+import { assert, bits, className, define, nonenumerable, properties, entries, errors, filter, isArray, isFunction, isObject, isString, keys, lazyProperties, matchAll, memoize, predicate, range, repeat, split, toString, types, unique, values, weakDefine, readObject, mapFunction, defineProperty, defineProperties, setPrototypeOf, isInstanceOf, } from 'util';
 import { string, property, shift, and, regexp, notnot } from 'predicate';
+import { Location } from 'location';
+export { Location } from 'location';
+import {MapExtensions} from 'extendMap';
 
-export let SIZEOF_POINTER = 8;
-export let SIZEOF_INT = 4;
+export const SIZEOF_POINTER = 8;
+export const SIZEOF_INT = 4;
+
 
 const ast2np = (
   (wm = new WeakMap()) =>
@@ -41,11 +44,11 @@ export function DeepFind(ast, pred, flags = deep.RETURN_VALUE) {
 }
 
 export function* DeepSelect(ast, pred, flags = deep.RETURN_VALUE) {
-  let m = ast2np(ast);
+  const m = ast2np(ast);
 
   if(isString(pred)) pred = property('name', string(pred));
 
-  for(let [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH | (flags & ~deep.RETURN_PATH_VALUE), deep.TYPE_OBJECT, ['inner'])) {
+  for(const [value, path] of deep.iterate(ast, pred, deep.RETURN_VALUE_PATH | (flags & ~deep.RETURN_PATH_VALUE), deep.TYPE_OBJECT, ['inner'])) {
     DeepCachePath(ast, path, m);
 
     switch (flags & deep.RETURN_PATH_VALUE) {
@@ -156,9 +159,9 @@ export class List extends Array {
     let ret = new List(),
       i = 0;
 
-    if(typeof callback == 'object' && callback != null && callback instanceof RegExp) {
+    if(isInstanceOf(RegExp, callback)) {
       var re = callback;
-      callback = elem => typeof elem == 'object' && elem != null && (re.test(elem.name) || (GetLoc(elem) && re.test(GetLoc(elem).file)));
+      callback = elem => isObject(elem) && (re.test(elem.name) || (GetLoc(elem) && re.test(GetLoc(elem).file)));
     }
 
     for(let elem of this) {
@@ -221,7 +224,7 @@ export class Node {
   static node2ast = new WeakMap();
 
   constructor(ast) {
-    if(typeof ast == 'object' && ast != null) {
+    if(isObject(ast)) {
       if('path' in ast && 'value' in ast) ast = ast.value;
 
       //throw new Error(`Node constructor ${inspect(ast)}`);
@@ -239,7 +242,7 @@ export class Node {
   /* prettier-ignore */ get loc() { return new Location(GetLoc(this.ast)); }
 
   get file() {
-    const loc = this.ast.loc ?? DeepFind(this.ast, (v, k) => k == 'loc') ?? DeepFind(t.ast, (v, k) => typeof v == 'object' && v != null && 'file' in v);
+    const loc = this.ast.loc ?? DeepFind(this.ast, (v, k) => k == 'loc') ?? DeepFind(t.ast, (v, k) => isObject(v) && 'file' in v);
     if(loc) return loc.file;
   }
 
@@ -274,7 +277,7 @@ export class Node {
   /* prettier-ignore */ get [Symbol.toStringTag]() { return this.constructor.name; }
 }
 
-Object.setPrototypeOf(Node.prototype, null);
+setPrototypeOf(Node.prototype, null);
 
 const getTypeFromNode = memoize((node, ast) => new Type(node.type, ast), new WeakMap());
 
@@ -850,7 +853,8 @@ export class RecordDecl extends Type {
     if(fields) {
       let tag, access;
 
-      Object.defineProperty(this, 'members', {
+      defineProperty(this, 'members', {
+        enumerable: true,
         get: memoize(() =>
           fields
             .filter(node => !('parentDeclContextId' in node) && node.kind != 'FriendDecl')
@@ -1204,7 +1208,7 @@ export class Range {
 
 Range.prototype[Symbol.toStringTag] = 'Range';
 
-export class Location {
+/*export class Location {
   #line = undefined;
   #column = undefined;
   #offset = undefined;
@@ -1223,7 +1227,7 @@ export class Location {
   }
 
   static from(loc) {
-    if(typeof loc == 'object' && loc != null && loc instanceof Location) return loc;
+    if(isObject(loc) && loc instanceof Location) return loc;
     try {
       return new Location(loc);
     } catch(e) {
@@ -1241,7 +1245,7 @@ export class Location {
     if('file' in loc) {
       const haveFilename = typeof loc.file == 'string';
 
-      Object.defineProperty(this, 'file', { value: loc.file, enumerable: true, writable: !haveFilename, configurable: true });
+      defineProperty(this, 'file', { value: loc.file, enumerable: true, writable: !haveFilename, configurable: true });
     }
   }
 
@@ -1251,14 +1255,14 @@ export class Location {
     }
   }
 
-  /* prettier-ignore */ get line() { return this.#line; }
-  /* prettier-ignore */ set line(v) { if(v != this.#line) this.#column = undefined; this.#line = v; }
+  get line() { return this.#line; }
+  set line(v) { if(v != this.#line) this.#column = undefined; this.#line = v; }
 
-  /* prettier-ignore */ get column() { return this.#column; }
-  /* prettier-ignore */ set column(v) { this.#column = v; }
+  get column() { return this.#column; }
+  set column(v) { this.#column = v; }
 
-  /* prettier-ignore */ get offset() { return this.#offset; }
-  /* prettier-ignore */ set offset(v) { if(this.#offset - v < this.#column) this.#column -= this.#offset - v; else { this.#column = undefined; this.#line = undefined; } this.#offset = v; }
+  get offset() { return this.#offset; }
+  set offset(v) { if(this.#offset - v < this.#column) this.#column -= this.#offset - v; else { this.#column = undefined; this.#line = undefined; } this.#offset = v; }
 
   [Symbol.for('nodejs.util.inspect.custom')](depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
@@ -1290,7 +1294,7 @@ export class Location {
     if(this.file) ret.file = this.file;
     if(this.#column) ret.col = this.#column;
     if(this.#line) ret.line = this.#line;
-    /*if(typeof this.#offset == 'number')*/ ret.offset = this.#offset;
+    ret.offset = this.#offset;
 
     return ret;
   }
@@ -1299,7 +1303,7 @@ export class Location {
     let str = this + '';
     return str.localeCompare(other + '');
   }
-}
+}*/
 
 export function TypeFactory(node, ast, cache = true) {
   let obj;
@@ -1364,7 +1368,7 @@ export function TypeFactory(node, ast, cache = true) {
   }
 
   if(obj) {
-    if(obj[Symbol.toStringTag] != node.kind) Object.defineProperties(obj, { [Symbol.toStringTag]: { value: node.kind } });
+    if(obj[Symbol.toStringTag] != node.kind) defineProperties(obj, { [Symbol.toStringTag]: { value: node.kind } });
   }
 
   return obj;
@@ -1526,7 +1530,16 @@ export async function AstDump(compiler, source, args, force) {
     json() {
       const binary = /\.bjson$/i.test(this.file);
 
-      return binary ? ReadBJSON(this.file, null) : JSON.parse(fs.readFileSync(this.file, 'utf-8'));
+      if(binary) {
+        let data=fs.readFileSync(this.file, null);
+      
+        if(data) 
+        return BJSON.read(data);
+
+      else throw new Error(`ERROR reading ${this.file}`)
+      }
+
+      return  JSON.parse(fs.readFileSync(this.file, 'utf-8'));
     },
     data() {
       let data = this.json;
@@ -1543,14 +1556,14 @@ export async function AstDump(compiler, source, args, force) {
               else loc.file = file;
             }
           } catch(e) {}
-        };
+        };  
         SetFile(node.loc);
         SetFile(node.range?.begin);
         SetFile(node.range?.end);
       }
       if(!/\.bjson$/i.test(this.file)) {
         console.log(`Writing '${bjson}'...`);
-        WriteBJSON(bjson, data);
+        fs.writeFileSync(bjson,  BJSON.write(data));
         console.log(`Deleting '${this.file}'...`);
         fs.unlinkSync(this.file);
         this.file = bjson;
@@ -1576,11 +1589,11 @@ export async function AstDump(compiler, source, args, force) {
   });
   r = lazyProperties(r, {
     types() {
-      return Object.setPrototypeOf(
+      return setPrototypeOf(
         this.filter(
           n => /(?:Record|Typedef|Enum)Decl/.test(n.kind),
           () => true,
-        ),
+        ).map(node => TypeFactory(node, this.data)),
         List.prototype,
       );
     },
@@ -1592,21 +1605,27 @@ export async function AstDump(compiler, source, args, force) {
 
       if(list.length == 0) list = [...DeepSelect(this.data, n => n.kind.startsWith('FunctionDecl'))];
 
-      return Object.setPrototypeOf(list, List.prototype);
+      return setPrototypeOf(
+        list.map(node => new FunctionDecl(node, this.data)),
+        List.prototype,
+      );
     },
     namespaces() {
-      return Object.setPrototypeOf([...DeepSelect(this.data, n => 'NamespaceDecl' == n.kind)], List.prototype);
+      return setPrototypeOf([...DeepSelect(this.data, n => 'NamespaceDecl' == n.kind)], List.prototype);
     },
     classes() {
       let predicate = n => n.kind == 'CXXRecordDecl' && !n.isImplicit;
-      /*(Predicate.property('kind', Predicate.equal('CXXRecordDecl')),
-        Predicate.not(Predicate.property('isImplicit', Predicate.equal(true))));*/
-      //predicate = n => 'CXXRecordDecl' == n.kind && !n.isImplicit;
-      return Object.setPrototypeOf([...DeepSelect(this.data, predicate)], List.prototype);
+      return setPrototypeOf([...DeepSelect(this.data, predicate)], List.prototype);
+    },
+    structs() {
+      return setPrototypeOf(
+        this.filter(n => /RecordDecl/.test(n.kind)).map(n => TypeFactory(n, this.data)),
+        List.prototype,
+      );
     },
     variables() {
-      return Object.setPrototypeOf(
-        this.filter(n => /(?:Var)Decl/.test(n.kind)),
+      return setPrototypeOf(
+        this.filter(n => /(?:Var)Decl/.test(n.kind)).map(node => new VarDecl(node, this.data)),
         List.prototype,
       );
     },
@@ -1658,7 +1677,7 @@ export function NodeType(n) {
 export function NodeName(n, name) {
   if(typeof name != 'string') name = '';
   if(name == '' && n.name) name = n.name;
-  if(typeof n == 'object' && n != null && n.tagUsed) name = n.tagUsed + ' ' + name;
+  if(isObject(n) && n.tagUsed) name = n.tagUsed + ' ' + name;
   return name;
 }
 
@@ -1796,7 +1815,7 @@ export function NodePrinter(ast) {
   };
   printer.ast = ast;
 
-  Object.defineProperties(printer, {
+  defineProperties(printer, {
     output: {
       get() {
         return out;
@@ -2781,7 +2800,7 @@ export function PrintAst(node, ast) {
   ast ??= globalThis['$'].data;
   let printer = NodePrinter(ast);
   globalThis.printer = printer;
-  Object.defineProperties(printer, {
+  defineProperties(printer, {
     path: {
       get() {
         return DeepPathOf(ast, this.node);
