@@ -43,6 +43,7 @@
     "lib/location.js": "location",
     "lib/pointer.js": "pointer",
     "lib/deep.js": "deep",
+    "lib/fs.js": "fs",
     "lib/path.js": "path",
     "lib/xml.js": "xml",
     "lib/lexer.js": "lexer",
