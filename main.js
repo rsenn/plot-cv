@@ -20,7 +20,7 @@ import keysim from './lib/dom/keysim.js';
 import { h, render, useState, Fragment, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 import { ColorMap } from './lib/draw/colorMap.js';
 import { BoardRenderer, EagleSVGRenderer, LibraryRenderer, Renderer, SchematicRenderer } from './lib/eagle.js';
-import { DereferenceError, EagleDocument, EagleElement, EagleProject} from './lib/eagle-dom.js';
+import { DereferenceError, EagleParser,EagleFactory,EagleDocument, EagleElement, EagleProject, Node as EagleNode} from './lib/eagle-dom.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
 import { EventIterator } from './lib/iterator/event.js';
@@ -378,9 +378,10 @@ async function LoadFile(file) {
   let response = await FetchURL(url);
   let xml = await response.text();
 
-  //console.log(`LoadFile ${name}`, { xml });
+ console.log(`LoadFile ${name}`, { xml });
 
-  let doc = new EagleDocument(xml, null, name, null, filesystem);
+  let doc = new EagleParser(new EagleFactory()).parseFromString(xml, name);
+  //let doc = new EagleDocument(xml, null, name, null, filesystem);
 
   //console.log(`LoadFile ${name}`, { doc, xml });
   if(/\.brd$/.test(name)) window.board = doc;
@@ -961,9 +962,12 @@ async function LoadDocument(project, parentElem) {
   if(typeof project == 'string') project = GetProject(project);
 
   config.currentProject(project.name);
-  project.doc = await LoadFile(project).catch(err => console.error(err));
 
-  //console.log('project.doc', project.doc);
+
+  project.doc = await LoadFile(project.name).catch(err => console.error(err));
+  //project.doc = new EagleParser().parseFromString(project.data);
+
+ console.log('project.doc', project.doc);
 
   currentProj(project);
   LogJS.info(`${project.name} loaded.`);
@@ -1549,7 +1553,7 @@ const AppMain = (window.onload = async () => {
   //prettier-ignore
 
   const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, tlite, debounce, tXml, deep, Alea, path,  Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff,  XmlObject, XmlAttr, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, React, Fragment,  FileList, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
- CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleProject, EagleSVGRenderer, Renderer, SchematicRenderer, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
+ CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleFactory,EagleDocument, EagleNode, EagleElement, EagleProject, EagleSVGRenderer, Renderer, SchematicRenderer, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
  classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
   Object.assign(globalThis, {
@@ -1782,6 +1786,10 @@ const AppMain = (window.onload = async () => {
       File.prototype.path = function() {
         return this.dir + '/' + this.name;
       };
+
+   /*   weakDefine(File.prototype, {get doc() {
+        return LoadFile(this.name);
+      }})*/
 
       if(files) {
         list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
