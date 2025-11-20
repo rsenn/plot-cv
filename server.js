@@ -13,7 +13,6 @@ import SerialPort from 'serialport';
 import WebSocket from 'ws';
 import { ReadDirRecursive } from './dir-helpers.js';
 import importReplacer from './importReplacer.js';
-import { ReadFile } from './io-helpers.js';
 import { Alea } from './lib/alea.js';
 import PortableChildProcess from './lib/childProcess.js';
 import { abbreviate, escape, filter, filterKeys, getMethods, isObject, matchAll, randStr, toUnixTime, tryCatch, tryFunction, unique, unixTime, weakDefine, weakMapper } from './lib/misc.js';
@@ -25,7 +24,8 @@ import SerialStream from '@serialport/stream';
 const rotateLeft = n => x => (x << n) | ((x >> (32 - n)) & ~((-1 >> n) << n));
 
 const moduleAliases = {
-  'xlib/preact.mjs': 'lib/preact.module.js'
+  'xlib/preact.mjs': 'lib/preact.module.js',
+  'lib/preact.mjs': 'lib/preact.js'
 };
 
 function GetMimeType(file) {
@@ -515,7 +515,7 @@ async function main() {
           //console.log('JS replace: ' + file);
         }
 
-        let s = ReadFile(file);
+        let s = fs.readFileSync(file, 'utf-8');
         res.type('application/javascript; charset=UTF-8');
         res.send(importReplacer.replace(s, file));
         return;
