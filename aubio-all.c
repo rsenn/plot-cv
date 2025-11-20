@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <math.h>
 #include "/home/roman/Sources/aubio/src/io/sink_wavwrite.c"
 #include "/home/roman/Sources/aubio/src/io/sink_apple_audio.c"
 #include "/home/roman/Sources/aubio/src/io/ioutils.c"

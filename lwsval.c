@@ -27,7 +27,6 @@
 #include <portmidi.h>
 #include <linux/random.h>
 #include <zlib.h>
-#include <dns.h>
 
 static inline int
 escape_char_pred(int c) {
