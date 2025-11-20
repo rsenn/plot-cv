@@ -1,5 +1,5 @@
 import { AddLayer, BoardToGerber, ClearCache, FetchURL, GcodeToPolylines, GerberToGcode, GetLayer, ListProjects, default as commands } from './commands.js';
-import { Button, ButtonGroup, Chooser, ColorWheel, Conditional, CrossHair, DisplayList, DropDown, DynamicLabel, Fence, File, FileList, FloatingPanel, Panel, Ruler, Slider, Toggle } from './components.js';
+import { Button, ButtonGroup, Chooser, ColorWheel, Conditional, CrossHair, DisplayList, DropDown, DynamicLabel, Fence, File, FileList, FloatingPanel, Panel, Ruler, Slider, Toggle, } from './components.js';
 import { AlignAll, GetElements, GetInstances, GetPositions, scientific, UpdateMeasures } from './eagle-commands.js';
 import Alea from './lib/alea.js';
 import debounce from './lib/async/debounce.js';
@@ -10,28 +10,29 @@ import { ClipperLib } from './lib/clipper-lib.js';
 import Shape from './lib/clipper.js';
 import { HSLA, ImmutableHSLA, ImmutableRGBA, isHSLA, isRGBA, RGBA } from './lib/color.js';
 import { BinaryTree } from './lib/container/binaryTree.js';
-import deep from './lib/deep.js';
+import * as deep from './lib/deep.js';
 import { devtools } from './lib/devtools.js';
-import dom from './lib/dom.js';
+import * as dom from './lib/dom-old.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
 import { eventIterator, iterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
 import { h, render, useState, Fragment, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 import { ColorMap } from './lib/draw/colorMap.js';
-import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleElementProxy, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, LibraryRenderer, makeEagleElement, makeEagleNode, Renderer, SchematicRenderer } from './lib/eagle.js';
+import { BoardRenderer, EagleSVGRenderer, LibraryRenderer, Renderer, SchematicRenderer } from './lib/eagle.js';
+import { DereferenceError, EagleParser, EagleFactory, EagleDocument, EagleElement, EagleProject, Node as EagleNode,Serializer } from './lib/eagle-dom.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
 import { EventIterator } from './lib/iterator/event.js';
 import { Slot, SlotProvider } from './slots.js';
 import { Wire } from './lib/eagle/components/wire.js';
-import { Alignment, AlignmentAngle, AlignmentAttrs, CalculateArcRadius, CartesianToPolar, ClampAngle, DEBUG, DEG2RAD, EagleAlignments, ElementToClass, EscapeClassName, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LayerToClass, LinesToPath, log, MakeCoordTransformer, MakeRotation, PinSizes, PolarToCartesian, RAD2DEG, RenderArc, RotateTransformation, setDebug, SVGAlignments, UnescapeClassName, useAttributes, useTrkl, VERTICAL } from './lib/eagle/renderUtils.js';
+import { Alignment, AlignmentAngle, AlignmentAttrs, CalculateArcRadius, CartesianToPolar, ClampAngle, DEBUG, DEG2RAD, EagleAlignments, ElementToClass, EscapeClassName, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LayerToClass, LinesToPath, log, MakeCoordTransformer, MakeRotation, PinSizes, PolarToCartesian, RAD2DEG, RenderArc, RotateTransformation, setDebug, SVGAlignments, UnescapeClassName, useAttributes, useTrkl, VERTICAL, } from './lib/eagle/renderUtils.js';
 import * as ecmascript from './lib/ecmascript.js';
 import { BG, digit2color, GetColorBands, GetExponent, GetFactor, GetMantissa, GetMultipliers, NumberToValue, ValueToNumber } from './lib/eda/colorCoding.js';
 import { FetchCached, NormalizeResponse, ResponseData } from './lib/fetch.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 import { Functional } from './lib/functional.js';
-import { GCodeLineStream, GcodeObject, GcodeParser, gcodetogeometry, gcodeToObject, Interpreter, InterpretGcode, noop, objectToGcode, parseFile, parseFileSync, parseGcode, parseStream, parseString, parseStringSync } from './lib/gcode.js';
+import { GCodeLineStream, GcodeObject, GcodeParser, gcodetogeometry, gcodeToObject, Interpreter, InterpretGcode, noop, objectToGcode, parseFile, parseFileSync, parseGcode, parseStream, parseString, parseStringSync, } from './lib/gcode.js';
 import { Arc, BBox, Circle, isBBox, LineList, Polygon, default as geom } from './lib/geom.js';
 import { MatrixTransformation, Rotation, Scaling, Transformation, TransformationList, Translation } from './lib/geom/transformation.js';
 import Voronoi from './lib/geom/voronoi.js';
@@ -44,7 +45,7 @@ import { arrayDiff, /*ImmutablePath, */ MutablePath, objectDiff, toXML } from '.
 import { lazyInitializer } from './lib/lazyInitializer.js';
 import LogJS from './lib/log.js';
 import { BaseCache, brcache, CachedFetch, lscache } from './lib/lscache.js';
-import { camelize, clamp, className, define, entries, escape, filter, functionName, getMethods, getset, isArray, isObject, isoDate, keys, mapAdapter, mapFunction, memoize, once, properties, range, repeater, roundTo, split, toString, tryCatch, tryFunction, values, weakDefine } from './lib/misc.js';
+import { camelize, clamp, className, define, entries, escape, filter, functionName, getMethods, getset, isArray, isObject, isoDate, keys, mapAdapter, mapFunction, memoize, once, properties, range, repeater, roundTo, split, toString, tryCatch, tryFunction, values, weakDefine, } from './lib/misc.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import objectInspect from './lib/objectInspect.js';
 import * as path from './lib/path.js';
@@ -60,12 +61,12 @@ import tlite from './lib/tlite.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
 import tXml from './lib/tXml.js';
-import { XmlAttr, XmlObject } from './lib/xml.js';
+import { XmlAttr, XmlObject } from './lib/xml-old.js';
 import { ImmutableXPath } from './lib/xml/xpath.js';
 import { Message } from './message.js';
 import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
 import serial from './serial.js';
-import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
+import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator, } from './lib/stream.js?ts=<?TS?>';
 //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 
 const {
@@ -101,7 +102,7 @@ const {
   Transition,
   TransitionList,
   TRBL,
-  Tree
+  Tree,
 } = { ...dom, ...geom };
 //import rpc from './quickjs/qjs-net/js/rpc.js';
 
@@ -110,15 +111,15 @@ const elementDefaultAttributes = {
   fill: 'none',
   'stroke-linecap': 'round',
   'stroke-linejoin': 'round',
-  'stroke-width': 0.1
+  'stroke-width': 0.1,
 };
 
 const is = {
-  on: arg => ['yes', 'on', 1, true].indexOf(arg) != -1
+  on: arg => ['yes', 'on', 1, true].indexOf(arg) != -1,
 };
 
 /* prettier-ignore */
-//extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
+//extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleDocument, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
 const Timer = { ...Timers, once: dom.Timer };
 
 const putError = error => console.log('ERROR: ' + error.message + '\n' + error.stack);
@@ -157,7 +158,7 @@ const SaveConfig = debounce(() => {
   return fetch('config', {
     method: 'POST',
     headers: { 'content-type': 'application/octet-stream' },
-    body: JSON.stringify(obj)
+    body: JSON.stringify(obj),
   }).then(res => res.json());
 }, 5 * 1000);
 
@@ -170,8 +171,8 @@ const LoadConfig = once(() =>
       ...r,
       entries() {
         return Object.entries(r);
-      }
-    }))
+      },
+    })),
 );
 
 let store = (window.store = makeLocalStorage());
@@ -188,7 +189,7 @@ let config = {
   showGrid: trkl(store.get('grid') || true),
   sortOrder: trkl(store.get('sortOrder') || -1),
   sortKey: trkl(store.get('sortKey') || 'name'),
-  currentProject: trkl(store.get('currentProject') || null)
+  currentProject: trkl(store.get('currentProject') || null),
 };
 
 const GetProject = arg => {
@@ -200,7 +201,7 @@ let elementChildren = null;
 let elementGeometries = null;
 let zoomValue = getset(
   () => ZoomFactor(config.zoomLog()),
-  value => config.zoomLog(ZoomLog(value))
+  value => config.zoomLog(ZoomLog(value)),
 );
 //
 /*let zoomValue= getset(
@@ -214,7 +215,7 @@ config.zoomLog.subscribe(AdjustZoom);
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
 const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
-const trklGetSet = (get, set) => value => value !== undefined ? set(value) : get();
+const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
 //const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
 /*const MouseEvents = h => ({
@@ -225,7 +226,7 @@ const trklGetSet = (get, set) => value => value !== undefined ? set(value) : get
 
 tlite(() => ({
   grav: 'nw',
-  attrib: ['data-tlite', 'data-tooltip', 'title', 'data-filename']
+  attrib: ['data-tlite', 'data-tooltip', 'title', 'data-filename'],
 }));
 
 const utf8Decoder = new TextDecoder('utf-8');
@@ -237,7 +238,7 @@ const svgFactory = memoize((parent, delegate) => {
     ...delegate,
     append_to(elem, p) {
       if(delegate.append_to) delegate.append_to(elem, p || parent);
-    }
+    },
   });
   let rect = calcViewBox(parent);
   let zIndex = maxZIndex() + 1;
@@ -245,18 +246,18 @@ const svgFactory = memoize((parent, delegate) => {
     'svg',
     {
       viewBox: rect.toString(),
-      style: `position: absolute; left: 0; top: 0; z-index: ${zIndex}; stroke: #000, fill: none;`
+      style: `position: absolute; left: 0; top: 0; z-index: ${zIndex}; stroke: #000, fill: none;`,
     },
     [
       ['defs'],
       [
         'g',
         {
-          transform: ` scale(1,-1) translate(0,1.27) translate(0,${-rect.y2}) `
+          transform: ` scale(1,-1) translate(0,1.27) translate(0,${-rect.y2}) `,
         },
-        [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }]]
-      ]
-    ]
+        [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }]],
+      ],
+    ],
   ];
   const element = (svgOwner = factory(...svg));
   factory.root = parent = element.lastElementChild;
@@ -269,7 +270,7 @@ function DrawSVG(...args) {
       //console.log('append_to', this, { elem, p });
       (p || this.root).appendChild(elem);
       adjustViewBox(elem);
-    }
+    },
   });
   let e;
   /*let parent = project.svg.parentElement.lastElementChild;
@@ -290,7 +291,7 @@ function DrawSVG(...args) {
         e = factory('line', {
           ...line.toObject(),
           stroke: c.hex(),
-          'stroke-width': 0.1
+          'stroke-width': 0.1,
         });
       }
     }
@@ -330,7 +331,7 @@ function setViewBox(svgOwner, box) {
   svgOwner.setAttribute('viewBox', rect.toString());
   svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
   Element.attr(svgOwner.lastElementChild.firstElementChild, {
-    ...rect.toRect()
+    ...rect.toRect(),
   });
 }
 
@@ -358,13 +359,13 @@ const filesystem = {
       method: 'post',
       headers: {
         'Content-Type': 'application/octet-stream',
-        'Content-Disposition': `attachment; filename="${filename}"`
+        'Content-Disposition': `attachment; filename="${filename}"`,
       },
-      body: data + ''
+      body: data + '',
     });
   },
   async exists(filename) {},
-  async realpath(filename) {}
+  async realpath(filename) {},
 };
 
 async function LoadFile(file) {
@@ -377,9 +378,10 @@ async function LoadFile(file) {
   let response = await FetchURL(url);
   let xml = await response.text();
 
-  //console.log(`LoadFile ${name}`, { xml });
+  console.log(`LoadFile ${name}`, { xml });
 
-  let doc = new EagleDocument(xml, null, name, null, filesystem);
+  let doc = new EagleParser().parseFromString(xml, name);
+  //let doc = new EagleDocument(xml, null, name, null, filesystem);
 
   //console.log(`LoadFile ${name}`, { doc, xml });
   if(/\.brd$/.test(name)) window.board = doc;
@@ -394,9 +396,9 @@ async function SaveFile(filename, data, contentType) {
     method: 'post',
     headers: {
       'Content-Type': contentType || 'application/xml',
-      'Content-Disposition': `attachment; filename="${filename}"`
+      'Content-Disposition': `attachment; filename="${filename}"`,
     },
-    body: data
+    body: data,
   });
   let { status, statusText } = response;
   //console.log('SaveFile', {filename,data, response});
@@ -492,22 +494,22 @@ const GerberLayers = {
   GKO: 'Keep-Out Layer ',
   GML: 'Mill layer',
   gpi: 'Photoplotter info file',
-  TXT: 'Drill file'
+  TXT: 'Drill file',
 };
 
 let svgDocFactory = memoize((id = '#geom') =>
   SVG.factory(Element.find(id)).initialize('svg', {
     width: window.innerWidth,
-    height: window.innerHeight /*, style: "pointer-events: none;"*/
-  })
+    height: window.innerHeight /*, style: "pointer-events: none;"*/,
+  }),
 );
 let svgGroupFactory = memoize((props = {}) =>
   svgDocFactory().setRoot('g', {
     stroke: '#f00',
     'stroke-width': 3,
     fill: 'none',
-    ...props
-  })
+    ...props,
+  }),
 );
 
 const maxZIndex = () =>
@@ -515,7 +517,7 @@ const maxZIndex = () =>
     ...Element.findAll('*')
       .map(e => Element.getCSS(e, 'z-index'))
       .filter(z => !/(auto)/.test(z))
-      .map(z => +z)
+      .map(z => +z),
   );
 
 const groupProps = memoize(() => {
@@ -524,7 +526,7 @@ const groupProps = memoize(() => {
   const randomColor = () => HSLA.random([240, -120], [100, 100], [30, 75], [1, 1], prng).hex();
   return [
     { stroke: randomColor(), transform },
-    { stroke: randomColor(), transform }
+    { stroke: randomColor(), transform },
   ];
 });
 
@@ -543,7 +545,7 @@ function DrawArc(start, end, angle) {
   let points = [
     ...line,
     middle,
-    center
+    center,
     //...[0.25, 0.75].map(a => line.pointAt(a))
   ];
   let degA = (angle * 180) / Math.PI;
@@ -590,8 +592,8 @@ function DrawArc(start, end, angle) {
       r: 10,
       fill: rainbow[i],
       'stroke-width': 2,
-      stroke: 'black'
-    })
+      stroke: 'black',
+    }),
   );
 
   let svg = g('line', { ...line.toObject() }).ownerSVGElement;
@@ -611,8 +613,8 @@ function DrawArc(start, end, angle) {
       fill: '#ff0',
       stroke: '#000',
       'stroke-width': 1.5,
-      transform: `translate(${center})`
-    })
+      transform: `translate(${center})`,
+    }),
   );
 
   b('polyline', {
@@ -620,13 +622,13 @@ function DrawArc(start, end, angle) {
     fill: 'none',
     stroke: '#000',
     'stroke-width': 1.5,
-    transform: `translate(${center})`
+    transform: `translate(${center})`,
   });
 
   r('path', { d: `M ${p1} A ${radius} ${radius} 0 0 1 ${p2}` });
   r('path', {
     d: `M ${p1} A ${radius} ${radius} 0 1 0 ${p2}`,
-    stroke: '#00dd0080'
+    stroke: '#00dd0080',
   });
 
   //g('line', { ...line2.toObject(), stroke: '#0f0' });
@@ -663,7 +665,7 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
       r: 5,
       stroke: '#000',
       fill: '#fff',
-      'stroke-width': 0.4
+      'stroke-width': 0.4,
     });
     draw(
       'text',
@@ -671,9 +673,9 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
         x: x + 0.2,
         y: y + 0.5,
         ...AlignmentAttrs({ x: 0, y: 0 }),
-        'font-size': '6px'
+        'font-size': '6px',
       },
-      node.value + ''
+      node.value + '',
     );
   }
   function DrawEdge(item, parent) {
@@ -688,12 +690,12 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
     draw('line', {
       ...Line(...points).round(0.001),
       stroke: '#000',
-      'stroke-width': 0.4
+      'stroke-width': 0.4,
     });
   }
 };
 DrawBinaryTree.bt = new BinaryTree(
-  new BinaryTree.Node('A', new BinaryTree.Node('B', new BinaryTree.Node('D')), new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F')))
+  new BinaryTree.Node('A', new BinaryTree.Node('B', new BinaryTree.Node('D')), new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F'))),
 );
 DrawBinaryTree.bt = new BinaryTree(
   new BinaryTree.Node(
@@ -705,11 +707,11 @@ DrawBinaryTree.bt = new BinaryTree(
         'H',
         new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)),
         new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)),
-        new BinaryTree.Node('V')
+        new BinaryTree.Node('V'),
       ),
-      new BinaryTree.Node(3)
-    )
-  )
+      new BinaryTree.Node(3),
+    ),
+  ),
 );
 
 function GetPaths(query, parent = project.svgElement) {
@@ -729,7 +731,7 @@ function PathToPolylines(path, step = 0.01) {
     .filter(poly => poly.length > 1)
     .map(poly => {
       let transforms = new TransformationList(
-        Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()
+        Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse(),
       ).collapse();
       //console.log('transforms', transforms);
       return new Polyline(poly).transform(transforms);
@@ -740,7 +742,7 @@ function PathToPolyline(path, step = 0.01) {
   let poly = [...SVG.pathIterator(path, { step })];
 
   let transforms = new TransformationList(
-    Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()
+    Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse(),
   ).collapse();
   //console.log('transforms', transforms);
   return new Polyline(poly).transform(transforms);
@@ -758,7 +760,7 @@ function OutsetPath(path, offset, miterLimit = 2, arcTolerance = 0.01) {
   co.AddPath(
     path.closed ? path.slice(0, -1) : path,
     ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'],
-    ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound']
+    ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound'],
   );
   co.Execute(output, offset);
   //console.log('output:', output);
@@ -849,13 +851,13 @@ function EagleMaps(project) {
   const { /*path2obj, obj2path, */ path2eagle, eagle2path /*, eagle2obj, obj2eagle */ } = project.doc.maps;
   const [component2eagle, eagle2component] = [
     mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)),
-    mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined))
+    mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined)),
   ];
   weakDefine(maps, {
     path2eagle,
     eagle2path,
     path2component,
-    component2path
+    component2path,
   });
 
   /* const [component2dom, dom2component] = [
@@ -872,7 +874,7 @@ function EagleMaps(project) {
     component2eagle,
     component2path,
     eagle2component,
-    path2component
+    path2component,
   });
   Object.assign(project, { maps });
   return maps;
@@ -897,7 +899,7 @@ function* PackageNames(doc = project.doc) {
           if(!isNaN(+(match[0] + ''))) indexes.push(i);
           return { s, v, indexes };
         },
-        { indexes: [] }
+        { indexes: [] },
       )
       .indexes.reverse();
     let sIndex = tokens.findIndex(([token, index]) => token == '/');
@@ -924,7 +926,7 @@ function* PackageNames(doc = project.doc) {
         w,
         h,
         size,
-        orientation
+        orientation,
       });
     }
   }
@@ -960,9 +962,11 @@ async function LoadDocument(project, parentElem) {
   if(typeof project == 'string') project = GetProject(project);
 
   config.currentProject(project.name);
-  project.doc = await LoadFile(project).catch(err => console.error(err));
 
-  //console.log('project.doc', project.doc);
+  project.doc = await LoadFile(project.name).catch(err => console.error(err));
+  //project.doc = new EagleParser().parseFromString(project.data);
+
+  console.log('project.doc', project.doc);
 
   currentProj(project);
   LogJS.info(`${project.name} loaded.`);
@@ -990,10 +994,10 @@ async function LoadDocument(project, parentElem) {
           let names = [...PackageNames(doc)];
           let changes = names.filter(a => a[0] != a[1]);
           return names;
-        }
+        },
       },
-      { memoize: true, configurable: true }
-    )
+      { memoize: true, configurable: true },
+    ),
   );
 
   await RenderProject(project);
@@ -1016,7 +1020,7 @@ async function RenderProject(project = globalThis.project) {
 
   let Component = project.renderer.render(doc, null, {});
 
-  let usedLayers = [...doc.layers.list]; /*.filter(layer => layer.elements.size > 0)*/
+  let usedLayers = [...doc.layers]; /*.filter(layer => layer.elements.size > 0)*/
 
   Timer.once(250).then(() =>
     layerList(
@@ -1035,9 +1039,9 @@ async function RenderProject(project = globalThis.project) {
           fn.subscribe = handler.subscribe;
           fn.unsubscribe = handler.unsubscribe;
           return fn;
-        })()
-      }))
-    )
+        })(),
+      })),
+    ),
   );
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = Component;
@@ -1064,9 +1068,9 @@ async function RenderProject(project = globalThis.project) {
         sizeListener,
         aspectListener,
         listener: transform,
-        'data-name': project.name
+        'data-name': project.name,
       },
-      [Component]
+      [Component],
     );
   }
   let svgElement;
@@ -1082,7 +1086,7 @@ async function RenderProject(project = globalThis.project) {
 
     project.maps = {
       ...project.doc.maps,
-      ...EagleMaps(project)
+      ...EagleMaps(project),
     };
 
     project.rendered = rendered;
@@ -1109,9 +1113,9 @@ async function RenderProject(project = globalThis.project) {
       SVG.factory(() =>
         project.makeGroup({
           ...((id !== undefined && { id }) || {}),
-          'stroke-width': 0.127 / 4
-        })
-      )
+          'stroke-width': 0.127 / 4,
+        }),
+      ),
     );
     project.makeFactory();
 
@@ -1183,7 +1187,7 @@ async function RenderProject(project = globalThis.project) {
       /* prettier-ignore */ get width() { return viewBox.width; },
       /* prettier-ignore */ set width(value) { viewBox.width = value; setRect(viewBox); },
       /* prettier-ignore */ get height() { return viewBox.height; },
-      /* prettier-ignore */ set height(value) { viewBox.height = value; setRect(viewBox); }
+      /* prettier-ignore */ set height(value) { viewBox.height = value; setRect(viewBox); },
     });
   }
   {
@@ -1208,7 +1212,7 @@ async function RenderProject(project = globalThis.project) {
 
       Element.attr(project.svgElement, {
         'data-filename': project.name,
-        'data-aspect': project.aspectRatio
+        'data-aspect': project.aspectRatio,
       });
       AdjustZoom();
       project.status = SaveSVG();
@@ -1246,7 +1250,7 @@ const GenerateVoronoi = () => {
   //console.log('doc', doc);
   let points = new PointList();
 
-  for(let element of doc.elements.list) {
+  for(let element of doc.elements) {
     let { x, y, package: pkg } = element;
     //console.log('element:', element, { x, y });
     let origin = new Point(x, y);
@@ -1283,7 +1287,7 @@ const GenerateVoronoi = () => {
   const factory = SVG.factory();
   const lines = [
     ...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]),
-    ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])
+    ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }]),
   ];
   const circles = [
     ...holes.map(p => [
@@ -1294,9 +1298,9 @@ const GenerateVoronoi = () => {
         r: 0.254,
         fill: 'none',
         stroke: '#00f',
-        'stroke-width': 0.3
-      }
-    ]) /* ...points2.map(p => [ 'circle', { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: 'rgba(0,255,255,0.75)', 'stroke-width': 0.1 } ])*/
+        'stroke-width': 0.3,
+      },
+    ]) /* ...points2.map(p => [ 'circle', { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: 'rgba(0,255,255,0.75)', 'stroke-width': 0.1 } ])*/,
   ];
   const polylines = [
     ...cells.reduce(
@@ -1307,12 +1311,12 @@ const GenerateVoronoi = () => {
           {
             points: new PointList(halfedges.map(({ site }) => site)).toString(),
             stroke: '#f0f',
-            'stroke-width': 0.1
-          }
-        ]
+            'stroke-width': 0.1,
+          },
+        ],
       ],
-      []
-    )
+      [],
+    ),
   ];
   //console.log('polylines:', polylines);
   //console.log('cells:', cells);
@@ -1322,7 +1326,7 @@ const GenerateVoronoi = () => {
     left: 0,
     top: 0,
     width: '100%',
-    height: 'auto'
+    height: 'auto',
   });
   //filesystem.writeFile('output.svg', svgFile);
   //console.log('svg:', svgElem);
@@ -1352,11 +1356,11 @@ function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
             line.element = e;
             line.xml = e.toXML();
             return line;
-          })
-        )
+          }),
+        ),
       ])
       .map(([name, lines]) => [name, lines, lines.slice().toPolygons(pts => new Polyline(pts))])
-      .map(([name, lines, polygons]) => [name, { lines, polygons }])
+      .map(([name, lines, polygons]) => [name, { lines, polygons }]),
   );
 }
 
@@ -1417,7 +1421,7 @@ const CreateGrblSocket = async (port = 'tnt1') => {
   let url = makeURL({
     location: '/serial',
     protocol: 'ws',
-    query: { port }
+    query: { port },
   });
   let ws = new WebSocketClient();
   await ws.connect(url);
@@ -1452,7 +1456,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
     socketURL ||
     makeURL({
       location: parseURL(window.location.href).location + 'ws',
-      protocol: window.location.href.startsWith('https') ? 'wss' : 'ws'
+      protocol: window.location.href.startsWith('https') ? 'wss' : 'ws',
     });
   let ws = new WebSocketClient();
   let send = ws.send;
@@ -1513,7 +1517,7 @@ const AuthorizationDialog = ({ onAuth, ...props }) => {
               onInput: e => {
                 setUsername(e.target.value);
               },
-              value: username
+              value: username,
             }),
             h('input', {
               name: 'password',
@@ -1523,7 +1527,7 @@ const AuthorizationDialog = ({ onAuth, ...props }) => {
               onInput: e => {
                 setPassword(e.target.value);
               },
-              value: password
+              value: password,
             }),
             h('input', {
               name: 'Ok',
@@ -1532,12 +1536,12 @@ const AuthorizationDialog = ({ onAuth, ...props }) => {
                 e.preventDefault();
                 onAuth({ username, password });
                 return false;
-              }
-            })
-          ])
-        )
-      ])
-    )
+              },
+            }),
+          ]),
+        ),
+      ]),
+    ),
   );
 };
 
@@ -1547,8 +1551,8 @@ const AppMain = (window.onload = async () => {
   const { sortOrder, sortKey } = config;
   //prettier-ignore
 
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, tlite, debounce, tXml, deep, Alea, path,  Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff,  XmlObject, XmlAttr, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, React, Fragment,  FileList, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
- CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList,  ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, tlite, debounce, tXml, deep, Alea, path,  Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff,  XmlObject, XmlAttr, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, React, Fragment,  FileList, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
+ CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleFactory,EagleParser,EagleDocument, EagleNode, EagleElement, EagleProject, Serializer, EagleSVGRenderer, Renderer, SchematicRenderer, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
  classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
   Object.assign(globalThis, {
@@ -1568,7 +1572,7 @@ const AppMain = (window.onload = async () => {
     entries,
     values,
     tryCatch,
-    tryFunction
+    tryFunction,
   });
 
   const localFunctions = {
@@ -1627,8 +1631,8 @@ const AppMain = (window.onload = async () => {
       GetFactor,
       GetColorBands,
       BG,
-      digit2color
-    }
+      digit2color,
+    },
   };
 
   if(store.keys().length == 0) {
@@ -1672,19 +1676,18 @@ const AppMain = (window.onload = async () => {
   weakDefine(window, { rpc:rpc2 });
   weakDefine(window, imports);
   weakDefine(window.Element, getMethods(dom.Element));
-  weakDefine(window, dom, geom, imports, localFunctions);
+  weakDefine(window,  geom, imports, localFunctions);
   weakDefine(window, {
     functions: filter(localFunctions, v => typeof v == 'function'),
-    dom,
-    geom,
+     geom,
     config,
     loading,
-    filePanel
+    filePanel,
   });
   Error.stackTraceLimit = 100;
 
   weakDefine(window, {
-    TestArc: () => timer(2000).then(() => DrawArc({ x: 50, y: 150 }, { x: 350, y: 300 }, 120 * (Math.PI / 180)))
+    TestArc: () => timer(2000).then(() => DrawArc({ x: 50, y: 150 }, { x: 350, y: 300 }, 120 * (Math.PI / 180))),
   });
 
   const timestamps = new Repeater(async (push, stop) => {
@@ -1747,10 +1750,10 @@ const AppMain = (window.onload = async () => {
       let data = {
         files: await fetch('files?filter=.*.(brd|sch|lbr|GBL|GKO|GTL)$&flat=1', {
           method: 'get' /*,
-          body: JSON.stringify({ filter: '.*.(brd|sch|lbr|GBL|GKO|GTL)$' })*/
+          body: JSON.stringify({ filter: '.*.(brd|sch|lbr|GBL|GKO|GTL)$' })*/,
         })
           .then(resp => resp.text())
-          .then(json => JSON.parse(json))
+          .then(json => JSON.parse(json)),
       };
 
       if(typeof data == 'string') data = JSON.parse(data);
@@ -1782,11 +1785,15 @@ const AppMain = (window.onload = async () => {
         return this.dir + '/' + this.name;
       };
 
+      /*   weakDefine(File.prototype, {get doc() {
+        return LoadFile(this.name);
+      }})*/
+
       if(files) {
         list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
         let svgs = list.reduce((acc, file) => {
           if(/\.lbr$/i.test(file.name)) return acc;
-          file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
+          file.svg = `${path.basename(file.name)}.${path.extname(file.name)}.svg`;
           //console.log(`file.svg = '${file.svg}'`);
           return [...acc, file.svg];
         }, []);
@@ -1901,10 +1908,10 @@ const AppMain = (window.onload = async () => {
           color: 'white',
           height: '60px',
           width: '200px',
-          padding: '0 10px 0 0'
-        }
+          padding: '0 10px 0 0',
+        },
       },
-      [result && new Date(result.value).toLocaleTimeString('de-CH')]
+      [result && new Date(result.value).toLocaleTimeString('de-CH')],
     );
   };
   LogJS.addAppender(
@@ -1913,7 +1920,7 @@ const AppMain = (window.onload = async () => {
         let d = new Date(time);
         if(typeof window.pushlog == 'function') window.pushlog([type, isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
       }
-    }
+    },
   );
   let loggerRect = new Rect();
   const Logger = props => {
@@ -1944,12 +1951,12 @@ const AppMain = (window.onload = async () => {
             h('img', {
               className: 'log sign',
               src: `static/${type.toLowerCase() || 'warn'}.svg`,
-              style: { height: '14px', width: 'auto', marginTop: '-1px' }
-            })
+              style: { height: '14px', width: 'auto', marginTop: '-1px' },
+            }),
           ),
-          h('td', { className: 'log message' }, m + '')
-        ])
-      )
+          h('td', { className: 'log message' }, m + ''),
+        ]),
+      ),
     );
   };
 
@@ -1963,7 +1970,7 @@ const AppMain = (window.onload = async () => {
     return h(
       'table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
-      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')]))
+      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')])),
     );
   };
 
@@ -1988,9 +1995,9 @@ const AppMain = (window.onload = async () => {
         className: 'commander',
         value: inputText,
         onKeyDown: handler,
-        autofocus: true
+        autofocus: true,
       },
-      []
+      [],
     );
   };
 
@@ -2063,7 +2070,7 @@ const AppMain = (window.onload = async () => {
 
               layerList(layers);
             }),
-          { timeout: 40 }
+          { timeout: 40 },
         ),
         onMouseMove: e => {
           if(e.buttons & 1 && setTo !== undefined) setVisible(setTo);
@@ -2071,7 +2078,7 @@ const AppMain = (window.onload = async () => {
         onMouseUp: e => {
           setTo = null;
         } /*,
-        onMouseDown*/
+        onMouseDown*/,
       },
       [
         h(
@@ -2079,27 +2086,27 @@ const AppMain = (window.onload = async () => {
           {
             className: classNames(className, 'number'),
             style: {
-              background: color || (isObject(element) && element.color)
+              background: color || (isObject(element) && element.color),
             },
-            ...props
+            ...props,
           },
-          `${i}`
+          `${i}`,
         ),
         h(
           'span',
           {
             className: classNames(className, 'name', !isVisible && 'gray', solo && 'bold'),
-            ...props
+            ...props,
           },
-          `${name}`
+          `${name}`,
         ),
         h('img', {
           className: classNames(className, 'visible'),
           ...props,
           style: { height: '1em', width: 'auto' },
-          src: `static/svg/${isVisible ? 'show' : 'hide'}.svg`
-        })
-      ]
+          src: `static/svg/${isVisible ? 'show' : 'hide'}.svg`,
+        }),
+      ],
     );
   };
 
@@ -2155,7 +2162,7 @@ const AppMain = (window.onload = async () => {
             //console.log('file list push', e);
             open(!open());
           }
-        }
+        },
       }),
 
       /* h(Button, {
@@ -2170,12 +2177,12 @@ const AppMain = (window.onload = async () => {
       h(Button, {
         //  caption: '↔',
         fn: MakeFitAction(VERTICAL & 1),
-        image: 'static/svg/fit-vertical.svg'
+        image: 'static/svg/fit-vertical.svg',
       }),
       h(Button, {
         //  caption: '↕',
         fn: MakeFitAction(HORIZONTAL & 1),
-        image: 'static/svg/fit-horizontal.svg'
+        image: 'static/svg/fit-horizontal.svg',
       }),
       h(Conditional, { signal: currentProj }, [
         h(Button, {
@@ -2183,12 +2190,12 @@ const AppMain = (window.onload = async () => {
           fn: () => config.showGrid(!config.showGrid()),
           state: config.showGrid,
           toggle: true,
-          image: 'static/svg/grid.svg'
+          image: 'static/svg/grid.svg',
         }),
         h(
           DropDown,
           {
-            isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open }))
+            isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open })),
             // into: '#portal'
           },
           [
@@ -2197,7 +2204,7 @@ const AppMain = (window.onload = async () => {
                 ...props,
                 toggle: true,
                 state: layersDropDown,
-                image: 'static/svg/layers.svg'
+                image: 'static/svg/layers.svg',
               }),
             props =>
               h(
@@ -2207,11 +2214,11 @@ const AppMain = (window.onload = async () => {
                   className: 'layers',
                   itemClass: 'layer',
                   itemComponent: Layer,
-                  items: layerList
+                  items: layerList,
                 },
-                []
-              )
-          ]
+                [],
+              ),
+          ],
         ),
         h(Button, {
           fn: debounce(async e => {
@@ -2225,7 +2232,7 @@ const AppMain = (window.onload = async () => {
               let gerber = await BoardToGerber(project, {
                 side,
                 [side]: true,
-                fetch: ['drill', 'outline'].indexOf(side) != -1
+                fetch: ['drill', 'outline'].indexOf(side) != -1,
               });
 
               if(gerber) {
@@ -2251,7 +2258,7 @@ const AppMain = (window.onload = async () => {
                 nog64: true,
                 'fill-outline': true,
                 voronoi: true,
-                /*'zero-start': true,*/ nog81: true
+                /*'zero-start': true,*/ nog81: true,
               });
               allGcode[side] = gcode;
               //project.gcode[side] = gcode.data && gcode.data.data ? gcode.data.data : gcode.data;
@@ -2317,11 +2324,11 @@ const AppMain = (window.onload = async () => {
                                 e.setAttribute(name, value);
                                 e.style.removeProperty(name);
                               }
-                            })
+                            }),
                           );
 
                           return g;
-                        }
+                        },
                       });
                       /*
                       layer.sublayers = histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
@@ -2347,8 +2354,8 @@ const AppMain = (window.onload = async () => {
             }
           }, 100),
           'data-tooltip': 'Generate Gerber RS274-X CAM data',
-          image: 'static/svg/cnc-obrabeni.svg'
-        })
+          image: 'static/svg/cnc-obrabeni.svg',
+        }),
       ]),
 
       h(Conditional, { signal: gcode }, [
@@ -2356,7 +2363,7 @@ const AppMain = (window.onload = async () => {
           fn: () => {
             const colors = {
               front: 'hsl(300,100%,70%)',
-              back: 'hsl(230,100%,70%)'
+              back: 'hsl(230,100%,70%)',
             };
             for(let side of ['back', 'front']) {
               let gc = project.gcode[side];
@@ -2365,30 +2372,30 @@ const AppMain = (window.onload = async () => {
                 GcodeToPolylines(gc.data, {
                   fill: false,
                   color: colors[side],
-                  side
+                  side,
                 });
               }
             }
           },
           'data-tooltip': 'Create Voronoi diagram',
-          image: 'static/svg/voronoi.svg'
-        })
+          image: 'static/svg/voronoi.svg',
+        }),
       ]),
       h(Toggle, {
         state: sortOrder,
         images: ['static/svg/sort-asc.svg', 'static/svg/sort-desc.svg'],
         //disable: trkl(true),
-        visible: open
+        visible: open,
       }),
       h(DynamicLabel, {
         className: 'vcenter pad-lr',
-        caption: documentTitle
+        caption: documentTitle,
       }),
       h(DynamicLabel, {
         className: 'vcenter pad-lr',
-        caption: documentSize
+        caption: documentSize,
       }),
-      h(Consumer, {})
+      h(Consumer, {}),
     ]),
 
     /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
@@ -2424,7 +2431,7 @@ const AppMain = (window.onload = async () => {
         files: projects,
         onActive: open,
         onChange: debounce(async (e, p, i) => await ChooseDocument(p, i), 5000, {
-          leading: true
+          leading: true,
         }),
         filter: config.searchFilter,
         showSearch,
@@ -2448,7 +2455,7 @@ const AppMain = (window.onload = async () => {
                   valueB = b[key];
                 return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
               },
-        currentInput: currentSearch
+        currentInput: currentSearch,
       },
       [
         h(
@@ -2461,7 +2468,7 @@ const AppMain = (window.onload = async () => {
 
               console.log('Sort order changed', key);
               config.sortKey(key);
-            }
+            },
           },
           [
             props =>
@@ -2469,25 +2476,25 @@ const AppMain = (window.onload = async () => {
                 src: 'static/svg/sort-name-2.svg',
                 alt: 'Name',
                 'data-key': 'name',
-                ...props
+                ...props,
               }),
             props =>
               h('img', {
                 src: 'static/svg/sort-time-2.svg',
                 alt: 'Modification time',
                 'data-key': 'mtime',
-                ...props
+                ...props,
               }),
             props =>
               h('img', {
                 src: 'static/svg/sort-size-2.svg',
                 alt: 'Size',
                 'data-key': 'size',
-                ...props
-              })
-          ]
-        )
-      ]
+                ...props,
+              }),
+          ],
+        ),
+      ],
     ),
 
     h(CrossHair, { ...crosshair }),
@@ -2502,8 +2509,8 @@ const AppMain = (window.onload = async () => {
           LogJS.info(`> ${cmdStr}`);
           let result = fn();
           LogJS.info(`= ${toSource(result)}`);
-        }
-      }) /*])*/
+        },
+      }) /*])*/,
     ]),
     h(Slot, { name: 'layers' }),
     h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: config.credentials })),
@@ -2514,9 +2521,9 @@ const AppMain = (window.onload = async () => {
       },
       style: {
         position: 'absolute',
-        right: 0
-      }
-    })
+        right: 0,
+      },
+    }),
   ]);
   console.log('DUMMY', (window.preactComponent = preactComponent));
 
@@ -2543,7 +2550,7 @@ const AppMain = (window.onload = async () => {
   let css = {
     cursor: undefined,
     'pointer-events': undefined,
-    'user-select': undefined
+    'user-select': undefined,
   };
 
   //moveHandler.subscribe(MoveEvent);
@@ -2562,7 +2569,7 @@ const AppMain = (window.onload = async () => {
     }
     let zIndex = find(
       map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
-      z => /^[0-9]/.test(z)
+      z => /^[0-9]/.test(z),
     );
     if(zIndex > 0) clear(event.elements);
     for(let e of event.elements)
@@ -2576,8 +2583,8 @@ const AppMain = (window.onload = async () => {
         e,
         Element.walkUp(e, e => {
           if(e.hasAttribute('data-layer')) throw e.getAttribute('data-layer');
-        })
-      ])
+        }),
+      ]),
     );
     event.colors = new Map();
     for(let [e, layer] of event.layers) {
@@ -2591,9 +2598,9 @@ const AppMain = (window.onload = async () => {
         ifThenElse(
           v => v,
           l => l.map(e => e.classList.value),
-          () => ''
-        )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value))
-      ])
+          () => '',
+        )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value)),
+      ]),
     );
     removeIf(event.classes, classes => classes == '');
     removeIf(event.elements, e => e.tagName == 'polyline');
@@ -2608,7 +2615,7 @@ const AppMain = (window.onload = async () => {
         fill: 'none',
         'stroke-linecap': 'square',
         'vector-effect': 'non-scaling-stroke',
-        'pointer-events': 'none'
+        'pointer-events': 'none',
       });
 
     if(prevEvent && group) {
@@ -2623,13 +2630,13 @@ const AppMain = (window.onload = async () => {
       for(let [e, rect] of bboxes) {
         let transforms =
           Element.walkUp(e, (p, d, set, stop) =>
-            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform'))
+            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')),
           ) || [];
         transforms = transforms.reverse();
         elems.add(e);
         let props = {
           ...rect.round(0.001).toObject(),
-          transform: transforms.join(' ')
+          transform: transforms.join(' '),
         };
         rects.set(e, [
           // SVG.create('rect', { ...props, stroke: '#000', 'stroke-width': 0.127 * 2 }, group),
@@ -2640,10 +2647,10 @@ const AppMain = (window.onload = async () => {
               ...props,
               'stroke-dasharray': '0.508 0.508',
               'stroke-dashoffset': 0.508,
-              stroke: '#ff0'
+              stroke: '#ff0',
             },
-            group
-          )
+            group,
+          ),
         ]);
       }
       /*
@@ -2729,8 +2736,8 @@ const AppMain = (window.onload = async () => {
           Element.setCSS(box, {
             cursor: 'move',
             'pointer-events': 'none',
-            'user-select': 'none'
-          })
+            'user-select': 'none',
+          }),
         );
 
         window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top'], (pos, last, first) => {
@@ -2908,5 +2915,5 @@ const Module = {
     let myString = prompt('Enter a string:');
     Module.callMain([myString]);
   },
-  print: txt => alert(`The MD5 hash is: ${txt}`)
+  print: txt => alert(`The MD5 hash is: ${txt}`),
 };

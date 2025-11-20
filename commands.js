@@ -1,5 +1,7 @@
 import Alea from './lib/alea.js';
-import { Element, SVG, default as dom } from './lib/dom.js';
+import { SVG } from './lib/dom/svg.js';
+import { Element } from './lib/dom/element.js';
+import dom from './lib/dom-old.js';
 import { FetchCached, NormalizeResponse, ResponseData } from './lib/fetch.js';
 import { parseGcode } from './lib/gcode.js';
 import { BBox, isPoint, Point, Polyline, default as geom } from './lib/geom.js';
