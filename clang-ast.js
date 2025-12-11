@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as deep from 'deep';
 import * as path from 'path';
-import * as BJSON from 'bjson'
+import * as BJSON from 'bjson';
 import { Pointer } from 'pointer';
 import { Spawn } from './os-helpers.js';
 //import { countSubstring } from './string-helpers.js';
@@ -10,11 +10,10 @@ import { assert, bits, className, define, nonenumerable, properties, entries, er
 import { string, property, shift, and, regexp, notnot } from 'predicate';
 import { Location } from 'location';
 export { Location } from 'location';
-import {MapExtensions} from 'extendMap';
+import { MapExtensions } from 'extendMap';
 
 export const SIZEOF_POINTER = 8;
 export const SIZEOF_INT = 4;
-
 
 const ast2np = (
   (wm = new WeakMap()) =>
@@ -337,7 +336,9 @@ export class PointerType extends Node {
     }
   }
 
-  toJS() { return 'ArrayBuffer'; }
+  toJS() {
+    return 'ArrayBuffer';
+  }
 
   toString() {
     return this.pointee + ` *`;
@@ -1533,15 +1534,13 @@ export async function AstDump(compiler, source, args, force) {
       const binary = /\.bjson$/i.test(this.file);
 
       if(binary) {
-        let data=fs.readFileSync(this.file, null);
-      
-        if(data) 
-        return BJSON.read(data);
+        let data = fs.readFileSync(this.file, null);
 
-      else throw new Error(`ERROR reading ${this.file}`)
+        if(data) return BJSON.read(data);
+        else throw new Error(`ERROR reading ${this.file}`);
       }
 
-      return  JSON.parse(fs.readFileSync(this.file, 'utf-8'));
+      return JSON.parse(fs.readFileSync(this.file, 'utf-8'));
     },
     data() {
       let data = this.json;
@@ -1558,14 +1557,14 @@ export async function AstDump(compiler, source, args, force) {
               else loc.file = file;
             }
           } catch(e) {}
-        };  
+        };
         SetFile(node.loc);
         SetFile(node.range?.begin);
         SetFile(node.range?.end);
       }
       if(!/\.bjson$/i.test(this.file)) {
         console.log(`Writing '${bjson}'...`);
-        fs.writeFileSync(bjson,  BJSON.write(data));
+        fs.writeFileSync(bjson, BJSON.write(data));
         console.log(`Deleting '${this.file}'...`);
         fs.unlinkSync(this.file);
         this.file = bjson;
