@@ -1,7 +1,7 @@
 import { get, select, iterate, RETURN_PATH_VALUE, RETURN_VALUE_PATH, RETURN_VALUE, PATH_AS_POINTER, FILTER_HAS_KEY, TYPE_OBJECT } from 'deep';
 import { Pointer } from 'pointer';
 import { readFileSync } from 'fs';
-import { isObject,isFunction, isString, isNumeric, types,weakMapper } from 'util';
+import { isObject, isFunction, isString, isNumeric, types, weakMapper } from 'util';
 
 export function GetQualifier(ast, path) {
   const ptr = new Pointer(path);
@@ -31,27 +31,24 @@ export function ParentPath(path) {
   return new Pointer(path).slice(0, isNumeric(path[path.length - 1]) ? -2 : -1);
 }
 
+export function ParentNode(ast, path) {
+  let i = 0;
+  for(let [n, p] of WalkUp(ast, path)) {
+    if(i) {
+      if(isObject(n) && n.type) return [n, p];
+    }
 
-export function ParentNode(ast,path) {
-  let i=0;
-  for(let[n,p] of WalkUp(ast,path)) {
-if(i) {
-  if(isObject(n) && n.type) return [n,p];
+    ++i;
+  }
 }
 
-++i;
-  }
-} 
-
-
-let sourceFiles=weakMapper(source=> readFileSync(source, 'utf-8').trimEnd().split(/\n/g), new Map());
-
+const sourceFiles = weakMapper(source => readFileSync(source, 'utf-8').trimEnd().split(/\n/g), new Map());
 
 export function GetSourceLine(source, line) {
-return sourceFiles(source)[line-1]; 
+  return sourceFiles(source)[line - 1];
 }
 
-export function Predicate( pred) {
+export function Predicate(pred) {
   if(isString(pred)) {
     const s = pred;
     pred = n => n.type == s;
@@ -60,15 +57,13 @@ export function Predicate( pred) {
     pred = n => re.test(n.type);
   }
 
-if(!isFunction(pred))
-  pred=() => true;
+  if(!isFunction(pred)) pred = () => true;
 
-return pred;
+  return pred;
 }
 
-
 export function IsInside(ast, path, pred) {
-  const [n,p] = ParentNode(ast,path);
+  const [n, p] = ParentNode(ast, path);
   return Predicate(pred)(n, p, ast);
 }
 
@@ -95,19 +90,18 @@ export function* GetNodeTypes(ast, path) {
 export function GetImportIdentifiers(root) {
   if(!types.isGenerator(root)) root = GetImportSpecifiers(root);
 
-const r={};
-  for(const [spec, path] of root) r[spec.local.name]= new Pointer(path);
+  const r = {};
+  for(const [spec, path] of root) r[spec.local.name] = new Pointer(path);
 
-return r;
+  return r;
 }
 
 export function* GetNonImportIdentifiers(root) {
   for(const [id, path] of IterateNodes(root, e => e.type == 'Identifier')) {
     if(IsInsideAny(root, path, e => /Import.*Decl/.test(e.type))) continue;
 
-if(path[path.length-1] == 'property') continue;
+    if(path[path.length - 1] == 'property') continue;
 
     yield [id.name, new Pointer(path)];
-
   }
 }
