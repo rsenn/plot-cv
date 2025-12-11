@@ -337,6 +337,8 @@ export class PointerType extends Node {
     }
   }
 
+  toJS() { return 'ArrayBuffer'; }
+
   toString() {
     return this.pointee + ` *`;
   }
