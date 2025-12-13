@@ -1,16 +1,16 @@
-import { distinct, once, streamify, subscribe, throttle } from './lib/async/events.js';
-import { timer } from './lib/async/helpers.js';
-import { CreateWebSocket, ReconnectingWebSocket, StreamReadIterator, WebSocketIterator, WebSocketURL } from './lib/async/websocket.js';
+import { once, streamify } from './lib/async/events.js';
+//import { timer } from './lib/async/helpers.js';
+import { ReconnectingWebSocket, WebSocketURL } from './lib/async/websocket.js';
 import { HSLA, RGBA } from './lib/color.js';
 import { LinkedList } from './lib/container/linkedList.js';
 import { CANVAS, crosskit } from './lib/crosskit.js';
-import { Element, isElement, SVG } from './lib/dom-old.js';
-import { Component, createRef, Fragment, h, html, render, toChildArray, useLayoutEffect, useRef, useState, default as React } from './lib/dom/preactComponent.js';
-import { Intersection, isRect, Line, Matrix, Point, Rect, Size, TransformationList, Vector } from './lib/geom.js';
+import { Element, SVG } from './lib/dom-old.js';
+import { Fragment, h, default as React } from './lib/dom/preactComponent.js';
+import { Matrix, Point, Rect, Size, TransformationList } from './lib/geom.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { List } from './lib/list.js';
-import { chain, chainRight, define, getConstructorChain, getPrototypeChain, getset, gettersetter, isCFunction, isFunction, isJSFunction, isObject, isUndefined, keys, memoize, properties, propertyLookup, randInt, randStr, tryCatch, tryFunction, unique, } from './lib/misc.js';
-import { AcquireReader, AcquireWriter, ArrayWriter, AsyncRead, AsyncWrite, ByteReader, ChunkReader, CreateTransformStream, CreateWritableStream, DebugTransformStream, isStream, LineBufferStream, LineReader, LogSink, PipeTo, PipeToRepeater, ReadAll, Reader, ReadFromIterator, readStream, RepeaterSink, RepeaterSource, StringReader, TextTransformStream, WritableRepeater, WriteIterator, WriteToRepeater, } from './lib/stream/utils.js';
+import { chainRight, define, getConstructorChain, getPrototypeChain, getset, isCFunction, isFunction, isObject, keys, memoize, properties, propertyLookup, randInt, randStr, tryCatch, tryFunction, unique, } from './lib/misc.js';
+//import { AcquireReader, AcquireWriter, ArrayWriter, AsyncRead, AsyncWrite, ByteReader, ChunkReader, CreateTransformStream, CreateWritableStream, DebugTransformStream, isStream, LineBufferStream, LineReader, LogSink, PipeTo, PipeToRepeater, ReadAll, Reader, ReadFromIterator, readStream, RepeaterSink, RepeaterSource, StringReader, TextTransformStream, WritableRepeater, WriteIterator, WriteToRepeater, } from './lib/stream/utils.js';
 import trkl from './lib/trkl.js';
 import miscfixed6x13 from './static/json/miscfixed6x13.js';
 import { wasmBrowserInstantiate } from './wasm-helpers.js';
@@ -988,6 +988,5 @@ function ToggleClass(element, name) {
 function syncHeight() {
   htmlElement.style.setProperty('--window-inner-height', `${window.innerHeight}px`);
 }
-
 
 main();
