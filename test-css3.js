@@ -1,6 +1,5 @@
 import { selector } from './grammar-css3.js';
 import { Console } from 'console';
-
 function main(...args) {
   globalThis.console = new Console(process.stderr, {
     inspectOptions: {

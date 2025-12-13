@@ -2,7 +2,6 @@ import * as path from 'path';
 import { range } from 'util';
 import Console from 'console';
 import * as cv from 'opencv';
-
 function Grayscale(src, dst) {
   let channels = [];
   cv.cvtColor(src, dst, cv.COLOR_BGR2Lab);

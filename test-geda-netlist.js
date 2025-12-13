@@ -2,7 +2,6 @@ import gedaNetlistGrammar from './grammar-geda-netlist.js';
 import { Point, Size } from './lib/geom.js';
 import * as path from './lib/path.js';
 import inspect from 'inspect';
-
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;

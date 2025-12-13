@@ -1,6 +1,5 @@
 import * as os from 'os';
 import { ReadFd } from './io-helpers.js';
-
 function main(...args) {
   let [rd, wr] = os.pipe();
 

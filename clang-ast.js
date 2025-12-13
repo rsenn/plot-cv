@@ -13,6 +13,7 @@ export { Location } from 'location';
 import { MapExtensions } from 'extendMap';
 
 export const SIZEOF_POINTER = 8;
+
 export const SIZEOF_INT = 4;
 
 const ast2np = (

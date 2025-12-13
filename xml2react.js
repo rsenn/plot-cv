@@ -2,7 +2,7 @@
 import { ReadFd, ReadFile } from './io-helpers.js';
 import { Console } from 'console';
 import { read as readXML } from 'xml';
-
+#!/usr/bin/env qjsm
 function* injectSeparator(iter, sep = ', ', pad = ' ') {
   let i = 0;
   for(let item of iter) {

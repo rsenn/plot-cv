@@ -1,6 +1,5 @@
 import { h, render } from './lib/dom/preactComponent.js';
 import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
-
 extendArray();
 
 const Table = props =>

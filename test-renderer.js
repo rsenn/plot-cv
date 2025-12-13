@@ -4,7 +4,6 @@ import { ReactComponent } from './lib/dom/preactComponent.js';
 import { EagleDocument, Renderer } from './lib/eagle.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { render } from './lib/preact.js';
-
 Util.colorCtor = ColoredText;
 
 function WriteFile(name, data) {

@@ -1,6 +1,5 @@
 import REPL from './repl.js';
 import * as Terminal from './terminal.js';
-
 let repl;
 
 async function CommandLine() {

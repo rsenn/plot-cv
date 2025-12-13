@@ -1,10 +1,9 @@
-#!/usr/bin/env qjsm
 import * as path from 'path';
 import { IfDebug, ReadFile, WriteJSON } from './io-helpers.js';
 import { ECMAScriptParser, Identifier, ImportDeclaration, ImportSpecifier, Literal, Printer } from './lib/ecmascript.js';
 import { Console } from 'console';
 import deep from 'deep';
-
+#!/usr/bin/env qjsm
 Object.assign(ReadImport.prototype, { [Symbol.toStringTag]: 'Import' });
 
 function main(...args) {

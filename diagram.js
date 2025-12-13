@@ -7,6 +7,7 @@ export const Y = Symbol.for('y');
 const PERP = { [X]: Y, [Y]: X };
 
 const COORD = { [X]: 'x', [Y]: 'y' };
+
 const SIZE = { [X]: 'width', [Y]: 'height' };
 
 export function LinearTransform(sx, sy, tx, ty) {

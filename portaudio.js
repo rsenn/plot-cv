@@ -588,6 +588,7 @@ defineObj(PaStreamInfo.prototype, { [nameKey]: 'PaStreamInfo' });
  * @return   {Number}
  */
 define('Pa_GetVersion', dlsym(libportaudio, 'Pa_GetVersion'), null, 'int');
+
 export function Pa_GetVersion() {
   return call('Pa_GetVersion');
 }
@@ -598,6 +599,7 @@ export function Pa_GetVersion() {
  * @return   {String}
  */
 define('Pa_GetVersionText', dlsym(libportaudio, 'Pa_GetVersionText'), null, 'char *');
+
 export function Pa_GetVersionText() {
   return call('Pa_GetVersionText');
 }
@@ -608,6 +610,7 @@ export function Pa_GetVersionText() {
  * @return   {Number}
  */
 define('Pa_GetVersionInfo', dlsym(libportaudio, 'Pa_GetVersionInfo'), null, 'void *');
+
 export function Pa_GetVersionInfo() {
   const result = call('Pa_GetVersionInfo');
 

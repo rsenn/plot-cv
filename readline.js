@@ -24,6 +24,7 @@ export function readline(prompt) {
  * @return   {Number}
  */
 define('rl_abort', dlsym(libreadline, 'rl_abort'), null, 'int', 'int', 'int');
+
 export function abort(count, key) {
   return call('rl_abort', count, key);
 }

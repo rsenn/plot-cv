@@ -1,7 +1,6 @@
 import * as acorn from 'acorn';
 import tsPlugin from 'acorn-typescript';
 import { readFileSync } from 'fs';
-
 /*
  *
  * */

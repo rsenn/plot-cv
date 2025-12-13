@@ -18,6 +18,7 @@ const testfn = () => true;
 const testtmpl = `this is\na test`;
 
 const source = `this.define('DecimalDigit', /[0-9]/);`;
+
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
 const SliceOffEmpty = (arr, pred = item => item != '') => arr.slice(arr.findIndex(pred));

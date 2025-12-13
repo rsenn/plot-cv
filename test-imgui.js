@@ -1,7 +1,6 @@
 import { context, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, poll, RESIZABLE, SAMPLES, Window } from 'glfw';
 import * as ImGui from 'imgui';
 import * as nvg from 'nanovg';
-
 let window /*, nvg*/;
 
 export function Clear(color = nvg.RGB(0, 0, 0)) {

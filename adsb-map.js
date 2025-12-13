@@ -22,7 +22,6 @@ import Icon from './openlayers/src/ol/style/Icon.js';
 import { composeCssTransform } from './openlayers/src/ol/transform.js';
 import View from './openlayers/src/ol/View.js';
 import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
-
 extendArray(Array.prototype);
 
 let data = (globalThis.data = []);
@@ -845,6 +844,7 @@ class Aircraft extends Feature {
 }
 
 const getElement = obj => (typeof obj == 'object' && obj != null && 'elm' in obj ? obj.elm : obj);
+
 const getElementFn =
   fn =>
   (elm, ...args) =>

@@ -3,7 +3,6 @@ import { Line, LineList, MakePolygon, Point } from './lib/geom.js';
 import SvgPath from './lib/svg/path.js';
 import { Console } from 'console';
 import * as xml from 'xml';
-
 function PathFromPoints(points, pos = new Point(0, 0)) {
   let path = new SvgPath();
 

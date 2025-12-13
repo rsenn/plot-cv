@@ -12,12 +12,14 @@ export function linenoiseSetCompletionCallback(fn) {
 
 /* void linenoiseAddCompletion(linenoiseCompletions* lc, const char* str)  */
 define('linenoiseAddCompletion', dlsym(liblinenoise, 'linenoiseAddCompletion'), null, 'void', 'void *', 'string');
+
 export function linenoiseAddCompletion(lc, str) {
   return call('linenoiseAddCompletion', lc, str);
 }
 
 /* char* linenoise(const char* prompt)  */
 define('linenoise', dlsym(liblinenoise, 'linenoise'), null, 'string', 'string');
+
 export function linenoise(prompt) {
   let r = call('linenoise', prompt);
   if(r > 0) r = toString(r);
@@ -26,12 +28,14 @@ export function linenoise(prompt) {
 
 /* int linenoiseHistoryAdd(const char* line)  */
 define('linenoiseHistoryAdd', dlsym(liblinenoise, 'linenoiseHistoryAdd'), null, 'int', 'string');
+
 export function linenoiseHistoryAdd(line) {
   return call('linenoiseHistoryAdd', line);
 }
 
 /* int linenoiseHistorySetMaxLen(int len)  */
 define('linenoiseHistorySetMaxLen', dlsym(liblinenoise, 'linenoiseHistorySetMaxLen'), null, 'int', 'int');
+
 export function linenoiseHistorySetMaxLen(len) {
   return call('linenoiseHistorySetMaxLen', len);
 }

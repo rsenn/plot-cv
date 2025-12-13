@@ -1,5 +1,4 @@
 import * as bjson from 'bjson';
-
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;

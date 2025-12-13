@@ -8,7 +8,6 @@ import * as path from './lib/path.js';
 import Tree from './lib/tree.js';
 import tXml from './lib/tXml.js';
 import { toXML } from './lib/xml.js';
-
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {
@@ -37,6 +36,7 @@ function WriteFile(name, data) {
 const push_back = (arr, ...items) => [...(arr || []), ...items];
 
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
+
 const tail = (arr, n = 0) => arr[arr.length - 1 - n];
 
 async function main(...args) {

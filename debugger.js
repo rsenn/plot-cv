@@ -1,7 +1,6 @@
 import * as deep from './lib/deep.js';
 import { ansiStyles, define, error, isFunction } from './lib/misc.js';
 import { Pointer } from './lib/pointer.js';
-
 globalThis.process ??= { env: {} };
 
 var worker;

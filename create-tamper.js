@@ -1,4 +1,3 @@
-#!/usr/bin/env qjsm
 import filesystem from 'fs';
 import { SortedMap } from './lib/container/sortedMap.js';
 import deep from './lib/deep.js';
@@ -6,7 +5,7 @@ import { ECMAScriptParser, ESNode, ExportNamedDeclaration, ImportDeclaration, Li
 import { ImmutablePath } from './lib/json.js';
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import * as path from './lib/path.js';
-
+#!/usr/bin/env qjsm
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',
   width: '100%',

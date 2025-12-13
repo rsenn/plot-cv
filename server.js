@@ -80,6 +80,7 @@ let dirmap,
   names = [],
   dirs = {};
 let childProcess;
+
 const port = process.env.PORT || 3000;
 
 const files = new Set();

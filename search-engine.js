@@ -5,7 +5,6 @@ import { Node, Parser } from './quickjs/qjs-modules/lib/dom.js';
 import Console from 'console';
 import { get, select, RETURN_PATH_VALUE } from 'deep';
 import extendArray from 'extendArray';
-
 extendArray(Array.prototype);
 
 const SearchEngines = [

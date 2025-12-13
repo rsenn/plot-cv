@@ -3,7 +3,6 @@ import { EagleDocument } from './lib/eagle.js';
 import { Line, Point, PointList } from './lib/geom.js';
 import Voronoi from './lib/geom/voronoi.js';
 import { toXML } from './lib/json.js';
-
 async function testVoronoi(filename) {
   //console.log('Loading document: ' + filename);
   let doc = new EagleDocument(filesystem.readFileSync(filename), null, filename);

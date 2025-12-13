@@ -59,6 +59,7 @@ export function sqlite3_close(arg1) {
  * @return   {Number}
  */
 define('sqlite3_exec', dlsym(libsqlite3, 'sqlite3_exec'), null, 'int', 'void *', 'char *', 'long', 'void *', 'void *');
+
 export function sqlite3_exec(arg1, sql, callback, arg4, errmsg) {
   return call('sqlite3_exec', arg1, sql, callback, arg4, errmsg);
 }

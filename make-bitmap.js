@@ -4,7 +4,6 @@ import { Window } from './qjs-opencv/js/cvHighGUI.js';
 import { Pipeline } from './qjs-opencv/js/cvPipeline.js';
 import Console from 'console';
 import * as cv from 'opencv';
-
 function main(...args) {
   globalThis.console = new Console({
     colors: true,

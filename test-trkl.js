@@ -1,5 +1,4 @@
 import trkl from './lib/trkl.js';
-
 let testObj = {}, testValues = [1, 2, 3, 4, 5];
 
 trkl.bind(testObj, 'prop1', value => (value === undefined ? testValues[0] : (testValues[0] = value)));

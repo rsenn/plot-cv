@@ -8,7 +8,6 @@ import { Repeater } from './lib/repeater/repeater.js';
 import ProxyList from './node_modules/free-proxy/index.js';
 import ProxyLists from './node_modules/proxy-lists/index.js';
 import proxynova from './node_modules/proxynova/index.js';
-
 function TCPSocket(host, port) {
   const defaultTimeout = 30000;
   const tcp = new net.Socket();

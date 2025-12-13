@@ -10,7 +10,6 @@ import { VideoSource } from './qjs-opencv/js/cvVideo.js';
 import Console from 'console';
 import * as cv from 'opencv';
 import * as std from 'std';
-
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),
   RADIAL_DISTANCE: c => c.simplifyRadialDistance(10),

@@ -22,6 +22,7 @@ export function define(so, name, rtype, ...args) {
 const SFM_READ = 0x10;
 
 const SFM_WRITE = 0x20;
+
 const SFM_RDWR = 0x30;
 
 class sf_info_t extends ArrayBuffer {

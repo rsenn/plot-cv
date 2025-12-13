@@ -1,4 +1,3 @@
-#!/usr/bin/env qjsm
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -9,7 +8,7 @@ import inspect from 'inspect';
 import { Lexer, Token } from 'lexer';
 import ECMAScriptLexer from 'lib/lexer/ecmascript.js';
 import * as std from 'std';
-
+#!/usr/bin/env qjsm
 ('use strict');
 ('use math');
 
@@ -84,6 +83,7 @@ extendArray(Array.prototype);
 const IsBuiltin = moduleName => /^[^\/.]+$/.test(moduleName);
 
 const compact = (n, more = {}) => console.config({ compact: n, maxArrayLength: 100, ...more });
+
 const AddUnique = (arr, item) => (arr.indexOf(item) == -1 ? arr.push(item) : null);
 const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 4294967296 : ival);
 const IntToBinary = i => (i == -1 || typeof i != 'number' ? i : '0b' + IntToDWord(i).toString(2));

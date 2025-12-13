@@ -1,4 +1,3 @@
-#!/usr/bin/env qjsm
 import child_process from 'child_process';
 import * as fs from 'fs';
 

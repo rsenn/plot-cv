@@ -4,7 +4,6 @@ import { define } from 'util';
 import deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Tree from './lib/tree.js';
-
 //prettier-ignore
 let fs, spawn;
 

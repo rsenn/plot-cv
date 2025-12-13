@@ -20,8 +20,6 @@ function handle_msg(e) {
 
 const u8arr = ev.buf;
 const sab = u8arr.buffer;
-
-
   log(`SAB address:`, toPointer(sab));
 
       /* modify the SharedArrayBuffer */

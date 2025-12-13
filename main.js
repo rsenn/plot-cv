@@ -120,6 +120,7 @@ const is = {
 
 /* prettier-ignore */
 //extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleDocument, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
+
 const Timer = { ...Timers, once: dom.Timer };
 
 const putError = error => console.log('ERROR: ' + error.message + '\n' + error.stack);
@@ -147,8 +148,11 @@ let activeFile;
 let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
 let aspectListener = trkl(1);
+
 const documentTitle = trkl('');
+
 const documentSize = trkl('');
+
 const loading = trkl(false);
 const filePanel = trkl(false);
 

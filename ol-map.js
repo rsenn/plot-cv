@@ -7,7 +7,6 @@ import { Coordinate, Markers, OpenlayersMap, ParseCoordinates, Pin, Popup, Trans
 import { add, scale, toStringHDMS, wrapX } from './openlayers/src/ol/coordinate.js';
 import { toLonLat } from './openlayers/src/ol/proj.js';
 import { parseDMS } from './string-helpers.js';
-
 let data = (globalThis.data = []);
 let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
 let extent = [5.9962, 45.8389, 10.5226, 47.8229];

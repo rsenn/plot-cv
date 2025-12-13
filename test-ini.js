@@ -6,7 +6,6 @@ import { toXML } from './lib/json.js';
 import * as path from './lib/path.js';
 import tXml from './lib/tXml.js';
 import { Console } from 'console';
-
 async function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {

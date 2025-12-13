@@ -1,5 +1,4 @@
 import { sqlite3_open } from './sqlite3.js';
-
 function main(...args) {
   let ret,
     a = new Uint32Array(2);

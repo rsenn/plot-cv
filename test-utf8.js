@@ -1,5 +1,4 @@
 import { ReadFile } from './io-helpers.js';
-
 function* BytesToUTF8(bytes) {
   let state = 0,
     val = 0;

@@ -2,7 +2,6 @@ import * as path from 'path';
 import { ReadFile, WriteFile } from './io-helpers.js';
 import { Console } from 'console';
 import { parseModule } from 'esprima';
-
 function main(...args) {
   globalThis.console = new Console({
     stdout: process.stdout,

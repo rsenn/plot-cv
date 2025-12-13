@@ -19,6 +19,7 @@ export function archive_version_number() {
  * @return   {String}
  */
 define('archive_version_string', dlsym(libarchive, 'archive_version_string'), null, 'char *');
+
 export function archive_version_string() {
   return call('archive_version_string');
 }
@@ -29,6 +30,7 @@ export function archive_version_string() {
  * @return   {String}
  */
 define('archive_version_details', dlsym(libarchive, 'archive_version_details'), null, 'char *');
+
 export function archive_version_details() {
   return call('archive_version_details');
 }
@@ -39,6 +41,7 @@ export function archive_version_details() {
  * @return   {String}
  */
 define('archive_zlib_version', dlsym(libarchive, 'archive_zlib_version'), null, 'char *');
+
 export function archive_zlib_version() {
   return call('archive_zlib_version');
 }
@@ -49,6 +52,7 @@ export function archive_zlib_version() {
  * @return   {String}
  */
 define('archive_liblzma_version', dlsym(libarchive, 'archive_liblzma_version'), null, 'char *');
+
 export function archive_liblzma_version() {
   return call('archive_liblzma_version');
 }

@@ -4,7 +4,6 @@ import { camelize, curry, define, escape, extendArray, split, toString, unique }
 import JSLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
 import { Console } from 'console';
 import * as std from 'std';
-
 let buffers = {},
   modules = {};
 let T;
@@ -21,6 +20,7 @@ const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 429496729
 const IntToBinary = i => (i == -1 || typeof i != 'number' ? i : '0b' + IntToDWord(i).toString(2));
 
 //const code = ["const str = stack.toString().replace(/\\n\\s*at /g, '\\n');", "/^(.*)\\s\\((.*):([0-9]*):([0-9]*)\\)$/.exec(line);" ];
+
 const code = [
   "const str = stack.toString().replace(/\\n\\s*at /g, '\\n');",
   '/Reg.*Ex/i.test(n)',
@@ -96,8 +96,11 @@ const TokIs = curry((type, lexeme, tok) => {
 });
 
 const IsKeyword = TokIs('keyword');
+
 const IsPunctuator = TokIs('punctuator');
+
 const IsIdentifier = TokIs('identifier');
+
 const IsStringLiteral = TokIs('stringLiteral');
 
 function ImportType(seq) {

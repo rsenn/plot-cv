@@ -1,6 +1,5 @@
 import * as os from 'os';
 import { Console } from 'console';
-
 var worker;
 var counter;
 

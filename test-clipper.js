@@ -4,7 +4,6 @@ import { SVG } from './lib/dom.js';
 import { Point, PointList } from './lib/geom.js';
 import { parse } from './lib/svg/path-parser.js';
 import { Console } from 'console';
-
 globalThis.console = new Console({
   inspectOptions: {
     maxStringLength: 200,
@@ -105,4 +104,5 @@ function testShape() {
 testOffset();
 
 testClipper();
+
 testShape();

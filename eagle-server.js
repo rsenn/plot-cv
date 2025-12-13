@@ -1,4 +1,3 @@
-#!/usr/bin/env qjsm
 import * as fs from 'fs';
 import { client, getSessions, LLL_INFO, LLL_USER, LLL_WARN, logLevels, createServer, setLog } from 'net';
 import * as os from 'os';
@@ -10,7 +9,7 @@ import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import { VirtFS } from './virtfs.js';
 import extendArray from 'extendArray';
 import * as std from 'std';
-
+#!/usr/bin/env qjsm
 extendArray(Array.prototype);
 
 const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));

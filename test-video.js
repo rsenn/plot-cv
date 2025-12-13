@@ -17,7 +17,6 @@ import { CLAHE, Affine3, BoostDesc, BriefDescriptorExtractor, Canny, COLOR_Bayer
 import process from 'process';
 import inspect from 'inspect';
 import * as std from 'std';
-
 let rainbow;
 let zoom = 1;
 let debug = false;

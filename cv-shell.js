@@ -1,4 +1,3 @@
-#!/usr/bin/env qjsm
 import { AutoValue } from './autoValue.js';
 import { ImagePipeline } from './imagePipeline.js';
 import { LoadHistory, ReadBJSON, ReadFile, ReadJSON, WriteBJSON, WriteFile, WriteJSON } from './io-helpers.js';

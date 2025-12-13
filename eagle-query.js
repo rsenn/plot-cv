@@ -7,7 +7,6 @@ import { UnitForName } from './lib/eda/units.js';
 import { toXML } from './lib/json.js';
 import { unique } from './lib/misc.js';
 import { Console } from 'console';
-
 let documents = [];
 
 function xmlize(obj, depth = 2) {

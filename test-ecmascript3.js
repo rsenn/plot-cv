@@ -4,10 +4,10 @@ import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
 import { CallExpression, ESNode, Identifier, ImportDeclaration, TemplateLiteral } from './lib/ecmascript/estree.js';
 import Printer from './lib/ecmascript/printer.js';
 import Tree from './lib/tree.js';
-
 let fs;
 
 const testfn = () => true;
+
 const testtmpl = `this is\na test`;
 const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i])));`;
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');

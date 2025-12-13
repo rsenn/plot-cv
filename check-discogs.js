@@ -4,7 +4,6 @@ import { glob } from 'util';
 import { LoadConfig } from './config.js';
 import { FetchURL, ReadFile, WriteJSON } from './io-helpers.js';
 import Console from 'console';
-
 function ReadCallback(fd, fn = data => {}) {
   let buf = new ArrayBuffer(1024);
   setReadHandler(fd, () => {

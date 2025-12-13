@@ -7,7 +7,6 @@ import { inspect } from './lib/misc.js';
 import { Stack } from './lib/stack.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
-
 let lexer, parser, childProcess;
 
 globalThis.fs = fs;

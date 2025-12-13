@@ -366,4 +366,3 @@ export default createMemoizedFunction;
     }
     /* eslint-enable */ return target;
 }
-

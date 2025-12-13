@@ -4,7 +4,6 @@ import { Spawn } from './os-helpers.js';
 import { ReadFile } from './test-readfile.js';
 import { Console } from 'console';
 import { _get_osfhandle } from 'misc';
-
 globalThis.console = new Console({ inspectOptions: { colors: true, compact: false } });
 
 function ReadProcess(...args) {

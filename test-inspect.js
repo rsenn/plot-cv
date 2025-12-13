@@ -1,6 +1,5 @@
 import { range } from './lib/misc.js';
 import { Console } from 'console';
-
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {

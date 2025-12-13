@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 import { matchAll } from './lib/misc.js';
-
 //prettier-ignore
 let filesystem ;
 

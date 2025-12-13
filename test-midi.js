@@ -7,6 +7,7 @@ import * as std from 'std';
 /*const MIDI_NOTE_OFF = 0x80;
 
 const MIDI_NOTE_ON = 0x90;
+
 const MIDI_POLYPHONIC_KEY_PRESSURE = 0xA0;
 const MIDI_CONTROL_CHANGE = 0xB0;
 const MIDI_PROGRAM_CHANGE = 0xC0;

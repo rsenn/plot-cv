@@ -5,9 +5,13 @@ const libeditline = dlopen('/usr/local/lib/libeditline.so.1', RTLD_NOW);
 export const el_hist_size = dlsym('el_hist_size', libeditline);
 
 export const el_no_echo = dlsym('el_no_echo', libeditline);
+
 export const el_no_hist = dlsym('el_no_hist', libeditline);
+
 export const prompt_len = dlsym('prompt_len', libeditline);
+
 export const rl_attempted_completion_function = dlsym('rl_attempted_completion_function', libeditline);
+
 export const rl_attempted_completion_over = dlsym('rl_attempted_completion_over', libeditline);
 export const rl_completion_entry_function = dlsym('rl_completion_entry_function', libeditline);
 export const rl_deprep_term_function = dlsym('rl_deprep_term_function', libeditline);

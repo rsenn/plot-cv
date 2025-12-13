@@ -4,7 +4,6 @@ import { Spawn } from './os-helpers.js';
 import { Console } from 'console';
 import inspect from 'inspect';
 import * as std from 'std';
-
 globalThis.console = new Console(std.open('workertest.log', 'a+'), {
   inspectOptions: {
     compact: 2,

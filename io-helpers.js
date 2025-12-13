@@ -3,7 +3,6 @@ import { read as readBJSON, write as writeBJSON } from 'bjson';
 import { closeSync, readFileSync, statSync, writeFileSync, readSync, gets } from 'fs';
 import { define, error, toString } from './lib/misc.js';
 import { popen } from 'std';
-
 let xml;
 
 //import('xml') .then(m => (xml = m)) .catch(() => {});

@@ -4,7 +4,6 @@ import { Graph } from './lib/fd-graph.js';
 import { LineList, Rect } from './lib/geom.js';
 import ptr from './lib/json-ptr.js';
 import { toXML } from './lib/json.js';
-
 let filesystem = fs;
 
 function xmlize(obj, depth = 2) {

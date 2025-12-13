@@ -1,6 +1,5 @@
 import { F_GETFL, F_SETFL, fcntl, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import * as ffi from 'ffi';
-
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
   define(name, fp, null, ret, ...args);

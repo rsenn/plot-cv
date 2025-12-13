@@ -1,6 +1,5 @@
 import { DirIterator, ReadDirRecursive, RecursiveDirIterator } from './dir-helpers.js';
 import extendGenerator from './quickjs/qjs-modules/lib/extendGenerator.js';
-
 let tmpdir;
 let buffer, buffer2;
 let handle;

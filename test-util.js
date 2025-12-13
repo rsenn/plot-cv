@@ -1,5 +1,4 @@
 import { Util } from './lib/util.js';
-
 async function main(...args) {
   function test(arg) {
     console.log('function test', { arg });

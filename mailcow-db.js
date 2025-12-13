@@ -6,7 +6,6 @@ import { Console } from 'console';
 import { MySQL } from 'mysql';
 import { MySQLResult } from 'mysql';
 import { exit } from 'std';
-
 ('use strict');
 ('use math');
 

@@ -4,7 +4,6 @@ import { MIDIEvent, MIDIStream } from './lib/midi.js';
 import { quote } from './lib/misc.js';
 import { Console } from 'console';
 import * as std from 'std';
-
 /*const MIDI_NOTE_OFF = 0x80;
 /* MIDIMessageLength -- how many bytes in a message? */
 function MIDIMessageLength(byte) {

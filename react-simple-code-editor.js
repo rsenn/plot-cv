@@ -1,5 +1,4 @@
 import * as React from './lib/dom/preactComponent.js';
-
 function _extends() {
   _extends =
     Object.assign ||
@@ -23,6 +22,7 @@ function _extends() {
  // Tell Babel to transform JSX into h() calls: /** @jsx h */ const KEYCODE_ENTER = 13;
 
 const KEYCODE_TAB = 9;
+
 const KEYCODE_BACKSPACE = 8;
 const KEYCODE_Y = 89;
 const KEYCODE_Z = 90;

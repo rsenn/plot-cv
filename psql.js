@@ -25,6 +25,7 @@ export function PQconnectStart(conninfo) {
  * @return   {Number}
  */
 define('PQconnectStartParams', dlsym(libpq, 'PQconnectStartParams'), null, 'void *', 'void *', 'void *', 'int');
+
 export function PQconnectStartParams(keywords, values, expand_dbname) {
   return call('PQconnectStartParams', keywords, values, expand_dbname);
 }
@@ -37,6 +38,7 @@ export function PQconnectStartParams(keywords, values, expand_dbname) {
  * @return   {Number}
  */
 define('PQconnectdb', dlsym(libpq, 'PQconnectdb'), null, 'void *', 'char *');
+
 export function PQconnectdb(conninfo) {
   return call('PQconnectdb', conninfo);
 }
@@ -51,6 +53,7 @@ export function PQconnectdb(conninfo) {
  * @return   {Number}
  */
 define('PQconnectdbParams', dlsym(libpq, 'PQconnectdbParams'), null, 'void *', 'void *', 'void *', 'int');
+
 export function PQconnectdbParams(keywords, values, expand_dbname) {
   return call('PQconnectdbParams', keywords, values, expand_dbname);
 }

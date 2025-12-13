@@ -17,7 +17,6 @@ import { Console } from 'console';
 import { toString, getOpt } from 'util';
 import require from 'require';
 import * as std from 'std';
-
 globalThis.fs = fs;
 
 function main(...args) {

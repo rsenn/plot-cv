@@ -1,9 +1,8 @@
-#!/usr/bin/env qjsm
 import CLexer from './lib/clexer.js';
 import { escape, extendArray } from './lib/misc.js';
 import { Console } from 'console';
 import * as std from 'std';
-
+#!/usr/bin/env qjsm
 extendArray();
 
 const NonWS = t => t.type != 'whitespace';

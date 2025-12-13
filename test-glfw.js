@@ -4,7 +4,6 @@ import { range } from './lib/misc.js';
 import Console from 'console';
 import { context, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, poll, RESIZABLE, SAMPLES, Window } from 'glfw';
 import { imread } from 'opencv';
-
 function Mat2Texture(texture_cv) {
   console.log('texture_cv', texture_cv);
   const { buffer } = texture_cv;

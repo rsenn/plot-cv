@@ -2,7 +2,6 @@ import { ReadFile, WriteFile } from './io-helpers.js';
 import { Grammar } from './lib/parse/grammar.js';
 import * as path from './lib/path.js';
 import { Console } from 'console';
-
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;

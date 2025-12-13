@@ -19,7 +19,7 @@ import * as deep from 'deep';
 import extendArray from 'extendArray';
 import extendGenerator from 'extendGenerator';
 import { TreeIterator } from 'tree_walker';
-
+#!/usr/bin/env qjsm
 extendGenerator();
 extendArray();
 

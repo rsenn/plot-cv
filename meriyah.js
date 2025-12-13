@@ -3,7 +3,7 @@ import { createWriteStream, readFileSync } from 'fs';
 import { getOpt, showHelp } from './lib/misc.js';
 import { parseScript } from './lib/meriyah.js';
 import process from 'process';
-
+#!/usr/bin/env qjsm
 const { stdout, stderr, argv } = process;
 
 function main(...argv) {

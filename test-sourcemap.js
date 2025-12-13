@@ -1,6 +1,5 @@
-//prettier-ignore
 import { SourceMap } from './lib/sourceMap.js';
-
+//prettier-ignore
 let filesystem;
 
 async function main(...args) {

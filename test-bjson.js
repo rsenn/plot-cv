@@ -3,7 +3,6 @@ import * as path from './lib/path.js';
 import tXml from './lib/tXml.js';
 import * as zlib from './quickjs/qjs-ffi/examples/zlib.js';
 import * as ffi from 'ffi';
-
 let prng = new Alea().seed(Date.now());
 
 /*class Uint64 {
@@ -124,6 +123,7 @@ function WriteFile(name, data) {
 const push_back = (arr, ...items) => [...(arr || []), ...items];
 
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
+
 const tail = arr => arr[arr.length - 1];
 
 async function main(...args) {

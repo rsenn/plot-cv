@@ -1,6 +1,5 @@
-//const { Chromeless } = require('chromeless')
 import { Chromeless } from 'chromeless';
-
+//const { Chromeless } = require('chromeless')
 async function run() {
   const chromeless = new Chromeless();
 
