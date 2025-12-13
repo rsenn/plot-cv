@@ -164,6 +164,7 @@ class DrawList extends LinkedList {
 }
 
 let drawList = (globalThis.drawList = new DrawList());
+let fixedList = (globalThis.fixedList = new Array());
 
 function* AllParents(elem) {
   let obj = elem.ownerDocument;
@@ -345,6 +346,8 @@ async function* TouchIterator(element, t) {
   let ev = MouseToTouch(await once(element, ['mousedown', 'touchstart']));
   let type = ev.type.slice(0, 5);
 
+  let { buttons } = ev;
+
   globalThis.pressed = true;
 
   if(!t) {
@@ -382,7 +385,7 @@ async function* MoveIterator(eventIterator) {
 
         for(let touch of event.touches) {
           const { force, radiusX, radiusY, ...obj } = touch;
-          yield { ...obj, type: 'touch', index: i, force, radiusX, radiusY };
+          yield { ...obj, type: 'touch', index: i, force, radiusX, radiusY, buttons: event.buttons };
           ++i;
         }
       }
@@ -415,6 +418,8 @@ function main() {
   );
 
   LoadWASM();
+
+  document.addEventListener('contextmenu', event => event.preventDefault());
 
   const width = 320;
   const height = 200;
@@ -488,6 +493,20 @@ function main() {
     }
   }
 
+  function DrawPixel(draw, value = 255 - 0x10) {
+    try {
+      pixels[draw.y][draw.x] = value;
+
+      if(draw.size > 1) {
+        if(draw.x > 0) pixels[draw.y][draw.x - 1] = value;
+        if(draw.x < 319) pixels[draw.y][draw.x + 1] = value;
+        if(draw.y > 0) pixels[draw.y - 1][draw.x] = value;
+
+        if(draw.y < 199) pixels[draw.y + 1][draw.x] = value;
+      }
+    } catch(e) {}
+  }
+
   function Fire() {
     for(let x = 0; x < width; x++) {
       pixels[height][x] = 255 - (RandomByte() % 128);
@@ -504,19 +523,7 @@ function main() {
     }
 
     for(let draw of drawList.dequeue()) {
-      draw.value = 255 - 0x10; //(RandomByte() % 128);
-
-      try {
-        pixels[draw.y][draw.x] = draw.value;
-
-        if(draw.size > 1) {
-          if(draw.x > 0) pixels[draw.y][draw.x - 1] = draw.value;
-          if(draw.x < 319) pixels[draw.y][draw.x + 1] = draw.value;
-          if(draw.y > 0) pixels[draw.y - 1][draw.x] = draw.value;
-
-          if(draw.y < 199) pixels[draw.y + 1][draw.x] = draw.value;
-        }
-      } catch(e) {}
+      DrawPixel(draw);
 
       draw.time += 40;
 
@@ -525,9 +532,16 @@ function main() {
       //Blaze(draw.x, draw.y, 255 - (RandomByte() % 128));
     }
 
+    for(let group of fixedList) for (let draw of group) DrawPixel(draw, (randInt() & 0xff) | 0x80);
+
     for(let y = 0; y < height; y++) {
       for(let x = 0; x < width; x++) {
-        const sum = [pixels[y + 1][Modulo(x - 1, width)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, width)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
+        /* prettier-ignore */ const sum = [
+          pixels[y + 1][Modulo(x - 1, width)], 
+          pixels[y + 1][x], 
+          pixels[y + 1][Modulo(x + 1, width)], 
+          pixels[y + 2][x]
+        ].reduce((a, p) => a + (p | 0), 0);
 
         pixels[y][x] = (sum * 15) >>> 6;
       }
@@ -557,6 +571,10 @@ function main() {
 
   function Draw(x, y, time = performance.now()) {
     return drawList.insert({ x, y, time });
+  }
+
+  function FixedPoints(points = []) {
+    fixedList.push(points.map(({ x, y }) => ({ x, y, time: performance.now() })));
   }
 
   function* Bresenham(x0, y0, x1, y1) {
@@ -612,7 +630,7 @@ function main() {
     for(let ty = 0; ty < rows; ++ty) for (let tx = 0; tx < cols; ++tx) pixels[(y + ty) % h][(x + tx) % w] = a[ty >> 1][tx >> 1];
   }
 
-  Object.assign(globalThis, { RandomByte });
+  Object.assign(globalThis, { randInt, Draw, FixedPoints, Bresenham, RandomByte, Blaze });
 
   NewWS({
     onOpen() {
@@ -628,10 +646,12 @@ function main() {
   let str = '';
   let xpos = 0;
 
-  function KeyHandler(key) {
-    console.log('KeyHandler', { xpos, key });
+  function KeyHandler(key, pressed) {
+    console.log('KeyHandler', { xpos, key, pressed });
 
-    if(key in miscfixed6x13) {
+    if(key == 'Shift') {
+      globalThis.shiftPressed = pressed;
+    } else if(key in miscfixed6x13) {
       PutArray2(xpos, 100, miscfixed6x13[key]);
       xpos += 14;
     }
@@ -643,7 +663,7 @@ function main() {
 
       if(!ctrlKey && !altKey && !metaKey) if (e.cancelable) e.preventDefault();
 
-      KeyHandler(key);
+      KeyHandler(key, type.endsWith('down'));
     }
   })();
 
@@ -678,6 +698,13 @@ function main() {
       for await(let ev of iter) {
         globalThis.movement = ev;
 
+        //console.log(ev);
+
+        let a;
+
+        if(ev.buttons & 2) fixedList.push((a = []));
+        let add = ev.buttons & 2 ? pt => a.push(pt) : pt => drawList.insert(pt);
+
         if(gfxRect.inside(ev)) {
           let pt = (globalThis.mousePos = new Point(ev));
           let diff = pt,
@@ -691,8 +718,8 @@ function main() {
           trail.push(obj);
 
           if(prev) {
-            for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) drawList.insert({ x, y, time });
-          } else drawList.insert(obj);
+            for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) add({ x, y, time });
+          } else add(obj);
 
           last = t;
 
