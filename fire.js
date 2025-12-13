@@ -15,7 +15,7 @@ import trkl from './lib/trkl.js';
 import miscfixed6x13 from './static/json/miscfixed6x13.js';
 import { wasmBrowserInstantiate } from './wasm-helpers.js';
 
-console.log('fire.js loaded!')
+console.log('fire.js loaded!');
 
 let lsgs = (globalThis.lsgs = getset([key => localStorage.getItem(key), (key, value) => localStorage.setItem(key, value)]));
 
@@ -989,12 +989,35 @@ function syncHeight() {
   htmlElement.style.setProperty('--window-inner-height', `${window.innerHeight}px`);
 }
 
-define(globalThis, { crosskit, RGBA, HSLA, Matrix, TransformationList });
-define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
-define(globalThis, { define, isUndefined, properties, keys });
-define(globalThis, { once, streamify, throttle, distinct, subscribe });
-define(globalThis, { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector });
 define(globalThis, {
+  crosskit,
+  RGBA,
+  HSLA,
+  Matrix,
+  TransformationList,
+  WebSocketIterator,
+  WebSocketURL,
+  CreateWebSocket,
+  NewWS,
+  ReconnectingWebSocket,
+  define,
+  isUndefined,
+  properties,
+  keys,
+  once,
+  streamify,
+  throttle,
+  distinct,
+  subscribe,
+  Intersection,
+  Matrix,
+  isRect,
+  Rect,
+  Size,
+  Point,
+  Line,
+  TransformationList,
+  Vector,
   GetElementMatrix,
   PositionMatrix,
   PositionMatrix2,
@@ -1032,9 +1055,6 @@ define(globalThis, {
   Reader,
   ReadAll,
   StreamReadIterator,
-});
-
-define(globalThis, {
   Element,
   isElement,
   SVG,
