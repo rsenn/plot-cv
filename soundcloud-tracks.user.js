@@ -15,7 +15,7 @@
 (function () {
   'use strict';
 
-  console.log('SoundCloud grabber loaded');
+  console.log('SoundCloud track getter loaded');
 
   window.addEventListener('load', e => {
     window.a = GetTracks();

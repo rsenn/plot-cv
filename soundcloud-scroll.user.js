@@ -11,65 +11,59 @@
 // @updateURL    https://github.com/rsenn/plot-cv/raw/refs/heads/main/soundcloud-scroll.user.js
 //==/UserScript==
 
-function scrollToBottom() {
-  const scrollElem = document.documentElement;
-  const newScrollPos = scrollElem.scrollHeight - window.innerHeight;
-  const scrollOffset = newScrollPos - scrollElem.scrollTop;
+Object.assign(globalThis, {
+  scrollToBottom() {
+    const scrollElem = document.documentElement;
+    const newScrollPos = scrollElem.scrollHeight - window.innerHeight;
+    const scrollOffset = newScrollPos - scrollElem.scrollTop;
 
-  if(scrollOffset > 0) {
-    console.log('TamperMonkey script: scrolling by', scrollOffset);
-    scrollElem.scrollTop += scrollOffset;
-  }
+    if(scrollOffset > 0) {
+      console.log('TamperMonkey script: scrolling by', scrollOffset);
+      scrollElem.scrollTop += scrollOffset;
+    }
 
-  return scrollOffset;
-}
-
-const interceptXHR = (function () {
-  let h;
-  const requests = [];
-  return once(
-    (handler = e => console.log('loadend event fired')) => {
-      h = handler;
-      const originalXMLHttpRequest = XMLHttpRequest;
-      window.XMLHttpRequest = function() {
-        const req = new originalXMLHttpRequest();
-        const originalOpen = req.open;
-        req.open = function(method, url) {
-          //console.log('XMLHttpRequest.open()', {method,url});
-          requests.push([method, url]);
-          return originalOpen.call(this, method, url);
+    return scrollOffset;
+  },
+  interceptXHR: (function () {
+    let h,
+      requests = [];
+    return once(
+      (handler = e => console.log('loadend event fired')) => {
+        h = handler;
+        const originalXMLHttpRequest = XMLHttpRequest;
+        window.XMLHttpRequest = function() {
+          const req = new originalXMLHttpRequest();
+          const originalOpen = req.open;
+          req.open = function(method, url) {
+            requests.push([method, url]);
+            return originalOpen.call(this, method, url);
+          };
+          req.addEventListener('loadend', event => h(event, requests));
+          return req;
         };
-        req.addEventListener('loadend', event => {
-          h(event, requests);
-          // requests.splice(0, requests.length);
-        });
-        return req;
-      };
-      window.XMLHttpRequest.prototype = originalXMLHttpRequest.prototype;
-    },
-    null,
-    newHandler => (h = newHandler),
-  );
-})();
-
-const interceptFetch = once((handler = (req, options, response) => console.log('fetch', { url: req + '', options, response })) => {
-  const oldFetch = fetch;
-  window.fetch = async function(req, options) {
-    const response = await oldFetch(req, options);
-    handler(req, options, response);
-    return response;
-  };
+        window.XMLHttpRequest.prototype = originalXMLHttpRequest.prototype;
+      },
+      null,
+      newHandler => (h = newHandler),
+    );
+  })(),
+  interceptFetch: once((handler = (req, options, response) => console.log('fetch', { url: req + '', options, response })) => {
+    const oldFetch = fetch;
+    window.fetch = async function(req, options) {
+      const response = await oldFetch(req, options);
+      handler(req, options, response);
+      return response;
+    };
+  }),
+  once,
+  debounceAsync,
 });
-
-Object.assign(window, { interceptXHR, interceptFetch, once, debounceAsync });
 
 window.addEventListener('keydown', e => {
   if(e.key == 'End') {
     console.log('TamperMonkey script: Installing XHR intercept handler');
     interceptXHR((e, requests) => {
-      if(e.target.responseURL.indexOf('/tracks/') != -1) {
-        setTimeout(scrollToBottom, 100);
-      }
+      if(e.target.responseURL.indexOf('/tracks/') != -1) setTimeout(scrollToBottom, 100);
       requests.splice(0, requests.length);
     });
   }
@@ -82,7 +76,6 @@ window.addEventListener('keydown', e => {
 function once(fn, thisArg, memoFn) {
   let ret,
     ran = false;
-
   return function(...args) {
     if(!ran) {
       ran = true;
@@ -90,7 +83,6 @@ function once(fn, thisArg, memoFn) {
     } else if(typeof memoFn == 'function') {
       ret = memoFn(...args);
     }
-
     return ret;
   };
 }
@@ -100,18 +92,7 @@ function debounceAsync(fn, wait = 0, options = {}) {
     d,
     timer,
     pendingArgs = [];
-
   const callFn = (thisObj, args) => fn.call(thisObj, ...args);
-
-  function defer() {
-    const d = {};
-    d.promise = new Promise((resolve, reject) => {
-      d.resolve = resolve;
-      d.reject = reject;
-    });
-    return d;
-  }
-
   return function debounced(...args) {
     const currentWait = getWait(wait);
     const currentTime = new Date().getTime();
@@ -122,19 +103,23 @@ function debounceAsync(fn, wait = 0, options = {}) {
     else d = defer();
     pendingArgs.push(args);
     timer = setTimeout(flush.bind(this), currentWait);
-
     if(options.accumulate) {
       const argsIndex = pendingArgs.length - 1;
       return d.promise.then(results => results[argsIndex]);
     }
-
     return d.promise;
   };
-
+  function defer() {
+    const d = {};
+    d.promise = new Promise((resolve, reject) => {
+      d.resolve = resolve;
+      d.reject = reject;
+    });
+    return d;
+  }
   function getWait(wait) {
     return typeof wait === 'function' ? wait() : wait;
   }
-
   function flush() {
     const thisDeferred = d;
     clearTimeout(timer);
