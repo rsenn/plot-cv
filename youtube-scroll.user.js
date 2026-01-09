@@ -16,41 +16,16 @@
 
   function scrollToBottom() {
     const scrollElem = document.documentElement;
-    const newScrollPos = scrollElem.scrollHeight - window.innerHeight;
-    const scrollOffset = newScrollPos - scrollElem.scrollTop;
+    const { scrollTop, scrollHeight } = scrollElem;
 
-    if(scrollOffset > 0) {
-      console.log('TamperMonkey script: scrolling by', scrollOffset);
-      scrollElem.scrollTop += scrollOffset;
-    }
+    scrollElem.scrollTop = scrollHeight;
+
+    const scrollOffset = scrollElem.scrollTop - scrollTop;
+
+    if(scrollOffset > 0) console.log('TamperMonkey script: scrolled by', scrollOffset);
 
     return scrollOffset;
   }
-
-  const interceptXHR = (function () {
-    let h,
-      requests = [];
-    return once(
-      (handler = e => console.log('loadend event fired')) => {
-        h = handler;
-        const originalXMLHttpRequest = XMLHttpRequest;
-        window.XMLHttpRequest = function() {
-          const req = new originalXMLHttpRequest();
-          const originalOpen = req.open;
-          req.open = function(method, url) {
-            console.log('XMLHttpRequest', { method, url });
-            requests.push([method, url]);
-            return originalOpen.call(this, method, url);
-          };
-          req.addEventListener('loadend', event => h(event, requests));
-          return req;
-        };
-        window.XMLHttpRequest.prototype = originalXMLHttpRequest.prototype;
-      },
-      null,
-      newHandler => (h = newHandler),
-    );
-  })();
 
   const interceptFetch = once((handler = (req, options, response) => console.log('fetch', { url: req + '', options, response })) => {
     const oldFetch = fetch;
@@ -73,19 +48,24 @@
       ),
     once,
     debounceAsync,
+    interceptFetch,
+    scrollToBottom,
   });
 
   window.addEventListener('keydown', e => {
     if(e.key == 'End' || e.key == 'PageDown') {
-      console.log('TamperMonkey script: Installing XHR intercept handler');
-      interceptXHR((e, requests) => {
-        if(e.target.responseURL.indexOf('/browse') != -1) setTimeout(scrollToBottom, 100);
-        requests.splice(0, requests.length);
+      console.log('TamperMonkey script: Installing fetch() intercept handler');
+      interceptFetch((req, opt, rsp) => {
+        if(req.url && req.url.indexOf('/browse') != -1) {
+          console.log('TamperMonkey script: fetch() intercepted');
+
+          setTimeout(scrollToBottom, 100);
+        }
       });
     }
     if(e.key == 'Home' || e.key == 'PageUp') {
-      console.log('TamperMonkey script: Removing XHR intercept handler');
-      interceptXHR(() => {});
+      console.log('TamperMonkey script: Removing fetch() intercept handler');
+      interceptFetch(() => {});
     }
   });
 
