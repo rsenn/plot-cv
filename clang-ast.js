@@ -877,7 +877,12 @@ export class RecordDecl extends Type {
                   let loc = node.type.qualType.split(/(?:\s*[()]| at )/g)[2];
                   let [file, line, column] = loc.split(/:/g).map(i => (!isNaN(+i) ? +i : i));
 
-                  let typePaths = [...DeepSelect(inner, n => n.line == line, deep.RETURN_PATH)];
+                  console.log('RecordDecl.constructor',{file,line,column});
+
+                  let typePaths = deep.select(inner, n => n?.loc?.line == line, deep.RETURN_PATH|deep.FILTER_HAS_KEY, deep.TYPE_OBJECT,['inner']);
+
+                  console.log('RecordDecl.constructor',{typePaths});
+
                   let typePath = PathRemoveLoc(typePaths[0]);
                   let typeNode = DeepGet(inner, typePath);
                   type = TypeFactory(typeNode, ast, ns);
