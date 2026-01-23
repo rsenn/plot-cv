@@ -11,59 +11,60 @@
 // @updateURL    https://github.com/rsenn/plot-cv/raw/refs/heads/main/soundcloud-scroll.user.js
 //==/UserScript==
 
-Object.assign(globalThis, {
-  scrollToBottom() {
-    const scrollElem = document.documentElement;
-    const newScrollPos = scrollElem.scrollHeight - window.innerHeight;
-    const scrollOffset = newScrollPos - scrollElem.scrollTop;
+function scrollToBottom() {
+  const scrollElem = document.documentElement;
+  const newScrollPos = scrollElem.scrollHeight - window.innerHeight;
+  const scrollOffset = newScrollPos - scrollElem.scrollTop;
 
-    if(scrollOffset > 0) {
-      console.log('TamperMonkey script: scrolling by', scrollOffset);
-      scrollElem.scrollTop += scrollOffset;
-    }
+  if(scrollOffset > 0) {
+    console.log('TamperMonkey script: scrolling by', scrollOffset);
+    scrollElem.scrollTop += scrollOffset;
+  }
 
-    return scrollOffset;
-  },
-  interceptXHR: (function () {
-    let h,
-      requests = [];
-    return once(
-      (handler = e => console.log('loadend event fired')) => {
-        h = handler;
-        const originalXMLHttpRequest = XMLHttpRequest;
-        window.XMLHttpRequest = function() {
-          const req = new originalXMLHttpRequest();
-          const originalOpen = req.open;
-          req.open = function(method, url) {
-            requests.push([method, url]);
-            return originalOpen.call(this, method, url);
-          };
-          req.addEventListener('loadend', event => h(event, requests));
-          return req;
+  return scrollOffset;
+}
+
+const interceptXHR = (function () {
+  let h,
+    requests = [];
+  return once(
+    (handler = e => console.log('loadend event fired')) => {
+      h = handler;
+      const originalXMLHttpRequest = XMLHttpRequest;
+      window.XMLHttpRequest = function() {
+        const req = new originalXMLHttpRequest();
+        const originalOpen = req.open;
+        req.open = function(method, url) {
+          requests.push([method, url]);
+          return originalOpen.call(this, method, url);
         };
-        window.XMLHttpRequest.prototype = originalXMLHttpRequest.prototype;
-      },
-      null,
-      newHandler => (h = newHandler),
-    );
-  })(),
-  interceptFetch: once((handler = (req, options, response) => console.log('fetch', { url: req + '', options, response })) => {
-    const oldFetch = fetch;
-    window.fetch = async function(req, options) {
-      const response = await oldFetch(req, options);
-      handler(req, options, response);
-      return response;
-    };
-  }),
-  once,
-  debounceAsync,
+        req.addEventListener('loadend', event => h(event, requests));
+        return req;
+      };
+      window.XMLHttpRequest.prototype = originalXMLHttpRequest.prototype;
+    },
+    null,
+    newHandler => (h = newHandler),
+  );
+})();
+
+const interceptFetch = once((handler = (req, options, response) => console.log('fetch', { url: req + '', options, response })) => {
+  const oldFetch = fetch;
+  window.fetch = async function(req, options) {
+    const response = await oldFetch(req, options);
+    handler(req, options, response);
+    return response;
+  };
 });
+
+Object.assign(window, { interceptXHR, interceptFetch, once, debounceAsync });
 
 window.addEventListener('keydown', e => {
   if(e.key == 'End') {
     console.log('TamperMonkey script: Installing XHR intercept handler');
     interceptXHR((e, requests) => {
       if(e.target.responseURL.indexOf('/tracks/') != -1) setTimeout(scrollToBottom, 100);
+
       requests.splice(0, requests.length);
     });
   }
@@ -93,6 +94,14 @@ function debounceAsync(fn, wait = 0, options = {}) {
     timer,
     pendingArgs = [];
   const callFn = (thisObj, args) => fn.call(thisObj, ...args);
+  function defer() {
+    const d = {};
+    d.promise = new Promise((resolve, reject) => {
+      d.resolve = resolve;
+      d.reject = reject;
+    });
+    return d;
+  }
   return function debounced(...args) {
     const currentWait = getWait(wait);
     const currentTime = new Date().getTime();
@@ -109,14 +118,6 @@ function debounceAsync(fn, wait = 0, options = {}) {
     }
     return d.promise;
   };
-  function defer() {
-    const d = {};
-    d.promise = new Promise((resolve, reject) => {
-      d.resolve = resolve;
-      d.reject = reject;
-    });
-    return d;
-  }
   function getWait(wait) {
     return typeof wait === 'function' ? wait() : wait;
   }
