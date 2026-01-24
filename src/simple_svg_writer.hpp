@@ -38,26 +38,13 @@ public:
       : name(name)
       , value(value ? "true" : "false") {}
 
-  std::string
-  Name() const {
-    return name;
-  }
-  std::string
-  Value() const {
-    return value;
-  }
-  void
-  Value(std::string value) {
-    this->value = value;
-  }
+  std::string Name() const { return name; }
+  std::string Value() const { return value; }
+  void Value(std::string value) { this->value = value; }
 
-  std::string
-  ToText() const {
-    return name + "=\"" + value + "\"";
-  }
+  std::string ToText() const { return name + "=\"" + value + "\""; }
 
-  friend std::ostream&
-  operator<<(std::ostream& stream, const Attribute& attribute) {
+  friend std::ostream& operator<<(std::ostream& stream, const Attribute& attribute) {
     return stream << attribute.ToText();
   }
 };
@@ -69,8 +56,7 @@ class Transform {
 public:
   Transform() {}
 
-  Transform&
-  matrix(double a, double b, double c, double d, double e, double f) {
+  Transform& matrix(double a, double b, double c, double d, double e, double f) {
     std::stringstream stream;
     stream << "matrix(" << a << " " << b << " " << c << " " << d << " " << e << " " << f << ')';
     transforms.push_back(stream.str());
@@ -78,8 +64,7 @@ public:
     return *this;
   }
 
-  Transform&
-  Translate(double dx, double dy = 0.0) {
+  Transform& Translate(double dx, double dy = 0.0) {
     std::stringstream stream;
     stream << "translate(" << dx << " " << dy << ')';
     transforms.push_back(stream.str());
@@ -87,8 +72,7 @@ public:
     return *this;
   }
 
-  Transform&
-  Scale(double scale_x, double scale_y) {
+  Transform& Scale(double scale_x, double scale_y) {
     std::stringstream stream;
     stream << "scale("
            << " " << scale_x << " " << scale_y << ')';
@@ -97,13 +81,9 @@ public:
     return *this;
   }
 
-  Transform&
-  Scale(double scale_x) {
-    return Scale(scale_x, scale_x);
-  }
+  Transform& Scale(double scale_x) { return Scale(scale_x, scale_x); }
 
-  Transform&
-  Rotate(double angle, double about_x = 0.0, double about_y = 0.0) {
+  Transform& Rotate(double angle, double about_x = 0.0, double about_y = 0.0) {
     std::stringstream stream;
     stream << "rotate(" << angle << " " << about_x << " " << about_y << ')';
     transforms.push_back(stream.str());
@@ -111,8 +91,7 @@ public:
     return *this;
   }
 
-  Transform&
-  SkewX(double skew_x) {
+  Transform& SkewX(double skew_x) {
     std::stringstream stream;
     stream << "skewX("
            << " " << skew_x << ')';
@@ -121,8 +100,7 @@ public:
     return *this;
   }
 
-  Transform&
-  SkewY(double skew_y) {
+  Transform& SkewY(double skew_y) {
     std::stringstream stream;
     stream << "skewY("
            << " " << skew_y << ')';
@@ -131,8 +109,7 @@ public:
     return *this;
   }
 
-  Attribute
-  AsAttribute() const {
+  Attribute AsAttribute() const {
     std::stringstream stream;
 
     for(size_t i = transforms.size(); i != 0; --i)
@@ -151,10 +128,7 @@ class Base {
   std::vector<Attribute> attributes;
 
 protected:
-  virtual std::string
-  Extras() const {
-    return {};
-  }
+  virtual std::string Extras() const { return {}; }
 
 public:
   Base(const std::string& tag)
@@ -165,18 +139,13 @@ public:
 
   virtual ~Base() {}
 
-  std::string
-  Tag() const {
-    return tag;
-  }
-  const auto&
-  Attributes() const {
-    return attributes;
-  }
+  std::string Tag() const { return tag; }
+  const auto& Attributes() const { return attributes; }
 
-  Base&
-  AddAttribute(const Attribute& attribute) {
-    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) { return a.Name().compare(attribute.Name()) == 0; });
+  Base& AddAttribute(const Attribute& attribute) {
+    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) {
+      return a.Name().compare(attribute.Name()) == 0;
+    });
     if(ii != attributes.end()) {
       ii->Value(attribute.Value());
     } else {
@@ -185,38 +154,21 @@ public:
     return *this;
   }
 
-  Base&
-  Id(const std::string& id) {
-    return AddAttribute({"id", id});
-  }
+  Base& Id(const std::string& id) { return AddAttribute({"id", id}); }
 
-  Base&
-  Class(const std::string& class_name) {
-    return AddAttribute({"class", class_name});
-  }
+  Base& Class(const std::string& class_name) { return AddAttribute({"class", class_name}); }
 
-  Base&
-  Stroke(const std::string& stroke) {
-    return AddAttribute({"stroke", stroke});
-  }
+  Base& Stroke(const std::string& stroke) { return AddAttribute({"stroke", stroke}); }
 
-  Base&
-  StrokeWidth(const double& stroke_width) {
+  Base& StrokeWidth(const double& stroke_width) {
     return AddAttribute({"stroke-width", stroke_width});
   }
 
-  Base&
-  Fill(const std::string& fill) {
-    return AddAttribute({"fill", fill});
-  }
+  Base& Fill(const std::string& fill) { return AddAttribute({"fill", fill}); }
 
-  Base&
-  Transform(const Transform& transform) {
-    return AddAttribute(transform.AsAttribute());
-  }
+  Base& Transform(const Transform& transform) { return AddAttribute(transform.AsAttribute()); }
 
-  virtual std::string
-  ToText() const {
+  virtual std::string ToText() const {
     std::ostringstream stream;
     stream << "<" << tag;
 
@@ -230,8 +182,7 @@ public:
     return stream.str();
   }
 
-  friend std::ostream&
-  operator<<(std::ostream& stream, const Base& base) {
+  friend std::ostream& operator<<(std::ostream& stream, const Base& base) {
     return stream << base.ToText();
   }
 };
@@ -256,15 +207,13 @@ public:
       : x(x)
       , y(y) {}
 
-  std::string
-  ToText() const {
+  std::string ToText() const {
     std::stringstream stream;
     stream << x << ',' << y;
     return stream.str();
   }
 
-  friend std::ostream&
-  operator<<(std::ostream& stream, const Point& point) {
+  friend std::ostream& operator<<(std::ostream& stream, const Point& point) {
     return stream << point.ToText();
   }
 };
@@ -273,8 +222,7 @@ class PolyBase : public Base {
   std::vector<Point> points;
 
 protected:
-  virtual std::string
-  Extras() const override {
+  virtual std::string Extras() const override {
     std::ostringstream stream;
 
     for(const auto& p : points) {
@@ -292,14 +240,12 @@ public:
       , points(points) {}
   virtual ~PolyBase() override {}
 
-  PolyBase&
-  Add(const Point& point) {
+  PolyBase& Add(const Point& point) {
     points.push_back(point);
     return *this;
   }
 
-  PolyBase&
-  Add(double x, double y) {
+  PolyBase& Add(double x, double y) {
     points.push_back({x, y});
     return *this;
   }
@@ -346,7 +292,8 @@ public:
   Ellipse()
       : Base("ellipse") {}
   Ellipse(double center_x, double center_y, double radius_x, double radius_y)
-      : Base("ellipse", {{"cx", center_x}, {"cy", center_y}, {"rx", radius_x}, {"ry", radius_y}}) {}
+      : Base("ellipse",
+             {{"cx", center_x}, {"cy", center_y}, {"rx", radius_x}, {"ry", radius_y}}) {}
   virtual ~Ellipse() override {}
 };
 
@@ -364,8 +311,7 @@ class GroupBase : public Base {
   std::vector<std::shared_ptr<Base>> objects;
 
 protected:
-  std::string
-  StartTag() const {
+  std::string StartTag() const {
     std::ostringstream stream;
     stream << "<" << Tag();
 
@@ -377,8 +323,7 @@ protected:
     return stream.str();
   }
 
-  std::string
-  EndTag() const {
+  std::string EndTag() const {
     std::ostringstream stream;
     stream << "</" << Tag() << ">";
 
@@ -392,15 +337,12 @@ public:
       : Base(group_tag, attributes) {}
   virtual ~GroupBase() override {}
 
-  template<typename T>
-  GroupBase&
-  Append(const T& object) {
+  template<typename T> GroupBase& Append(const T& object) {
     objects.push_back(std::make_shared<T>(object));
     return *this;
   }
 
-  virtual std::string
-  ToText() const override {
+  virtual std::string ToText() const override {
     std::ostringstream stream;
     stream << StartTag() << '\n';
 
@@ -413,8 +355,7 @@ public:
     return stream.str();
   }
 
-  friend std::ostream&
-  operator<<(std::ostream& stream, const GroupBase& group_base) {
+  friend std::ostream& operator<<(std::ostream& stream, const GroupBase& group_base) {
     return stream << group_base.ToText();
   }
 };
@@ -428,8 +369,7 @@ public:
       , text(text) {}
   virtual ~Text() override {}
 
-  virtual std::string
-  ToText() const override {
+  virtual std::string ToText() const override {
     std::ostringstream stream;
     stream << StartTag();
     stream << text;
@@ -445,8 +385,7 @@ public:
       : GroupBase("g") {}
   virtual ~Group() override {}
 
-  friend std::ostream&
-  operator<<(std::ostream& stream, const Group& group) {
+  friend std::ostream& operator<<(std::ostream& stream, const Group& group) {
     return stream << group.ToText();
   }
 };
@@ -456,11 +395,11 @@ public:
   Layer()
       : GroupBase("g", {{"inkscape:groupmode", std::string("layer")}}) {}
   Layer(const std::string& name)
-      : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
+      : GroupBase("g",
+                  {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
   virtual ~Layer() override {}
 
-  friend std::ostream&
-  operator<<(std::ostream& stream, const Layer& group) {
+  friend std::ostream& operator<<(std::ostream& stream, const Layer& group) {
     return stream << group.ToText();
   }
 };
@@ -474,18 +413,19 @@ public:
       : GroupBase("svg",
                   {{"xmlns", std::string("http://www.w3.org/2000/svg")},
                    {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
-                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+                   {"xmlns:inkscape",
+                    std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   Document(double width, double height)
       : GroupBase("svg",
                   {{"width", to_string(width)},
                    {"height", to_string(height)},
                    {"xmlns", std::string("http://www.w3.org/2000/svg")},
                    {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
-                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+                   {"xmlns:inkscape",
+                    std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   virtual ~Document() override {}
 
-  Document&
-  ViewBox(double x_min, double y_min, double width, double height) {
+  Document& ViewBox(double x_min, double y_min, double width, double height) {
     std::ostringstream stream;
     stream << x_min << ' ' << y_min << ' ' << width << ' ' << height;
     AddAttribute({"viewBox", stream.str()});
@@ -493,8 +433,7 @@ public:
     return *this;
   }
 
-  virtual std::string
-  ToText() const override {
+  virtual std::string ToText() const override {
     std::ostringstream stream;
     stream << "<?xml version=\"1.0\"?>" << '\n';
 
@@ -503,8 +442,7 @@ public:
     return stream.str();
   }
 
-  friend std::ostream&
-  operator<<(std::ostream& stream, const Document& document) {
+  friend std::ostream& operator<<(std::ostream& stream, const Document& document) {
     return stream << document.ToText();
   }
 };

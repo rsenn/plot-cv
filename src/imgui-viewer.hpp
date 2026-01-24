@@ -37,7 +37,8 @@ ImageTexture::setImage(cv::Mat* pframe) {
   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
   // Some enviromnent doesn't support GP_BGR
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, (pframe->data));
+  glTexImage2D(
+      GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, (pframe->data));
 }
 
 void

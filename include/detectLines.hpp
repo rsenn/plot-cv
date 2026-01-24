@@ -23,7 +23,9 @@ void findCurveEnds(vector<Vec4i> linesP, vector<Vec3f> circles, vector<Point>& c
 void extractCurve(vector<Point> contour, vector<Point> curveEnds, vector<Point>& curve);
 bool isNearCircle(Point corner, vector<Vec3f> circles);
 bool isVorH(Vec4i line);
-void createStraightLines(vector<Point> rectCorners, vector<Point> curveEnds, vector<Vec4i>& straight_lines);
+void createStraightLines(vector<Point> rectCorners,
+                         vector<Point> curveEnds,
+                         vector<Vec4i>& straight_lines);
 void drawStraightLines(Mat& img_all, vector<Vec4i> straight_lines);
 void drawPoints(Mat& img_all, vector<Point> rectCorners, vector<Point> curveEnds);
 

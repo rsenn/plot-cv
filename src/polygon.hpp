@@ -36,10 +36,7 @@ public:
   value_type get_curvature(int i);
   point_type get_point(int i);
   void replace_point(int i, point_type p);
-  int
-  get_regular_point_size() {
-    return regular_points.size();
-  };
+  int get_regular_point_size() { return regular_points.size(); };
   vector_type delete_loop(); // détecte les boucles internes et supprime les
                              // points de la plus petite.
   ~Polygon_();               // destructor

@@ -38,7 +38,8 @@ segment_cut(cv::Point_<T> p1, cv::Point_<T> p2, cv::Point_<T> q1, cv::Point_<T> 
 template<class T>
 static cv::Point_<T>
 convex_point(cv::Point_<T> begin_point, cv::Point_<T> end_point, T t) {
-  return cv::Point_<T>(t * end_point.x + (1 - t) * begin_point.x, t * end_point.y + (1 - t) * begin_point.y);
+  return cv::Point_<T>(t * end_point.x + (1 - t) * begin_point.x,
+                       t * end_point.y + (1 - t) * begin_point.y);
 }
 
 template<>
@@ -280,7 +281,8 @@ Polygon_<double>::draw_curvatures(const cv::Mat& Image) {
   for(int i = 0; i < curvature.size(); i++) {
     double x = normals[i](0);
     double y = normals[i](1);
-    point_type p(600 * curvature[i] * x + regular_points[i].x, 600 * curvature[i] * y + regular_points[i].y);
+    point_type p(600 * curvature[i] * x + regular_points[i].x,
+                 600 * curvature[i] * y + regular_points[i].y);
     // std::cout << p.x <<", " << p.y << std::endl;
     line(Image, regular_points[i], p, color_type(255, 120, 255));
   }

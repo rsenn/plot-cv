@@ -65,13 +65,18 @@ extern int thresh, thresh2, apertureSize;
 
 image_type get_alpha_channel(image_type m);
 
-extern "C" image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
+extern "C" image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred,
+    imgCanny,
     imgMorphology; // Canny edge image
 
 void image_info(image_type img);
-std::vector<point_vector<int>> get_contours(image_type src, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_TREE);
+std::vector<point_vector<int>> get_contours(image_type src,
+                                            std::vector<cv::Vec4i>& hierarchy,
+                                            int flag = CV_RETR_TREE);
 
-void svg_draw_polyline(svg::Document& doc, const point_vector<float>& contour_arg, std::function<svg::Color(const point_vector<float>&)> color_fn);
+void svg_draw_polyline(svg::Document& doc,
+                       const point_vector<float>& contour_arg,
+                       std::function<svg::Color(const point_vector<float>&)> color_fn);
 
 struct config_values {
   int morphology_kernel_size;
@@ -102,7 +107,8 @@ extern "C" config_values config;
 
 template<class T>
 inline int
-get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un, std::vector<cv::Point_<T>>& bigContour) {
+get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un,
+                    std::vector<cv::Point_<T>>& bigContour) {
   double maxArea = 0.0;
   int largestContour = -1;
   for(size_t i = 0; i < contours_un.size(); i++) {
@@ -130,7 +136,9 @@ get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un, 
 
 extern config_values config;
 
-void draw_all_contours(image_type& out, std::vector<point_vector<int>>& contours, int thickness = 1);
+void draw_all_contours(image_type& out,
+                       std::vector<point_vector<int>>& contours,
+                       int thickness = 1);
 
 // Function that calculates the absolute value
 
@@ -171,7 +179,11 @@ out_points(O& os, const point_vector<int>& pl) {
 template<class Container>
 inline void
 draw_all_lines(
-    image_type& out, const Container& lines, const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int { return (index * 360 * 10 / len) % 360; }) {
+    image_type& out,
+    const Container& lines,
+    const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
+      return (index * 360 * 10 / len) % 360;
+    }) {
   for(typename Container::const_iterator it = lines.begin(); it != lines.end(); it++) {
     size_t i = std::distance(lines.begin(), it);
     const color_type color = hsv_to_rgb(hue(i, lines.size()), 1.0, 1.0);
@@ -186,7 +198,8 @@ draw_all_lines(
 
 template<class T>
 inline void
-svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::string output_file) {
+svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours,
+                std::string output_file) {
 
   logfile << "Saving '" << output_file << "'" << std::endl;
 
@@ -194,10 +207,13 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
   svg::Document doc(output_file, svg::Layout(dimensions, svg::Layout::TopLeft));
   svg::LineChart chart(5.0);
   std::vector<double> areas;
-  std::transform(contours.begin(), contours.end(), std::back_inserter(areas), [](const std::vector<cv::Point_<T>>& contour) -> double {
-    point_vector<float> vec = contour;
-    return cv::contourArea(vec);
-  });
+  std::transform(contours.begin(),
+                 contours.end(),
+                 std::back_inserter(areas),
+                 [](const std::vector<cv::Point_<T>>& contour) -> double {
+                   point_vector<float> vec = contour;
+                   return cv::contourArea(vec);
+                 });
   const auto& it = std::max_element(areas.begin(), areas.end());
   double max_area = 0;
   if(it != areas.end()) {
@@ -211,7 +227,9 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
     return from_scalar(hsv_to_rgb(area / max_area * 360, 1, 1));
   };
 
-  std::for_each(contours.begin(), contours.end(), std::bind(&svg_draw_polyline, std::ref(doc), std::placeholders::_1, cfn));
+  std::for_each(contours.begin(),
+                contours.end(),
+                std::bind(&svg_draw_polyline, std::ref(doc), std::placeholders::_1, cfn));
   //  svg_draw_polyline(doc, contour_arg, svg::Color(255, 0, 0));
 
   doc.save();
@@ -222,7 +240,8 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
 template<class P>
 inline JSValue
 points_to_js(const std::vector<P>& v) {
-  std::function<JSValue(const P&)> fn([](const P& point) -> JSValue { return js.create_point(point.x, point.y); });
+  std::function<JSValue(const P&)> fn(
+      [](const P& point) -> JSValue { return js.create_point(point.x, point.y); });
   return vector_to_js(js, v, fn);
 }
 
@@ -255,20 +274,17 @@ jsrt::value check_eval();
 
 class Timer {
 public:
-  void
-  start() {
+  void start() {
     start_time = std::chrono::system_clock::now();
     running = true;
   }
 
-  void
-  stop() {
+  void stop() {
     end_time = std::chrono::system_clock::now();
     running = false;
   }
 
-  double
-  elapsedMilliseconds() {
+  double elapsedMilliseconds() {
     std::chrono::time_point<std::chrono::system_clock> end;
 
     if(running) {
@@ -280,10 +296,7 @@ public:
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - start_time).count();
   }
 
-  double
-  elapsedSeconds() {
-    return elapsedMilliseconds() / 1000.0;
-  }
+  double elapsedSeconds() { return elapsedMilliseconds() / 1000.0; }
 
 private:
   std::chrono::time_point<std::chrono::system_clock> start_time;

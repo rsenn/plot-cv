@@ -29,62 +29,43 @@ struct jsiter;
 
 struct jsatom {
 
-  static jsatom
-  create(JSContext* ctx, const char* str) {
-    return jsatom(JS_NewAtom(ctx, str));
-  }
-  static jsatom
-  create(JSContext* ctx, uint32_t num) {
+  static jsatom create(JSContext* ctx, const char* str) { return jsatom(JS_NewAtom(ctx, str)); }
+  static jsatom create(JSContext* ctx, uint32_t num) {
     return jsatom(JS_NewAtomUInt32(ctx, num));
   }
-  static jsatom
-  create(JSContext* ctx, const char* x, size_t n) {
+  static jsatom create(JSContext* ctx, const char* x, size_t n) {
     return jsatom(JS_NewAtomLen(ctx, x, n));
   }
-  static jsatom
-  create(JSContext* ctx, const jsatom& atom) {
+  static jsatom create(JSContext* ctx, const jsatom& atom) {
     return jsatom(JS_DupAtom(ctx, atom));
   }
-  static jsatom
-  create(JSContext* ctx, const JSValueConst& value) {
+  static jsatom create(JSContext* ctx, const JSValueConst& value) {
     return jsatom(JS_ValueToAtom(ctx, value));
   }
-  static jsatom
-  create(JSContext* ctx, const std::string& str) {
+  static jsatom create(JSContext* ctx, const std::string& str) {
     return create(ctx, str.data(), str.size());
   }
 
   //~jsatom() { destroy(); }
 
-  static void
-  destroy(JSContext* ctx, jsatom& a) {
+  static void destroy(JSContext* ctx, jsatom& a) {
     JS_FreeAtom(ctx, a._a);
     a._a = JS_ATOM_NULL;
   }
 
   operator JSAtom() const { return _a; }
 
-  const char*
-  to_cstring(JSContext* _ctx) const {
-    return JS_AtomToCString(_ctx, _a);
-  }
+  const char* to_cstring(JSContext* _ctx) const { return JS_AtomToCString(_ctx, _a); }
 
-  JSValue
-  to_value(JSContext* _ctx) const {
-    return JS_AtomToValue(_ctx, _a);
-  }
+  JSValue to_value(JSContext* _ctx) const { return JS_AtomToValue(_ctx, _a); }
 
-  JSValue
-  to_string(JSContext* _ctx) const {
-    return JS_AtomToString(_ctx, _a);
-  }
+  JSValue to_string(JSContext* _ctx) const { return JS_AtomToString(_ctx, _a); }
 
 private:
   jsatom(JSAtom a)
       : _a(a) {}
 
-  static jsatom
-  create(JSAtom a) {
+  static jsatom create(JSAtom a) {
     jsatom ret(a);
     return ret;
   }
@@ -107,10 +88,7 @@ struct jsrt {
       : ctx(JS_DupContext(c)) {}
   ~jsrt();
 
-  value
-  new_string(const char* str) const {
-    return JS_NewString(ctx, str);
-  }
+  value new_string(const char* str) const { return JS_NewString(ctx, str); }
 
   typedef value c_function(jsrt* rt, const_value this_val, int argc, const_value* argv);
 
@@ -129,13 +107,11 @@ struct jsrt {
   template<class T> void get_rect(const_value val, T& ref) const;
   template<class T> void get_color(const_value val, T& ref) const;
 
-  void
-  get_boolean(const_value val, bool& ref) {
+  void get_boolean(const_value val, bool& ref) {
     bool b = JS_ToBool(ctx, val);
     ref = b;
   }
-  bool
-  get_boolean(const_value val) {
+  bool get_boolean(const_value val) {
     bool b;
     get_boolean(val, b);
     return b;
@@ -146,9 +122,7 @@ struct jsrt {
   template<class T> value create(T arg);
   template<class T> value create_point(T x, T y);
 
-  template<class T>
-  value
-  get_property(const_value obj, T prop) const {
+  template<class T> value get_property(const_value obj, T prop) const {
     throw std::runtime_error("template specialization");
   }
 
@@ -157,49 +131,41 @@ struct jsrt {
 
   bool has_property(const_value obj, const jsatom& atom) const;
 
-  bool
-  has_property(const_value obj, const std::string& name) const {
+  bool has_property(const_value obj, const std::string& name) const {
     jsatom atom = jsatom::create(ctx, name);
     bool ret = has_property(obj, atom);
     jsatom::destroy(ctx, atom);
     return ret;
   }
-  bool
-  has_property(const_value obj, uint32_t index) const {
+  bool has_property(const_value obj, uint32_t index) const {
     jsatom atom = jsatom::create(ctx, index);
     bool ret = has_property(obj, atom);
     jsatom::destroy(ctx, atom);
     return ret;
   }
-  bool
-  has_property(const_value obj, const const_value& prop) const {
+  bool has_property(const_value obj, const const_value& prop) const {
     jsatom atom = jsatom::create(ctx, prop);
     bool ret = has_property(obj, atom);
     jsatom::destroy(ctx, atom);
     return ret;
   }
 
-  template<class T>
-  void
-  set_property(const_value obj, T prop, value val) {}
+  template<class T> void set_property(const_value obj, T prop, value val) {}
 
   void set_property(const_value obj, const jsatom& atom, value val, int flags);
-  void
-  set_property(const_value obj, const std::string& name, value val, int flags) {
+  void set_property(const_value obj, const std::string& name, value val, int flags) {
     jsatom atom = jsatom::create(ctx, name);
     set_property(obj, atom, val, flags);
     jsatom::destroy(ctx, atom);
   }
 
-  void
-  set_property(const_value obj, uint32_t index, value val, int flags) {
+  void set_property(const_value obj, uint32_t index, value val, int flags) {
     jsatom atom = jsatom::create(ctx, index);
     set_property(obj, atom, val, flags);
     jsatom::destroy(ctx, atom);
   }
 
-  void
-  set_property(const_value obj, const const_value& prop, value val, int flags) {
+  void set_property(const_value obj, const const_value& prop, value val, int flags) {
     jsatom atom = jsatom::create(ctx, prop);
     set_property(obj, atom, val, flags);
     jsatom::destroy(ctx, atom);
@@ -213,29 +179,23 @@ struct jsrt {
 
   std::string function_name(const_value fn) const;
 
-  std::string
-  class_name(const_value obj) const {
-    return function_name(get_constructor(obj));
-  }
+  std::string class_name(const_value obj) const { return function_name(get_constructor(obj)); }
 
   value get_global(const char* name) const;
   void set_global(const char* name, value v);
 
   value get_symbol(const char* name) const;
-  value
-  get_iterator(const_value obj, const char* symbol = "iterator") {
+  value get_iterator(const_value obj, const char* symbol = "iterator") {
     return get_property_symbol(obj, symbol);
   }
   value call_iterator(const_value obj, const char* symbol = "iterator");
   value call_iterator_next(const_value obj, const char* symbol = "iterator");
 
-  const_value
-  global_object() const {
+  const_value global_object() const {
     value globalThis = JS_GetGlobalObject(ctx);
     return globalThis;
   }
-  value
-  global_object() {
+  value global_object() {
     value globalThis = JS_GetGlobalObject(ctx);
     return globalThis;
   }
@@ -252,9 +212,14 @@ struct jsrt {
 
   const_value prototype(const_value obj) const;
 
-  void property_names(const_value obj, std::vector<const char*>& out, bool enum_only = false, bool recursive = false) const;
+  void property_names(const_value obj,
+                      std::vector<const char*>& out,
+                      bool enum_only = false,
+                      bool recursive = false) const;
 
-  std::vector<const char*> property_names(const_value obj, bool enum_only = true, bool recursive = true) const;
+  std::vector<const char*> property_names(const_value obj,
+                                          bool enum_only = true,
+                                          bool recursive = true) const;
 
   void dump_error() const;
 
@@ -291,8 +256,7 @@ struct jsrt {
   int tag(value val) const;
   void* obj(const_value val) const;
 
-  std::string
-  typestr(const_value val) const {
+  std::string typestr(const_value val) const {
     if(is_number(val))
       return "number";
     else if(is_bool(val))
@@ -322,8 +286,7 @@ struct jsrt {
     return "unknown";
   }
 
-  std::string
-  to_string(const_value arg) const {
+  std::string to_string(const_value arg) const {
     std::string ret;
     get_string(arg, ret);
     return ret;
@@ -340,10 +303,7 @@ struct jsrt {
   value atom_to_string(const atom& a) const;
   const char* atom_to_cstring(const atom& a) const;
 
-  void
-  free_value(const value& v) const {
-    JS_FreeValue(ctx, v);
-  }
+  void free_value(const value& v) const { JS_FreeValue(ctx, v); }
 
 protected:
   value get_undefined() const;
@@ -355,10 +315,7 @@ public:
   JSContext* ctx;
 
 private:
-  JSRuntime*
-  get_runtime() const {
-    return JS_GetRuntime(ctx);
-  }
+  JSRuntime* get_runtime() const { return JS_GetRuntime(ctx); }
 
 public:
   int32_t get_length(const const_value& v) const;
@@ -484,7 +441,8 @@ inline void
 jsrt::get_color(const_value val, T& ref) const {
   const_value vr = _undefined, vg = _undefined, vb = _undefined, va = _undefined;
 
-  if(is_object(val) && has_property(val, "r") && has_property(val, "g") && has_property(val, "b")) {
+  if(is_object(val) && has_property(val, "r") && has_property(val, "g") &&
+     has_property(val, "b")) {
     vr = get_property<const char*>(val, "r");
     vg = get_property<const char*>(val, "g");
     vb = get_property<const char*>(val, "b");
@@ -674,7 +632,10 @@ jsrt::set_property(const_value obj, const jsatom& atom, value val, int flags) {
 
 template<class T>
 inline jsrt::value
-vector_to_js(jsrt& js, const T& v, size_t n, const std::function<jsrt::value(const typename T::value_type&)>& fn) {
+vector_to_js(jsrt& js,
+             const T& v,
+             size_t n,
+             const std::function<jsrt::value(const typename T::value_type&)>& fn) {
   using std::placeholders::_1;
   jsrt::value ret = js.create_array(n);
   for(uint32_t i = 0; i < n; i++)
@@ -685,7 +646,8 @@ vector_to_js(jsrt& js, const T& v, size_t n, const std::function<jsrt::value(con
 template<class T>
 inline jsrt::value
 vector_to_js(jsrt& js, const T& v, size_t n) {
-  return vector_to_js(v, n, std::bind(&jsrt::create<typename T::value_type>, &js, std::placeholders::_1));
+  return vector_to_js(
+      v, n, std::bind(&jsrt::create<typename T::value_type>, &js, std::placeholders::_1));
 }
 
 template<class T>
@@ -696,7 +658,9 @@ vector_to_js(jsrt& js, const T& v) {
 
 template<class P>
 inline jsrt::value
-vector_to_js(jsrt& js, const std::vector<P>& v, const std::function<jsrt::value(const P&)>& fn) {
+vector_to_js(jsrt& js,
+             const std::vector<P>& v,
+             const std::function<jsrt::value(const P&)>& fn) {
   return vector_to_js(js, v, v.size(), fn);
 }
 
@@ -712,7 +676,8 @@ pointer_to_js(jsrt& js, const P* v, size_t n, const std::function<jsrt::value(co
 template<class P>
 inline jsrt::value
 pointer_to_js(jsrt& js, const P* v, size_t n) {
-  std::function<jsrt::value(const P&)> fn([&](const P& v) -> jsrt::value { return js.create(v); });
+  std::function<jsrt::value(const P&)> fn(
+      [&](const P& v) -> jsrt::value { return js.create(v); });
 
   return pointer_to_js(js, v, n, fn);
 }
@@ -840,65 +805,35 @@ jsrt::is_array_like(const_value val) const {
  * Array iterator
  */
 struct jsiter {
-  JSValue
-  operator*() const {
+  JSValue operator*() const {
     if(p < n)
       return i((uint32_t)p);
     else
       return JS_UNDEFINED;
   }
-  jsiter
-  operator++() {
+  jsiter operator++() {
     jsiter ret = *this;
     if(p < n)
       p++;
     return ret;
   }
-  jsiter&
-  operator++(int) {
+  jsiter& operator++(int) {
     if(p < n)
       ++p;
     return *this;
   }
-  bool
-  operator==(const jsiter& o) const {
-    return p == o.p && n == o.n;
-  }
-  bool
-  operator<(const jsiter& o) const {
-    return p < o.p;
-  }
-  bool
-  operator>(const jsiter& o) const {
-    return p > o.p;
-  }
-  bool
-  operator<=(const jsiter& o) const {
-    return !(*this > o);
-  }
-  bool
-  operator>=(const jsiter& o) const {
-    return !(*this < o);
-  }
-  bool
-  operator!=(const jsiter& o) const {
-    return !(*this == o);
-  }
+  bool operator==(const jsiter& o) const { return p == o.p && n == o.n; }
+  bool operator<(const jsiter& o) const { return p < o.p; }
+  bool operator>(const jsiter& o) const { return p > o.p; }
+  bool operator<=(const jsiter& o) const { return !(*this > o); }
+  bool operator>=(const jsiter& o) const { return !(*this < o); }
+  bool operator!=(const jsiter& o) const { return !(*this == o); }
 
-  ptrdiff_t
-  operator-(const jsiter& o) const {
-    return p - o.p;
-  }
+  ptrdiff_t operator-(const jsiter& o) const { return p - o.p; }
 
-  jsiter
-  operator-(size_t o) const {
-    return jsiter(i, n, p - o);
-  }
+  jsiter operator-(size_t o) const { return jsiter(i, n, p - o); }
 
-  jsiter
-  operator+(size_t o) const {
-    return jsiter(i, n, p + o);
-  }
+  jsiter operator+(size_t o) const { return jsiter(i, n, p + o); }
 
 protected:
   std::function<JSValue(uint32_t)> i;
@@ -946,7 +881,10 @@ jsrt::end(JSValue& v) {
 
 inline std::function<JSValue(JSValue, uint32_t)>
 jsrt::index() const {
-  return std::bind(&jsrt::get_property<uint32_t>, this, std::placeholders::_1, std::placeholders::_2);
+  return std::bind(&jsrt::get_property<uint32_t>,
+                   this,
+                   std::placeholders::_1,
+                   std::placeholders::_2);
 }
 
 inline std::function<JSValue(uint32_t)>

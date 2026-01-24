@@ -51,21 +51,22 @@ public:
    * @param      pt    The point
    */
   template<class InputIterator, class OutputIterator>
-  void
-  transform_points(InputIterator from, InputIterator to, OutputIterator out) const {
-    std::transform(from, to, out, std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
+  void transform_points(InputIterator from, InputIterator to, OutputIterator out) const {
+    std::transform(from,
+                   to,
+                   out,
+                   std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
   }
 
-  template<class InputIterator> void transform_points(InputIterator from, InputIterator to) const;
+  template<class InputIterator>
+  void transform_points(InputIterator from, InputIterator to) const;
 
-  Matrix<T>&
-  operator=(const cv::MatExpr& expr) {
+  Matrix<T>& operator=(const cv::MatExpr& expr) {
     init(cv::Mat(expr));
     return *this;
   }
 
-  Matrix<T>&
-  operator=(const Matrix<T>& other) {
+  Matrix<T>& operator=(const Matrix<T>& other) {
     init(other);
     return *this;
   }
@@ -84,59 +85,46 @@ public:
   -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
   }
 */
-  static Matrix<T>
-  rotation(double angle) {
-    return Matrix<T>({std::cos(angle), std::sin(angle), 0}, {-std::sin(angle), std::cos(angle), 0});
+  static Matrix<T> rotation(double angle) {
+    return Matrix<T>({std::cos(angle), std::sin(angle), 0},
+                     {-std::sin(angle), std::cos(angle), 0});
   }
 
-  static Matrix<T>
-  scale(double scale) {
+  static Matrix<T> scale(double scale) {
     return Matrix<T>({scale, 0, 0}, {0, scale, 0}, {0, 0, 1});
   }
 
-  template<class OtherT>
-  static Matrix<T>
-  translation(OtherT x, OtherT y) {
+  template<class OtherT> static Matrix<T> translation(OtherT x, OtherT y) {
     return Matrix<T>({1, 0, T(x)}, {0, 1, T(y)}, {0, 0, 1});
   }
-  static Matrix<T>
-  identity() {
-    return Matrix<T>({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
-  }
+  static Matrix<T> identity() { return Matrix<T>({1, 0, 0}, {0, 1, 0}, {0, 0, 1}); }
 
-  cv::Affine3<T>
-  affine() const {
-    return cv::Affine3<T>(*this);
-  }
+  cv::Affine3<T> affine() const { return cv::Affine3<T>(*this); }
 
-  static Matrix<T>
-  create(T xx, T xy, T yx, T yy, T tx, T ty) {
+  static Matrix<T> create(T xx, T xy, T yx, T yy, T tx, T ty) {
     return Matrix<T>({xx, xy, yx}, {yy, tx, ty});
   }
 
-  template<class R = std::array<T, dim>> Matrix<T>& init(const R& row0, const R& row1, const R& row2);
+  template<class R = std::array<T, dim>>
+  Matrix<T>& init(const R& row0, const R& row1, const R& row2);
 
-  Matrix<T>&
-  init(T xx, T xy, T yx, T yy, T tx, T ty) {
+  Matrix<T>& init(T xx, T xy, T yx, T yy, T tx, T ty) {
     set_row(0, {xx, xy, tx});
     set_row(1, {yx, yy, ty});
     set_row(2, {0, 0, 1});
     return *this;
   }
 
-  Matrix<T>&
-  init() {
+  Matrix<T>& init() {
     init({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
     return *this;
   }
-  Matrix<T>&
-  init(T values[3][3]) {
+  Matrix<T>& init(T values[3][3]) {
     init(values[0], values[1], values[2]);
     return *this;
   }
 
-  Matrix<T>&
-  init(const cv::Mat& other) {
+  Matrix<T>& init(const cv::Mat& other) {
     if(other.rows > 2)
       init(other.ptr<T>(0, 0), other.ptr<T>(1, 0), other.ptr<T>(2, 0));
     else
@@ -144,8 +132,7 @@ public:
     return *this;
   }
 
-  Matrix<T>&
-  init(const Matrix<T>& other) {
+  Matrix<T>& init(const Matrix<T>& other) {
     if(other.rows > 2)
       init(other[0], other[1], other[2]);
     else
@@ -154,8 +141,7 @@ public:
   }
 
   template<class OtherT = float>
-  static Matrix<T>
-  rotation(double angle, const cv::Point_<OtherT>& origin) {
+  static Matrix<T> rotation(double angle, const cv::Point_<OtherT>& origin) {
     Matrix<T> ret = Matrix<T>::identity();
     const cv::Point_<OtherT> zero(0, 0);
     /*
@@ -166,19 +152,18 @@ public:
     if(origin != zero)
       ret.multiplicate(Matrix<T>(1, 0, -T(origin.x), 0, 1, -T(origin.y)));
 
-    ret.multiplicate(Matrix<T>(T(std::cos(angle)), T(std::sin(angle)), 0, -T(std::sin(angle)), T(std::cos(angle)), 0));
+    ret.multiplicate(Matrix<T>(
+        T(std::cos(angle)), T(std::sin(angle)), 0, -T(std::sin(angle)), T(std::cos(angle)), 0));
     if(origin != zero)
       ret.multiplicate(Matrix<T>(1, 0, T(origin.x), 0, 1, T(origin.y)));
 
     return ret;
   }
 
-  std::array<T, dim>&
-  operator[](int row) {
+  std::array<T, dim>& operator[](int row) {
     return *reinterpret_cast<std::array<T, dim>*>(ptr(row, 0));
   }
-  std::array<T, dim> const&
-  operator[](int row) const {
+  std::array<T, dim> const& operator[](int row) const {
     return *reinterpret_cast<std::array<T, dim> const*>(ptr(row, 0));
   }
 
@@ -186,18 +171,11 @@ public:
 
   Matrix<T> product(const Matrix<T>& other) const;
 
-  Matrix<T>
-  operator*(const Matrix<T>& other) const {
-    return product(other);
-  }
-  Matrix<T>&
-  operator*=(const Matrix<T>& other) {
-    return multiplicate(other);
-  }
+  Matrix<T> operator*(const Matrix<T>& other) const { return product(other); }
+  Matrix<T>& operator*=(const Matrix<T>& other) { return multiplicate(other); }
 
 protected:
-  Matrix<T>&
-  set(int row, int col, const T& value) {
+  Matrix<T>& set(int row, int col, const T& value) {
     if(base_type::type() == CV_64F)
       *base_type::ptr<double>(row, col) = value;
 
@@ -212,15 +190,9 @@ protected:
 
   T get(int row, int col) const;
 
-  const T&
-  ref(int row, int col) const {
-    return *ptr(row, col);
-  }
+  const T& ref(int row, int col) const { return *ptr(row, col); }
 
-  T&
-  ref(int row, int col) {
-    return *ptr(row, col);
-  }
+  T& ref(int row, int col) { return *ptr(row, col); }
 
   const T* ptr(int row, int col) const;
 
@@ -240,7 +212,10 @@ template<class T>
 template<class InputIterator>
 inline void
 Matrix<T>::transform_points(InputIterator from, InputIterator to) const {
-  std::for_each(from, to, std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
+  std::for_each(
+      from,
+      to,
+      std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
 }
 
 template<class T>
