@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as deep from 'deep';
 import * as path from 'path';
 import * as BJSON from 'bjson';
+import * as json from 'json';
 import { Pointer } from 'pointer';
 import { Spawn } from './os-helpers.js';
 //import { countSubstring } from './string-helpers.js';
@@ -1546,7 +1547,7 @@ export async function AstDump(compiler, source, args, force) {
         else throw new Error(`ERROR reading ${this.file}`);
       }
 
-      return JSON.parse(fs.readFileSync(this.file, 'utf-8'));
+      return json.read(fs.readFileSync(this.file, null));
     },
     data() {
       let data = this.json;
