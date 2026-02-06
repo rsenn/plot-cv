@@ -3,21 +3,21 @@ import { readFileSync } from 'fs';
 import { toString, getOpt } from 'util';
 
 function main(...args) {
-  let params = getOpt(
+  let { output = process.env.HOME + '/storage/movies/output.mp4', ...params } = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
+      output: [true, null, 'o'],
       '@': 'images.../c',
     },
     args,
   );
 
-  console.log(params);
-
   const size = new Size(1080, 1440);
-  const w = new VideoWriter(process.env.HOME + '/storage/movies/output.mp4', VideoWriter.fourcc('avc1'), 1, size);
+  const w = new VideoWriter(output, VideoWriter.fourcc('avc1'), 1, size);
 
   const frame = new Mat(size, CV_8UC3);
-
+  const { length } = params['@'];
+  let i = 0;
   for(const image of params['@']) {
     let m = imread(image);
 
@@ -44,12 +44,12 @@ function main(...args) {
 
     if(!m.size.equals(size)) resize(m, m, size);
 
-    console.log('frame size:', console.config({ compact: true }), m == frame, m.size);
+    console.log(`frame #${++i}/${length}`, console.config({ compact: true }), m == frame, m.size);
     w.write(m);
   }
 
-  console.log('writing...');
-  m.release();
+  console.log(`writing '${output}'...`);
+  w.release();
 }
 
 main(...scriptArgs.slice(1));
