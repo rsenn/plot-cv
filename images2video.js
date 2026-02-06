@@ -3,41 +3,44 @@ import { readFileSync } from 'fs';
 import { toString, getOpt } from 'util';
 
 function main(...args) {
-  let { output = process.env.HOME + '/storage/movies/output.mp4', ...params } = getOpt(
+  let { fps=25, output = process.env.HOME + '/storage/movies/output.mp4', ...params } = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       output: [true, null, 'o'],
+      fps: [true, null, 'f'],
       '@': 'images.../c',
     },
     args,
   );
 
   const size = new Size(1080, 1440);
-  const w = new VideoWriter(output, VideoWriter.fourcc('avc1'), 1, size);
+  const w = new VideoWriter(output, VideoWriter.fourcc('avc1'), fps, size);
 
   const frame = new Mat(size, CV_8UC3);
   const { length } = params['@'];
+  
   let i = 0;
+
   for(const image of params['@']) {
     let m = imread(image);
 
     if(m.size.aspect != size.aspect) {
       let f = size.div(m.size);
 
-      let ff = Math.min(...f);
-      let ffi = [...f].indexOf(ff);
-      let ffo = ffi ^ 1;
-      let newsz = new Size(m.size).mul(ff).round();
-      let dsz = new Size(size).sub(newsz);
-      let r = new Rect(...new Size(dsz).div(2).round(), ...newsz);
+      const factor = Math.min(...f);
+      const index = [...f].indexOf(factor);
+      const other = index ^ 1;
+      const newsz = new Size(m.size).mul(factor).round();
+      const delta = new Size(size).sub(newsz);
+      const rect = new Rect(...new Size(delta).div(2).round(), ...newsz);
 
-      let diff = [...size][ffo] - [...newsz][ffo];
+      const diff = [...size][other] - [...newsz][other];
 
-      //console.log('', { newsz, dsz, r, f, ff, ffi, diff });
+      //console.log('', { newsz, delta, rect, f, factor, index, diff });
 
       resize(m, m, newsz);
       frame.clear();
-      m.copyTo(frame(r));
+      m.copyTo(frame(rect));
 
       m = frame;
     }
