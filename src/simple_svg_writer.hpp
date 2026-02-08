@@ -74,8 +74,7 @@ public:
 
   Transform& Scale(double scale_x, double scale_y) {
     std::stringstream stream;
-    stream << "scale("
-           << " " << scale_x << " " << scale_y << ')';
+    stream << "scale(" << " " << scale_x << " " << scale_y << ')';
     transforms.push_back(stream.str());
 
     return *this;
@@ -93,8 +92,7 @@ public:
 
   Transform& SkewX(double skew_x) {
     std::stringstream stream;
-    stream << "skewX("
-           << " " << skew_x << ')';
+    stream << "skewX(" << " " << skew_x << ')';
     transforms.push_back(stream.str());
 
     return *this;
@@ -102,8 +100,7 @@ public:
 
   Transform& SkewY(double skew_y) {
     std::stringstream stream;
-    stream << "skewY("
-           << " " << skew_y << ')';
+    stream << "skewY(" << " " << skew_y << ')';
     transforms.push_back(stream.str());
 
     return *this;
