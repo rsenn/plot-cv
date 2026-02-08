@@ -1,4 +1,4 @@
-import { Mat, CV_8UC3, Rect, Point, Size, CAP_FFMPEG,CAP_ANDROID, CAP_GSTREAMER,  VideoWriter, imread, resize } from 'opencv';
+import { Mat, CV_8UC3, Rect, Point, Size, CAP_FFMPEG, CAP_ANDROID, CAP_GSTREAMER, VideoWriter, imread, resize } from 'opencv';
 import { readFileSync } from 'fs';
 import { toString, getOpt } from 'util';
 
@@ -61,5 +61,8 @@ function main(...args) {
   w.release();
 }
 
-try {                                                            main(...scriptArgs.slice(1));                                } catch(error) {                                                 console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
 }
