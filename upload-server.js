@@ -928,6 +928,7 @@ function main(...args) {
             },
             onFinalize() {
               console.log(`onFinalize() form parser`, this.uuid);
+              resp.write(`${this.temp}\r\n`);
               resp.write(`done: ${progress} bytes read\r\n`);
               resp.finish();
             },
