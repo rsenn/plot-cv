@@ -2189,6 +2189,8 @@ export function NodePrinter(ast) {
 
           put('{ ');
           let i = 0;
+
+          if(init_list_expr.inner)
           for(let inner of init_list_expr.inner) {
             if(i++ > 0) put(', ');
 
