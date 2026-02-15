@@ -53,12 +53,6 @@ const ListJSON = async (dir = 'uploads') => {
 
 Object.assign(globalThis, { isElement, createElement, React, geom, transformation });
 Object.assign(globalThis, {
-  /*ParseCoordinates,
-  TransformCoordinates,
-  Coordinate,
-  Pin,
-  Markers,
-  OpenlayersMap,*/
   DragArea,
   DropArea,
   Card,
@@ -72,6 +66,8 @@ Object.assign(globalThis, {
   ListJSON,
   LineReader,
   ReadIterator,
+  UploadFiles,
+  UploadFile
 });
 
 export function prioritySort(arr, predicates = []) {
