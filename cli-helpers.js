@@ -1,5 +1,10 @@
 import { abbreviate, define } from './lib/misc.js';
 
+export function parseDate(str) {
+  const [y,mt,d,h,m,s]=[...[...(str+'').matchAll(/(\d{4})(\d{2})(\d{2}).(\d{2})(\d{2})(\d{2})/g)][0]].slice(1);
+  return new Date(`${y}-${mt}-${d}T${h}:${m}:${s}`);
+}
+
 function padTrunc(...args) {
   let [len, s] = args;
   const end = len >= 0;
