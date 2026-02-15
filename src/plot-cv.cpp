@@ -1119,9 +1119,9 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     duration<double, std::milli> fp_ms = after - before;
     auto int_ms = duration_cast<milliseconds>(after - before);
     duration<long, std::micro> int_usec = int_ms;
-    std::cout << "f() took " << fp_ms.count() << " ms, "
-              << "or " << int_ms.count() << " whole milliseconds "
-              << "(which is " << int_usec.count() << " whole microseconds)" << std::endl;
+    std::cout << "f() took " << fp_ms.count() << " ms, " << "or " << int_ms.count()
+              << " whole milliseconds " << "(which is " << int_usec.count()
+              << " whole microseconds)" << std::endl;
   }
   timer.stop();
 

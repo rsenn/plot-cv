@@ -20,4 +20,5 @@ file(
   src/*.hpp)
 
 add_executable(plot-cv src/plot-cv.cpp ${PLOT_CV_SOURCES})
-target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY})
+target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs-static
+                      ${ELECTRICFENCE_LIBRARY})

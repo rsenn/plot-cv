@@ -13,9 +13,9 @@
 //    float y = ImGui::BezierValue( 0.5f, v ); // x delta in [0..1] range
 // }
 
-//#define IMGUI_DEFINE_MATH_OPERATORS
-//#include <imgui.h>
-//#include <imgui_internal.h>
+// #define IMGUI_DEFINE_MATH_OPERATORS
+// #include <imgui.h>
+// #include <imgui_internal.h>
 
 namespace ImGui {
 template<int steps>
