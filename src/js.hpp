@@ -627,7 +627,7 @@ jsrt::set_property<const jsatom&>(const_value obj, const jsatom& atom, value val
 
 inline void
 jsrt::set_property(const_value obj, const jsatom& atom, value val, int flags) {
-  JS_SetPropertyInternal(ctx, obj, atom, val, flags);
+  JS_SetPropertyInternal(ctx, obj, atom, val, JS_NULL, flags);
 }
 
 template<class T>

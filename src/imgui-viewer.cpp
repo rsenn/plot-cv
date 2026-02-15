@@ -10,9 +10,9 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "../imgui/imgui.hpp"
-#include "../imgui/imgui_impl_opengl3.hpp"
-#include "../imgui/imgui_impl_sdl.hpp"
+#include "../imgui/imgui.h"
+#include "../imgui/backends/imgui_impl_opengl3.h"
+#include "../imgui/backends/imgui_impl_sdl2.h"
 
 #include "imgui-viewer.hpp"
 #include "color.hpp"

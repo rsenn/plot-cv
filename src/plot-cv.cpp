@@ -22,15 +22,15 @@
 
 #include "color.hpp"
 #include "data.hpp"
-#include "../qjs-opencv/geometry.hpp"
+#include "../qjs-opencv/include/geometry.hpp"
 #include "js.hpp"
-#include "../qjs-opencv/line.hpp"
+#include "../qjs-opencv/include/line.hpp"
 #include "matrix.hpp"
 #include "plot-cv.hpp"
 #include "polygon.hpp"
-#include "../qjs-opencv/psimpl.hpp"
+#include "../qjs-opencv/include/psimpl.hpp"
 #include "auto_canny.hpp"
-#include "../qjs-opencv/jsbindings.hpp"
+#include "../qjs-opencv/include/jsbindings.hpp"
 #include "../qjs-opencv/js_point_iterator.hpp"
 #include "../qjs-opencv/js_contour.hpp"
 #include "../qjs-opencv/js_rect.hpp"
@@ -1173,9 +1173,9 @@ js_init(int argc, char* argv[]) {
   js_init_module_point_iterator(js.ctx, "point-iterator");
   js_init_module_contour(js.ctx, "contour");
   js_init_module_line(js.ctx, "line");
-  js_init_module_draw(js.ctx, "draw");
-  js_init_module_cv(js.ctx, "cv");
-  js_init_module_video_capture(js.ctx, "video-capture");
+  //js_init_module_draw(js.ctx, "draw");
+  //js_init_module_cv(js.ctx, "cv");
+  //js_init_module_video_capture(js.ctx, "video-capture");
 
   jsrt::value console = js.get_global("console");
   JS_SetPropertyStr(js.ctx, console, "log", JS_NewCFunction(js.ctx, js_print, "log", 1));

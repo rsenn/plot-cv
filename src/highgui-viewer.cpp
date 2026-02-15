@@ -1,8 +1,8 @@
 #include "plot-cv.hpp"
 #include "color.hpp"
 #include "js.hpp"
-#include "../qjs-opencv/line.hpp"
-#include "../qjs-opencv/geometry.hpp"
+#include "../qjs-opencv/include/line.hpp"
+#include "../qjs-opencv/include/geometry.hpp"
 #include "matrix.hpp"
 
 #include <opencv2/core.hpp>
