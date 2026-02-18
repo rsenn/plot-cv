@@ -23,7 +23,7 @@ prettier() {
     ${CONFIG:+--config
 "$CONFIG"} \
     --no-insert-pragma \
-    "$@"; ${DEBUG:-false} && echo "$@" 1>&2; command "$@" 2>&1 ##| grep -v 'ExperimentalWarning:'
+    "$@"; [ "${DEBUG+set}" = set ] && echo "$@" 1>&2; command "$@" 2>&1 ##| grep -v 'ExperimentalWarning:'
  exit $?)
 }
 
