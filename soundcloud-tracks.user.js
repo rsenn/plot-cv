@@ -49,8 +49,8 @@ function GetTracks() {
         return this.map(([url, title]) => url.padEnd(maxlen) + ' ' + title).join('\n');
       },
       toURLs() {
-        return this.map(([url]) => url+'\n').join('');
-      }
+        return this.map(([url]) => url + '\n').join('');
+      },
     },
   );
 }
