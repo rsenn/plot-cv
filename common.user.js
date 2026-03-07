@@ -17,6 +17,7 @@
    console.log('Common Userscript LOADED');
 
   Object.assign(window, {
+    waitFor: ms => new Promise((r) => setTimeout(r, ms)),
     Q: (s, d = document) => d.querySelector(s),
     QA: (s, d = document) => [...(d.querySelectorAll(s) ?? [])],
   });
