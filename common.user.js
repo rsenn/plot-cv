@@ -26,19 +26,16 @@
     waitFor: ms => new Promise(r => setTimeout(r, ms)),
     Q: (s, d = document) => d.querySelector(s),
     QA: (s, d = document) => [...(d.querySelectorAll(s) ?? [])],
-    elementInViewport2(el) {
-      const width = el.offsetWidth,
-        height = el.offsetHeight;
-      let top = el.offsetTop,
-        left = el.offsetLeft;
-
-      while(el.offsetParent) {
-        el = el.offsetParent;
-        top += el.offsetTop;
-        left += el.offsetLeft;
+    elementInViewport(e) {
+      const w = e.offsetWidth,
+        h = e.offsetHeight;
+      let y = e.offsetTop,
+        x = e.offsetLeft;
+      while((e = e.offsetParent)) {
+        y += e.offsetTop;
+        x += e.offsetLeft;
       }
-
-      return top < window.pageYOffset + window.innerHeight && left < window.pageXOffset + window.innerWidth && top + height > window.pageYOffset && left + width > window.pageXOffset;
+      return y < window.pageYOffset + window.innerHeight && x < window.pageXOffset + window.innerWidth && y + h > window.pageYOffset && x + w > window.pageXOffset;
     },
   });
 })();
