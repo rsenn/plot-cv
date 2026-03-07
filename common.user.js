@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Common Userscript
 // @namespace    http://tampermonkey.net/
-// @version      2026-03-07
+// @version      V1.0.1
 // @description  try to take over the world!
 // @author       You
 // @match        *://*/*
@@ -26,5 +26,19 @@
     waitFor: ms => new Promise(r => setTimeout(r, ms)),
     Q: (s, d = document) => d.querySelector(s),
     QA: (s, d = document) => [...(d.querySelectorAll(s) ?? [])],
+    elementInViewport2(el) {
+      const width = el.offsetWidth,
+        height = el.offsetHeight;
+      let top = el.offsetTop,
+        left = el.offsetLeft;
+
+      while(el.offsetParent) {
+        el = el.offsetParent;
+        top += el.offsetTop;
+        left += el.offsetLeft;
+      }
+
+      return top < window.pageYOffset + window.innerHeight && left < window.pageXOffset + window.innerWidth && top + height > window.pageYOffset && left + width > window.pageXOffset;
+    },
   });
 })();
