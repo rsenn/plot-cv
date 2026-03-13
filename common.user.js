@@ -26,6 +26,8 @@
     waitFor: ms => new Promise(r => setTimeout(r, ms)),
     Q: (s, d = document) => d.querySelector(s),
     QA: (s, d = document) => [...(d.querySelectorAll(s) ?? [])],
+    isVScrollable: e => e.offsetHeight > 0 && e.scrollHeight > e.offsetHeight,
+    isHScrollable: e => e.offsetWidth > 0 && e.scrollWidth > e.offsetWidth,
     elementInViewport(e) {
       const w = e.offsetWidth,
         h = e.offsetHeight;
