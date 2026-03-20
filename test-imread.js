@@ -55,8 +55,8 @@ function main(...args) {
       maxStringLength: 200,
       maxArrayLength: 10,
       compact: 0,
-      depth: 10
-    }
+      depth: 10,
+    },
   });
   let ctor_names = Object.getOwnPropertyNames(cv).filter(name => typeof cv[name] == 'function');
 

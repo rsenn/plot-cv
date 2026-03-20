@@ -878,11 +878,11 @@ export class RecordDecl extends Type {
                   let loc = node.type.qualType.split(/(?:\s*[()]| at )/g)[2];
                   let [file, line, column] = loc.split(/:/g).map(i => (!isNaN(+i) ? +i : i));
 
-                  console.log('RecordDecl.constructor',{file,line,column});
+                  console.log('RecordDecl.constructor', { file, line, column });
 
-                  let typePaths = deep.select(inner, n => n?.loc?.line == line, deep.RETURN_PATH|deep.FILTER_HAS_KEY, deep.TYPE_OBJECT,['inner']);
+                  let typePaths = deep.select(inner, n => n?.loc?.line == line, deep.RETURN_PATH | deep.FILTER_HAS_KEY, deep.TYPE_OBJECT, ['inner']);
 
-                  console.log('RecordDecl.constructor',{typePaths});
+                  console.log('RecordDecl.constructor', { typePaths });
 
                   let typePath = PathRemoveLoc(typePaths[0]);
                   let typeNode = DeepGet(inner, typePath);
@@ -2191,11 +2191,11 @@ export function NodePrinter(ast) {
           let i = 0;
 
           if(init_list_expr.inner)
-          for(let inner of init_list_expr.inner) {
-            if(i++ > 0) put(', ');
+            for(let inner of init_list_expr.inner) {
+              if(i++ > 0) put(', ');
 
-            printer.print(inner);
-          }
+              printer.print(inner);
+            }
           put(' }');
         }
         InlineCommandComment(inline_command_comment) {

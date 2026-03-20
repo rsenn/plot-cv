@@ -1,7 +1,7 @@
 import { abbreviate, define } from './lib/misc.js';
 
 export function parseDate(str) {
-  const [y,mt,d,h,m,s]=[...[...(str+'').matchAll(/(\d{4})(\d{2})(\d{2}).(\d{2})(\d{2})(\d{2})/g)][0]].slice(1);
+  const [y, mt, d, h, m, s] = [...[...(str + '').matchAll(/(\d{4})(\d{2})(\d{2}).(\d{2})(\d{2})(\d{2})/g)][0]].slice(1);
   return new Date(`${y}-${mt}-${d}T${h}:${m}:${s}`);
 }
 
@@ -22,11 +22,7 @@ function padTrunc(...args) {
   }
 }
 
-export function Table(
-  rows,
-  keys,
-  t = (cell, column) => abbreviate((cell === undefined ? '–' : cell + '').replace(/\n.*/g, ''))
-) {
+export function Table(rows, keys, t = (cell, column) => abbreviate((cell === undefined ? '–' : cell + '').replace(/\n.*/g, ''))) {
   let sizes = {};
   keys = keys || Object.keys(rows[0]);
   let getfn = k => (typeof k == 'function' ? k : row => row[k]);
@@ -57,23 +53,19 @@ export function Table(
           pad(
             this.keys.map(() => ''),
             '─',
-            '─┼─'
-          )
+            '─┼─',
+          ),
         ]
           .concat([...this.rows].map(row => pad(row, ' ', ' │ ').slice(0, repl.columns)))
           .map(l => ` ${l} `)
           .join('\n');
-      }
+      },
     },
-    { rows, keys, [Symbol.toStringTag]: 'Table', [Symbol.for('print')]: true }
+    { rows, keys, [Symbol.toStringTag]: 'Table', [Symbol.for('print')]: true },
   );
 }
 
-export function List(
-  items,
-  keys,
-  t = (item, field) => (item === undefined ? '–' : item + '').replace(/[\r\n].*/g, '')
-) {
+export function List(items, keys, t = (item, field) => (item === undefined ? '–' : item + '').replace(/[\r\n].*/g, '')) {
   let sizes = {};
   keys = keys || Object.keys(items[0]);
   let getfn = k => (typeof k == 'function' ? k : item => item[k]);
@@ -94,15 +86,14 @@ export function List(
       .join(sep ?? ' ')
       .trimEnd();
 
-  if(!Array.isArray(items[0]))
-    items = items.map(fields => keys.map((key, i) => getfn(key)(fields)));
+  if(!Array.isArray(items[0])) items = items.map(fields => keys.map((key, i) => getfn(key)(fields)));
 
   return define(
     {
       toString() {
         return [...this.items].map(item => pad(item, ' ', ' ').slice(0, repl.columns)).join('\n');
-      }
+      },
     },
-    { items, keys, [Symbol.toStringTag]: 'List', [Symbol.for('print')]: true }
+    { items, keys, [Symbol.toStringTag]: 'List', [Symbol.for('print')]: true },
   );
 }

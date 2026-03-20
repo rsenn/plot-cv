@@ -67,7 +67,7 @@ Object.assign(globalThis, {
   LineReader,
   ReadIterator,
   UploadFiles,
-  UploadFile
+  UploadFile,
 });
 
 export function prioritySort(arr, predicates = []) {
