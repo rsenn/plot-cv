@@ -16,7 +16,7 @@
 //![includes]
 
 using namespace cv;
-using namespace cv::dnn;
+//using namespace cv::dnn;
 
 void getClasses(std::string classesFile);
 void drawPrediction(int classId, float conf, int left, int top, int right, int bottom, Mat& frame);
@@ -169,7 +169,7 @@ yoloPostProcessing(std::vector<Mat>& outs,
 
   // NMS
   std::vector<int> keep_idx;
-  NMSBoxes(boxes, confidences, conf_threshold, iou_threshold, keep_idx);
+  dnn::NMSBoxes(boxes, confidences, conf_threshold, iou_threshold, keep_idx);
 
   for(auto i : keep_idx) {
     keep_classIds.push_back(classIds[i]);
@@ -207,7 +207,7 @@ main(int argc, char** argv) {
   int inpHeight = parser.get<int>("height");
   Scalar scale = parser.get<Scalar>("scale");
   Scalar mean = parser.get<Scalar>("mean");
-  ImagePaddingMode paddingMode = static_cast<ImagePaddingMode>(parser.get<int>("paddingmode"));
+  dnn::ImagePaddingMode paddingMode = static_cast<dnn::ImagePaddingMode>(parser.get<int>("paddingmode"));
   //![preprocess_params]
 
   // check if yolo model is valid
@@ -222,7 +222,7 @@ main(int argc, char** argv) {
 
   // load model
   //![read_net]
-  Net net = readNet(weightPath);
+  dnn::Net net = dnn::readNet(weightPath);
   int backend = parser.get<int>("backend");
   net.setPreferableBackend(backend);
   net.setPreferableTarget(parser.get<int>("target"));
@@ -262,10 +262,10 @@ main(int argc, char** argv) {
   // image pre-processing
   //![preprocess_call]
   Size size(inpWidth, inpHeight);
-  Image2BlobParams imgParams(scale, size, mean, swapRB, CV_32F, DNN_LAYOUT_NCHW, paddingMode, paddingValue);
+  dnn::Image2BlobParams imgParams(scale, size, mean, swapRB, CV_32F, dnn::DNN_LAYOUT_NCHW, paddingMode, paddingValue);
 
   // rescale boxes back to original image
-  Image2BlobParams paramNet;
+  dnn::Image2BlobParams paramNet;
   paramNet.scalefactor = scale;
   paramNet.size = size;
   paramNet.mean = mean;
