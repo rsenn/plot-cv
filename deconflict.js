@@ -17,7 +17,7 @@ function deconflict(s) {
     if(done) break;
     let [match, start, end] = value;
     match = match.trimEnd();
-    console.log('match', match);
+
     if(match.length > 8) {
       let idx = />>>>>>>/y.test(match) | 0;
       tags[idx] = match.slice(8);
@@ -25,11 +25,13 @@ function deconflict(s) {
 
     if(start > pos) {
       let t = s.substring(pos, start);
+
       if(/<<<<<<<|=======/y.test(match)) out[0] += t;
       if(/<<<<<<<|>>>>>>>/y.test(match)) out[1] += t;
     }
     pos = end;
   }
+
   return out.map((s, i) => [tags[i], s]);
   return tags.reduce((acc, tag, i) => ({ ...acc, [tag]: out[i] }), {});
 }

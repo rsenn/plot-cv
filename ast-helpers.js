@@ -110,6 +110,7 @@ export function NodePredicate(pred) {
     const re = pred;
     pred = n => re.test(n.type);
   }
+
   if(!pred) pred = () => true;
   return pred;
 }
@@ -157,11 +158,11 @@ export function GetImportIdentifiers(root) {
   return r;
 }
 
-export function* GetNonImportIdentifiers(root) {
-  for(const [id, path] of IterateNodes(root, 'Identifier')) {
+export function* GetNonImportIdentifiers(root,pred= (node,path)=> true) {
+  for(const [id, path] of IterateNodes(root, 'Identifier', pred)) {
     if(IsInsideAny(root, path, /Import.*Decl/)) continue;
 
-    //    if(path[path.length - 1] == 'property') continue;
+    //if(path[path.length - 1] == 'property') continue;
 
     yield [id.name, new Pointer(path)];
   }
