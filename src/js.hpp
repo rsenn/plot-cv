@@ -30,21 +30,11 @@ struct jsiter;
 struct jsatom {
 
   static jsatom create(JSContext* ctx, const char* str) { return jsatom(JS_NewAtom(ctx, str)); }
-  static jsatom create(JSContext* ctx, uint32_t num) {
-    return jsatom(JS_NewAtomUInt32(ctx, num));
-  }
-  static jsatom create(JSContext* ctx, const char* x, size_t n) {
-    return jsatom(JS_NewAtomLen(ctx, x, n));
-  }
-  static jsatom create(JSContext* ctx, const jsatom& atom) {
-    return jsatom(JS_DupAtom(ctx, atom));
-  }
-  static jsatom create(JSContext* ctx, const JSValueConst& value) {
-    return jsatom(JS_ValueToAtom(ctx, value));
-  }
-  static jsatom create(JSContext* ctx, const std::string& str) {
-    return create(ctx, str.data(), str.size());
-  }
+  static jsatom create(JSContext* ctx, uint32_t num) { return jsatom(JS_NewAtomUInt32(ctx, num)); }
+  static jsatom create(JSContext* ctx, const char* x, size_t n) { return jsatom(JS_NewAtomLen(ctx, x, n)); }
+  static jsatom create(JSContext* ctx, const jsatom& atom) { return jsatom(JS_DupAtom(ctx, atom)); }
+  static jsatom create(JSContext* ctx, const JSValueConst& value) { return jsatom(JS_ValueToAtom(ctx, value)); }
+  static jsatom create(JSContext* ctx, const std::string& str) { return create(ctx, str.data(), str.size()); }
 
   //~jsatom() { destroy(); }
 
@@ -122,9 +112,7 @@ struct jsrt {
   template<class T> value create(T arg);
   template<class T> value create_point(T x, T y);
 
-  template<class T> value get_property(const_value obj, T prop) const {
-    throw std::runtime_error("template specialization");
-  }
+  template<class T> value get_property(const_value obj, T prop) const { throw std::runtime_error("template specialization"); }
 
   value get_property_atom(const_value obj, atom) const;
   value get_property_symbol(const_value obj, const char* symbol);
@@ -185,9 +173,7 @@ struct jsrt {
   void set_global(const char* name, value v);
 
   value get_symbol(const char* name) const;
-  value get_iterator(const_value obj, const char* symbol = "iterator") {
-    return get_property_symbol(obj, symbol);
-  }
+  value get_iterator(const_value obj, const char* symbol = "iterator") { return get_property_symbol(obj, symbol); }
   value call_iterator(const_value obj, const char* symbol = "iterator");
   value call_iterator_next(const_value obj, const char* symbol = "iterator");
 
@@ -212,14 +198,9 @@ struct jsrt {
 
   const_value prototype(const_value obj) const;
 
-  void property_names(const_value obj,
-                      std::vector<const char*>& out,
-                      bool enum_only = false,
-                      bool recursive = false) const;
+  void property_names(const_value obj, std::vector<const char*>& out, bool enum_only = false, bool recursive = false) const;
 
-  std::vector<const char*> property_names(const_value obj,
-                                          bool enum_only = true,
-                                          bool recursive = true) const;
+  std::vector<const char*> property_names(const_value obj, bool enum_only = true, bool recursive = true) const;
 
   void dump_error() const;
 
@@ -441,8 +422,7 @@ inline void
 jsrt::get_color(const_value val, T& ref) const {
   const_value vr = _undefined, vg = _undefined, vb = _undefined, va = _undefined;
 
-  if(is_object(val) && has_property(val, "r") && has_property(val, "g") &&
-     has_property(val, "b")) {
+  if(is_object(val) && has_property(val, "r") && has_property(val, "g") && has_property(val, "b")) {
     vr = get_property<const char*>(val, "r");
     vg = get_property<const char*>(val, "g");
     vb = get_property<const char*>(val, "b");
@@ -632,10 +612,7 @@ jsrt::set_property(const_value obj, const jsatom& atom, value val, int flags) {
 
 template<class T>
 inline jsrt::value
-vector_to_js(jsrt& js,
-             const T& v,
-             size_t n,
-             const std::function<jsrt::value(const typename T::value_type&)>& fn) {
+vector_to_js(jsrt& js, const T& v, size_t n, const std::function<jsrt::value(const typename T::value_type&)>& fn) {
   using std::placeholders::_1;
   jsrt::value ret = js.create_array(n);
   for(uint32_t i = 0; i < n; i++)
@@ -646,8 +623,7 @@ vector_to_js(jsrt& js,
 template<class T>
 inline jsrt::value
 vector_to_js(jsrt& js, const T& v, size_t n) {
-  return vector_to_js(
-      v, n, std::bind(&jsrt::create<typename T::value_type>, &js, std::placeholders::_1));
+  return vector_to_js(v, n, std::bind(&jsrt::create<typename T::value_type>, &js, std::placeholders::_1));
 }
 
 template<class T>
@@ -658,9 +634,7 @@ vector_to_js(jsrt& js, const T& v) {
 
 template<class P>
 inline jsrt::value
-vector_to_js(jsrt& js,
-             const std::vector<P>& v,
-             const std::function<jsrt::value(const P&)>& fn) {
+vector_to_js(jsrt& js, const std::vector<P>& v, const std::function<jsrt::value(const P&)>& fn) {
   return vector_to_js(js, v, v.size(), fn);
 }
 
@@ -676,8 +650,7 @@ pointer_to_js(jsrt& js, const P* v, size_t n, const std::function<jsrt::value(co
 template<class P>
 inline jsrt::value
 pointer_to_js(jsrt& js, const P* v, size_t n) {
-  std::function<jsrt::value(const P&)> fn(
-      [&](const P& v) -> jsrt::value { return js.create(v); });
+  std::function<jsrt::value(const P&)> fn([&](const P& v) -> jsrt::value { return js.create(v); });
 
   return pointer_to_js(js, v, n, fn);
 }
@@ -881,10 +854,7 @@ jsrt::end(JSValue& v) {
 
 inline std::function<JSValue(JSValue, uint32_t)>
 jsrt::index() const {
-  return std::bind(&jsrt::get_property<uint32_t>,
-                   this,
-                   std::placeholders::_1,
-                   std::placeholders::_2);
+  return std::bind(&jsrt::get_property<uint32_t>, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 inline std::function<JSValue(uint32_t)>

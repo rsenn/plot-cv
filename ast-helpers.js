@@ -158,7 +158,7 @@ export function GetImportIdentifiers(root) {
   return r;
 }
 
-export function* GetNonImportIdentifiers(root,pred= (node,path)=> true) {
+export function* GetNonImportIdentifiers(root, pred = (node, path) => true) {
   for(const [id, path] of IterateNodes(root, 'Identifier', pred)) {
     if(IsInsideAny(root, path, /Import.*Decl/)) continue;
 

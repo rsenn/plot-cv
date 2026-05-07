@@ -44,9 +44,7 @@ public:
 
   std::string ToText() const { return name + "=\"" + value + "\""; }
 
-  friend std::ostream& operator<<(std::ostream& stream, const Attribute& attribute) {
-    return stream << attribute.ToText();
-  }
+  friend std::ostream& operator<<(std::ostream& stream, const Attribute& attribute) { return stream << attribute.ToText(); }
 };
 
 class Transform {
@@ -140,9 +138,7 @@ public:
   const auto& Attributes() const { return attributes; }
 
   Base& AddAttribute(const Attribute& attribute) {
-    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) {
-      return a.Name().compare(attribute.Name()) == 0;
-    });
+    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) { return a.Name().compare(attribute.Name()) == 0; });
     if(ii != attributes.end()) {
       ii->Value(attribute.Value());
     } else {
@@ -157,9 +153,7 @@ public:
 
   Base& Stroke(const std::string& stroke) { return AddAttribute({"stroke", stroke}); }
 
-  Base& StrokeWidth(const double& stroke_width) {
-    return AddAttribute({"stroke-width", stroke_width});
-  }
+  Base& StrokeWidth(const double& stroke_width) { return AddAttribute({"stroke-width", stroke_width}); }
 
   Base& Fill(const std::string& fill) { return AddAttribute({"fill", fill}); }
 
@@ -179,9 +173,7 @@ public:
     return stream.str();
   }
 
-  friend std::ostream& operator<<(std::ostream& stream, const Base& base) {
-    return stream << base.ToText();
-  }
+  friend std::ostream& operator<<(std::ostream& stream, const Base& base) { return stream << base.ToText(); }
 };
 
 class Rect : public Base {
@@ -210,9 +202,7 @@ public:
     return stream.str();
   }
 
-  friend std::ostream& operator<<(std::ostream& stream, const Point& point) {
-    return stream << point.ToText();
-  }
+  friend std::ostream& operator<<(std::ostream& stream, const Point& point) { return stream << point.ToText(); }
 };
 
 class PolyBase : public Base {
@@ -289,8 +279,7 @@ public:
   Ellipse()
       : Base("ellipse") {}
   Ellipse(double center_x, double center_y, double radius_x, double radius_y)
-      : Base("ellipse",
-             {{"cx", center_x}, {"cy", center_y}, {"rx", radius_x}, {"ry", radius_y}}) {}
+      : Base("ellipse", {{"cx", center_x}, {"cy", center_y}, {"rx", radius_x}, {"ry", radius_y}}) {}
   virtual ~Ellipse() override {}
 };
 
@@ -352,9 +341,7 @@ public:
     return stream.str();
   }
 
-  friend std::ostream& operator<<(std::ostream& stream, const GroupBase& group_base) {
-    return stream << group_base.ToText();
-  }
+  friend std::ostream& operator<<(std::ostream& stream, const GroupBase& group_base) { return stream << group_base.ToText(); }
 };
 
 class Text : public GroupBase {
@@ -382,9 +369,7 @@ public:
       : GroupBase("g") {}
   virtual ~Group() override {}
 
-  friend std::ostream& operator<<(std::ostream& stream, const Group& group) {
-    return stream << group.ToText();
-  }
+  friend std::ostream& operator<<(std::ostream& stream, const Group& group) { return stream << group.ToText(); }
 };
 
 class Layer : public GroupBase {
@@ -392,13 +377,10 @@ public:
   Layer()
       : GroupBase("g", {{"inkscape:groupmode", std::string("layer")}}) {}
   Layer(const std::string& name)
-      : GroupBase("g",
-                  {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
+      : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
   virtual ~Layer() override {}
 
-  friend std::ostream& operator<<(std::ostream& stream, const Layer& group) {
-    return stream << group.ToText();
-  }
+  friend std::ostream& operator<<(std::ostream& stream, const Layer& group) { return stream << group.ToText(); }
 };
 
 class Document : public GroupBase {
@@ -410,16 +392,14 @@ public:
       : GroupBase("svg",
                   {{"xmlns", std::string("http://www.w3.org/2000/svg")},
                    {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
-                   {"xmlns:inkscape",
-                    std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   Document(double width, double height)
       : GroupBase("svg",
                   {{"width", to_string(width)},
                    {"height", to_string(height)},
                    {"xmlns", std::string("http://www.w3.org/2000/svg")},
                    {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
-                   {"xmlns:inkscape",
-                    std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   virtual ~Document() override {}
 
   Document& ViewBox(double x_min, double y_min, double width, double height) {
@@ -439,9 +419,7 @@ public:
     return stream.str();
   }
 
-  friend std::ostream& operator<<(std::ostream& stream, const Document& document) {
-    return stream << document.ToText();
-  }
+  friend std::ostream& operator<<(std::ostream& stream, const Document& document) { return stream << document.ToText(); }
 };
 
 } // namespace simple_svg
