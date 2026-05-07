@@ -4,7 +4,6 @@
  * @author OpenCV team
  */
 
-//![includes]
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -13,17 +12,13 @@
 #include "iostream"
 #include "common.hpp"
 #include <opencv2/highgui.hpp>
-//![includes]
-
-using namespace cv;
-//using namespace cv::dnn;
 
 void getClasses(std::string classesFile);
-void drawPrediction(int classId, float conf, int left, int top, int right, int bottom, Mat& frame);
-void yoloPostProcessing(std::vector<Mat>& outs,
+void drawPrediction(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame);
+void yoloPostProcessing(std::vector<cv::Mat>& outs,
                         std::vector<int>& keep_classIds,
                         std::vector<float>& keep_confidences,
-                        std::vector<Rect2d>& keep_boxes,
+                        std::vector<cv::Rect2d>& keep_boxes,
                         float conf_threshold,
                         float iou_threshold,
                         const std::string& model_name,
@@ -71,105 +66,100 @@ std::string keys = "{ help  h     |   | Print help message. }"
 void
 getClasses(std::string classesFile) {
   std::ifstream ifs(classesFile.c_str());
+
   if(!ifs.is_open())
-    CV_Error(Error::StsError, "File " + classesFile + " not found");
+    CV_Error(cv::Error::StsError, "File " + classesFile + " not found");
+
   std::string line;
+
   while(std::getline(ifs, line))
     classes.push_back(line);
 }
 
 void
-drawPrediction(int classId, float conf, int left, int top, int right, int bottom, Mat& frame) {
-  rectangle(frame, Point(left, top), Point(right, bottom), Scalar(0, 255, 0));
+drawPrediction(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame) {
+  cv::rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), cv::Scalar(0, 255, 0));
 
-  std::string label = format("%.2f", conf);
+  std::string label = cv::format("%.2f", conf);
   if(!classes.empty()) {
     CV_Assert(classId < (int)classes.size());
     label = classes[classId] + ": " + label;
   }
 
   int baseLine;
-  Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
+  cv::Size labelSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 
-  top = max(top, labelSize.height);
-  rectangle(frame, Point(left, top - labelSize.height), Point(left + labelSize.width, top + baseLine), Scalar::all(255), FILLED);
-  putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, Scalar());
+  top = cv::max(top, labelSize.height);
+  cv::rectangle(frame, cv::Point(left, top - labelSize.height), cv::Point(left + labelSize.width, top + baseLine), cv::Scalar::all(255), cv::FILLED);
+  cv::putText(frame, label, cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar());
 }
 
 void
-yoloPostProcessing(std::vector<Mat>& outs,
+yoloPostProcessing(std::vector<cv::Mat>& outs,
                    std::vector<int>& keep_classIds,
                    std::vector<float>& keep_confidences,
-                   std::vector<Rect2d>& keep_boxes,
+                   std::vector<cv::Rect2d>& keep_boxes,
                    float conf_threshold,
                    float iou_threshold,
                    const std::string& model_name,
                    const int nc = 80) {
-  // Retrieve
   std::vector<int> classIds;
   std::vector<float> confidences;
-  std::vector<Rect2d> boxes;
+  std::vector<cv::Rect2d> boxes;
 
   if(model_name == "yolov8" || model_name == "yolov10" || model_name == "yolov9") {
     cv::transposeND(outs[0], {0, 2, 1}, outs[0]);
   }
 
   if(model_name == "yolonas") {
-    // outs contains 2 elements of shape [1, 8400, nc] and [1, 8400, 4]. Concat them to get [1, 8400, nc+4]
-    Mat concat_out;
-    // squeeze the first dimension
+    cv::Mat concat_out;
     outs[0] = outs[0].reshape(1, outs[0].size[1]);
     outs[1] = outs[1].reshape(1, outs[1].size[1]);
     cv::hconcat(outs[1], outs[0], concat_out);
     outs[0] = concat_out;
-    // remove the second element
     outs.pop_back();
-    // unsqueeze the first dimension
     outs[0] = outs[0].reshape(0, std::vector<int>{1, outs[0].size[0], outs[0].size[1]});
   }
 
-  // assert if last dim is nc+5 or nc+4
   CV_CheckEQ(outs[0].dims, 3, "Invalid output shape. The shape should be [1, #anchors, nc+5 or nc+4]");
   CV_CheckEQ((outs[0].size[2] == nc + 5 || outs[0].size[2] == nc + 4), true, "Invalid output shape: ");
 
   for(auto preds : outs) {
-    preds = preds.reshape(1, preds.size[1]); // [1, 8400, 85] -> [8400, 85]
+    preds = preds.reshape(1, preds.size[1]);
+
     for(int i = 0; i < preds.rows; ++i) {
-      // filter out non object
       float obj_conf = (model_name == "yolov8" || model_name == "yolonas" || model_name == "yolov9" || model_name == "yolov10") ? 1.0f : preds.at<float>(i, 4);
+
       if(obj_conf < conf_threshold)
         continue;
 
-      Mat scores = preds.row(i).colRange((model_name == "yolov8" || model_name == "yolonas" || model_name == "yolov9" || model_name == "yolov10") ? 4 : 5, preds.cols);
+      cv::Mat scores = preds.row(i).colRange((model_name == "yolov8" || model_name == "yolonas" || model_name == "yolov9" || model_name == "yolov10") ? 4 : 5, preds.cols);
       double conf;
-      Point maxLoc;
+      cv::Point maxLoc;
       minMaxLoc(scores, 0, &conf, 0, &maxLoc);
 
       conf = (model_name == "yolov8" || model_name == "yolonas" || model_name == "yolov9" || model_name == "yolov10") ? conf : conf * obj_conf;
       if(conf < conf_threshold)
         continue;
 
-      // get bbox coords
       float* det = preds.ptr<float>(i);
       double cx = det[0];
       double cy = det[1];
       double w = det[2];
       double h = det[3];
 
-      // [x1, y1, x2, y2]
-      if(model_name == "yolonas" || model_name == "yolov10") {
-        boxes.push_back(Rect2d(cx, cy, w, h));
-      } else {
-        boxes.push_back(Rect2d(cx - 0.5 * w, cy - 0.5 * h, cx + 0.5 * w, cy + 0.5 * h));
-      }
+      if(model_name == "yolonas" || model_name == "yolov10")
+        boxes.push_back(cv::Rect2d(cx, cy, w, h));
+      else
+        boxes.push_back(cv::Rect2d(cx - 0.5 * w, cy - 0.5 * h, cx + 0.5 * w, cy + 0.5 * h));
+
       classIds.push_back(maxLoc.x);
       confidences.push_back(static_cast<float>(conf));
     }
   }
 
-  // NMS
   std::vector<int> keep_idx;
-  dnn::NMSBoxes(boxes, confidences, conf_threshold, iou_threshold, keep_idx);
+  cv::dnn::NMSBoxes(boxes, confidences, conf_threshold, iou_threshold, keep_idx);
 
   for(auto i : keep_idx) {
     keep_classIds.push_back(classIds[i]);
@@ -184,8 +174,9 @@ yoloPostProcessing(std::vector<Mat>& outs,
  */
 int
 main(int argc, char** argv) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   parser.about("Use this script to run object detection deep learning networks using OpenCV.");
+
   if(parser.has("help")) {
     parser.printMessage();
     return 0;
@@ -193,134 +184,111 @@ main(int argc, char** argv) {
 
   CV_Assert(parser.has("model"));
   CV_Assert(parser.has("yolo"));
-  // if model is default, use findFile to get the full path otherwise use the given path
-  std::string weightPath = findFile(parser.get<String>("model"));
-  std::string yolo_model = parser.get<String>("yolo");
+  std::string weightPath = findFile(parser.get<cv::String>("model"));
+  std::string yolo_model = parser.get<cv::String>("yolo");
   int nc = parser.get<int>("nc");
 
   float confThreshold = parser.get<float>("thr");
   float nmsThreshold = parser.get<float>("nms");
-  //![preprocess_params]
   float paddingValue = parser.get<float>("padvalue");
   bool swapRB = parser.get<bool>("rgb");
   int inpWidth = parser.get<int>("width");
   int inpHeight = parser.get<int>("height");
-  Scalar scale = parser.get<Scalar>("scale");
-  Scalar mean = parser.get<Scalar>("mean");
-  dnn::ImagePaddingMode paddingMode = static_cast<dnn::ImagePaddingMode>(parser.get<int>("paddingmode"));
-  //![preprocess_params]
+  cv::Scalar scale = parser.get<cv::Scalar>("scale");
+  cv::Scalar mean = parser.get<cv::Scalar>("mean");
+  cv::dnn::ImagePaddingMode paddingMode = static_cast<cv::dnn::ImagePaddingMode>(parser.get<int>("paddingmode"));
 
-  // check if yolo model is valid
   if(yolo_model != "yolov5" && yolo_model != "yolov6" && yolo_model != "yolov7" && yolo_model != "yolov8" && yolo_model != "yolov10" && yolo_model != "yolov9" && yolo_model != "yolox" &&
      yolo_model != "yolonas")
-    CV_Error(Error::StsError, "Invalid yolo model: " + yolo_model);
+    CV_Error(cv::Error::StsError, "Invalid yolo model: " + yolo_model);
 
-  // get classes
-  if(parser.has("classes")) {
-    getClasses(findFile(parser.get<String>("classes")));
-  }
+  if(parser.has("classes"))
+    getClasses(findFile(parser.get<cv::String>("classes")));
 
-  // load model
-  //![read_net]
-  dnn::Net net = dnn::readNet(weightPath);
+  cv::dnn::Net net = cv::dnn::readNet(weightPath);
   int backend = parser.get<int>("backend");
   net.setPreferableBackend(backend);
   net.setPreferableTarget(parser.get<int>("target"));
-  //![read_net]
 
-  VideoCapture cap;
-  Mat img;
+  cv::VideoCapture cap;
+  cv::Mat img;
   bool isImage = false;
   bool isCamera = false;
 
-  // Check if input is given
   if(parser.has("input")) {
-    String input = parser.get<String>("input");
-    // Check if the input is an image
-    if(input.find(".jpg") != String::npos || input.find(".png") != String::npos) {
-      img = imread(findFile(input));
-      if(img.empty()) {
-        CV_Error(Error::StsError, "Cannot read image file: " + input);
-      }
+    cv::String input = parser.get<cv::String>("input");
+    if(input.find(".jpg") != cv::String::npos || input.find(".png") != cv::String::npos) {
+      img = cv::imread(findFile(input));
+
+      if(img.empty())
+        CV_Error(cv::Error::StsError, "Cannot read image file: " + input);
+
       isImage = true;
     } else {
       cap.open(input);
-      if(!cap.isOpened()) {
-        CV_Error(Error::StsError, "Cannot open video " + input);
-      }
+
+      if(!cap.isOpened())
+        CV_Error(cv::Error::StsError, "Cannot open video " + input);
+
       isCamera = true;
     }
   } else {
     int cameraIndex = parser.get<int>("device");
     cap.open(cameraIndex);
-    if(!cap.isOpened()) {
-      CV_Error(Error::StsError, cv::format("Cannot open camera #%d", cameraIndex));
-    }
+
+    if(!cap.isOpened())
+      CV_Error(cv::Error::StsError, cv::format("Cannot open camera #%d", cameraIndex));
+
     isCamera = true;
   }
 
-  // image pre-processing
-  //![preprocess_call]
-  Size size(inpWidth, inpHeight);
-  dnn::Image2BlobParams imgParams(scale, size, mean, swapRB, CV_32F, dnn::DNN_LAYOUT_NCHW, paddingMode, paddingValue);
+  cv::Size size(inpWidth, inpHeight);
+  cv::dnn::Image2BlobParams imgParams(scale, size, mean, swapRB, CV_32F, cv::dnn::DNN_LAYOUT_NCHW, paddingMode, paddingValue);
 
-  // rescale boxes back to original image
-  dnn::Image2BlobParams paramNet;
+  cv::dnn::Image2BlobParams paramNet;
   paramNet.scalefactor = scale;
   paramNet.size = size;
   paramNet.mean = mean;
   paramNet.swapRB = swapRB;
   paramNet.paddingmode = paddingMode;
-  //![preprocess_call]
 
-  //![forward_buffers]
-  std::vector<Mat> outs;
+  std::vector<cv::Mat> outs;
   std::vector<int> keep_classIds;
   std::vector<float> keep_confidences;
-  std::vector<Rect2d> keep_boxes;
-  std::vector<Rect> boxes;
-  //![forward_buffers]
+  std::vector<cv::Rect2d> keep_boxes;
+  std::vector<cv::Rect> boxes;
+  cv::Mat inp;
 
-  Mat inp;
-  while(waitKey(1) < 0) {
-
+  while(cv::waitKey(1) < 0) {
     if(isCamera)
       cap >> img;
+
     if(img.empty()) {
       std::cout << "Empty frame" << std::endl;
-      waitKey();
+      cv::waitKey();
       break;
     }
-    //![preprocess_call_func]
-    inp = blobFromImageWithParams(img, imgParams);
-    //![preprocess_call_func]
 
-    //![forward]
+    inp = blobFromImageWithParams(img, imgParams);
+
     net.setInput(inp);
     net.forward(outs, net.getUnconnectedOutLayersNames());
-    //![forward]
 
-    //![postprocess]
     yoloPostProcessing(outs, keep_classIds, keep_confidences, keep_boxes, confThreshold, nmsThreshold, yolo_model, nc);
-    //![postprocess]
 
-    // covert Rect2d to Rect
-    //![draw_boxes]
-    for(auto box : keep_boxes) {
-      boxes.push_back(Rect(cvFloor(box.x), cvFloor(box.y), cvFloor(box.width - box.x), cvFloor(box.height - box.y)));
-    }
+    for(auto box : keep_boxes)
+      boxes.push_back(cv::Rect(cvFloor(box.x), cvFloor(box.y), cvFloor(box.width - box.x), cvFloor(box.height - box.y)));
 
     paramNet.blobRectsToImageRects(boxes, boxes, img.size());
 
     for(size_t idx = 0; idx < boxes.size(); ++idx) {
-      Rect box = boxes[idx];
+      cv::Rect box = boxes[idx];
       drawPrediction(keep_classIds[idx], keep_confidences[idx], box.x, box.y, box.width + box.x, box.height + box.y, img);
     }
 
     const std::string kWinName = "Yolo Object Detector";
-    namedWindow(kWinName, WINDOW_NORMAL);
-    imshow(kWinName, img);
-    //![draw_boxes]
+    cv::namedWindow(kWinName, cv::WINDOW_NORMAL);
+    cv::imshow(kWinName, img);
 
     outs.clear();
     keep_classIds.clear();
@@ -329,7 +297,7 @@ main(int argc, char** argv) {
     boxes.clear();
 
     if(isImage) {
-      waitKey();
+      cv::waitKey();
       break;
     }
   }
