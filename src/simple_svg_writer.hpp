@@ -389,17 +389,9 @@ public:
   //<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
   //</svg>
   Document()
-      : GroupBase("svg",
-                  {{"xmlns", std::string("http://www.w3.org/2000/svg")},
-                   {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
-                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+      : GroupBase("svg", {{"xmlns", std::string("http://www.w3.org/2000/svg")}, {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")}, {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   Document(double width, double height)
-      : GroupBase("svg",
-                  {{"width", to_string(width)},
-                   {"height", to_string(height)},
-                   {"xmlns", std::string("http://www.w3.org/2000/svg")},
-                   {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
-                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+      : GroupBase("svg", {{"width", to_string(width)}, {"height", to_string(height)}, {"xmlns", std::string("http://www.w3.org/2000/svg")}, {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")}, {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   virtual ~Document() override {}
 
   Document& ViewBox(double x_min, double y_min, double width, double height) {

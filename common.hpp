@@ -1,6 +1,6 @@
 #include <opencv2/core/utils/filesystem.hpp>
 
-//using namespace cv;
+// using namespace cv;
 
 std::string genArgument(const std::string& argName, const std::string& help, const std::string& modelName, const std::string& zooFile, char key = ' ', std::string defaultVal = "");
 
@@ -12,13 +12,13 @@ std::string
 genArgument(const std::string& argName, const std::string& help, const std::string& modelName, const std::string& zooFile, char key, std::string defaultVal) {
   if(!modelName.empty()) {
     cv::FileStorage fs(zooFile, cv::FileStorage::READ);
-    
+
     if(fs.isOpened()) {
       cv::FileNode node = fs[modelName];
-      
+
       if(!node.empty()) {
         cv::FileNode value = node[argName];
-        
+
         if(!value.empty()) {
           if(value.isReal())
             defaultVal = cv::format("%f", (float)value);
@@ -52,13 +52,17 @@ findFile(const std::string& filename) {
     return filename;
 
   const char* extraPaths[] = {getenv("OPENCV_DNN_TEST_DATA_PATH"), getenv("OPENCV_TEST_DATA_PATH")};
+
   for(int i = 0; i < 2; ++i) {
     if(extraPaths[i] == NULL)
       continue;
+
     std::string absPath = cv::utils::fs::join(extraPaths[i], cv::utils::fs::join("cv::dnn", filename));
+
     if(cv::utils::fs::exists(absPath))
       return absPath;
   }
+
   CV_Error(cv::Error::StsObjectNotFound,
            "File " + filename +
                " not found! "
@@ -81,9 +85,6 @@ genPreprocArguments(const std::string& modelName, const std::string& zooFile) {
                      modelName,
                      zooFile,
                      'c') +
-         genArgument("mean", "Preprocess input image by subtracting mean values. Mean values should be in BGR order and delimited by spaces.", modelName, zooFile) +
-         genArgument("scale", "Preprocess input image by multiplying on a scale factor.", modelName, zooFile, ' ', "1.0") +
-         genArgument("width", "Preprocess input image by resizing to a specific width.", modelName, zooFile, ' ', "-1") +
-         genArgument("height", "Preprocess input image by resizing to a specific height.", modelName, zooFile, ' ', "-1") +
-         genArgument("rgb", "Indicate that model works with RGB input images instead BGR ones.", modelName, zooFile);
+         genArgument("mean", "Preprocess input image by subtracting mean values. Mean values should be in BGR order and delimited by spaces.", modelName, zooFile) + genArgument("scale", "Preprocess input image by multiplying on a scale factor.", modelName, zooFile, ' ', "1.0") +
+         genArgument("width", "Preprocess input image by resizing to a specific width.", modelName, zooFile, ' ', "-1") + genArgument("height", "Preprocess input image by resizing to a specific height.", modelName, zooFile, ' ', "-1") + genArgument("rgb", "Indicate that model works with RGB input images instead BGR ones.", modelName, zooFile);
 }

@@ -67,17 +67,7 @@ bool show_diagnostics = false;
 double epsilon = 3;
 const int max_frames = 100000;
 
-config_values config = {.morphology_kernel_size = 1,
-                        .morphology_operator = 0,
-                        .blur_kernel_size = 2,
-                        .blur_sigma = 175,
-                        .blur_sigma_s = 6000,
-                        .blur_sigma_r = 40,
-                        .hough_rho = 99,
-                        .hough_theta = 25,
-                        .hough_threshold = 900,
-                        .hough_minlinelen = 127,
-                        .hough_maxlinegap = 199};
+config_values config = {.morphology_kernel_size = 1, .morphology_operator = 0, .blur_kernel_size = 2, .blur_sigma = 175, .blur_sigma_s = 6000, .blur_sigma_r = 40, .hough_rho = 99, .hough_theta = 25, .hough_threshold = 900, .hough_minlinelen = 127, .hough_maxlinegap = 199};
 
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
@@ -396,13 +386,7 @@ hough_lines(image_type& img, std::vector<point_vector<int>>& ret) {
 void
 hough_lines(image_type& img, std::vector<cv::Vec4i>& out) {
   // invert_color(img);
-  cv::HoughLinesP(img,
-                  out,
-                  (double)(config.hough_rho + 1) / 10.0,
-                  CV_PI / (double)(config.hough_theta + 1),
-                  (double)(config.hough_threshold + 1) / 10.0,
-                  (double)(config.hough_minlinelen + 1) / 10,
-                  (double)(config.hough_maxlinegap + 1) / 10);
+  cv::HoughLinesP(img, out, (double)(config.hough_rho + 1) / 10.0, CV_PI / (double)(config.hough_theta + 1), (double)(config.hough_threshold + 1) / 10.0, (double)(config.hough_minlinelen + 1) / 10, (double)(config.hough_maxlinegap + 1) / 10);
 }
 
 void
@@ -424,9 +408,7 @@ draw_lines(image_type& target, InputIterator start, InputIterator end, const cv:
 void
 draw_lines(image_type& target, std::vector<cv::Vec4i>::const_iterator start, std::vector<cv::Vec4i>::const_iterator end, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8) {
 
-  std::for_each(start, end, [target, color, thickness, lineType](const cv::Vec4i& vec) {
-    cv::line(target, point_type<int>(vec[0], vec[1]), point_type<int>(vec[2], vec[3]), color, thickness, lineType);
-  });
+  std::for_each(start, end, [target, color, thickness, lineType](const cv::Vec4i& vec) { cv::line(target, point_type<int>(vec[0], vec[1]), point_type<int>(vec[2], vec[3]), color, thickness, lineType); });
 }
 
 void
@@ -573,11 +555,7 @@ get_alpha_channel(image_type m) {
 
 void
 image_info(image_type img) {
-  std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels() << " depth="
-            << (img.depth() == CV_8U    ? "CV_8U"
-                : img.depth() == CV_32F ? "CV_32F"
-                                        : "CV_??")
-            << std::endl;
+  std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels() << " depth=" << (img.depth() == CV_8U ? "CV_8U" : img.depth() == CV_32F ? "CV_32F" : "CV_??") << std::endl;
 }
 
 JSValue
@@ -631,10 +609,7 @@ process_raster(std::function<void(std::string, cv::Mat*)> display_image, int sho
 
   image_type strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
 
-  cv::morphologyEx(imgCanny,
-                   imgMorphology,
-                   config.morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
-                   cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(config.morphology_kernel_size + 1, config.morphology_kernel_size + 1)));
+  cv::morphologyEx(imgCanny, imgMorphology, config.morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(config.morphology_kernel_size + 1, config.morphology_kernel_size + 1)));
 
   cv::cvtColor(imgBlurred, imgBlurred, cv::COLOR_GRAY2BGR);
   /*

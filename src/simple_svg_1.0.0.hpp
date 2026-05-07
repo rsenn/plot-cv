@@ -319,8 +319,7 @@ public:
       , radius(diameter / 2) {}
   std::string toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("circle") << attribute("cx", translateX(center.x, layout)) << attribute("cy", translateY(center.y, layout)) << attribute("r", translateScale(radius, layout))
-       << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
+    ss << elemStart("circle") << attribute("cx", translateX(center.x, layout)) << attribute("cy", translateY(center.y, layout)) << attribute("r", translateScale(radius, layout)) << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
     return ss.str();
   }
   void offset(Point const& offset) {
@@ -342,8 +341,7 @@ public:
       , radius_height(height / 2) {}
   std::string toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("ellipse") << attribute("cx", translateX(center.x, layout)) << attribute("cy", translateY(center.y, layout)) << attribute("rx", translateScale(radius_width, layout))
-       << attribute("ry", translateScale(radius_height, layout)) << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
+    ss << elemStart("ellipse") << attribute("cx", translateX(center.x, layout)) << attribute("cy", translateY(center.y, layout)) << attribute("rx", translateScale(radius_width, layout)) << attribute("ry", translateScale(radius_height, layout)) << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
     return ss.str();
   }
   void offset(Point const& offset) {
@@ -366,8 +364,7 @@ public:
       , height(height) {}
   std::string toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("rect") << attribute("x", translateX(edge.x, layout)) << attribute("y", translateY(edge.y, layout)) << attribute("width", translateScale(width, layout))
-       << attribute("height", translateScale(height, layout)) << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
+    ss << elemStart("rect") << attribute("x", translateX(edge.x, layout)) << attribute("y", translateY(edge.y, layout)) << attribute("width", translateScale(width, layout)) << attribute("height", translateScale(height, layout)) << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
     return ss.str();
   }
   void offset(Point const& offset) {
@@ -389,8 +386,7 @@ public:
       , end_point(end_point) {}
   std::string toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("line") << attribute("x1", translateX(start_point.x, layout)) << attribute("y1", translateY(start_point.y, layout)) << attribute("x2", translateX(end_point.x, layout))
-       << attribute("y2", translateY(end_point.y, layout)) << stroke.toString(layout) << emptyElemEnd();
+    ss << elemStart("line") << attribute("x1", translateX(start_point.x, layout)) << attribute("y1", translateY(start_point.y, layout)) << attribute("x2", translateX(end_point.x, layout)) << attribute("y2", translateY(end_point.y, layout)) << stroke.toString(layout) << emptyElemEnd();
     return ss.str();
   }
   void offset(Point const& offset) {
@@ -482,8 +478,7 @@ public:
       , font(font) {}
   std::string toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("text") << attribute("x", translateX(origin.x, layout)) << attribute("y", translateY(origin.y, layout)) << fill.toString(layout) << stroke.toString(layout) << font.toString(layout)
-       << ">" << content << elemEnd("text");
+    ss << elemStart("text") << attribute("x", translateX(origin.x, layout)) << attribute("y", translateY(origin.y, layout)) << fill.toString(layout) << stroke.toString(layout) << font.toString(layout) << ">" << content << elemEnd("text");
     return ss.str();
   }
   void offset(Point const& offset) {
@@ -590,8 +585,7 @@ public:
   }
   std::string toString() const {
     std::stringstream ss;
-    ss << "<?xml " << attribute("version", "1.0") << attribute("standalone", "no") << "?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" "
-       << "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg " << attribute("width", layout.dimensions.width, "px") << attribute("height", layout.dimensions.height, "px")
+    ss << "<?xml " << attribute("version", "1.0") << attribute("standalone", "no") << "?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" " << "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg " << attribute("width", layout.dimensions.width, "px") << attribute("height", layout.dimensions.height, "px")
        << attribute("xmlns", "http://www.w3.org/2000/svg") << attribute("version", "1.1") << ">\n"
        << body_nodes_str << elemEnd("svg");
     return ss.str();

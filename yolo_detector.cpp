@@ -15,14 +15,7 @@
 
 void getClasses(std::string classesFile);
 void drawPrediction(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame);
-void yoloPostProcessing(std::vector<cv::Mat>& outs,
-                        std::vector<int>& keep_classIds,
-                        std::vector<float>& keep_confidences,
-                        std::vector<cv::Rect2d>& keep_boxes,
-                        float conf_threshold,
-                        float iou_threshold,
-                        const std::string& model_name,
-                        const int nc);
+void yoloPostProcessing(std::vector<cv::Mat>& outs, std::vector<int>& keep_classIds, std::vector<float>& keep_confidences, std::vector<cv::Rect2d>& keep_boxes, float conf_threshold, float iou_threshold, const std::string& model_name, const int nc);
 
 std::vector<std::string> classes;
 
@@ -95,14 +88,7 @@ drawPrediction(int classId, float conf, int left, int top, int right, int bottom
 }
 
 void
-yoloPostProcessing(std::vector<cv::Mat>& outs,
-                   std::vector<int>& keep_classIds,
-                   std::vector<float>& keep_confidences,
-                   std::vector<cv::Rect2d>& keep_boxes,
-                   float conf_threshold,
-                   float iou_threshold,
-                   const std::string& model_name,
-                   const int nc = 80) {
+yoloPostProcessing(std::vector<cv::Mat>& outs, std::vector<int>& keep_classIds, std::vector<float>& keep_confidences, std::vector<cv::Rect2d>& keep_boxes, float conf_threshold, float iou_threshold, const std::string& model_name, const int nc = 80) {
   std::vector<int> classIds;
   std::vector<float> confidences;
   std::vector<cv::Rect2d> boxes;
@@ -198,8 +184,7 @@ main(int argc, char** argv) {
   cv::Scalar mean = parser.get<cv::Scalar>("mean");
   cv::dnn::ImagePaddingMode paddingMode = static_cast<cv::dnn::ImagePaddingMode>(parser.get<int>("paddingmode"));
 
-  if(yolo_model != "yolov5" && yolo_model != "yolov6" && yolo_model != "yolov7" && yolo_model != "yolov8" && yolo_model != "yolov10" && yolo_model != "yolov9" && yolo_model != "yolox" &&
-     yolo_model != "yolonas")
+  if(yolo_model != "yolov5" && yolo_model != "yolov6" && yolo_model != "yolov7" && yolo_model != "yolov8" && yolo_model != "yolov10" && yolo_model != "yolov9" && yolo_model != "yolox" && yolo_model != "yolonas")
     CV_Error(cv::Error::StsError, "Invalid yolo model: " + yolo_model);
 
   if(parser.has("classes"))

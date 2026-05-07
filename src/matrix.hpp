@@ -50,9 +50,7 @@ public:
    * @param[in]  m     { parameter_description }
    * @param      pt    The point
    */
-  template<class InputIterator, class OutputIterator> void transform_points(InputIterator from, InputIterator to, OutputIterator out) const {
-    std::transform(from, to, out, std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
-  }
+  template<class InputIterator, class OutputIterator> void transform_points(InputIterator from, InputIterator to, OutputIterator out) const { std::transform(from, to, out, std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1)); }
 
   template<class InputIterator> void transform_points(InputIterator from, InputIterator to) const;
 
