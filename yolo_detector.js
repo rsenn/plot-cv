@@ -17,6 +17,13 @@ function CV_Error(code, ...rest) {
   std.exit(code);
 }
 
+function CV_CheckEQ(a, b, msg) {
+  if(a != b) {
+    console.error(msg);
+    std.exit(1);
+  }
+}
+
 const keys =
   `{ help  h     |   | Print help message. }` +
   `{ device      | 0 | camera device number. }` +
@@ -111,14 +118,12 @@ function yoloPostProcessing(
     outs[1] = outs[1].reshape(1, outs[1].size[1]);
     hconcat(outs[1], outs[0], concat_out);
     outs[0] = concat_out;
-    outs.pop_back();
+    outs.pop();
     outs[0] = outs[0].reshape(0, [1, outs[0].size[0], outs[0].size[1]]);
   }
 
-  //CV_CheckEQ(outs[0].dims, 3, 'Invalid output shape. The shape should be [1, #anchors, nc+5 or nc+4]');
-  //CV_CheckEQ(outs[0].size[2] == nc + 5 || outs[0].size[2] == nc + 4, true, 'Invalid output shape: ');
-
-  console.log('outs', outs);
+  CV_CheckEQ(outs[0].dims, 3, 'Invalid output shape. The shape should be [1, #anchors, nc+5 or nc+4]');
+  //CV_CheckEQ(outs[0].size[2] == nc + 5 || outs[0].size[2] == nc + 4, true, 'Invalid output shape: ' + outs[0].size);
 
   for(let preds of outs) {
     preds = preds.reshape(1, preds.size[1]);
@@ -131,6 +136,7 @@ function yoloPostProcessing(
       let scores = preds.row(i).colRange(model_name == 'yolov8' || model_name == 'yolonas' || model_name == 'yolov9' || model_name == 'yolov10' ? 4 : 5, preds.cols);
       let conf;
       let maxLoc = new Point();
+
       minMaxLoc(
         scores,
         0,
@@ -283,8 +289,16 @@ function main() {
 
     inp = dnn.blobFromImageWithParams(img, imgParams);
 
+    //console.log('inp',inp);
+
+    const outLayers = net.getUnconnectedOutLayersNames();
+
+    //console.log('outLayers',outLayers);
+
     net.setInput(inp);
-    net.forward(outs, net.getUnconnectedOutLayersNames());
+    net.forward(outs, outLayers);
+
+    console.log('outs', outs);
 
     yoloPostProcessing(outs, keep_classIds, keep_confidences, keep_boxes, confThreshold, nmsThreshold, yolo_model, nc);
 
