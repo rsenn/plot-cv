@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Coinbase Trading Bot mit PyTorch LSTM-Modell
 ============================================
@@ -156,12 +157,15 @@ def run_bot():
 
         try:
             # --- Daten holen ---
+            print(f"  fetch_candles {PRODUCT_ID} {client}")
             df     = fetch_candles(client, PRODUCT_ID)
+            print(f"  prices =")
             prices = df["close"].values
             print(f"  📊 Letzter Preis: {prices[-1]:.2f} EUR")
 
             # --- Modell trainieren (alle 10 Zyklen neu) ---
             if cycle % 10 == 1:
+               
                 print("  🔄 Trainiere Modell...")
                 quick_train(model, prices, SEQ_LEN, scaler, epochs=20)
 
