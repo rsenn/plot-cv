@@ -121,7 +121,7 @@ function yoloPostProcessing(
     outs.pop();
     outs[0] = outs[0].reshape(0, [1, outs[0].size[0], outs[0].size[1]]);
   }
-
+console.log('outs',outs);
   CV_CheckEQ(outs[0].dims, 3, 'Invalid output shape. The shape should be [1, #anchors, nc+5 or nc+4]');
   //CV_CheckEQ(outs[0].size[2] == nc + 5 || outs[0].size[2] == nc + 4, true, 'Invalid output shape: ' + outs[0].size);
 
@@ -208,8 +208,8 @@ function main() {
   let swapRB = parser.get('rgb');
   let inpWidth = parser.get('width');
   let inpHeight = parser.get('height');
-  let scale = parser.get('scale');
-  let mean = parser.get('mean');
+  let scale = Scalar(parser.get('scale'));
+  let mean = Scalar(parser.get('mean'));
   let paddingMode = parser.get('paddingmode');
 
   if(

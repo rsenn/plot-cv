@@ -2,3 +2,4 @@ import { FONT_HERSHEY_SIMPLEX, VideoCapture, destroyAllWindows, getTextSize, imr
 
 
 function main(file) {
+}
