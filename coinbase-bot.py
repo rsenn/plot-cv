@@ -16,11 +16,11 @@ import torch.nn as nn
 from sklearn.preprocessing import MinMaxScaler
 from coinbase.rest import RESTClient  # coinbase-advanced-py
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # 1. KONFIGURATION
-# ─────────────────────────────────────────────
-API_KEY    = "your_api_key"
-API_SECRET = "your_api_secret"
+# ---------------------------------------------
+API_KEY    = os.getenv('COINBASE_API_KEY') or "your_api_key"
+API_SECRET = os.getenv('COINBASE_API_SECRET') or "your_api_secret"
 
 PRODUCT_ID    = "BTC-EUR"   # Handelspaar
 SEQ_LEN       = 30          # LSTM-Sequenzlänge (Kerzen)
@@ -29,9 +29,9 @@ BUY_THRESHOLD  = 0.502      # Modell-Konfidenz für Kauf
 SELL_THRESHOLD = 0.498      # Modell-Konfidenz für Verkauf
 LOOP_INTERVAL  = 60         # Sekunden zwischen Zyklen
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # 2. LSTM-MODELL
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 class PriceLSTM(nn.Module):
     def __init__(self, input_size=1, hidden_size=64, num_layers=2):
         super().__init__()
@@ -44,9 +44,9 @@ class PriceLSTM(nn.Module):
         return self.sig(self.fc(out[:, -1, :]))
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # 3. DATEN-HELFER
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def fetch_candles(client: RESTClient, product_id: str, limit: int = 150) -> pd.DataFrame:
     """Holt OHLCV-Daten der letzten `limit` 1-Minuten-Kerzen."""
     end   = int(time.time())
@@ -72,9 +72,9 @@ def prepare_sequence(prices: np.ndarray, seq_len: int, scaler: MinMaxScaler):
     return tensor
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # 4. ORDERFUNKTIONEN
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def place_market_buy(client: RESTClient, product_id: str, quote_size: float):
     """Kauft für `quote_size` EUR zum Marktpreis."""
     import uuid
@@ -108,9 +108,9 @@ def get_btc_balance(client: RESTClient) -> float:
     return 0.0
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # 5. TRAININGS-SCHLEIFE (Schnell-Training)
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def quick_train(model: PriceLSTM, prices: np.ndarray, seq_len: int,
                 scaler: MinMaxScaler, epochs: int = 20):
     """Trainiert das Modell kurzfristig auf aktuellen Marktdaten."""
@@ -137,9 +137,9 @@ def quick_train(model: PriceLSTM, prices: np.ndarray, seq_len: int,
             print(f"    Epoch {ep+1}/{epochs} | Loss: {loss.item():.4f}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # 6. HAUPT-BOT-SCHLEIFE
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def run_bot():
     print("🤖 Coinbase Trading Bot gestartet")
     print(f"   Paar: {PRODUCT_ID} | Sequenz: {SEQ_LEN} | Intervall: {LOOP_INTERVAL}s\n")
@@ -151,7 +151,7 @@ def run_bot():
 
     while True:
         cycle += 1
-        print(f"── Zyklus {cycle} | {time.strftime('%H:%M:%S')} ──────────────")
+        print(f"-- Zyklus {cycle} | {time.strftime('%H:%M:%S')} --------------")
 
         try:
             # --- Daten holen ---
@@ -192,8 +192,8 @@ def run_bot():
         time.sleep(LOOP_INTERVAL)
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # 7. EINSTIEGSPUNKT
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 if __name__ == "__main__":
     run_bot()
