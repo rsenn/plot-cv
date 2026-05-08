@@ -8,6 +8,7 @@ WICHTIG: Nur zu Lernzwecken. Kein echter Finanzrat.
          Teste immer zuerst im Sandbox/Paper-Trading-Modus!
 """
 
+from os import getenv
 import time
 import numpy as np
 import pandas as pd
@@ -19,8 +20,8 @@ from coinbase.rest import RESTClient  # coinbase-advanced-py
 # ---------------------------------------------
 # 1. KONFIGURATION
 # ---------------------------------------------
-API_KEY    = os.getenv('COINBASE_API_KEY') or "your_api_key"
-API_SECRET = os.getenv('COINBASE_API_SECRET') or "your_api_secret"
+API_KEY    = getenv('COINBASE_API_KEY') or "your_api_key"
+API_SECRET = getenv('COINBASE_API_SECRET') or "your_api_secret"
 
 PRODUCT_ID    = "BTC-EUR"   # Handelspaar
 SEQ_LEN       = 30          # LSTM-Sequenzlänge (Kerzen)
