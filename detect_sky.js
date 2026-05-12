@@ -93,7 +93,7 @@ let bestArea = 0;
 
 for(let lbl = 1; lbl < numLabels; lbl++) {
   // 0 = background
- 
+
   /*console.log('stats.type', stats.type,CV_32S);
   console.log('stats.size', stats.size);
   console.log('stats', stats);*/
