@@ -17,7 +17,7 @@
  *   qjs yolo.js --input video.mp4
  */
 
-import {destroyAllWindows, dnn, drawRect, FILLED, FONT_HERSHEY_SIMPLEX, getTextSize, imread, imshow, imwrite, Mat, Point, putText, Rect, Scalar, Size, TickMeter, VideoCapture, waitKey } from 'opencv';
+import { destroyAllWindows, dnn, drawRect, FILLED, FONT_HERSHEY_SIMPLEX, getTextSize, imread, imshow, imwrite, Mat, Point, putText, Rect, Scalar, Size, TickMeter, VideoCapture, waitKey, } from 'opencv';
 import * as std from 'std';
 import * as os from 'os';
 
@@ -195,7 +195,7 @@ function detectYOLO(img) {
 }
 
 /**
- * Zeichnet Bounding Boxes + Labels auf ein Bild.
+ * Draws bounding boxes + labels on an image.
  */
 function drawDetections(img, detections) {
   for(const d of detections) {
