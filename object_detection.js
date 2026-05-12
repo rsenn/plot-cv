@@ -1,4 +1,5 @@
-import {  CommandLineParser, createTrackbar, dnn, FileNode, FileStorage, getTextSize, getTickFrequency, Mat, namedWindow, VideoCapture, waitKey } from 'opencv';
+import { WINDOW_NORMAL, FILLED, FONT_HERSHEY_SIMPLEX, drawRect, resize, minMaxLoc, Scalar, CV_8U, CV_32FC1, Size, CommandLineParser, createTrackbar, dnn, FileNode, FileStorage, getTextSize, getTickFrequency, Mat, namedWindow, VideoCapture, waitKey, imshow, putText, } from 'opencv';
+import { readFileSync } from 'fs';
 
 const Error = { StsNotImplemented: 1 };
 
@@ -29,7 +30,8 @@ let keys =
   `{ @alias      | | An alias name of model to extract preprocessing parameters from models.yml file. }` +
   `{ zoo         | models.yml | An optional path to file with preprocessing parameters }` +
   `{ device      |  0 | camera device number. }` +
-  `{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera. }` +  `{ framework f | | Optional name of an origin framework of the model. Detect it automatically if it does not set. }` +
+  `{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera. }` +
+  `{ framework f | | Optional name of an origin framework of the model. Detect it automatically if it does not set. }` +
   `{ classes     | | Optional path to a text file with names of classes to label detected objects. }` +
   `{ thr         | .5 | Confidence threshold. }` +
   `{ nms         | .4 | Non-maximum suppression threshold. }` +
@@ -49,19 +51,17 @@ let keys =
   `6: CUDA, ` +
   `7: CUDA fp16 (half-float preprocess) }` +
   `{ async       | 0 | Number of asynchronous forwards at the same time. ` +
-  `Choose 0 for synchronous mode }`+
-  `{ scale     | 1 | Preprocess input image by multiplying on a scale factor. }`+
-  `{ mean      | 0 | Preprocess input image by subtracting mean values. Mean values should be in BGR order and delimited by spaces.", modelName, zooFile) }`+
-  `{ rgb       |   | Indicate that model works with RGB input images instead BGR ones. }`+
-  `{ width     |   | Preprocess input image by resizing to a specific width. }`+
-  `{ height    |   | Preprocess input image by resizing to a specific height. }`+
+  `Choose 0 for synchronous mode }` +
+  `{ scale     | 1 | Preprocess input image by multiplying on a scale factor. }` +
+  `{ mean      | 0 | Preprocess input image by subtracting mean values. Mean values should be in BGR order and delimited by spaces.", modelName, zooFile) }` +
+  `{ rgb       |   | Indicate that model works with RGB input images instead BGR ones. }` +
+  `{ width     |   | Preprocess input image by resizing to a specific width. }` +
+  `{ height    |   | Preprocess input image by resizing to a specific height. }` +
   `{ model   m |   | Path to a binary file of model contains trained weights.
                      It could be a file with extensions .caffemodel (Caffe), 
-                     .pb (TensorFlow), .t7 or .net (Torch), .weights (Darknet), .bin (OpenVINO). }`+
-   `{ config  c |  | Path to a text file of model contains network configuration.
+                     .pb (TensorFlow), .t7 or .net (Torch), .weights (Darknet), .bin (OpenVINO). }` +
+  `{ config  c |  | Path to a text file of model contains network configuration.
                      It could be a file with extensions .prototxt (Caffe), .pbtxt (TensorFlow), .cfg (Darknet), .xml (OpenVINO). }`;
-;
-
 let confThreshold, nmsThreshold;
 let classes = [];
 
@@ -125,7 +125,7 @@ function main() {
   const modelName = parser.get('@alias');
   const zooFile = parser.get('zoo');
 
- /* keys += genPreprocArguments(modelName, zooFile);
+  /* keys += genPreprocArguments(modelName, zooFile);
 
   parser = new CommandLineParser(argc, argv, keys);*/
   parser.about('Use this script to run object detection deep learning networks using OpenCV.');
@@ -267,14 +267,15 @@ function main() {
   // Process frames.
   let frame = new Mat(),
     blob = new Mat();
+
   while(waitKey(1) < 0) {
-    cap >> frame;
-    if(frame.empty()) {
+    cap.read(frame);
+    if(frame.empty) {
       waitKey();
       break;
     }
 
-    preprocess(frame, net, Size(inpWidth, inpHeight), scale, mean, swapRB);
+    preprocess(frame, net, new Size(inpWidth, inpHeight), scale, mean, swapRB);
 
     let outs = [];
     net.forward(outs, outNames);
@@ -286,7 +287,7 @@ function main() {
     let freq = getTickFrequency() / 1000;
     let t = net.getPerfProfile(layersTimes) / freq;
     let label = `Inference time: ${t} ms`;
-    putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
+    putText(frame, label, new Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
     imshow(kWinName, frame);
   }
@@ -300,10 +301,11 @@ function preprocess(frame, net, inpSize, scale, mean, swapRB) {
   // Create a 4D blob from a frame.
   if(inpSize.width <= 0) inpSize.width = frame.cols;
   if(inpSize.height <= 0) inpSize.height = frame.rows;
-  blobFromImage(frame, blob, 1.0, inpSize, Scalar(), swapRB, false, CV_8U);
+  dnn.blobFromImage(frame, blob, 1.0, inpSize, Scalar(), swapRB, false, CV_8U);
 
   // Run a model.
   net.setInput(blob, '', scale, mean);
+
   if(net.getLayer(0).outputNameToIndex('im_info') != -1) {
     // Faster-RCNN or R-FCN
     resize(frame, frame, inpSize);
@@ -320,6 +322,7 @@ function postprocess(/*Mat&*/ frame, outs, /*Net& */ net, backend) {
   let classIds = [];
   let confidences = [];
   let boxes = [];
+
   if(outLayerType == 'DetectionOutput') {
     // Network produces output blob with a shape 1x1xNx7 where N is a number of
     // detections and an every detection is a vector of values
@@ -386,11 +389,10 @@ function postprocess(/*Mat&*/ frame, outs, /*Net& */ net, backend) {
 
   // NMS is used inside Region layer only on DNN_BACKEND_OPENCV for another backends we need NMS in sample
   // or NMS is required if number of outputs > 1
-  if(outLayers.length > 1 || (outLayerType == 'Region' && backend != DNN_BACKEND_OPENCV)) {
+  if(outLayers.length > 1 || (outLayerType == 'Region' && backend != dnn.DNN_BACKEND_OPENCV)) {
     /*std::map<int, std::vector<size_t>>*/ let class2indices = new Map();
 
     for(let i = 0; i < classIds.length; i++) if(confidences[i] >= confThreshold) class2indices.getOrInsertComputed(classIds[i], k => []).push(i);
-
     let nmsBoxes = [];
     let nmsConfidences = [];
     let nmsClassIds = [];
@@ -405,7 +407,7 @@ function postprocess(/*Mat&*/ frame, outs, /*Net& */ net, backend) {
         localConfidences.push(confidences[classIndices[i]]);
       }
       let nmsIndices = [];
-      NMSBoxes(localBoxes, localConfidences, confThreshold, nmsThreshold, nmsIndices);
+      dnn.NMSBoxes(localBoxes, localConfidences, confThreshold, nmsThreshold, nmsIndices);
       for(let i = 0; i < nmsIndices.length; i++) {
         let idx = nmsIndices[i];
         nmsBoxes.push(localBoxes[idx]);
@@ -425,7 +427,7 @@ function postprocess(/*Mat&*/ frame, outs, /*Net& */ net, backend) {
 }
 
 function drawPred(classId, conf, left, top, right, bottom, /*Mat&*/ frame) {
-  rectangle(frame, new Point(left, top), new Point(right, bottom), Scalar(0, 255, 0));
+  drawRect(frame, new Point(left, top), new Point(right, bottom), Scalar(0, 255, 0));
 
   let label = Math.round(conf * 100) / 100;
 
@@ -437,8 +439,8 @@ function drawPred(classId, conf, left, top, right, bottom, /*Mat&*/ frame) {
   let baseLine;
   let labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, v => (baseLine = v));
 
-  top = max(top, labelSize.height);
-  rectangle(frame, new Point(left, top - labelSize.height), new Point(left + labelSize.width, top + baseLine), Scalar(255, 255, 255, 255), FILLED);
+  top = Math.max(top, labelSize.height);
+  drawRect(frame, new Point(left, top - labelSize.height), new Point(left + labelSize.width, top + baseLine), Scalar(255, 255, 255, 255), FILLED);
   putText(frame, label, new Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, Scalar());
 }
 
