@@ -5,7 +5,7 @@ function deconflict(s) {
 
   let gen = util.repeat(
     v => v != null,
-    m => (m = re.exec(s)) && [m[0], re.lastIndex - m[0].length, re.lastIndex]
+    m => (m = re.exec(s)) && [m[0], re.lastIndex - m[0].length, re.lastIndex],
   );
 
   let pos = 0;

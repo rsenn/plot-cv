@@ -94,8 +94,8 @@ function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
 
         console.log('complete', { line, arg, pos });
         return { tab, pos: 0, ctx: {} };
-      }
-    ]
+      },
+    ],
   };
 
   /*console.log = repl.printFunction((...args) => {
@@ -108,7 +108,7 @@ function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
 
 function main(...args) {
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 10 }
+    inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 10 },
   });
   let debugLog;
 
@@ -122,9 +122,9 @@ function main(...args) {
     {
       debug: [false, null, 'x'],
       'output-dir': [true, null, 'd'],
-      '@': 'input'
+      '@': 'input',
     },
-    args
+    args,
   );
 
   Object.assign(globalThis, { cv });
@@ -133,7 +133,7 @@ function main(...args) {
     quit(arg) {
       repl.cleanup();
       std.exit(arg ?? 0);
-    }
+    },
   });
 
   cmdhist = `.${base}-cmdhistory`;
@@ -164,7 +164,7 @@ function main(...args) {
     },
     globalValues() {
       return AutoValue(getConfFile('global'));
-    }
+    },
   });
 
   Object.assign(globalThis, {
@@ -203,7 +203,7 @@ function main(...args) {
     WriteJSON,
     WriteBJSON,
     ImageInfo,
-    AutoValue
+    AutoValue,
   });
   repl.globalKeys();
 

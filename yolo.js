@@ -1,0 +1,275 @@
+/**
+ * YOLO Objekterkennung mit qjs-opencv
+ *
+ * Voraussetzungen:
+ *   - QuickJS (qjs) installiert
+ *   - qjs-opencv kompiliert (opencv.so)
+ *   - Modell-Dateien heruntergeladen (siehe unten)
+ *
+ * Benötigte Dateien:
+ *   wget https://pjreddie.com/media/files/yolov3.weights
+ *   wget https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg
+ *   wget https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names
+ *
+ * Ausführen:
+ *   qjs yolo.js --input bild.jpg
+ *   qjs yolo.js --input 0          (Webcam)
+ *   qjs yolo.js --input video.mp4
+ */
+
+import * as cv from 'opencv';
+import * as std from 'std';
+import * as os from 'os';
+
+// --- Konfiguration ------------------------------------------------------------
+const CONFIG = {
+  weights: 'yolov3.weights',
+  config: 'yolov3.cfg',
+  names: 'coco.names',
+  confThresh: 0.5, // Mindest-Konfidenz (0–1)
+  nmsThresh: 0.4, // Non-Maximum Suppression Schwellwert
+  inputSize: 416, // YOLO Eingabe-Auflösung (320 / 416 / 608)
+  outputFile: 'output.jpg',
+};
+
+// --- Hilfsfunktionen ----------------------------------------------------------
+
+/** Lädt die Klassennamen aus einer Textdatei */
+function loadClassNames(path) {
+  const f = std.open(path, 'r');
+  if(!f) throw new Error(`Kann ${path} nicht öffnen`);
+  const names = [];
+  let line;
+
+  while((line = f.getline()) !== null) {
+    const trimmed = line.trim();
+    if(trimmed) names.push(trimmed);
+  }
+
+  f.close();
+  return names;
+}
+
+/** Gibt zufällige (aber konsistente) Farbe für jede Klasse zurück */
+function classColor(classId, total) {
+  const hue = ((classId * 360) / total) % 360;
+  // Einfache HSV→BGR Näherung
+  const h = hue / 60;
+  const s = 0.9,
+    v = 255;
+  const i = Math.floor(h);
+  const f = h - i;
+  const p = v * (1 - s);
+  const q = v * (1 - s * f);
+  const t = v * (1 - s * (1 - f));
+  const rgb = [
+    [v, t, p],
+    [q, v, p],
+    [p, v, t],
+    [p, q, v],
+    [t, p, v],
+    [v, p, q],
+  ][i % 6];
+
+  return [Math.round(rgb[2]), Math.round(rgb[1]), Math.round(rgb[0])]; // BGR
+}
+
+/** Liest CLI-Argument */
+function getArg(flag) {
+  const args = scriptArgs || [];
+  const i = args.indexOf(flag);
+  return i !== -1 ? args[i + 1] : null;
+}
+
+// --- Netz laden ---------------------------------------------------------------
+print('[1/4] Load YOLO-Net ...');
+const net = cv.dnn.readNetFromDarknet(CONFIG.config, CONFIG.weights);
+net.setPreferableBackend(cv.dnn.DNN_BACKEND_OPENCV);
+net.setPreferableTarget(cv.dnn.DNN_TARGET_CPU);
+
+// Namen der Output-Layer ermitteln
+const layerNames = net.getLayerNames();
+const unconnected = [...net.getUnconnectedOutLayers()];
+
+const outputLayers = unconnected.map(i => layerNames[i - 1]);
+
+print('[2/4] Load class names ...');
+const classNames = loadClassNames(CONFIG.names);
+const numClasses = classNames.length;
+print(`      ${numClasses} Classes loaded (COCO)`);
+
+// --- Eingabe öffnen -----------------------------------------------------------
+const inputSrc = getArg('--input') || 'Muehleberg.jpg';
+const isCamera = !isNaN(parseInt(inputSrc));
+const isVideo = !isCamera && (inputSrc.endsWith('.mp4') || inputSrc.endsWith('.avi') || inputSrc.endsWith('.mkv') || inputSrc.endsWith('.mov'));
+const isImage = !isCamera && !isVideo;
+
+print(`[3/4] Opened input: ${inputSrc} (${isCamera ? 'Webcam' : isVideo ? 'Video' : 'Bild'})`);
+
+let cap, frame;
+
+if(isImage) {
+  frame = cv.imread(inputSrc);
+  if(!frame || frame.empty) throw new Error(`Bild nicht gefunden: ${inputSrc}`);
+} else {
+  cap = new cv.VideoCapture(isCamera ? parseInt(inputSrc) : inputSrc);
+  if(!cap.isOpened()) throw new Error(`Kann Eingabe nicht öffnen: ${inputSrc}`);
+  frame = new cv.Mat();
+}
+
+// --- YOLO Inferenz ------------------------------------------------------------
+
+/**
+ * Führt YOLO-Erkennung auf einem cv.Mat durch.
+ * Gibt Array von { classId, className, conf, x, y, w, h } zurück.
+ */
+function detectYOLO(img) {
+  const H = img.rows;
+  const W = img.cols;
+
+  // Bild → YOLO-Blob (normalisiert, skaliert, RGB-Swap)
+  const blob = cv.dnn.blobFromImage(
+    img,
+    1 / 255.0, // Skalierungsfaktor
+    new cv.Size(CONFIG.inputSize, CONFIG.inputSize),
+    new cv.Scalar(0, 0, 0), // Mean-Subtraktion
+    true, // swapRB (BGR→RGB)
+    false, // crop
+  );
+
+  net.setInput(blob);
+  const outs = [];
+
+  net.forward(outs, outputLayers);
+
+  // Detektionen parsen
+  const boxes = [];
+  const confidences = [];
+  const classIds = [];
+
+  for(const out of outs) {
+    // out ist [num_detections × (5 + num_classes)]
+    for(let r = 0; r < out.rows; r++) {
+      const row = out.row(r).array[0]; // Float32Array
+
+      const scores = row.slice(5);
+
+      let maxScore = 0;
+      let classId = -1;
+
+      for(let c = 0; c < scores.length; c++) {
+        if(scores[c] > maxScore) {
+          maxScore = scores[c];
+          classId = c;
+        }
+      }
+
+      if(maxScore < CONFIG.confThresh) continue;
+
+      // YOLO gibt normierte Mittelpunkt-Koordinaten zurück
+      const cx = row[0] * W;
+      const cy = row[1] * H;
+      const bw = row[2] * W;
+      const bh = row[3] * H;
+
+      boxes.push(new cv.Rect(Math.round(cx - bw / 2), Math.round(cy - bh / 2), Math.round(bw), Math.round(bh)));
+      confidences.push(maxScore);
+      classIds.push(classId);
+    }
+  }
+
+  // Non-Maximum Suppression
+  const indices = [];
+
+  cv.dnn.NMSBoxes(boxes, confidences, CONFIG.confThresh, CONFIG.nmsThresh, indices);
+
+  return indices.map(i => ({
+    classId: classIds[i],
+    className: classNames[classIds[i]] ?? `class_${classIds[i]}`,
+    conf: confidences[i],
+    x: boxes[i].x,
+    y: boxes[i].y,
+    w: boxes[i].width,
+    h: boxes[i].height,
+  }));
+}
+
+/**
+ * Zeichnet Bounding Boxes + Labels auf ein Bild.
+ */
+function drawDetections(img, detections) {
+  for(const d of detections) {
+    const color = classColor(d.classId, numClasses);
+    const pt1 = new cv.Point(d.x, d.y);
+    const pt2 = new cv.Point(d.x + d.w, d.y + d.h);
+
+    // Bounding Box
+    cv.drawRect(img, pt1, pt2, color, 1);
+
+    // Label-Hintergrund
+    const label = `${d.className} ${(d.conf * 100).toFixed(0)}%`;
+    const baseline = [0];
+    const [width, height] = cv.getTextSize(label, cv.FONT_HERSHEY_SIMPLEX, 0.5, 1, baseline);
+    const labelY = Math.max(d.y, height + 4);
+
+    cv.drawRect(img, new cv.Point(d.x, labelY - height - 4), new cv.Point(d.x + width + 4, labelY), color, cv.FILLED);
+
+    const pos = new cv.Point(d.x + 2, labelY - 2);
+    //console.log('det', { pos, label });
+
+    // Text
+    cv.putText(img, label, pos, cv.FONT_HERSHEY_SIMPLEX, 0.5, cv.Scalar(255, 255, 255, 255), 1);
+  }
+}
+
+// --- Haupt-Loop ---------------------------------------------------------------
+print('[4/4] Starting recognition ...\n');
+
+if(isImage) {
+  // Einzelbild-Modus
+  const detections = detectYOLO(frame);
+
+  print(`Found objects: ${detections.length}`);
+  for(const d of detections) {
+    print(`  ${('[' + d.className + ']').padEnd(20, ' ')} confidence: ${(d.conf * 100).toFixed(1)}%  ` + `box: (${d.x}, ${d.y}, ${d.w}×${d.h})`);
+  }
+
+  drawDetections(frame, detections);
+  cv.imwrite(CONFIG.outputFile, frame);
+  print(`\nResult saved: ${CONFIG.outputFile}`);
+} else {
+  // Video / Webcam Modus
+  let frameCount = 0;
+  const ticker = new cv.TickMeter();
+
+  while(true) {
+    ticker.reset();
+    ticker.start();
+
+    if(!cap.read(frame) || frame.empty()) {
+      print('Input ended.');
+      break;
+    }
+
+    const detections = detectYOLO(frame);
+    drawDetections(frame, detections);
+
+    ticker.stop();
+    const fps = (1000 / ticker.getTimeMilli()).toFixed(1);
+
+    // FPS einblenden
+    cv.putText(frame, `FPS: ${fps}  Objects: ${detections.length}`, new cv.Point(10, 25), cv.FONT_HERSHEY_SIMPLEX, 0.7, new cv.Scalar(0, 255, 0), 2);
+
+    cv.imshow('YOLO – qjs-opencv  (q = quit)', frame);
+
+    frameCount++;
+    if(frameCount % 10 === 0) print(`Frame ${frameCount} | FPS: ${fps} | Objects: ${detections.length}`);
+
+    // 'q' oder ESC zum Beenden
+    const key = cv.waitKey(1) & 0xff;
+    if(key === 113 /* q */ || key === 27 /* ESC */) break;
+  }
+
+  cap.release();
+  cv.destroyAllWindows();
+}
