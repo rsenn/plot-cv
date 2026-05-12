@@ -13,14 +13,16 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
+from os import getenv
 from sklearn.preprocessing import MinMaxScaler
 from coinbase.rest import RESTClient  # coinbase-advanced-py
+import pprint
 
 # ─────────────────────────────────────────────
 # 1. KONFIGURATION
 # ─────────────────────────────────────────────
-API_KEY    = "your_api_key"
-API_SECRET = "your_api_secret"
+API_KEY    = getenv('COINBASE_API_KEY') or "your_api_key"
+API_SECRET = getenv('COINBASE_API_SECRET') or "your_api_secret"
 
 PRODUCT_ID    = "BTC-EUR"   # Handelspaar
 SEQ_LEN       = 30          # LSTM-Sequenzlänge (Kerzen)
@@ -58,7 +60,18 @@ def fetch_candles(client: RESTClient, product_id: str, limit: int = 150) -> pd.D
         granularity="ONE_MINUTE",
     )
     candles = resp["candles"]
-    df = pd.DataFrame(candles, columns=["start", "low", "high", "open", "close", "volume"])
+    
+    #pprint.pp(candles)
+
+    object_methods = [method_name for method_name in dir(candles[0])]
+
+    #pprint.pp(object_methods)
+    #df = pd.DataFrame(candles, columns=["start", "low", "high", "open", "close", "volume"])
+    #df = pd.DataFrame.from_records(candles, columns=["start", "low", "high", "open", "close", "volume"])
+    df = pd.DataFrame(c.to_dict() for c in candles)
+
+    #pprint.pp(df)
+
     df = df.sort_values("start").reset_index(drop=True)
     df["close"] = df["close"].astype(float)
     return df
