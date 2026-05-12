@@ -5,6 +5,7 @@
 
 Abhängigkeiten installieren:
     pip install ultralytics opencv-python-headless Pillow
+    pip install ultralytics opencv-python-pip install ultralytics opencv-python-pip install ultralytics opencv-python-headless PilloWheadless PilloWheadless PilloW
 
 Verwendung:
     python photo_categorizer.py                 # Demo-Modus (generierte Testbilder)
@@ -153,7 +154,7 @@ def analyze_image_demo(image_path: Path, conf_thresh: float = 0.35):
     # Simulierte Objekte anhand des Dateinamens
     presets = {
         "strasse":     [("car", 0.91), ("truck", 0.87), ("person", 0.78)],
-        "park":        [("dog",  0.93), ("person", pip install ultralytics opencv-python-pip install ultralytics opencv-python-pip install ultralytics opencv-python-headless PilloWheadless PilloWheadless PilloW0), ("bird", 0.61)],
+        "park":        [("dog",  0.93), ("person", 0.82), ("bird", 0.61)],
         "wohnzimmer":  [("couch", 0.95), ("tv",   0.89), ("cat",  0.77)],
     }
     stem = image_path.stem.lower()
