@@ -1,4 +1,4 @@
-import { CommandLineParser, createTrackbar, dnn, FileNode, FileStorage, getTextSize, getTickFrequency, Mat, namedWindow, VideoCapture, waitKey } from 'opencv';
+import {  CommandLineParser, createTrackbar, dnn, FileNode, FileStorage, getTextSize, getTickFrequency, Mat, namedWindow, VideoCapture, waitKey } from 'opencv';
 
 const Error = { StsNotImplemented: 1 };
 
@@ -20,13 +20,16 @@ function CV_Assert(cond) {
   }
 }
 
-const keys =
+function findFile(file) {
+  return file;
+}
+
+let keys =
   `{ help  h     | | Print help message. }` +
   `{ @alias      | | An alias name of model to extract preprocessing parameters from models.yml file. }` +
   `{ zoo         | models.yml | An optional path to file with preprocessing parameters }` +
   `{ device      |  0 | camera device number. }` +
-  `{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera. }` +
-  `{ framework f | | Optional name of an origin framework of the model. Detect it automatically if it does not set. }` +
+  `{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera. }` +  `{ framework f | | Optional name of an origin framework of the model. Detect it automatically if it does not set. }` +
   `{ classes     | | Optional path to a text file with names of classes to label detected objects. }` +
   `{ thr         | .5 | Confidence threshold. }` +
   `{ nms         | .4 | Non-maximum suppression threshold. }` +
@@ -46,7 +49,18 @@ const keys =
   `6: CUDA, ` +
   `7: CUDA fp16 (half-float preprocess) }` +
   `{ async       | 0 | Number of asynchronous forwards at the same time. ` +
-  `Choose 0 for synchronous mode }`;
+  `Choose 0 for synchronous mode }`+
+  `{ scale     | 1 | Preprocess input image by multiplying on a scale factor. }`+
+  `{ mean      | 0 | Preprocess input image by subtracting mean values. Mean values should be in BGR order and delimited by spaces.", modelName, zooFile) }`+
+  `{ rgb       |   | Indicate that model works with RGB input images instead BGR ones. }`+
+  `{ width     |   | Preprocess input image by resizing to a specific width. }`+
+  `{ height    |   | Preprocess input image by resizing to a specific height. }`+
+  `{ model   m |   | Path to a binary file of model contains trained weights.
+                     It could be a file with extensions .caffemodel (Caffe), 
+                     .pb (TensorFlow), .t7 or .net (Torch), .weights (Darknet), .bin (OpenVINO). }`+
+   `{ config  c |  | Path to a text file of model contains network configuration.
+                     It could be a file with extensions .prototxt (Caffe), .pbtxt (TensorFlow), .cfg (Darknet), .xml (OpenVINO). }`;
+;
 
 let confThreshold, nmsThreshold;
 let classes = [];
@@ -111,11 +125,12 @@ function main() {
   const modelName = parser.get('@alias');
   const zooFile = parser.get('zoo');
 
-  keys += genPreprocArguments(modelName, zooFile);
+ /* keys += genPreprocArguments(modelName, zooFile);
 
-  parser = CommandLineParser(argc, argv, keys);
+  parser = new CommandLineParser(argc, argv, keys);*/
   parser.about('Use this script to run object detection deep learning networks using OpenCV.');
-  if(argc == 1 || parser.has('help')) {
+
+  if(scriptArgs.length == 1 || parser.has('help')) {
     parser.printMessage();
     return 0;
   }
@@ -140,7 +155,8 @@ function main() {
   }
 
   // Load a model.
-  let net = readNet(modelPath, configPath, parser.get('framework'));
+  console.log({modelPath,configPath, framework: parser.get('framework') })
+  let net = dnn.readNet(modelPath, configPath, parser.get('framework'));
   let backend = +parser.get('backend');
   net.setPreferableBackend(backend);
   net.setPreferableTarget(+parser.get('target'));
