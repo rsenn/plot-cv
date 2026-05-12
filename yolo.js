@@ -17,9 +17,9 @@
  * qjs yolo.js --input video.mp4
  */
 
-import { destroyAllWindows, dnn, drawRect, FILLED, FONT_HERSHEY_SIMPLEX, getTextSize, imread, imshow, imwrite, Mat, Point, putText, Rect, Scalar, Size, TickMeter, VideoCapture, waitKey, } from 'opencv';
-import * as std from 'std';
-import * as os from 'os';
+import { CommandLineParser, destroyAllWindows, dnn, drawRect, FILLED, FONT_HERSHEY_SIMPLEX, getTextSize, imread, imshow, imwrite, Mat, Point, putText, Rect, Scalar, Size, TickMeter, VideoCapture, waitKey, } from 'opencv';
+import { open } from 'std';
+import { writeFileSync } from 'fs';
 
 // --- Configuration --------------------------------------------------------------
 const CONFIG = {
@@ -29,14 +29,13 @@ const CONFIG = {
   confThresh: 0.5, // minimum confidence (0-1)
   nmsThresh: 0.4, // Non-maximum suppression threshold
   inputSize: 416, // YOLO input resolution (320 / 416 / 608)
-  outputFile: 'output.jpg',
 };
 
 // --- Auxiliary functions --------------------------------------------------------
 
 /** Loads the class names from a text file */
 function loadClassNames(path) {
-  const f = std.open(path, 'r');
+  const f = open(path, 'r');
   if(!f) throw new Error(`Cannot open ${path}`);
   const names = [];
   let line;
@@ -81,191 +80,208 @@ function getArg(flag) {
   return i !== -1 ? args[i + 1] : null;
 }
 
-// --- Load network -----------------------------------------------------------------
-print('[1/4] Load YOLO-Net ...');
-const net = dnn.readNetFromDarknet(CONFIG.config, CONFIG.weights);
-net.setPreferableBackend(dnn.DNN_BACKEND_OPENCV);
-net.setPreferableTarget(dnn.DNN_TARGET_CPU);
+const keys =
+  `{ help  h     | | Print help message. }` +
+  `{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera. }` +
+  `{ output o     | output.jpg | Output file. }`;
 
-// Determine the names of the output layers
-const layerNames = net.getLayerNames();
-const unconnected = [...net.getUnconnectedOutLayers()];
+function main() {
+  const parser = new CommandLineParser(scriptArgs, keys);
 
-const outputLayers = unconnected.map(i => layerNames[i - 1]);
+  // --- Load network -----------------------------------------------------------------
+  print('[1/4] Load YOLO-Net ...');
+  const net = dnn.readNetFromDarknet(CONFIG.config, CONFIG.weights);
+  net.setPreferableBackend(dnn.DNN_BACKEND_OPENCV);
+  net.setPreferableTarget(dnn.DNN_TARGET_CPU);
 
-print('[2/4] Load class names ...');
-const classNames = loadClassNames(CONFIG.names);
-const numClasses = classNames.length;
-print(` ${numClasses} Classes loaded (COCO)`);
+  // Determine the names of the output layers
+  const layerNames = net.getLayerNames();
+  const unconnected = [...net.getUnconnectedOutLayers()];
 
-// --- Open input ---------------------------------------------------------
-const inputSrc = getArg('--input') || 'Muehleberg.jpg';
-const isCamera = !isNaN(parseInt(inputSrc));
-const isVideo = !isCamera && (inputSrc.endsWith('.mp4') || inputSrc.endsWith('.avi') || inputSrc.endsWith('.mkv') || inputSrc.endsWith('.mov'));
-const isImage = !isCamera && !isVideo;
+  const outputLayers = unconnected.map(i => layerNames[i - 1]);
 
-print(`[3/4] Opened input: ${inputSrc} (${isCamera ? 'Webcam' : isVideo ? 'Video' : 'Image'})`);
+  print('[2/4] Load class names ...');
+  const classNames = loadClassNames(CONFIG.names);
+  const numClasses = classNames.length;
+  print(` ${numClasses} Classes loaded (COCO)`);
 
-let cap, frame;
+  // --- Open input ---------------------------------------------------------
+  const inputSrc = parser.get('input') || 'Muehleberg.jpg';
+  const isCamera = !isNaN(parseInt(inputSrc));
+  const isVideo = !isCamera && (inputSrc.endsWith('.mp4') || inputSrc.endsWith('.avi') || inputSrc.endsWith('.mkv') || inputSrc.endsWith('.mov'));
+  const isImage = !isCamera && !isVideo;
 
-if(isImage) {
-  frame = imread(inputSrc);
-  if(!frame || frame.empty) throw new Error(`Image not found: ${inputSrc}`);
-} else {
-  cap = new VideoCapture(isCamera ? parseInt(inputSrc) : inputSrc);
-  if(!cap.isOpened()) throw new Error(`Cannot open input: ${inputSrc}`);
-  frame = new Mat();
-}
+  print(`[3/4] Opened input: ${inputSrc} (${isCamera ? 'Webcam' : isVideo ? 'Video' : 'Image'})`);
 
-// --- YOLO inference --------------------------------------------------------
+  let cap, frame;
 
-/**
- * Performs YOLO detection on a Mat.
- * Returns array of { classId, className, conf, x, y, w, h }.
- */
-function detectYOLO(img) {
-  const H = img.rows;
-  const W = img.cols;
+  if(isImage) {
+    frame = imread(inputSrc);
+    if(!frame || frame.empty) throw new Error(`Image not found: ${inputSrc}`);
+  } else {
+    cap = new VideoCapture(isCamera ? parseInt(inputSrc) : inputSrc);
+    if(!cap.isOpened()) throw new Error(`Cannot open input: ${inputSrc}`);
+    frame = new Mat();
+  }
 
-  //Image → YOLO blob (normalized, scaled, RGB swap)
-  const blob = dnn.blobFromImage(
-    img,
-    1 / 255.0, // scaling factor
-    new Size(CONFIG.inputSize, CONFIG.inputSize),
-    new Scalar(0, 0, 0), // Mean subtraction
-    true, // swapRB (BGR→RGB)
-    false, // crop
-  );
+  // --- YOLO inference --------------------------------------------------------
 
-  net.setInput(blob);
-  const outs = [];
+  /**
+   * Performs YOLO detection on a Mat.
+   * Returns array of { classId, className, conf, x, y, w, h }.
+   */
+  function detectYOLO(img) {
+    const H = img.rows;
+    const W = img.cols;
 
-  net.forward(outs, outputLayers);
+    //Image → YOLO blob (normalized, scaled, RGB swap)
+    const blob = dnn.blobFromImage(
+      img,
+      1 / 255.0, // scaling factor
+      new Size(CONFIG.inputSize, CONFIG.inputSize),
+      new Scalar(0, 0, 0), // Mean subtraction
+      true, // swapRB (BGR→RGB)
+      false, // crop
+    );
 
-  // Parse detections
-  const boxes = [];
-  const confidences = [];
-  const classIds = [];
+    net.setInput(blob);
+    const outs = [];
 
-  for(const out of outs) {
-    // out is [num_detections × (5 + num_classes)]
-    for(let r = 0; r < out.rows; r++) {
-      const row = out.row(r).array[0]; // Float32Array
+    net.forward(outs, outputLayers);
 
-      const scores = row.slice(5);
+    // Parse detections
+    const boxes = [];
+    const confidences = [];
+    const classIds = [];
 
-      let maxScore = 0;
-      let classId = -1;
+    for(const out of outs) {
+      // out is [num_detections × (5 + num_classes)]
+      for(let r = 0; r < out.rows; r++) {
+        const row = out.row(r).array[0]; // Float32Array
 
-      for(let c = 0; c < scores.length; c++) {
-        if(scores[c] > maxScore) {
-          maxScore = scores[c];
-          classId = c;
+        const scores = row.slice(5);
+
+        let maxScore = 0;
+        let classId = -1;
+
+        for(let c = 0; c < scores.length; c++) {
+          if(scores[c] > maxScore) {
+            maxScore = scores[c];
+            classId = c;
+          }
         }
+        if(maxScore < CONFIG.confThresh) continue;
+
+        // YOLO returns normalized center coordinates
+        const cx = row[0] * W;
+        const cy = row[1] * H;
+        const bw = row[2] * W;
+        const bh = row[3] * H;
+
+        boxes.push(new Rect(Math.round(cx - bw / 2), Math.round(cy - bh / 2), Math.round(bw), Math.round(bh)));
+        confidences.push(maxScore);
+        classIds.push(classId);
       }
-      if(maxScore < CONFIG.confThresh) continue;
+    }
 
-      // YOLO returns normalized center coordinates
-      const cx = row[0] * W;
-      const cy = row[1] * H;
-      const bw = row[2] * W;
-      const bh = row[3] * H;
+    // Non-maximum suppression
+    const indices = [];
 
-      boxes.push(new Rect(Math.round(cx - bw / 2), Math.round(cy - bh / 2), Math.round(bw), Math.round(bh)));
-      confidences.push(maxScore);
-      classIds.push(classId);
+    dnn.NMSBoxes(boxes, confidences, CONFIG.confThresh, CONFIG.nmsThresh, indices);
+
+    return indices.map(i => ({
+      classId: classIds[i],
+      className: classNames[classIds[i]] ?? `class_${classIds[i]}`,
+      conf: confidences[i],
+      x: boxes[i].x,
+      y: boxes[i].y,
+      w: boxes[i].width,
+      h: boxes[i].height,
+    }));
+  }
+
+  /**
+   * Draws bounding boxes + labels on an image.
+   */
+  function drawDetections(img, detections) {
+    for(const d of detections) {
+      const color = classColor(d.classId, numClasses);
+      const pt1 = new Point(d.x, d.y);
+      const pt2 = new Point(d.x + d.w, d.y + d.h);
+
+      // Bounding box
+      drawRect(img, pt1, pt2, color, 1);
+
+      // Label background
+      const label = `${d.className} ${(d.conf * 100).toFixed(0)}%`;
+      const baseline = [0];
+      const [width, height] = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, baseline);
+      const labelY = Math.max(d.y, height + 4);
+
+      drawRect(img, new Point(d.x, labelY - height - 4), new Point(d.x + width + 4, labelY), color, FILLED);
+
+      // Text
+      putText(img, label, new Point(d.x + 2, labelY - 2), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255, 255), 1);
     }
   }
 
-  // Non-maximum suppression
-  const indices = [];
+  // --- Main Loop ---------------------------------------------------------------
+  print('[4/4] Starting recognition ...\n');
 
-  dnn.NMSBoxes(boxes, confidences, CONFIG.confThresh, CONFIG.nmsThresh, indices);
-
-  return indices.map(i => ({
-    classId: classIds[i],
-    className: classNames[classIds[i]] ?? `class_${classIds[i]}`,
-    conf: confidences[i],
-    x: boxes[i].x,
-    y: boxes[i].y,
-    w: boxes[i].width,
-    h: boxes[i].height,
-  }));
-}
-
-/**
- * Draws bounding boxes + labels on an image.
- */
-function drawDetections(img, detections) {
-  for(const d of detections) {
-    const color = classColor(d.classId, numClasses);
-    const pt1 = new Point(d.x, d.y);
-    const pt2 = new Point(d.x + d.w, d.y + d.h);
-
-    // Bounding box
-    drawRect(img, pt1, pt2, color, 1);
-
-    // Label background
-    const label = `${d.className} ${(d.conf * 100).toFixed(0)}%`;
-    const baseline = [0];
-    const [width, height] = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, baseline);
-    const labelY = Math.max(d.y, height + 4);
-
-    drawRect(img, new Point(d.x, labelY - height - 4), new Point(d.x + width + 4, labelY), color, FILLED);
-
-    // Text
-    putText(img, label, new Point(d.x + 2, labelY - 2), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255, 255), 1);
-  }
-}
-
-// --- Main Loop ---------------------------------------------------------------
-print('[4/4] Starting recognition ...\n');
-
-if(isImage) {
-  // Single image mode
-  const detections = detectYOLO(frame);
-
-  print(`Found objects: ${detections.length}`);
-  for(const d of detections) {
-    print(` ${('[' + d.className + ']').padEnd(20, ' ')} confidence: ${(d.conf * 100).toFixed(1)}% ` + `box: (${d.x}, ${d.y}, ${d.w}×${d.h})`);
-  }
-
-  drawDetections(frame, detections);
-  imwrite(CONFIG.outputFile, frame);
-  print(`\nResult saved: ${CONFIG.outputFile}`);
-} else {
-  // Video / webcam mode
-  let frameCount = 0;
-  const ticker = new TickMeter();
-
-  while(true) {
-    ticker.reset();
-    ticker.start();
-
-    if(!cap.read(frame) || frame.empty()) {
-      print('Input ended.');
-      break;
-    }
-
+  if(isImage) {
+    // Single image mode
     const detections = detectYOLO(frame);
+
+    print(`Found objects: ${detections.length}`);
+    //console.log(`detections`, detections);
+
+    for(const d of detections) {
+      print(` ${('[' + d.className + ']').padEnd(20, ' ')} confidence: ${(d.conf * 100).toFixed(1)}% ` + `box: (${d.x}, ${d.y}, ${d.w}×${d.h})`);
+    }
+
     drawDetections(frame, detections);
+    imwrite(parser.get('output'), frame);
+    print(`\nResult saved: ${parser.get('output')}`);
 
-    ticker.stop();
-    const fps = (1000 / ticker.getTimeMilli()).toFixed(1);
+    const json = inputSrc.replace(/\.[^.]*$/g, '.json');
+    writeFileSync(json, JSON.stringify(detections, null, 2));
+    print(`JSON saved: ${json}`);
+  } else {
+    // Video / webcam mode
+    let frameCount = 0;
+    const ticker = new TickMeter();
 
-    // Show FPS
-    putText(frame, `FPS: ${fps} Objects: ${detections.length}`, new Point(10, 25), FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0, 255, 0), 2);
+    while(true) {
+      ticker.reset();
+      ticker.start();
 
-    imshow('YOLO – qjs-opencv (q = quit)', frame);
+      if(!cap.read(frame) || frame.empty()) {
+        print('Input ended.');
+        break;
+      }
 
-    frameCount++;
-    if(frameCount % 10 === 0) print(`Frame ${frameCount} | FPS: ${fps} | Objects: ${detections.length}`);
+      const detections = detectYOLO(frame);
+      drawDetections(frame, detections);
 
-    // 'q' or ESC to exit
-    const key = waitKey(1) & 0xff;
-    if(key === 113 /* q */ || key === 27 /* ESC */) break;
+      ticker.stop();
+      const fps = (1000 / ticker.getTimeMilli()).toFixed(1);
+
+      // Show FPS
+      putText(frame, `FPS: ${fps} Objects: ${detections.length}`, new Point(10, 25), FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0, 255, 0), 2);
+
+      imshow('YOLO – qjs-opencv (q = quit)', frame);
+
+      frameCount++;
+      if(frameCount % 10 === 0) print(`Frame ${frameCount} | FPS: ${fps} | Objects: ${detections.length}`);
+
+      // 'q' or ESC to exit
+      const key = waitKey(1) & 0xff;
+      if(key === 113 /* q */ || key === 27 /* ESC */) break;
+    }
+
+    cap.release();
+    destroyAllWindows();
   }
-
-  cap.release();
-  destroyAllWindows();
 }
+
+main();
