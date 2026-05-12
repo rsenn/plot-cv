@@ -1,11 +1,9 @@
 import { CommandLineParser, createTrackbar, dnn, FileNode, FileStorage, getTextSize, getTickFrequency, Mat, namedWindow, VideoCapture, waitKey } from 'opencv';
 
+const Error = { StsNotImplemented: 1 };
 
-const Error={StsNotImplemented:1};
-
-Map.prototype.getOrInsertComputed = function (key, callbackFunction) {
-  if (!this.has(key)) 
-    this.set(key, callbackFunction(key));
+Map.prototype.getOrInsertComputed = function(key, callbackFunction) {
+  if(!this.has(key)) this.set(key, callbackFunction(key));
 
   return this.get(key);
 };
@@ -22,35 +20,36 @@ function CV_Assert(cond) {
   }
 }
 
-const keys = `{ help  h     | | Print help message. }`+
-                    `{ @alias      | | An alias name of model to extract preprocessing parameters from models.yml file. }`+
-                    `{ zoo         | models.yml | An optional path to file with preprocessing parameters }`+
-                    `{ device      |  0 | camera device number. }`+
-                    `{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera. }`+
-                    `{ framework f | | Optional name of an origin framework of the model. Detect it automatically if it does not set. }`+
-                    `{ classes     | | Optional path to a text file with names of classes to label detected objects. }`+
-                    `{ thr         | .5 | Confidence threshold. }`+
-                    `{ nms         | .4 | Non-maximum suppression threshold. }`+
-                    `{ backend     |  0 | Choose one of computation backends: `+
-                    `0: automatically (by default), `+
-                    `1: Halide language (http://halide-lang.org/), `+
-                    `2: Intel's Deep Learning Inference Engine (https://software.intel.com/openvino-toolkit), `+
-                    `3: OpenCV implementation, `+
-                    `4: VKCOM, `+
-                    `5: CUDA }`+
-                    `{ target      | 0 | Choose one of target computation devices: `+
-                    `0: CPU target (by default), `+
-                    `1: OpenCL, `+
-                    `2: OpenCL fp16 (half-float precision), `+
-                    `3: VPU, `+
-                    `4: Vulkan, `+
-                    `6: CUDA, `+
-                    `7: CUDA fp16 (half-float preprocess) }`+
-                    `{ async       | 0 | Number of asynchronous forwards at the same time. `+
-                    `Choose 0 for synchronous mode }`;
- 
- let confThreshold, nmsThreshold;
-let classes=[];
+const keys =
+  `{ help  h     | | Print help message. }` +
+  `{ @alias      | | An alias name of model to extract preprocessing parameters from models.yml file. }` +
+  `{ zoo         | models.yml | An optional path to file with preprocessing parameters }` +
+  `{ device      |  0 | camera device number. }` +
+  `{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera. }` +
+  `{ framework f | | Optional name of an origin framework of the model. Detect it automatically if it does not set. }` +
+  `{ classes     | | Optional path to a text file with names of classes to label detected objects. }` +
+  `{ thr         | .5 | Confidence threshold. }` +
+  `{ nms         | .4 | Non-maximum suppression threshold. }` +
+  `{ backend     |  0 | Choose one of computation backends: ` +
+  `0: automatically (by default), ` +
+  `1: Halide language (http://halide-lang.org/), ` +
+  `2: Intel's Deep Learning Inference Engine (https://software.intel.com/openvino-toolkit), ` +
+  `3: OpenCV implementation, ` +
+  `4: VKCOM, ` +
+  `5: CUDA }` +
+  `{ target      | 0 | Choose one of target computation devices: ` +
+  `0: CPU target (by default), ` +
+  `1: OpenCL, ` +
+  `2: OpenCL fp16 (half-float precision), ` +
+  `3: VPU, ` +
+  `4: Vulkan, ` +
+  `6: CUDA, ` +
+  `7: CUDA fp16 (half-float preprocess) }` +
+  `{ async       | 0 | Number of asynchronous forwards at the same time. ` +
+  `Choose 0 for synchronous mode }`;
+
+let confThreshold, nmsThreshold;
+let classes = [];
 
 /*inline void preprocess(const Mat& frame, Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB);
 
@@ -109,59 +108,58 @@ private:
 function main() {
   const parser = new CommandLineParser(scriptArgs, keys);
 
-  const modelName = parser.get("@alias");
-  const  zooFile = parser.get("zoo");
+  const modelName = parser.get('@alias');
+  const zooFile = parser.get('zoo');
 
   keys += genPreprocArguments(modelName, zooFile);
 
   parser = CommandLineParser(argc, argv, keys);
-  parser.about("Use this script to run object detection deep learning networks using OpenCV.");
-  if(argc == 1 || parser.has("help")) {
+  parser.about('Use this script to run object detection deep learning networks using OpenCV.');
+  if(argc == 1 || parser.has('help')) {
     parser.printMessage();
     return 0;
   }
 
-  confThreshold = +parser.get("thr");
-  nmsThreshold = +parser.get("nms");
-  let scale = +parser.get("scale");
-  let mean = parser.get("mean");
-  let swapRB = Boolean(parser.get("rgb"));
-  let inpWidth = +parser.get("width");
-  let inpHeight = +parser.get("height");
-  let asyncNumReq = +parser.get("async");
-  CV_Assert(parser.has("model"));
-  let modelPath = findFile(parser.get("model"));
-  let configPath = findFile(parser.get("config"));
+  confThreshold = +parser.get('thr');
+  nmsThreshold = +parser.get('nms');
+  let scale = +parser.get('scale');
+  let mean = parser.get('mean');
+  let swapRB = Boolean(parser.get('rgb'));
+  let inpWidth = +parser.get('width');
+  let inpHeight = +parser.get('height');
+  let asyncNumReq = +parser.get('async');
+  CV_Assert(parser.has('model'));
+  let modelPath = findFile(parser.get('model'));
+  let configPath = findFile(parser.get('config'));
 
   // Open file with classes names.
-  if(parser.has("classes")) {
-  let  file = parser.get("classes");
+  if(parser.has('classes')) {
+    let file = parser.get('classes');
 
-   classes= readFileSync(file,'utf-8').trimEnd().split('\n');
+    classes = readFileSync(file, 'utf-8').trimEnd().split('\n');
   }
 
   // Load a model.
-let net = readNet(modelPath, configPath, parser.get("framework"));
-  let backend = +parser.get("backend");
+  let net = readNet(modelPath, configPath, parser.get('framework'));
+  let backend = +parser.get('backend');
   net.setPreferableBackend(backend);
-  net.setPreferableTarget(+parser.get("target"));
-  let  outNames = net.getUnconnectedOutLayersNames();
+  net.setPreferableTarget(+parser.get('target'));
+  let outNames = net.getUnconnectedOutLayersNames();
 
   // Create a window
-  const kWinName = "Deep learning object detection in OpenCV";
+  const kWinName = 'Deep learning object detection in OpenCV';
   namedWindow(kWinName, WINDOW_NORMAL);
-  let initialConf = Math.floor(confThreshold * 100);  
+  let initialConf = Math.floor(confThreshold * 100);
 
-  createTrackbar("Confidence threshold, %", kWinName, v=> initialConf=v , 99, callback);
+  createTrackbar('Confidence threshold, %', kWinName, v => (initialConf = v), 99, callback);
 
   // Open a video file or an image file or a camera stream.
-  const cap=new VideoCapture();
+  const cap = new VideoCapture();
 
-  if(parser.has("input"))
-    cap.open(parser.get("input"));  else
-    cap.open(+parser.get("device"));
+  if(parser.has('input')) cap.open(parser.get('input'));
+  else cap.open(+parser.get('device'));
 
-/*#ifdef USE_THREADS
+  /*#ifdef USE_THREADS
   let process = true;
 
   // Frames capturing thread
@@ -249,11 +247,11 @@ let net = readNet(modelPath, configPath, parser.get("framework"));
   processingThread.join();
 
 #else  // USE_THREADS*/
-  if(asyncNumReq)
-    CV_Error(Error.StsNotImplemented, "Asynchronous forward is supported only with Inference Engine backend.");
+  if(asyncNumReq) CV_Error(Error.StsNotImplemented, 'Asynchronous forward is supported only with Inference Engine backend.');
 
   // Process frames.
-  let frame=new Mat(), blob = new Mat();
+  let frame = new Mat(),
+    blob = new Mat();
   while(waitKey(1) < 0) {
     cap >> frame;
     if(frame.empty()) {
@@ -263,56 +261,51 @@ let net = readNet(modelPath, configPath, parser.get("framework"));
 
     preprocess(frame, net, Size(inpWidth, inpHeight), scale, mean, swapRB);
 
- let outs = [];
+    let outs = [];
     net.forward(outs, outNames);
 
     postprocess(frame, outs, net, backend);
 
     // Put efficiency information.
-   let layersTimes=[];
+    let layersTimes = [];
     let freq = getTickFrequency() / 1000;
-        let t = net.getPerfProfile(layersTimes) / freq;
-   let label = `Inference time: ${t} ms`;
+    let t = net.getPerfProfile(layersTimes) / freq;
+    let label = `Inference time: ${t} ms`;
     putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
     imshow(kWinName, frame);
   }
-/*#endif // USE_THREADS*/
+  /*#endif // USE_THREADS*/
   return 0;
 }
 
-  let blob=new  Mat;
+let blob = new Mat();
 
-
-function preprocess (frame,  net,  inpSize,  scale,  mean,   swapRB) {
-
+function preprocess(frame, net, inpSize, scale, mean, swapRB) {
   // Create a 4D blob from a frame.
-  if(inpSize.width <= 0)
-    inpSize.width = frame.cols;
-  if(inpSize.height <= 0)
-    inpSize.height = frame.rows;
+  if(inpSize.width <= 0) inpSize.width = frame.cols;
+  if(inpSize.height <= 0) inpSize.height = frame.rows;
   blobFromImage(frame, blob, 1.0, inpSize, Scalar(), swapRB, false, CV_8U);
 
   // Run a model.
-  net.setInput(blob, "", scale, mean);
-  if(net.getLayer(0).outputNameToIndex("im_info") != -1) // Faster-RCNN or R-FCN
-  {
+  net.setInput(blob, '', scale, mean);
+  if(net.getLayer(0).outputNameToIndex('im_info') != -1) {
+    // Faster-RCNN or R-FCN
     resize(frame, frame, inpSize);
-    let imInfo =new Mat(1,3, CV_32FC1, new Float32Array([ inpSize.height, inpSize.width, 1.6]));
+    let imInfo = new Mat(1, 3, CV_32FC1, new Float32Array([inpSize.height, inpSize.width, 1.6]));
 
-    net.setInput(imInfo, "im_info");
+    net.setInput(imInfo, 'im_info');
   }
 }
 
-function 
-postprocess(/*Mat&*/ frame, outs, /*Net& */net,   backend) {
+function postprocess(/*Mat&*/ frame, outs, /*Net& */ net, backend) {
   let outLayers = net.getUnconnectedOutLayers();
   let outLayerType = net.getLayer(outLayers[0]).type;
 
-  let classIds=[];
-  let confidences=[];
-  let boxes=[];
-  if(outLayerType == "DetectionOutput") {
+  let classIds = [];
+  let confidences = [];
+  let boxes = [];
+  if(outLayerType == 'DetectionOutput') {
     // Network produces output blob with a shape 1x1xNx7 where N is a number of
     // detections and an every detection is a vector of values
     // [batchId, classId, confidence, left, top, right, bottom]
@@ -343,7 +336,7 @@ postprocess(/*Mat&*/ frame, outs, /*Net& */net,   backend) {
         }
       }
     }
-  } else if(outLayerType == "Region") {
+  } else if(outLayerType == 'Region') {
     for(let i = 0; i < outs.length; ++i) {
       // Network produces output blob with a shape NxC where N is a number of
       // detected objects and C is a number of classes + 4 where the first 4
@@ -353,7 +346,13 @@ postprocess(/*Mat&*/ frame, outs, /*Net& */net,   backend) {
         let scores = outs[i].row(j).colRange(5, outs[i].cols);
         let classIdPoint;
         let confidence;
-        minMaxLoc(scores, 0, v=>confidence=v, 0,v=>classIdPoint=v);
+        minMaxLoc(
+          scores,
+          0,
+          v => (confidence = v),
+          0,
+          v => (classIdPoint = v),
+        );
         if(confidence > confThreshold) {
           let centerX = Math.floor(data[0] * frame.cols);
           let centerY = Math.floor(data[1] * frame.rows);
@@ -368,23 +367,20 @@ postprocess(/*Mat&*/ frame, outs, /*Net& */net,   backend) {
         }
       }
     }
-  } else
-    CV_Error(Error.StsNotImplemented, "Unknown output layer type: " + outLayerType);
+  } else CV_Error(Error.StsNotImplemented, 'Unknown output layer type: ' + outLayerType);
 
   // NMS is used inside Region layer only on DNN_BACKEND_OPENCV for another backends we need NMS in sample
   // or NMS is required if number of outputs > 1
-  if(outLayers.length > 1 || (outLayerType == "Region" && backend != DNN_BACKEND_OPENCV)) {
-    /*std::map<int, std::vector<size_t>>*/let class2indices=new Map();
+  if(outLayers.length > 1 || (outLayerType == 'Region' && backend != DNN_BACKEND_OPENCV)) {
+    /*std::map<int, std::vector<size_t>>*/ let class2indices = new Map();
 
-    for(let i = 0; i < classIds.length; i++) 
-      if(confidences[i] >= confThreshold) 
-class2indices.getOrInsertComputed(classIds[i], k => []).push(i);
-    
-    let nmsBoxes=[];
-    let nmsConfidences=[];
-    let nmsClassIds=[];
+    for(let i = 0; i < classIds.length; i++) if(confidences[i] >= confThreshold) class2indices.getOrInsertComputed(classIds[i], k => []).push(i);
 
-    for(let [first,second] of  class2indices) {
+    let nmsBoxes = [];
+    let nmsConfidences = [];
+    let nmsClassIds = [];
+
+    for(let [first, second] of class2indices) {
       let localBoxes;
       let localConfidences;
       let classIndices = second;
@@ -393,7 +389,7 @@ class2indices.getOrInsertComputed(classIds[i], k => []).push(i);
         localBoxes.push(boxes[classIndices[i]]);
         localConfidences.push(confidences[classIndices[i]]);
       }
-      let nmsIndices=[];
+      let nmsIndices = [];
       NMSBoxes(localBoxes, localConfidences, confThreshold, nmsThreshold, nmsIndices);
       for(let i = 0; i < nmsIndices.length; i++) {
         let idx = nmsIndices[i];
@@ -413,27 +409,26 @@ class2indices.getOrInsertComputed(classIds[i], k => []).push(i);
   }
 }
 
-function drawPred( classId,  conf,  left,  top,  right,  bottom, /*Mat&*/ frame) {
+function drawPred(classId, conf, left, top, right, bottom, /*Mat&*/ frame) {
   rectangle(frame, new Point(left, top), new Point(right, bottom), Scalar(0, 255, 0));
 
-  let label = Math.round(conf*100)/100;
+  let label = Math.round(conf * 100) / 100;
 
   if(!classes.length == 0) {
     CV_Assert(classId < classes.length);
-    label = classes[classId] + ": " + label;
+    label = classes[classId] + ': ' + label;
   }
 
   let baseLine;
-  let labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, v=>baseLine=v);
+  let labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, v => (baseLine = v));
 
   top = max(top, labelSize.height);
-  rectangle(frame,new Point(left, top - labelSize.height), new Point(left + labelSize.width, top + baseLine), Scalar(255,255,255,255), FILLED);
+  rectangle(frame, new Point(left, top - labelSize.height), new Point(left + labelSize.width, top + baseLine), Scalar(255, 255, 255, 255), FILLED);
   putText(frame, label, new Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, Scalar());
 }
 
-function callback( pos) {
+function callback(pos) {
   confThreshold = pos * 0.01;
 }
-
 
 main();
