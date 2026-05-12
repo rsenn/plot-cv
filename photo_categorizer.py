@@ -5,7 +5,6 @@
 
 Abhängigkeiten installieren:
     pip install ultralytics opencv-python-headless Pillow
-    pip install ultralytics opencv-python-pip install ultralytics opencv-python-pip install ultralytics opencv-python-headless PilloWheadless PilloWheadless PilloW
 
 Verwendung:
     python photo_categorizer.py                 # Demo-Modus (generierte Testbilder)
