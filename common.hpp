@@ -85,7 +85,6 @@ genPreprocArguments(const std::string& modelName, const std::string& zooFile) {
                      modelName,
                      zooFile,
                      'c') +
-         genArgument("mean", "Preprocess input image by subtracting mean values. Mean values should be in BGR order and delimited by spaces.", modelName, zooFile) 
-         + genArgument("scale", "Preprocess input image by multiplying on a scale factor.", modelName, zooFile, ' ', "1.0") +
-       genArgument("width", "Preprocess input image by resizing to a specific width.", modelName, zooFile, ' ', "-1") + genArgument("height", "Preprocess input image by resizing to a specific height.", modelName, zooFile, ' ', "-1") + genArgument("rgb", "Indicate that model works with RGB input images instead BGR ones.", modelName, zooFile);
+         genArgument("mean", "Preprocess input image by subtracting mean values. Mean values should be in BGR order and delimited by spaces.", modelName, zooFile) + genArgument("scale", "Preprocess input image by multiplying on a scale factor.", modelName, zooFile, ' ', "1.0") +
+         genArgument("width", "Preprocess input image by resizing to a specific width.", modelName, zooFile, ' ', "-1") + genArgument("height", "Preprocess input image by resizing to a specific height.", modelName, zooFile, ' ', "-1") + genArgument("rgb", "Indicate that model works with RGB input images instead BGR ones.", modelName, zooFile);
 }

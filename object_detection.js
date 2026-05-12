@@ -155,7 +155,6 @@ function main() {
   }
 
   // Load a model.
-  console.log({modelPath,configPath, framework: parser.get('framework') })
   let net = dnn.readNet(modelPath, configPath, parser.get('framework'));
   let backend = +parser.get('backend');
   net.setPreferableBackend(backend);
