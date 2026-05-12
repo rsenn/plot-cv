@@ -1,11 +1,11 @@
 """
 Coinbase Trading Bot mit PyTorch LSTM-Modell
 ============================================
-Benötigte Pakete:
+Required packages:
     pip install torch numpy pandas coinbase-advanced-py scikit-learn
 
-WICHTIG: Nur zu Lernzwecken. Kein echter Finanzrat.
-         Teste immer zuerst im Sandbox/Paper-Trading-Modus!
+IMPORTANT: For learning purposes only. Not real financial advice. 
+           Always test in sandbox/paper trading mode first!
 """
 
 import time
@@ -27,7 +27,7 @@ def logprint(msg):
 
 
 # ---------------------------------------------
-#1. CONFIGURATION
+# 1. CONFIGURATION
 # ---------------------------------------------
 API_KEY    = getenv('COINBASE_API_KEY') or "your_api_key"
 API_SECRET = getenv('COINBASE_API_SECRET') or "your_api_secret"
