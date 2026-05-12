@@ -17,7 +17,7 @@
  *   qjs yolo.js --input video.mp4
  */
 
-import * as cv from 'opencv';
+import {destroyAllWindows, dnn, drawRect, FILLED, FONT_HERSHEY_SIMPLEX, getTextSize, imread, imshow, imwrite, Mat, Point, putText, Rect, Scalar, Size, TickMeter, VideoCapture, waitKey } from 'opencv';
 import * as std from 'std';
 import * as os from 'os';
 
@@ -83,9 +83,9 @@ function getArg(flag) {
 
 // --- Netz laden ---------------------------------------------------------------
 print('[1/4] Load YOLO-Net ...');
-const net = cv.dnn.readNetFromDarknet(CONFIG.config, CONFIG.weights);
-net.setPreferableBackend(cv.dnn.DNN_BACKEND_OPENCV);
-net.setPreferableTarget(cv.dnn.DNN_TARGET_CPU);
+const net = dnn.readNetFromDarknet(CONFIG.config, CONFIG.weights);
+net.setPreferableBackend(dnn.DNN_BACKEND_OPENCV);
+net.setPreferableTarget(dnn.DNN_TARGET_CPU);
 
 // Namen der Output-Layer ermitteln
 const layerNames = net.getLayerNames();
@@ -109,18 +109,18 @@ print(`[3/4] Opened input: ${inputSrc} (${isCamera ? 'Webcam' : isVideo ? 'Video
 let cap, frame;
 
 if(isImage) {
-  frame = cv.imread(inputSrc);
+  frame = imread(inputSrc);
   if(!frame || frame.empty) throw new Error(`Bild nicht gefunden: ${inputSrc}`);
 } else {
-  cap = new cv.VideoCapture(isCamera ? parseInt(inputSrc) : inputSrc);
+  cap = new VideoCapture(isCamera ? parseInt(inputSrc) : inputSrc);
   if(!cap.isOpened()) throw new Error(`Kann Eingabe nicht öffnen: ${inputSrc}`);
-  frame = new cv.Mat();
+  frame = new Mat();
 }
 
 // --- YOLO Inferenz ------------------------------------------------------------
 
 /**
- * Führt YOLO-Erkennung auf einem cv.Mat durch.
+ * Führt YOLO-Erkennung auf einem Mat durch.
  * Gibt Array von { classId, className, conf, x, y, w, h } zurück.
  */
 function detectYOLO(img) {
@@ -128,11 +128,11 @@ function detectYOLO(img) {
   const W = img.cols;
 
   // Bild → YOLO-Blob (normalisiert, skaliert, RGB-Swap)
-  const blob = cv.dnn.blobFromImage(
+  const blob = dnn.blobFromImage(
     img,
     1 / 255.0, // Skalierungsfaktor
-    new cv.Size(CONFIG.inputSize, CONFIG.inputSize),
-    new cv.Scalar(0, 0, 0), // Mean-Subtraktion
+    new Size(CONFIG.inputSize, CONFIG.inputSize),
+    new Scalar(0, 0, 0), // Mean-Subtraktion
     true, // swapRB (BGR→RGB)
     false, // crop
   );
@@ -172,7 +172,7 @@ function detectYOLO(img) {
       const bw = row[2] * W;
       const bh = row[3] * H;
 
-      boxes.push(new cv.Rect(Math.round(cx - bw / 2), Math.round(cy - bh / 2), Math.round(bw), Math.round(bh)));
+      boxes.push(new Rect(Math.round(cx - bw / 2), Math.round(cy - bh / 2), Math.round(bw), Math.round(bh)));
       confidences.push(maxScore);
       classIds.push(classId);
     }
@@ -181,7 +181,7 @@ function detectYOLO(img) {
   // Non-Maximum Suppression
   const indices = [];
 
-  cv.dnn.NMSBoxes(boxes, confidences, CONFIG.confThresh, CONFIG.nmsThresh, indices);
+  dnn.NMSBoxes(boxes, confidences, CONFIG.confThresh, CONFIG.nmsThresh, indices);
 
   return indices.map(i => ({
     classId: classIds[i],
@@ -200,25 +200,22 @@ function detectYOLO(img) {
 function drawDetections(img, detections) {
   for(const d of detections) {
     const color = classColor(d.classId, numClasses);
-    const pt1 = new cv.Point(d.x, d.y);
-    const pt2 = new cv.Point(d.x + d.w, d.y + d.h);
+    const pt1 = new Point(d.x, d.y);
+    const pt2 = new Point(d.x + d.w, d.y + d.h);
 
     // Bounding Box
-    cv.drawRect(img, pt1, pt2, color, 1);
+    drawRect(img, pt1, pt2, color, 1);
 
     // Label-Hintergrund
     const label = `${d.className} ${(d.conf * 100).toFixed(0)}%`;
     const baseline = [0];
-    const [width, height] = cv.getTextSize(label, cv.FONT_HERSHEY_SIMPLEX, 0.5, 1, baseline);
+    const [width, height] = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, baseline);
     const labelY = Math.max(d.y, height + 4);
 
-    cv.drawRect(img, new cv.Point(d.x, labelY - height - 4), new cv.Point(d.x + width + 4, labelY), color, cv.FILLED);
-
-    const pos = new cv.Point(d.x + 2, labelY - 2);
-    //console.log('det', { pos, label });
+    drawRect(img, new Point(d.x, labelY - height - 4), new Point(d.x + width + 4, labelY), color, FILLED);
 
     // Text
-    cv.putText(img, label, pos, cv.FONT_HERSHEY_SIMPLEX, 0.5, cv.Scalar(255, 255, 255, 255), 1);
+    putText(img, label, new Point(d.x + 2, labelY - 2), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255, 255), 1);
   }
 }
 
@@ -235,12 +232,12 @@ if(isImage) {
   }
 
   drawDetections(frame, detections);
-  cv.imwrite(CONFIG.outputFile, frame);
+  imwrite(CONFIG.outputFile, frame);
   print(`\nResult saved: ${CONFIG.outputFile}`);
 } else {
   // Video / Webcam Modus
   let frameCount = 0;
-  const ticker = new cv.TickMeter();
+  const ticker = new TickMeter();
 
   while(true) {
     ticker.reset();
@@ -258,18 +255,18 @@ if(isImage) {
     const fps = (1000 / ticker.getTimeMilli()).toFixed(1);
 
     // FPS einblenden
-    cv.putText(frame, `FPS: ${fps}  Objects: ${detections.length}`, new cv.Point(10, 25), cv.FONT_HERSHEY_SIMPLEX, 0.7, new cv.Scalar(0, 255, 0), 2);
+    putText(frame, `FPS: ${fps}  Objects: ${detections.length}`, new Point(10, 25), FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0, 255, 0), 2);
 
-    cv.imshow('YOLO – qjs-opencv  (q = quit)', frame);
+    imshow('YOLO – qjs-opencv  (q = quit)', frame);
 
     frameCount++;
     if(frameCount % 10 === 0) print(`Frame ${frameCount} | FPS: ${fps} | Objects: ${detections.length}`);
 
     // 'q' oder ESC zum Beenden
-    const key = cv.waitKey(1) & 0xff;
+    const key = waitKey(1) & 0xff;
     if(key === 113 /* q */ || key === 27 /* ESC */) break;
   }
 
   cap.release();
-  cv.destroyAllWindows();
+  destroyAllWindows();
 }
