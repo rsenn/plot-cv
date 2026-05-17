@@ -16,7 +16,7 @@
  *   qjs-modules     – provides 'fs' for file I/O
  */
 
-import {Scalar, threshold,THRESH_BINARY_INV,THRESH_BINARY, Mat, imread, imshow, imwrite, waitKey, cvtColor, Canny, GaussianBlur, HoughLinesP, drawLine, LineSegmentDetector, COLOR_BGR2GRAY, LINE_AA } from 'opencv';
+import { Scalar, threshold, THRESH_BINARY_INV, THRESH_BINARY, Mat, imread, imshow, imwrite, waitKey, cvtColor, Canny, GaussianBlur, HoughLinesP, drawLine, LineSegmentDetector, COLOR_BGR2GRAY, LINE_AA, } from 'opencv';
 import { writeFileSync } from 'fs';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -88,10 +88,10 @@ try {
 
 if(!usedLSD || segments.length === 0) {
   const edges = new Mat(/*blurred.size, blurred.type*/);
- 
+
   Canny(blurred, edges, 50, 150);
- // 
- //blurred.xor(Scalar(255,255,255,255), edges);
+  //
+  //blurred.xor(Scalar(255,255,255,255), edges);
   //threshold(blurred,edges,127, 255, THRESH_BINARY);
 
   const houghLines = new Mat();
