@@ -16,7 +16,7 @@
  *   qjs-modules     – provides 'fs' for file I/O
  */
 
-import { Mat, imread, imshow, imwrite, waitKey, cvtColor, Canny, GaussianBlur, HoughLinesP, drawLine, LineSegmentDetector, COLOR_BGR2GRAY, LINE_AA } from 'opencv';
+import {Scalar, threshold,THRESH_BINARY_INV,THRESH_BINARY, Mat, imread, imshow, imwrite, waitKey, cvtColor, Canny, GaussianBlur, HoughLinesP, drawLine, LineSegmentDetector, COLOR_BGR2GRAY, LINE_AA } from 'opencv';
 import { writeFileSync } from 'fs';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -66,12 +66,13 @@ GaussianBlur(gray, blurred, { width: 5, height: 5 }, 0);
 let segments = [];
 let usedLSD = false;
 
+//if(0)
 try {
-  const lsd = LineSegmentDetector();
+  const lsd = new LineSegmentDetector();
   const lsdLines = new Mat();
   lsd.detect(blurred, lsdLines);
 
-  if(!lsdLines.empty()) {
+  if(!lsdLines.empty) {
     for(let i = 0; i < lsdLines.rows; i++) {
       const v = lsdLines.at(i, 0); // [x1, y1, x2, y2]
       segments.push({ x1: v[0], y1: v[1], x2: v[2], y2: v[3], method: 'LSD' });
@@ -86,8 +87,12 @@ try {
 // ─── method 2: HoughLinesP fallback ──────────────────────────────────────────
 
 if(!usedLSD || segments.length === 0) {
-  const edges = new Mat();
+  const edges = new Mat(/*blurred.size, blurred.type*/);
+ 
   Canny(blurred, edges, 50, 150);
+ // 
+ //blurred.xor(Scalar(255,255,255,255), edges);
+  //threshold(blurred,edges,127, 255, THRESH_BINARY);
 
   const houghLines = new Mat();
   HoughLinesP(edges, houghLines, 1, Math.PI / 180, 80, 30, 10);
@@ -117,7 +122,7 @@ const palette = [
 
 segments.forEach((seg, idx) => {
   const color = palette[idx % palette.length];
-  drawLine(canvas, { x: Math.round(seg.x1), y: Math.round(seg.y1) }, { x: Math.round(seg.x2), y: Math.round(seg.y2) }, color, 2, LINE_AA);
+  drawLine(canvas, { x: Math.round(seg.x1), y: Math.round(seg.y1) }, { x: Math.round(seg.x2), y: Math.round(seg.y2) }, color, 1, LINE_AA);
 });
 
 // ─── display ─────────────────────────────────────────────────────────────────
