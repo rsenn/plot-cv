@@ -75,10 +75,10 @@ function main(argv) {
   cvtColor(blurred, hsv, COLOR_BGR2HSV);
 
   const maskBlue = new Mat();
-  inRange(hsv, new Scalar(90, 30, 120), new Scalar(135, 255, 255), maskBlue);
+  inRange(hsv, Scalar(90, 30, 120), Scalar(135, 255, 255), maskBlue);
 
   const maskBright = new Mat();
-  inRange(hsv, new Scalar(0, 0, 200), new Scalar(179, 40, 255), maskBright);
+  inRange(hsv, Scalar(0, 0, 200), Scalar(179, 40, 255), maskBright);
 
   const maskColor = new Mat();
   bitwise_or(maskBlue, maskBright, maskColor);
@@ -86,8 +86,8 @@ function main(argv) {
   // --------------------------------------------------------------------------
   // Position prior: keep only the top `topFrac` of the frame.
   // --------------------------------------------------------------------------
-  const maskTop = new Mat(new Size(W, H), CV_8UC1, new Scalar(0));
-  rectangle(maskTop, new Point(0, 0), new Point(W, Math.round(H * topFrac)), new Scalar(255), -1);
+  const maskTop = new Mat(new Size(W, H), CV_8UC1, Scalar(0));
+  rectangle(maskTop, new Point(0, 0), new Point(W, Math.round(H * topFrac)), Scalar(255), -1);
 
   const mask = new Mat();
   bitwise_and(maskColor, maskTop, mask);
@@ -137,8 +137,8 @@ function main(argv) {
   imwrite(maskPath, mask);
 
   const overlay = src.clone();
-  drawContours(overlay, contours, bestIdx, new Scalar(0, 255, 0), 2, LINE_AA);
-  rectangle(overlay, new Point(bbox.x, bbox.y), new Point(bbox.x + bbox.width, bbox.y + bbox.height), new Scalar(0, 200, 255), 2);
+  drawContours(overlay, contours, bestIdx, Scalar(0, 255, 0), 2, LINE_AA);
+  rectangle(overlay, new Point(bbox.x, bbox.y), new Point(bbox.x + bbox.width, bbox.y + bbox.height), Scalar(0, 200, 255), 2);
   imwrite(contourPath, overlay);
 
   console.log(`wrote ${maskPath}`);

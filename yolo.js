@@ -139,7 +139,7 @@ function main() {
       img,
       1 / 255.0, // scaling factor
       new Size(CONFIG.inputSize, CONFIG.inputSize),
-      new Scalar(0, 0, 0), // Mean subtraction
+      Scalar(0, 0, 0), // Mean subtraction
       true, // swapRB (BGR→RGB)
       false, // crop
     );
@@ -267,7 +267,7 @@ function main() {
       const fps = (1000 / ticker.getTimeMilli()).toFixed(1);
 
       // Show FPS
-      putText(frame, `FPS: ${fps} Objects: ${detections.length}`, new Point(10, 25), FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0, 255, 0), 2);
+      putText(frame, `FPS: ${fps} Objects: ${detections.length}`, new Point(10, 25), FONT_HERSHEY_SIMPLEX, 0.7, Scalar(0, 255, 0), 2);
 
       imshow('YOLO – qjs-opencv (q = quit)', frame);
 

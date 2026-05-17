@@ -277,8 +277,8 @@ function main() {
 
     preprocess(frame, net, new Size(inpWidth, inpHeight), scale, mean, swapRB);
 
-    let outs = [];
-    net.forward(outs, outNames);
+    let outs = []; 
+   net.forward(outs, outNames);
 
     postprocess(frame, outs, net, backend);
 

@@ -178,7 +178,7 @@ function detectObjects(net, classNames, imagePath) {
     img,
     1 / 255.0, // Skalierungsfaktor
     new Size(inputSize, inputSize), // Zielgröße
-    new Scalar(0, 0, 0), // Mittelwert-Subtraktion
+    Scalar(0, 0, 0), // Mittelwert-Subtraktion
     true, // swapRB
     false, // crop
   );
@@ -281,14 +281,14 @@ function saveAnnotated(imagePath, detections, outDir) {
 
   for(const { label, confidence, box } of detections) {
     // Rahmen zeichnen
-    rectangle(img, box, new Scalar(0, 200, 0), 2);
+    rectangle(img, box, Scalar(0, 200, 0), 2);
 
     // Beschriftung
     const text = `${label} ${(confidence * 100).toFixed(0)}%`;
     let baseLine;
     const sz = getTextSize(text, FONT_HERSHEY_SIMPLEX, 0.55, 1, v => (baseLine = v));
-    rectangle(img, new Point(box.x, box.y - sz.height - 6), new Point(box.x + sz.width, box.y), new Scalar(0, 200, 0), FILLED);
-    putText(img, text, new Point(box.x, box.y - 4), FONT_HERSHEY_SIMPLEX, 0.55, new Scalar(0, 0, 0), 1);
+    rectangle(img, new Point(box.x, box.y - sz.height - 6), new Point(box.x + sz.width, box.y), Scalar(0, 200, 0), FILLED);
+    putText(img, text, new Point(box.x, box.y - 4), FONT_HERSHEY_SIMPLEX, 0.55, Scalar(0, 0, 0), 1);
   }
 
   const basename = imagePath
