@@ -53,22 +53,27 @@ function main() {
   // --- 3. find the page contour (largest 4-vertex approximation) ------------
   const contours = [];
   /*const result =*/ findContours(edges, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-  console.log('contours:', contours);
+  //console.log('contours:', contours);
+
+const MIN_AREA=W * H * 0.05;
+  console.log('MIN_AREA:', MIN_AREA);
 
   // sort candidates by area, descending, then find first that approximates to a quad
   const ranked = [...contours]
     .map(c => ({ c, area: contourArea(c) }))
-    //.filter(o => o.area > W * H * 0.05) // ignore noise: < 5 % of frame
+    //.filter(o => o.area > MIN_AREA) // ignore noise: < 5 % of frame
     .sort((a, b) => b.area - a.area);
-  console.log('ranked:', ranked.length);
+  console.log('ranked[0]:', ranked[0].area);
+  console.log('ranked[1]:', ranked[1].area);
 
   let pageContour = null;
   let pagePoints = null;
 
   for(const { c, area } of ranked) {
-    const peri = arcLength(c, true);
+    let peri = arcLength(c, true);
+    if(!Number.isFinite(peri)) peri=10000;
     const approx = new Contour();
-    console.log('peri:', peri);
+   //console.log('peri:', peri);
     c.approxPolyDP(approx, 0.02 * peri, true);
     const pts = [...approx].map(p => ({ x: p.x, y: p.y }));
     if(pts.length === 4) {
@@ -78,6 +83,8 @@ function main() {
       break;
     }
   }
+  console.log('pageContour:', pageContour);
+  console.log('pagePoints:', pagePoints);
 
   if(!pageContour) throw new Error('no quadrilateral page outline found');
 
