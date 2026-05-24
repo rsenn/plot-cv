@@ -3,7 +3,7 @@ import { ImagePipeline } from './imagePipeline.js';
 import { LoadHistory, ReadBJSON, ReadFile, ReadJSON, WriteBJSON, WriteFile, WriteJSON } from './io-helpers.js';
 import { ImageInfo } from './lib/image-info.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import { define, difference, escape, fnmatch, getFunctionArguments, getOpt, glob, GLOB_TILDE, lazyProperties, memoize, quote, toArrayBuffer, toString, union, wordexp } from './lib/misc.js';
+import { define, difference, escape, fnmatch, getFunctionArguments, getOpt, glob, GLOB_TILDE, lazyProperties, memoize, quote, toArrayBuffer, toString, union } from './lib/misc.js';
 import inspect from './lib/objectInspect.js';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
@@ -85,7 +85,7 @@ function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
         let arg = line.replace(/^\\*load\s*/, '');
         let start = line.length - arg.length;
         let paths = [];
-        let pattern = wordexp(arg, 0)[0];
+        let pattern /*= wordexp(arg, 0)[0]*/;
         //     if(!pattern.endsWith('*')) pattern += '*';
 
         glob(pattern + '*', GLOB_TILDE, (p, err) => console.log('glob error', { p, err }), paths);
@@ -94,8 +94,8 @@ function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
 
         console.log('complete', { line, arg, pos });
         return { tab, pos: 0, ctx: {} };
-      }
-    ]
+      },
+    ],
   };
 
   /*console.log = repl.printFunction((...args) => {
@@ -108,7 +108,7 @@ function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
 
 function main(...args) {
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 10 }
+    inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 10 },
   });
   let debugLog;
 
@@ -122,9 +122,9 @@ function main(...args) {
     {
       debug: [false, null, 'x'],
       'output-dir': [true, null, 'd'],
-      '@': 'input'
+      '@': 'input',
     },
-    args
+    args,
   );
 
   Object.assign(globalThis, { cv });
@@ -133,7 +133,7 @@ function main(...args) {
     quit(arg) {
       repl.cleanup();
       std.exit(arg ?? 0);
-    }
+    },
   });
 
   cmdhist = `.${base}-cmdhistory`;
@@ -164,7 +164,7 @@ function main(...args) {
     },
     globalValues() {
       return AutoValue(getConfFile('global'));
-    }
+    },
   });
 
   Object.assign(globalThis, {
@@ -188,7 +188,6 @@ function main(...args) {
     getFunctionArguments,
     glob,
     fnmatch,
-    wordexp,
     path,
     Console,
     REPL,
@@ -204,7 +203,7 @@ function main(...args) {
     WriteJSON,
     WriteBJSON,
     ImageInfo,
-    AutoValue
+    AutoValue,
   });
   repl.globalKeys();
 

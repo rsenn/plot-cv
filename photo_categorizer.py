@@ -153,7 +153,7 @@ def analyze_image_demo(image_path: Path, conf_thresh: float = 0.35):
     # Simulierte Objekte anhand des Dateinamens
     presets = {
         "strasse":     [("car", 0.91), ("truck", 0.87), ("person", 0.78)],
-        "park":        [("dog",  0.93), ("person", pip install ultralytics opencv-python-pip install ultralytics opencv-python-pip install ultralytics opencv-python-headless PilloWheadless PilloWheadless PilloW0), ("bird", 0.61)],
+        "park":        [("dog",  0.93), ("person", 0.82), ("bird", 0.61)],
         "wohnzimmer":  [("couch", 0.95), ("tv",   0.89), ("cat",  0.77)],
     }
     stem = image_path.stem.lower()
@@ -275,7 +275,14 @@ def run_webcam(model, conf_thresh=0.40):
         cv2.putText(frame, f"FPS: {fps:.1f}", (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 120), 2)
 
+        rows, cols = frame.shape
+
+        print(f"    rows: {rows} cols: {cols}")
+        #print(f"    {GRAY}– Keine Objekte erkannt –{RESET}")
+
+        #cv2.namedWindow("YOLO Kategorisierung – [Q] beenden", cv2.WINDOW_AUTOSIZE)
         cv2.imshow("YOLO Kategorisierung – [Q] beenden", frame)
+        cv2.resizeWindow("YOLO Kategorisierung – [Q] beenden", cols / 10, rows / 10)
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
@@ -382,7 +389,14 @@ def main():
 
         # Bild anzeigen (2 Sekunden)
         annotated = draw_detections(img_path, detections)
+
+        rows, cols, x = annotated.shape
+        print(f"    rows: {rows} cols: {cols}")
+
+        cv2.namedWindow(f"Kategorisierung: {img_path.name}", cv2.WINDOW_NORMAL) 
+        cv2.moveWindow(f"Kategorisierung: {img_path.name}", 0, 0)
         cv2.imshow(f"Kategorisierung: {img_path.name}", annotated)
+        cv2.resizeWindow(f"Kategorisierung: {img_path.name}", (cols // 6), (rows // 6)) 
         cv2.waitKey(2000)
         cv2.destroyAllWindows()
 

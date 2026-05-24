@@ -33,7 +33,7 @@ class Binary {
    * @default "binary"
    * @constant
    */
-  icaltype = "binary";
+  icaltype = 'binary';
 
   /**
    * Base64 decode the current value
@@ -70,39 +70,46 @@ class Binary {
     //if (typeof this.window['atob'] == 'function') {
     //    return atob(data);
     //}
-    let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-              "abcdefghijklmnopqrstuvwxyz0123456789+/=";
-    let o1, o2, o3, h1, h2, h3, h4, bits, i = 0,
+    let b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' + 'abcdefghijklmnopqrstuvwxyz0123456789+/=';
+    let o1,
+      o2,
+      o3,
+      h1,
+      h2,
+      h3,
+      h4,
+      bits,
+      i = 0,
       ac = 0,
-      enc = "",
+      enc = '',
       tmp_arr = [];
 
-    if (!data) {
+    if(!data) {
       return data;
     }
 
-    do { // pack three octets into four hexets
+    do {
+      // pack three octets into four hexets
       o1 = data.charCodeAt(i++);
       o2 = data.charCodeAt(i++);
       o3 = data.charCodeAt(i++);
 
-      bits = o1 << 16 | o2 << 8 | o3;
+      bits = (o1 << 16) | (o2 << 8) | o3;
 
-      h1 = bits >> 18 & 0x3f;
-      h2 = bits >> 12 & 0x3f;
-      h3 = bits >> 6 & 0x3f;
+      h1 = (bits >> 18) & 0x3f;
+      h2 = (bits >> 12) & 0x3f;
+      h3 = (bits >> 6) & 0x3f;
       h4 = bits & 0x3f;
 
       // use hexets to index into b64, and append result to encoded string
       tmp_arr[ac++] = b64.charAt(h1) + b64.charAt(h2) + b64.charAt(h3) + b64.charAt(h4);
-    } while (i < data.length);
+    } while(i < data.length);
 
     enc = tmp_arr.join('');
 
     let r = data.length % 3;
 
     return (r ? enc.slice(0, r - 3) : enc) + '==='.slice(r || 3);
-
   }
 
   _b64_decode(data) {
@@ -123,39 +130,47 @@ class Binary {
     //if (typeof this.window['btoa'] == 'function') {
     //    return btoa(data);
     //}
-    let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-              "abcdefghijklmnopqrstuvwxyz0123456789+/=";
-    let o1, o2, o3, h1, h2, h3, h4, bits, i = 0,
+    let b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' + 'abcdefghijklmnopqrstuvwxyz0123456789+/=';
+    let o1,
+      o2,
+      o3,
+      h1,
+      h2,
+      h3,
+      h4,
+      bits,
+      i = 0,
       ac = 0,
-      dec = "",
+      dec = '',
       tmp_arr = [];
 
-    if (!data) {
+    if(!data) {
       return data;
     }
 
     data += '';
 
-    do { // unpack four hexets into three octets using index points in b64
+    do {
+      // unpack four hexets into three octets using index points in b64
       h1 = b64.indexOf(data.charAt(i++));
       h2 = b64.indexOf(data.charAt(i++));
       h3 = b64.indexOf(data.charAt(i++));
       h4 = b64.indexOf(data.charAt(i++));
 
-      bits = h1 << 18 | h2 << 12 | h3 << 6 | h4;
+      bits = (h1 << 18) | (h2 << 12) | (h3 << 6) | h4;
 
-      o1 = bits >> 16 & 0xff;
-      o2 = bits >> 8 & 0xff;
+      o1 = (bits >> 16) & 0xff;
+      o2 = (bits >> 8) & 0xff;
       o3 = bits & 0xff;
 
-      if (h3 == 64) {
+      if(h3 == 64) {
         tmp_arr[ac++] = String.fromCharCode(o1);
-      } else if (h4 == 64) {
+      } else if(h4 == 64) {
         tmp_arr[ac++] = String.fromCharCode(o1, o2);
       } else {
         tmp_arr[ac++] = String.fromCharCode(o1, o2, o3);
       }
-    } while (i < data.length);
+    } while(i < data.length);
 
     dec = tmp_arr.join('');
 
@@ -176,9 +191,8 @@ class Binary {
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
 
-
 const DURATION_LETTERS = /([PDWHMTS]{1,1})/;
-const DATA_PROPS_TO_COPY = ["weeks", "days", "hours", "minutes", "seconds", "isNegative"];
+const DATA_PROPS_TO_COPY = ['weeks', 'days', 'hours', 'minutes', 'seconds', 'isNegative'];
 
 /**
  * This class represents the "duration" value type, with various calculation
@@ -194,7 +208,7 @@ class Duration {
    * @return {Duration}             The newly created duration instance
    */
   static fromSeconds(aSeconds) {
-    return (new Duration()).fromSeconds(aSeconds);
+    return new Duration().fromSeconds(aSeconds);
   }
 
   /**
@@ -205,7 +219,7 @@ class Duration {
    *                              duration ical type
    */
   static isValueString(string) {
-    return (string[0] === 'P' || string[1] === 'P');
+    return string[0] === 'P' || string[1] === 'P';
   }
 
   /**
@@ -219,7 +233,7 @@ class Duration {
     let dict = Object.create(null);
     let chunks = 0;
 
-    while ((pos = aStr.search(DURATION_LETTERS)) !== -1) {
+    while((pos = aStr.search(DURATION_LETTERS)) !== -1) {
       let type = aStr[pos];
       let numeric = aStr.slice(0, Math.max(0, pos));
       aStr = aStr.slice(pos + 1);
@@ -227,11 +241,9 @@ class Duration {
       chunks += parseDurationChunk(type, numeric, dict);
     }
 
-    if (chunks < 2) {
+    if(chunks < 2) {
       // There must be at least a chunk with "P" and some unit chunk
-      throw new Error(
-        'invalid duration value: Not enough duration components in "' + aStr + '"'
-      );
+      throw new Error('invalid duration value: Not enough duration components in "' + aStr + '"');
     }
 
     return new Duration(dict);
@@ -317,7 +329,7 @@ class Duration {
    * @type {String}
    * @default "icalduration"
    */
-  icalclass = "icalduration";
+  icalclass = 'icalduration';
 
   /**
    * The type name, to be used in the jCal object.
@@ -325,7 +337,7 @@ class Duration {
    * @type {String}
    * @default "duration"
    */
-  icaltype = "duration";
+  icaltype = 'duration';
 
   /**
    * Returns a clone of the duration object.
@@ -342,9 +354,8 @@ class Duration {
    * @return {Number}             The duration value in seconds
    */
   toSeconds() {
-    let seconds = this.seconds + 60 * this.minutes + 3600 * this.hours +
-                  86400 * this.days + 7 * 86400 * this.weeks;
-    return (this.isNegative ? -seconds : seconds);
+    let seconds = this.seconds + 60 * this.minutes + 3600 * this.hours + 86400 * this.days + 7 * 86400 * this.weeks;
+    return this.isNegative ? -seconds : seconds;
   }
 
   /**
@@ -358,11 +369,11 @@ class Duration {
   fromSeconds(aSeconds) {
     let secs = Math.abs(aSeconds);
 
-    this.isNegative = (aSeconds < 0);
+    this.isNegative = aSeconds < 0;
     this.days = trunc(secs / 86400);
 
     // If we have a flat number of weeks, use them.
-    if (this.days % 7 == 0) {
+    if(this.days % 7 == 0) {
       this.weeks = this.days / 7;
       this.days = 0;
     } else {
@@ -393,8 +404,8 @@ class Duration {
    * @param {Boolean=} aData.isNegative   If true, the duration is negative
    */
   fromData(aData) {
-    for (let prop of DATA_PROPS_TO_COPY) {
-      if (aData && prop in aData) {
+    for(let prop of DATA_PROPS_TO_COPY) {
+      if(aData && prop in aData) {
         this[prop] = aData[prop];
       } else {
         this[prop] = 0;
@@ -439,37 +450,37 @@ class Duration {
    * @return {String}
    */
   toString() {
-    if (this.toSeconds() == 0) {
-      return "PT0S";
+    if(this.toSeconds() == 0) {
+      return 'PT0S';
     } else {
-      let str = "";
-      if (this.isNegative) str += "-";
-      str += "P";
+      let str = '';
+      if(this.isNegative) str += '-';
+      str += 'P';
       let hasWeeks = false;
-      if (this.weeks) {
-        if (this.days || this.hours || this.minutes || this.seconds) {
-          str += (this.weeks * 7 + this.days) + "D";
+      if(this.weeks) {
+        if(this.days || this.hours || this.minutes || this.seconds) {
+          str += this.weeks * 7 + this.days + 'D';
         } else {
-          str += (this.weeks + "W");
+          str += this.weeks + 'W';
           hasWeeks = true;
         }
-      } else if (this.days) {
-        str += (this.days + "D");
+      } else if(this.days) {
+        str += this.days + 'D';
       }
 
-      if (!hasWeeks) {
-        if (this.hours || this.minutes || this.seconds) {
-          str += "T";
-          if (this.hours) {
-            str += this.hours + "H";
+      if(!hasWeeks) {
+        if(this.hours || this.minutes || this.seconds) {
+          str += 'T';
+          if(this.hours) {
+            str += this.hours + 'H';
           }
 
-          if (this.minutes) {
-            str += this.minutes + "M";
+          if(this.minutes) {
+            str += this.minutes + 'M';
           }
 
-          if (this.seconds) {
-            str += this.seconds + "S";
+          if(this.seconds) {
+            str += this.seconds + 'S';
           }
         }
       }
@@ -499,7 +510,7 @@ function parseDurationChunk(letter, number, object) {
   let type;
   switch (letter) {
     case 'P':
-      if (number && number === '-') {
+      if(number && number === '-') {
         object.isNegative = true;
       } else {
         object.isNegative = false;
@@ -526,17 +537,13 @@ function parseDurationChunk(letter, number, object) {
       return 0;
   }
 
-  if (type) {
-    if (!number && number !== 0) {
-      throw new Error(
-        'invalid duration value: Missing number before "' + letter + '"'
-      );
+  if(type) {
+    if(!number && number !== 0) {
+      throw new Error('invalid duration value: Missing number before "' + letter + '"');
     }
     let num = parseInt(number, 10);
-    if (isStrictlyNaN(num)) {
-      throw new Error(
-        'invalid duration value: Invalid number "' + number + '" before "' + letter + '"'
-      );
+    if(isStrictlyNaN(num)) {
+      throw new Error('invalid duration value: Invalid number "' + number + '" before "' + letter + '"');
     }
     object[type] = num;
   }
@@ -548,7 +555,6 @@ function parseDurationChunk(letter, number, object) {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This lets typescript resolve our custom types in the
@@ -575,19 +581,17 @@ class Period {
   static fromString(str, prop) {
     let parts = str.split('/');
 
-    if (parts.length !== 2) {
-      throw new Error(
-        'Invalid string value: "' + str + '" must contain a "/" char.'
-      );
+    if(parts.length !== 2) {
+      throw new Error('Invalid string value: "' + str + '" must contain a "/" char.');
     }
 
     let options = {
-      start: Time.fromDateTimeString(parts[0], prop)
+      start: Time.fromDateTimeString(parts[0], prop),
     };
 
     let end = parts[1];
 
-    if (Duration.isValueString(end)) {
+    if(Duration.isValueString(end)) {
       options.duration = Duration.fromString(end);
     } else {
       options.end = Time.fromDateTimeString(end, prop);
@@ -622,22 +626,22 @@ class Period {
    */
   static fromJSON(aData, aProp, aLenient) {
     function fromDateOrDateTimeString(aValue, dateProp) {
-      if (aLenient) {
+      if(aLenient) {
         return Time.fromString(aValue, dateProp);
       } else {
         return Time.fromDateTimeString(aValue, dateProp);
       }
     }
 
-    if (Duration.isValueString(aData[1])) {
+    if(Duration.isValueString(aData[1])) {
       return Period.fromData({
         start: fromDateOrDateTimeString(aData[0], aProp),
-        duration: Duration.fromString(aData[1])
+        duration: Duration.fromString(aData[1]),
       });
     } else {
       return Period.fromData({
         start: fromDateOrDateTimeString(aData[0], aProp),
-        end: fromDateOrDateTimeString(aData[1], aProp)
+        end: fromDateOrDateTimeString(aData[1], aProp),
       });
     }
   }
@@ -654,32 +658,31 @@ class Period {
   constructor(aData) {
     this.wrappedJSObject = this;
 
-    if (aData && 'start' in aData) {
-      if (aData.start && !(aData.start instanceof Time)) {
+    if(aData && 'start' in aData) {
+      if(aData.start && !(aData.start instanceof Time)) {
         throw new TypeError('.start must be an instance of ICAL.Time');
       }
       this.start = aData.start;
     }
 
-    if (aData && aData.end && aData.duration) {
+    if(aData && aData.end && aData.duration) {
       throw new Error('cannot accept both end and duration');
     }
 
-    if (aData && 'end' in aData) {
-      if (aData.end && !(aData.end instanceof Time)) {
+    if(aData && 'end' in aData) {
+      if(aData.end && !(aData.end instanceof Time)) {
         throw new TypeError('.end must be an instance of ICAL.Time');
       }
       this.end = aData.end;
     }
 
-    if (aData && 'duration' in aData) {
-      if (aData.duration && !(aData.duration instanceof Duration)) {
+    if(aData && 'duration' in aData) {
+      if(aData.duration && !(aData.duration instanceof Duration)) {
         throw new TypeError('.duration must be an instance of ICAL.Duration');
       }
       this.duration = aData.duration;
     }
   }
-
 
   /**
    * The start of the period
@@ -705,7 +708,7 @@ class Period {
    * @type {String}
    * @default "icalperiod"
    */
-  icalclass = "icalperiod";
+  icalclass = 'icalperiod';
 
   /**
    * The type name, to be used in the jCal object.
@@ -713,7 +716,7 @@ class Period {
    * @type {String}
    * @default "period"
    */
-  icaltype = "period";
+  icaltype = 'period';
 
   /**
    * Returns a clone of the duration object.
@@ -724,7 +727,7 @@ class Period {
     return Period.fromData({
       start: this.start ? this.start.clone() : null,
       end: this.end ? this.end.clone() : null,
-      duration: this.duration ? this.duration.clone() : null
+      duration: this.duration ? this.duration.clone() : null,
     });
   }
 
@@ -735,7 +738,7 @@ class Period {
    * @return {Duration}      The calculated duration
    */
   getDuration() {
-    if (this.duration) {
+    if(this.duration) {
       return this.duration;
     } else {
       return this.end.subtractDate(this.start);
@@ -749,7 +752,7 @@ class Period {
    * @return {Time}          The calculated end date
    */
   getEnd() {
-    if (this.end) {
+    if(this.end) {
       return this.end;
     } else {
       let end = this.start.clone();
@@ -767,9 +770,9 @@ class Period {
    * @param {Time|Period} dt    The date or other period to compare with
    */
   compare(dt) {
-    if (dt.compare(this.start) < 0) {
+    if(dt.compare(this.start) < 0) {
       return 1;
-    } else if (dt.compare(this.getEnd()) > 0) {
+    } else if(dt.compare(this.getEnd()) > 0) {
       return -1;
     } else {
       return 0;
@@ -781,7 +784,7 @@ class Period {
    * @return {String}
    */
   toString() {
-    return this.start + "/" + (this.end || this.duration);
+    return this.start + '/' + (this.end || this.duration);
   }
 
   /**
@@ -797,8 +800,7 @@ class Period {
    * @return {String}
    */
   toICALString() {
-    return this.start.toICALString() + "/" +
-           (this.end || this.duration).toICALString();
+    return this.start.toICALString() + '/' + (this.end || this.duration).toICALString();
   }
 }
 
@@ -806,7 +808,6 @@ class Period {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This lets typescript resolve our custom types in the
@@ -840,7 +841,7 @@ class Period {
  *
  *
  * @memberof ICAL
-*/
+ */
 class Time {
   static _dowCache = {};
   static _wnCache = {};
@@ -856,11 +857,11 @@ class Time {
     let _daysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     let days = 30;
 
-    if (month < 1 || month > 12) return days;
+    if(month < 1 || month > 12) return days;
 
     days = _daysInMonth[month];
 
-    if (month == 2) {
+    if(month == 2) {
       days += Time.isLeapYear(year);
     }
 
@@ -874,10 +875,10 @@ class Time {
    * @return {Boolean}          True, if the year is a leap year
    */
   static isLeapYear(year) {
-    if (year <= 1752) {
-      return ((year % 4) == 0);
+    if(year <= 1752) {
+      return year % 4 == 0;
     } else {
-      return (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
+      return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
     }
   }
 
@@ -894,15 +895,15 @@ class Time {
     let doy = aDayOfYear;
     let tt = new Time();
     tt.auto_normalize = false;
-    let is_leap = (Time.isLeapYear(year) ? 1 : 0);
+    let is_leap = Time.isLeapYear(year) ? 1 : 0;
 
-    if (doy < 1) {
+    if(doy < 1) {
       year--;
-      is_leap = (Time.isLeapYear(year) ? 1 : 0);
+      is_leap = Time.isLeapYear(year) ? 1 : 0;
       doy += Time.daysInYearPassedMonth[is_leap][12];
       return Time.fromDayOfYear(doy, year);
-    } else if (doy > Time.daysInYearPassedMonth[is_leap][12]) {
-      is_leap = (Time.isLeapYear(year) ? 1 : 0);
+    } else if(doy > Time.daysInYearPassedMonth[is_leap][12]) {
+      is_leap = Time.isLeapYear(year) ? 1 : 0;
       doy -= Time.daysInYearPassedMonth[is_leap][12];
       year++;
       return Time.fromDayOfYear(doy, year);
@@ -911,8 +912,8 @@ class Time {
     tt.year = year;
     tt.isDate = true;
 
-    for (let month = 11; month >= 0; month--) {
-      if (doy > Time.daysInYearPassedMonth[is_leap][month]) {
+    for(let month = 11; month >= 0; month--) {
+      if(doy > Time.daysInYearPassedMonth[is_leap][month]) {
         tt.month = month + 1;
         tt.day = doy - Time.daysInYearPassedMonth[is_leap][month];
         break;
@@ -935,7 +936,7 @@ class Time {
       year: parseInt(str.slice(0, 4), 10),
       month: parseInt(str.slice(5, 7), 10),
       day: parseInt(str.slice(8, 10), 10),
-      isDate: true
+      isDate: true,
     });
   }
 
@@ -956,7 +957,7 @@ class Time {
       year: strictParseInt(aValue.slice(0, 4)),
       month: strictParseInt(aValue.slice(5, 7)),
       day: strictParseInt(aValue.slice(8, 10)),
-      isDate: true
+      isDate: true,
     });
   }
 
@@ -970,26 +971,24 @@ class Time {
    * @return {Time}                 The date/time instance
    */
   static fromDateTimeString(aValue, prop) {
-    if (aValue.length < 19) {
-      throw new Error(
-        'invalid date-time value: "' + aValue + '"'
-      );
+    if(aValue.length < 19) {
+      throw new Error('invalid date-time value: "' + aValue + '"');
     }
 
     let zone;
     let zoneId;
 
-    if (aValue.slice(-1) === 'Z') {
+    if(aValue.slice(-1) === 'Z') {
       zone = Timezone.utcTimezone;
-    } else if (prop) {
+    } else if(prop) {
       zoneId = prop.getParameter('tzid');
 
-      if (prop.parent) {
-        if (prop.parent.name === 'standard' || prop.parent.name === 'daylight') {
+      if(prop.parent) {
+        if(prop.parent.name === 'standard' || prop.parent.name === 'daylight') {
           // Per RFC 5545 3.8.2.4 and 3.8.2.2, start/end date-times within
           // these components MUST be specified in local time.
           zone = Timezone.localTimezone;
-        } else if (zoneId) {
+        } else if(zoneId) {
           // If the desired time zone is defined within the component tree,
           // fetch its definition and prefer that.
           zone = prop.parent.getTimeZoneByID(zoneId);
@@ -1010,7 +1009,7 @@ class Time {
     // corresponding time zone definition, we may not be parsing the full file
     // or we may be dealing with a non-compliant file; in either case, we can
     // check our own time zone service for the TZID in a last-ditch effort.
-    if (zoneId && !zone) {
+    if(zoneId && !zone) {
       timeData.timezone = zoneId;
     }
 
@@ -1026,7 +1025,7 @@ class Time {
    * @return {Time}                 The date/time instance
    */
   static fromString(aValue, aProperty) {
-    if (aValue.length > 10) {
+    if(aValue.length > 10) {
       return Time.fromDateTimeString(aValue, aProperty);
     } else {
       return Time.fromDateString(aValue);
@@ -1079,15 +1078,15 @@ class Time {
       year: aYear,
       month: 1,
       day: 1,
-      isDate: true
+      isDate: true,
     });
 
     let dow = t.dayOfWeek();
     let wkst = aWeekStart || Time.DEFAULT_WEEK_START;
-    if (dow > Time.THURSDAY) {
+    if(dow > Time.THURSDAY) {
       t.day += 7;
     }
-    if (wkst > Time.THURSDAY) {
+    if(wkst > Time.THURSDAY) {
       t.day -= 7;
     }
 
@@ -1104,10 +1103,10 @@ class Time {
    * @return {String}             The dominical letter.
    */
   static getDominicalLetter(yr) {
-    let LTRS = "GFEDCBA";
-    let dom = (yr + (yr / 4 | 0) + (yr / 400 | 0) - (yr / 100 | 0) - 1) % 7;
+    let LTRS = 'GFEDCBA';
+    let dom = (yr + ((yr / 4) | 0) + ((yr / 400) | 0) - ((yr / 100) | 0) - 1) % 7;
     let isLeap = Time.isLeapYear(yr);
-    if (isLeap) {
+    if(isLeap) {
       return LTRS[(dom + 6) % 7] + LTRS[dom];
     } else {
       return LTRS[dom];
@@ -1122,7 +1121,7 @@ class Time {
    * @instance
    */
   static get epochTime() {
-    if (!this.#epochTime) {
+    if(!this.#epochTime) {
       this.#epochTime = Time.fromData({
         year: 1970,
         month: 1,
@@ -1131,15 +1130,15 @@ class Time {
         minute: 0,
         second: 0,
         isDate: false,
-        timezone: "Z"
+        timezone: 'Z',
       });
     }
     return this.#epochTime;
   }
 
   static _cmp_attr(a, b, attr) {
-    if (a[attr] > b[attr]) return 1;
-    if (a[attr] < b[attr]) return -1;
+    if(a[attr] > b[attr]) return 1;
+    if(a[attr] < b[attr]) return -1;
     return 0;
   }
 
@@ -1154,7 +1153,7 @@ class Time {
    */
   static daysInYearPassedMonth = [
     [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365],
-    [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366]
+    [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366],
   ];
 
   static SUNDAY = 1;
@@ -1205,7 +1204,7 @@ class Time {
    * @type {String}
    * @default "icaltime"
    */
-  icalclass = "icaltime";
+  icalclass = 'icaltime';
   _cachedUnixTime = null;
 
   /**
@@ -1325,7 +1324,7 @@ class Time {
    * @return {Number|Boolean}         Current value for the attribute
    */
   _getTimeAttr(attr) {
-    if (this._pendingNormalization) {
+    if(this._pendingNormalization) {
       this._normalize();
       this._pendingNormalization = false;
     }
@@ -1343,7 +1342,7 @@ class Time {
     // Check if isDate will be set and if was not set to normalize date.
     // This avoids losing days when seconds, minutes and hours are zeroed
     // what normalize will do when time is a date.
-    if (attr === "isDate" && val && !this._time.isDate) {
+    if(attr === 'isDate' && val && !this._time.isDate) {
       this.adjust(0, 0, 0, 0);
     }
     this._cachedUnixTime = null;
@@ -1387,7 +1386,7 @@ class Time {
       hour: hour,
       minute: minute,
       second: second,
-      zone: timezone
+      zone: timezone,
     });
   }
 
@@ -1398,10 +1397,10 @@ class Time {
    * @param {Boolean} [useUTC=false]  If true, the UTC values of the date will be used
    */
   fromJSDate(aDate, useUTC) {
-    if (!aDate) {
+    if(!aDate) {
       this.reset();
     } else {
-      if (useUTC) {
+      if(useUTC) {
         this.zone = Timezone.utcTimezone;
         this.year = aDate.getUTCFullYear();
         this.month = aDate.getUTCMonth() + 1;
@@ -1430,37 +1429,35 @@ class Time {
    * @param {Timezone=} aZone         Timezone this position occurs in
    */
   fromData(aData, aZone) {
-    if (aData) {
-      for (let [key, value] of Object.entries(aData)) {
-          // ical type cannot be set
-          if (key === 'icaltype') continue;
+    if(aData) {
+      for(let [key, value] of Object.entries(aData)) {
+        // ical type cannot be set
+        if(key === 'icaltype') continue;
         this[key] = value;
       }
     }
 
-    if (aZone) {
+    if(aZone) {
       this.zone = aZone;
     }
 
-    if (aData && !("isDate" in aData)) {
-      this.isDate = !("hour" in aData);
-    } else if (aData && ("isDate" in aData)) {
+    if(aData && !('isDate' in aData)) {
+      this.isDate = !('hour' in aData);
+    } else if(aData && 'isDate' in aData) {
       this.isDate = aData.isDate;
     }
 
-    if (aData && "timezone" in aData) {
-      let zone = TimezoneService.get(
-        aData.timezone
-      );
+    if(aData && 'timezone' in aData) {
+      let zone = TimezoneService.get(aData.timezone);
 
       this.zone = zone || Timezone.localTimezone;
     }
 
-    if (aData && "zone" in aData) {
+    if(aData && 'zone' in aData) {
       this.zone = aData.zone;
     }
 
-    if (!this.zone) {
+    if(!this.zone) {
       this.zone = Timezone.localTimezone;
     }
 
@@ -1477,7 +1474,7 @@ class Time {
   dayOfWeek(aWeekStart) {
     let firstDow = aWeekStart || Time.SUNDAY;
     let dowCacheKey = (this.year << 12) + (this.month << 8) + (this.day << 3) + firstDow;
-    if (dowCacheKey in Time._dowCache) {
+    if(dowCacheKey in Time._dowCache) {
       return Time._dowCache[dowCacheKey];
     }
 
@@ -1486,8 +1483,9 @@ class Time {
     let m = this.month + (this.month < 3 ? 12 : 0);
     let Y = this.year - (this.month < 3 ? 1 : 0);
 
-    let h = (q + Y + trunc(((m + 1) * 26) / 10) + trunc(Y / 4));
-    { // eslint-disable-line no-constant-condition
+    let h = q + Y + trunc(((m + 1) * 26) / 10) + trunc(Y / 4);
+    {
+      // eslint-disable-line no-constant-condition
       h += trunc(Y / 100) * 6 + trunc(Y / 400);
     }
 
@@ -1502,7 +1500,7 @@ class Time {
    * @return {Number}
    */
   dayOfYear() {
-    let is_leap = (Time.isLeapYear(this.year) ? 1 : 0);
+    let is_leap = Time.isLeapYear(this.year) ? 1 : 0;
     let diypm = Time.daysInYearPassedMonth;
     return diypm[is_leap][this.month - 1] + this.day;
   }
@@ -1519,7 +1517,7 @@ class Time {
   startOfWeek(aWeekStart) {
     let firstDow = aWeekStart || Time.SUNDAY;
     let result = this.clone();
-    result.day -= ((this.dayOfWeek() + 7 - firstDow) % 7);
+    result.day -= (this.dayOfWeek() + 7 - firstDow) % 7;
     result.isDate = true;
     result.hour = 0;
     result.minute = 0;
@@ -1628,7 +1626,7 @@ class Time {
   startDoyWeek(aFirstDayOfWeek) {
     let firstDow = aFirstDayOfWeek || Time.SUNDAY;
     let delta = this.dayOfWeek() - firstDow;
-    if (delta < 0) delta += 7;
+    if(delta < 0) delta += 7;
     return this.dayOfYear() - delta;
   }
 
@@ -1666,12 +1664,12 @@ class Time {
 
     let otherDay = this.clone();
 
-    if (pos >= 0) {
+    if(pos >= 0) {
       otherDay.day = 1;
 
       // because 0 means no position has been given
       // 1 and 0 indicate the same day.
-      if (pos != 0) {
+      if(pos != 0) {
         // remove the extra numeric value
         pos--;
       }
@@ -1686,11 +1684,10 @@ class Time {
       // day of the week and desired day of the week
       let offset = aDayOfWeek - startDow;
 
-
       // if the offset goes into the past
       // week we add 7 so it goes into the next
       // week. We only want to go forward in time here.
-      if (offset < 0)
+      if(offset < 0)
         // this is really important otherwise we would
         // end up with dates from in the past.
         offset += 7;
@@ -1707,7 +1704,6 @@ class Time {
       // set week day
       weekday = aDayOfWeek;
     } else {
-
       // then we set it to the last day in the current month
       otherDay.day = daysInMonth;
 
@@ -1716,9 +1712,9 @@ class Time {
 
       pos++;
 
-      weekday = (endDow - aDayOfWeek);
+      weekday = endDow - aDayOfWeek;
 
-      if (weekday < 0) {
+      if(weekday < 0) {
         weekday += 7;
       }
 
@@ -1742,14 +1738,14 @@ class Time {
   isNthWeekDay(aDayOfWeek, aPos) {
     let dow = this.dayOfWeek();
 
-    if (aPos === 0 && dow === aDayOfWeek) {
+    if(aPos === 0 && dow === aDayOfWeek) {
       return true;
     }
 
     // get pos
     let day = this.nthWeekDay(aDayOfWeek, aPos);
 
-    if (day === this.day) {
+    if(day === this.day) {
       return true;
     }
 
@@ -1772,7 +1768,7 @@ class Time {
    */
   weekNumber(aWeekStart) {
     let wnCacheKey = (this.year << 12) + (this.month << 8) + (this.day << 3) + aWeekStart;
-    if (wnCacheKey in Time._wnCache) {
+    if(wnCacheKey in Time._wnCache) {
       return Time._wnCache[wnCacheKey];
     }
     // This function courtesty of Julian Bucknall, published under the MIT license
@@ -1784,21 +1780,21 @@ class Time {
     dt.isDate = true;
     let isoyear = this.year;
 
-    if (dt.month == 12 && dt.day > 25) {
+    if(dt.month == 12 && dt.day > 25) {
       week1 = Time.weekOneStarts(isoyear + 1, aWeekStart);
-      if (dt.compare(week1) < 0) {
+      if(dt.compare(week1) < 0) {
         week1 = Time.weekOneStarts(isoyear, aWeekStart);
       } else {
         isoyear++;
       }
     } else {
       week1 = Time.weekOneStarts(isoyear, aWeekStart);
-      if (dt.compare(week1) < 0) {
+      if(dt.compare(week1) < 0) {
         week1 = Time.weekOneStarts(--isoyear, aWeekStart);
       }
     }
 
-    let daysBetween = (dt.subtractDate(week1).toSeconds() / 86400);
+    let daysBetween = dt.subtractDate(week1).toSeconds() / 86400;
     let answer = trunc(daysBetween / 7) + 1;
     Time._wnCache[wnCacheKey] = answer;
     return answer;
@@ -1811,7 +1807,7 @@ class Time {
    * @param {Duration} aDuration         The duration to add
    */
   addDuration(aDuration) {
-    let mult = (aDuration.isNegative ? -1 : 1);
+    let mult = aDuration.isNegative ? -1 : 1;
 
     // because of the duration optimizations it is much
     // more efficient to grab all the values up front
@@ -1869,14 +1865,14 @@ class Time {
    * @return {Number}                             -1, 0 or 1 for less/equal/greater
    */
   compare(other) {
-    if (other instanceof Period) {
+    if(other instanceof Period) {
       return -1 * other.compare(this);
     } else {
       let a = this.toUnixTime();
       let b = other.toUnixTime();
 
-      if (a > b) return 1;
-      if (b > a) return -1;
+      if(a > b) return 1;
+      if(b > a) return -1;
       return 0;
     }
   }
@@ -1893,9 +1889,9 @@ class Time {
     let b = other.convertToZone(tz);
     let rc = 0;
 
-    if ((rc = Time._cmp_attr(a, b, "year")) != 0) return rc;
-    if ((rc = Time._cmp_attr(a, b, "month")) != 0) return rc;
-    if ((rc = Time._cmp_attr(a, b, "day")) != 0) return rc;
+    if((rc = Time._cmp_attr(a, b, 'year')) != 0) return rc;
+    if((rc = Time._cmp_attr(a, b, 'month')) != 0) return rc;
+    if((rc = Time._cmp_attr(a, b, 'day')) != 0) return rc;
 
     return rc;
   }
@@ -1909,9 +1905,9 @@ class Time {
    */
   convertToZone(zone) {
     let copy = this.clone();
-    let zone_equals = (this.zone.tzid == zone.tzid);
+    let zone_equals = this.zone.tzid == zone.tzid;
 
-    if (!this.isDate && !zone_equals) {
+    if(!this.isDate && !zone_equals) {
       Timezone.convert_time(copy, this.zone, zone);
     }
 
@@ -1926,8 +1922,7 @@ class Time {
    * @return {Number}     UTC offset in seconds
    */
   utcOffset() {
-    if (this.zone == Timezone.localTimezone ||
-        this.zone == Timezone.utcTimezone) {
+    if(this.zone == Timezone.localTimezone || this.zone == Timezone.utcTimezone) {
       return 0;
     } else {
       return this.zone.utcOffset(this);
@@ -1942,7 +1937,7 @@ class Time {
   toICALString() {
     let string = this.toString();
 
-    if (string.length > 10) {
+    if(string.length > 10) {
       return design.icalendar.value['date-time'].toICAL(string);
     } else {
       return design.icalendar.value.date.toICAL(string);
@@ -1955,16 +1950,12 @@ class Time {
    * @return {String}
    */
   toString() {
-    let result = this.year + '-' +
-                 pad2(this.month) + '-' +
-                 pad2(this.day);
+    let result = this.year + '-' + pad2(this.month) + '-' + pad2(this.day);
 
-    if (!this.isDate) {
-        result += 'T' + pad2(this.hour) + ':' +
-                  pad2(this.minute) + ':' +
-                  pad2(this.second);
+    if(!this.isDate) {
+      result += 'T' + pad2(this.hour) + ':' + pad2(this.minute) + ':' + pad2(this.second);
 
-      if (this.zone === Timezone.utcTimezone) {
+      if(this.zone === Timezone.utcTimezone) {
         result += 'Z';
       }
     }
@@ -1977,12 +1968,11 @@ class Time {
    * @return {Date}
    */
   toJSDate() {
-    if (this.zone == Timezone.localTimezone) {
-      if (this.isDate) {
+    if(this.zone == Timezone.localTimezone) {
+      if(this.isDate) {
         return new Date(this.year, this.month - 1, this.day);
       } else {
-        return new Date(this.year, this.month - 1, this.day,
-                        this.hour, this.minute, this.second, 0);
+        return new Date(this.year, this.month - 1, this.day, this.hour, this.minute, this.second, 0);
       }
     } else {
       return new Date(this.toUnixTime() * 1000);
@@ -1990,7 +1980,7 @@ class Time {
   }
 
   _normalize() {
-    if (this._time.isDate) {
+    if(this._time.isDate) {
       this._time.hour = 0;
       this._time.minute = 0;
       this._time.second = 0;
@@ -2011,20 +2001,21 @@ class Time {
    *                                    current instance.
    */
   adjust(aExtraDays, aExtraHours, aExtraMinutes, aExtraSeconds, aTime) {
-
-    let minutesOverflow, hoursOverflow,
-        daysOverflow = 0, yearsOverflow = 0;
+    let minutesOverflow,
+      hoursOverflow,
+      daysOverflow = 0,
+      yearsOverflow = 0;
 
     let second, minute, hour, day;
     let daysInMonth;
 
     let time = aTime || this._time;
 
-    if (!time.isDate) {
+    if(!time.isDate) {
       second = time.second + aExtraSeconds;
       time.second = second % 60;
       minutesOverflow = trunc(second / 60);
-      if (time.second < 0) {
+      if(time.second < 0) {
         time.second += 60;
         minutesOverflow--;
       }
@@ -2032,7 +2023,7 @@ class Time {
       minute = time.minute + aExtraMinutes + minutesOverflow;
       time.minute = minute % 60;
       hoursOverflow = trunc(minute / 60);
-      if (time.minute < 0) {
+      if(time.minute < 0) {
         time.minute += 60;
         hoursOverflow--;
       }
@@ -2041,18 +2032,17 @@ class Time {
 
       time.hour = hour % 24;
       daysOverflow = trunc(hour / 24);
-      if (time.hour < 0) {
+      if(time.hour < 0) {
         time.hour += 24;
         daysOverflow--;
       }
     }
 
-
     // Adjust month and year first, because we need to know what month the day
     // is in before adjusting it.
-    if (time.month > 12) {
+    if(time.month > 12) {
       yearsOverflow = trunc((time.month - 1) / 12);
-    } else if (time.month < 1) {
+    } else if(time.month < 1) {
       yearsOverflow = trunc(time.month / 12) - 1;
     }
 
@@ -2062,15 +2052,15 @@ class Time {
     // Now take care of the days (and adjust month if needed)
     day = time.day + aExtraDays + daysOverflow;
 
-    if (day > 0) {
-      for (;;) {
+    if(day > 0) {
+      for(;;) {
         daysInMonth = Time.daysInMonth(time.month, time.year);
-        if (day <= daysInMonth) {
+        if(day <= daysInMonth) {
           break;
         }
 
         time.month++;
-        if (time.month > 12) {
+        if(time.month > 12) {
           time.year++;
           time.month = 1;
         }
@@ -2078,8 +2068,8 @@ class Time {
         day -= daysInMonth;
       }
     } else {
-      while (day <= 0) {
-        if (time.month == 1) {
+      while(day <= 0) {
+        if(time.month == 1) {
           time.year--;
           time.month = 12;
         } else {
@@ -2111,7 +2101,7 @@ class Time {
     this.year = date.getUTCFullYear();
     this.month = date.getUTCMonth() + 1;
     this.day = date.getUTCDate();
-    if (this._time.isDate) {
+    if(this._time.isDate) {
       this.hour = 0;
       this.minute = 0;
       this.second = 0;
@@ -2130,21 +2120,14 @@ class Time {
    * @return {Number}         Seconds since 1970
    */
   toUnixTime() {
-    if (this._cachedUnixTime !== null) {
+    if(this._cachedUnixTime !== null) {
       return this._cachedUnixTime;
     }
     let offset = this.utcOffset();
 
     // we use the offset trick to ensure
     // that we are getting the actual UTC time
-    let ms = Date.UTC(
-      this.year,
-      this.month - 1,
-      this.day,
-      this.hour,
-      this.minute,
-      this.second - offset
-    );
+    let ms = Date.UTC(this.year, this.month - 1, this.day, this.hour, this.minute, this.second - offset);
 
     // seconds
     this._cachedUnixTime = ms / 1000;
@@ -2166,15 +2149,7 @@ class Time {
    * @return {Object}
    */
   toJSON() {
-    let copy = [
-      'year',
-      'month',
-      'day',
-      'hour',
-      'minute',
-      'second',
-      'isDate'
-    ];
+    let copy = ['year', 'month', 'day', 'hour', 'minute', 'second', 'isDate'];
 
     let result = Object.create(null);
 
@@ -2182,12 +2157,12 @@ class Time {
     let len = copy.length;
     let prop;
 
-    for (; i < len; i++) {
+    for(; i < len; i++) {
       prop = copy[i];
       result[prop] = this[prop];
     }
 
-    if (this.zone) {
+    if(this.zone) {
       result.timezone = this.zone.tzid;
     }
 
@@ -2199,7 +2174,6 @@ class Time {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This lets typescript resolve our custom types in the
@@ -2219,7 +2193,7 @@ const PARAM_DELIMITER = ';';
 const PARAM_NAME_DELIMITER = '=';
 const DEFAULT_VALUE_TYPE$1 = 'unknown';
 const DEFAULT_PARAM_TYPE = 'text';
-const RFC6868_REPLACE_MAP$1 = { "^'": '"', "^n": "\n", "^^": "^" };
+const RFC6868_REPLACE_MAP$1 = { "^'": '"', '^n': '\n', '^^': '^' };
 
 /**
  * Parses iCalendar or vCard data into a raw jCal object. Consult
@@ -2235,7 +2209,7 @@ const RFC6868_REPLACE_MAP$1 = { "^'": '"', "^n": "\n", "^^": "^" };
  */
 function parse(input) {
   let state = {};
-  let root = state.component = [];
+  let root = (state.component = []);
 
   state.stack = [root];
 
@@ -2243,19 +2217,16 @@ function parse(input) {
     parse._handleContentLine(line, state);
   });
 
-
   // when there are still items on the stack
   // throw a fatal error, a component was not closed
   // correctly in that case.
-  if (state.stack.length > 1) {
-    throw new ParserError(
-      'invalid ical body. component began but did not end'
-    );
+  if(state.stack.length > 1) {
+    throw new ParserError('invalid ical body. component began but did not end');
   }
 
   state = null;
 
-  return (root.length == 1 ? root[0] : root);
+  return root.length == 1 ? root[0] : root;
 }
 
 /**
@@ -2272,7 +2243,7 @@ function parse(input) {
 parse.property = function(str, designSet) {
   let state = {
     component: [[], []],
-    designSet: designSet || design.defaultSet
+    designSet: designSet || design.defaultSet,
   };
   parse._handleContentLine(str, state);
   return state.component[1][0];
@@ -2291,7 +2262,6 @@ parse.component = function(str) {
   return parse(str);
 };
 
-
 /**
  * An error that occurred during parsing.
  *
@@ -2305,7 +2275,6 @@ class ParserError extends Error {
 
 // classes & constants
 parse.ParserError = ParserError;
-
 
 /**
  * Handles a single line of iCalendar/vCard, updating the state.
@@ -2341,28 +2310,28 @@ parse._handleContentLine = function(line, state) {
    * 2. ATTENDEE;ROLE=REQ-PARTICIPANT;
    *    // ROLE= is a param because : has not happened yet
    */
-    // when the parameter delimiter is after the
-    // value delimiter then it is not a parameter.
+  // when the parameter delimiter is after the
+  // value delimiter then it is not a parameter.
 
-  if ((paramPos !== -1 && valuePos !== -1)) {
+  if(paramPos !== -1 && valuePos !== -1) {
     // when the parameter delimiter is after the
     // value delimiter then it is not a parameter.
-    if (paramPos > valuePos) {
+    if(paramPos > valuePos) {
       paramPos = -1;
     }
   }
 
   let parsedParams;
-  if (paramPos !== -1) {
+  if(paramPos !== -1) {
     name = line.slice(0, Math.max(0, paramPos)).toLowerCase();
     parsedParams = parse._parseParameters(line.slice(Math.max(0, paramPos)), 0, state.designSet);
-    if (parsedParams[2] == -1) {
+    if(parsedParams[2] == -1) {
       throw new ParserError("Invalid parameters in '" + line + "'");
     }
     params = parsedParams[0];
     // Handle parameter values with multiple entries
     let parsedParamLength;
-    if (typeof parsedParams[1] === 'string') {
+    if(typeof parsedParams[1] === 'string') {
       parsedParamLength = parsedParams[1].length;
     } else {
       parsedParamLength = parsedParams[1].reduce((accumulator, currentValue) => {
@@ -2370,31 +2339,30 @@ parse._handleContentLine = function(line, state) {
       }, 0);
     }
     lastParamIndex = parsedParamLength + parsedParams[2] + paramPos;
-    if ((lastValuePos =
-      line.slice(Math.max(0, lastParamIndex)).indexOf(VALUE_DELIMITER)) !== -1) {
+    if((lastValuePos = line.slice(Math.max(0, lastParamIndex)).indexOf(VALUE_DELIMITER)) !== -1) {
       value = line.slice(Math.max(0, lastParamIndex + lastValuePos + 1));
     } else {
       throw new ParserError("Missing parameter value in '" + line + "'");
     }
-  } else if (valuePos !== -1) {
+  } else if(valuePos !== -1) {
     // without parmeters (BEGIN:VCAENDAR, CLASS:PUBLIC)
     name = line.slice(0, Math.max(0, valuePos)).toLowerCase();
     value = line.slice(Math.max(0, valuePos + 1));
 
-    if (name === 'begin') {
+    if(name === 'begin') {
       let newComponent = [value.toLowerCase(), [], []];
-      if (state.stack.length === 1) {
+      if(state.stack.length === 1) {
         state.component.push(newComponent);
       } else {
         state.component[2].push(newComponent);
       }
       state.stack.push(state.component);
       state.component = newComponent;
-      if (!state.designSet) {
+      if(!state.designSet) {
         state.designSet = design.getDesignSet(state.component[0]);
       }
       return;
-    } else if (name === 'end') {
+    } else if(name === 'end') {
       state.component = state.stack.pop();
       return;
     }
@@ -2408,9 +2376,7 @@ parse._handleContentLine = function(line, state) {
      * is sane and it is unlikely that we can serialize
      * the result correctly either.
      */
-    throw new ParserError(
-      'invalid line (no token ";" or ":") "' + line + '"'
-    );
+    throw new ParserError('invalid line (no token ";" or ":") "' + line + '"');
   }
 
   let valueType;
@@ -2421,7 +2387,7 @@ parse._handleContentLine = function(line, state) {
   let ungroupedName;
 
   // fetch the ungrouped part of the name
-  if (state.designSet.propertyGroups && name.indexOf('.') !== -1) {
+  if(state.designSet.propertyGroups && name.indexOf('.') !== -1) {
     splitName = name.split('.');
     params.group = splitName[0];
     ungroupedName = splitName[1];
@@ -2429,26 +2395,26 @@ parse._handleContentLine = function(line, state) {
     ungroupedName = name;
   }
 
-  if (ungroupedName in state.designSet.property) {
+  if(ungroupedName in state.designSet.property) {
     propertyDetails = state.designSet.property[ungroupedName];
 
-    if ('multiValue' in propertyDetails) {
+    if('multiValue' in propertyDetails) {
       multiValue = propertyDetails.multiValue;
     }
 
-    if ('structuredValue' in propertyDetails) {
+    if('structuredValue' in propertyDetails) {
       structuredValue = propertyDetails.structuredValue;
     }
 
-    if (value && 'detectType' in propertyDetails) {
+    if(value && 'detectType' in propertyDetails) {
       valueType = propertyDetails.detectType(value);
     }
   }
 
   // attempt to determine value
-  if (!valueType) {
-    if (!('value' in params)) {
-      if (propertyDetails) {
+  if(!valueType) {
+    if(!('value' in params)) {
+      if(propertyDetails) {
         valueType = propertyDetails.defaultType;
       } else {
         valueType = DEFAULT_VALUE_TYPE$1;
@@ -2470,13 +2436,13 @@ parse._handleContentLine = function(line, state) {
    */
 
   let result;
-  if (multiValue && structuredValue) {
+  if(multiValue && structuredValue) {
     value = parse._parseMultiValue(value, structuredValue, valueType, [], multiValue, state.designSet, structuredValue);
     result = [ungroupedName, params, valueType, value];
-  } else if (multiValue) {
+  } else if(multiValue) {
     result = [ungroupedName, params, valueType];
     parse._parseMultiValue(value, multiValue, valueType, result, null, state.designSet, false);
-  } else if (structuredValue) {
+  } else if(structuredValue) {
     value = parse._parseMultiValue(value, structuredValue, valueType, [], null, state.designSet, structuredValue);
     result = [ungroupedName, params, valueType, value];
   } else {
@@ -2485,9 +2451,8 @@ parse._handleContentLine = function(line, state) {
   }
   // rfc6350 requires that in vCard 4.0 the first component is the VERSION
   // component with as value 4.0, note that 3.0 does not have this requirement.
-  if (state.component[0] === 'vcard' && state.component[1].length === 0 &&
-          !(name === 'version' && value === '4.0')) {
-    state.designSet = design.getDesignSet("vcard3");
+  if(state.component[0] === 'vcard' && state.component[1].length === 0 && !(name === 'version' && value === '4.0')) {
+    state.designSet = design.getDesignSet('vcard3');
   }
   state.component[1].push(result);
 };
@@ -2503,7 +2468,7 @@ parse._handleContentLine = function(line, state) {
  * @return {Object} varies on type
  */
 parse._parseValue = function(value, type, designSet, structuredValue) {
-  if (type in designSet.value && 'fromICAL' in designSet.value[type]) {
+  if(type in designSet.value && 'fromICAL' in designSet.value[type]) {
     return designSet.value[type].fromICAL(value, structuredValue);
   }
   return value;
@@ -2526,7 +2491,8 @@ parse._parseParameters = function(line, start, designSet) {
   let delim = PARAM_NAME_DELIMITER;
   let result = {};
   let name, lcname;
-  let value, valuePos = -1;
+  let value,
+    valuePos = -1;
   let type, multiValue, mvdelim;
 
   // find the next '=' sign
@@ -2534,54 +2500,50 @@ parse._parseParameters = function(line, start, designSet) {
   // check if " is used if so get value from "->"
   // then increment pos to find next ;
 
-  while ((pos !== false) &&
-         (pos = line.indexOf(delim, pos + 1)) !== -1) {
-
+  while(pos !== false && (pos = line.indexOf(delim, pos + 1)) !== -1) {
     name = line.slice(lastParam + 1, pos);
-    if (name.length == 0) {
+    if(name.length == 0) {
       throw new ParserError("Empty parameter name in '" + line + "'");
     }
     lcname = name.toLowerCase();
     mvdelim = false;
     multiValue = false;
 
-    if (lcname in designSet.param && designSet.param[lcname].valueType) {
+    if(lcname in designSet.param && designSet.param[lcname].valueType) {
       type = designSet.param[lcname].valueType;
     } else {
       type = DEFAULT_PARAM_TYPE;
     }
 
-    if (lcname in designSet.param) {
+    if(lcname in designSet.param) {
       multiValue = designSet.param[lcname].multiValue;
-      if (designSet.param[lcname].multiValueSeparateDQuote) {
+      if(designSet.param[lcname].multiValueSeparateDQuote) {
         mvdelim = parse._rfc6868Escape('"' + multiValue + '"');
       }
     }
 
     let nextChar = line[pos + 1];
-    if (nextChar === '"') {
+    if(nextChar === '"') {
       valuePos = pos + 2;
       pos = line.indexOf('"', valuePos);
-      if (multiValue && pos != -1) {
-          let extendedValue = true;
-          while (extendedValue) {
-            if (line[pos + 1] == multiValue && line[pos + 2] == '"') {
-              pos = line.indexOf('"', pos + 3);
-            } else {
-              extendedValue = false;
-            }
+      if(multiValue && pos != -1) {
+        let extendedValue = true;
+        while(extendedValue) {
+          if(line[pos + 1] == multiValue && line[pos + 2] == '"') {
+            pos = line.indexOf('"', pos + 3);
+          } else {
+            extendedValue = false;
           }
         }
-      if (pos === -1) {
-        throw new ParserError(
-          'invalid line (no matching double quote) "' + line + '"'
-        );
+      }
+      if(pos === -1) {
+        throw new ParserError('invalid line (no matching double quote) "' + line + '"');
       }
       value = line.slice(valuePos, pos);
       lastParam = line.indexOf(PARAM_DELIMITER, pos);
       let propValuePos = line.indexOf(VALUE_DELIMITER, pos);
       // if either no next parameter or delimeter in property value, let's stop here
-      if (lastParam === -1 || (propValuePos !== -1 && lastParam > propValuePos)) {
+      if(lastParam === -1 || (propValuePos !== -1 && lastParam > propValuePos)) {
         pos = false;
       }
     } else {
@@ -2590,13 +2552,13 @@ parse._parseParameters = function(line, start, designSet) {
       // move to next ";"
       let nextPos = line.indexOf(PARAM_DELIMITER, valuePos);
       let propValuePos = line.indexOf(VALUE_DELIMITER, valuePos);
-      if (propValuePos !== -1 && nextPos > propValuePos) {
+      if(propValuePos !== -1 && nextPos > propValuePos) {
         // this is a delimiter in the property value, let's stop here
         nextPos = propValuePos;
         pos = false;
-      } else if (nextPos === -1) {
+      } else if(nextPos === -1) {
         // no ";"
-        if (propValuePos === -1) {
+        if(propValuePos === -1) {
           nextPos = line.length;
         } else {
           nextPos = propValuePos;
@@ -2613,21 +2575,18 @@ parse._parseParameters = function(line, start, designSet) {
     const length_before = value.length;
     value = parse._rfc6868Escape(value);
     valuePos += length_before - value.length;
-    if (multiValue) {
+    if(multiValue) {
       let delimiter = mvdelim || multiValue;
       value = parse._parseMultiValue(value, delimiter, type, [], null, designSet);
     } else {
       value = parse._parseValue(value, type, designSet);
     }
 
-    if (multiValue && (lcname in result)) {
-      if (Array.isArray(result[lcname])) {
+    if(multiValue && lcname in result) {
+      if(Array.isArray(result[lcname])) {
         result[lcname].push(value);
       } else {
-        result[lcname] = [
-          result[lcname],
-          value
-        ];
+        result[lcname] = [result[lcname], value];
       }
     } else {
       result[lcname] = value;
@@ -2669,14 +2628,14 @@ parse._parseMultiValue = function(buffer, delim, type, result, innerMulti, desig
   let pos = 0;
   let lastPos = 0;
   let value;
-  if (delim.length === 0) {
+  if(delim.length === 0) {
     return buffer;
   }
 
   // split each piece
-  while ((pos = unescapedIndexOf(buffer, delim, lastPos)) !== -1) {
+  while((pos = unescapedIndexOf(buffer, delim, lastPos)) !== -1) {
     value = buffer.slice(lastPos, pos);
-    if (innerMulti) {
+    if(innerMulti) {
       value = parse._parseMultiValue(value, innerMulti, type, [], null, designSet, structuredValue);
     } else {
       value = parse._parseValue(value, type, designSet, structuredValue);
@@ -2687,7 +2646,7 @@ parse._parseMultiValue = function(buffer, delim, type, result, innerMulti, desig
 
   // on the last piece take the rest of string
   value = buffer.slice(lastPos);
-  if (innerMulti) {
+  if(innerMulti) {
     value = parse._parseMultiValue(value, innerMulti, type, [], null, designSet, structuredValue);
   } else {
     value = parse._parseValue(value, type, designSet, structuredValue);
@@ -2718,37 +2677,35 @@ parse._eachLine = function(buffer, callback) {
   do {
     pos = buffer.indexOf('\n', lastPos) + 1;
 
-    if (pos > 1 && buffer[pos - 2] === '\r') {
+    if(pos > 1 && buffer[pos - 2] === '\r') {
       newlineOffset = 2;
     } else {
       newlineOffset = 1;
     }
 
-    if (pos === 0) {
+    if(pos === 0) {
       pos = len;
       newlineOffset = 0;
     }
 
     firstChar = buffer[lastPos];
 
-    if (firstChar === ' ' || firstChar === '\t') {
+    if(firstChar === ' ' || firstChar === '\t') {
       // add to line
       line += buffer.slice(lastPos + 1, pos - newlineOffset);
     } else {
-      if (line)
-        callback(null, line);
+      if(line) callback(null, line);
       // push line
       line = buffer.slice(lastPos, pos - newlineOffset);
     }
 
     lastPos = pos;
-  } while (pos !== len);
+  } while(pos !== len);
 
   // extra ending line
   line = line.trim();
 
-  if (line.length)
-    callback(null, line);
+  if(line.length) callback(null, line);
 };
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
@@ -2756,8 +2713,7 @@ parse._eachLine = function(buffer, callback) {
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
 
-
-const OPTIONS = ["tzid", "location", "tznames", "latitude", "longitude"];
+const OPTIONS = ['tzid', 'location', 'tznames', 'latitude', 'longitude'];
 
 /**
  * Timezone representation.
@@ -2776,23 +2732,23 @@ const OPTIONS = ["tzid", "location", "tznames", "latitude", "longitude"];
  */
 class Timezone {
   static _compare_change_fn(a, b) {
-    if (a.year < b.year) return -1;
-    else if (a.year > b.year) return 1;
+    if(a.year < b.year) return -1;
+    else if(a.year > b.year) return 1;
 
-    if (a.month < b.month) return -1;
-    else if (a.month > b.month) return 1;
+    if(a.month < b.month) return -1;
+    else if(a.month > b.month) return 1;
 
-    if (a.day < b.day) return -1;
-    else if (a.day > b.day) return 1;
+    if(a.day < b.day) return -1;
+    else if(a.day > b.day) return 1;
 
-    if (a.hour < b.hour) return -1;
-    else if (a.hour > b.hour) return 1;
+    if(a.hour < b.hour) return -1;
+    else if(a.hour > b.hour) return 1;
 
-    if (a.minute < b.minute) return -1;
-    else if (a.minute > b.minute) return 1;
+    if(a.minute < b.minute) return -1;
+    else if(a.minute > b.minute) return 1;
 
-    if (a.second < b.second) return -1;
-    else if (a.second > b.second) return 1;
+    if(a.second < b.second) return -1;
+    else if(a.second > b.second) return 1;
 
     return 0;
   }
@@ -2806,16 +2762,13 @@ class Timezone {
    * @return {Time}                    The converted date/time object
    */
   static convert_time(tt, from_zone, to_zone) {
-    if (tt.isDate ||
-        from_zone.tzid == to_zone.tzid ||
-        from_zone == Timezone.localTimezone ||
-        to_zone == Timezone.localTimezone) {
+    if(tt.isDate || from_zone.tzid == to_zone.tzid || from_zone == Timezone.localTimezone || to_zone == Timezone.localTimezone) {
       tt.zone = to_zone;
       return tt;
     }
 
     let utcOffset = from_zone.utcOffset(tt);
-    tt.adjust(0, 0, 0, - utcOffset);
+    tt.adjust(0, 0, 0, -utcOffset);
 
     utcOffset = to_zone.utcOffset(tt);
     tt.adjust(0, 0, 0, utcOffset);
@@ -2851,9 +2804,9 @@ class Timezone {
    */
   static #utcTimezone = null;
   static get utcTimezone() {
-    if (!this.#utcTimezone) {
+    if(!this.#utcTimezone) {
       this.#utcTimezone = Timezone.fromData({
-        tzid: "UTC"
+        tzid: 'UTC',
       });
     }
     return this.#utcTimezone;
@@ -2867,9 +2820,9 @@ class Timezone {
    */
   static #localTimezone = null;
   static get localTimezone() {
-    if (!this.#localTimezone) {
+    if(!this.#localTimezone) {
       this.#localTimezone = Timezone.fromData({
-        tzid: "floating"
+        tzid: 'floating',
       });
     }
     return this.#localTimezone;
@@ -2885,14 +2838,7 @@ class Timezone {
    * @param {Number} seconds    The extra amount of seconds
    */
   static adjust_change(change, days, hours, minutes, seconds) {
-    return Time.prototype.adjust.call(
-      change,
-      days,
-      hours,
-      minutes,
-      seconds,
-      change
-    );
+    return Time.prototype.adjust.call(change, days, hours, minutes, seconds, change);
   }
 
   static _minimumExpansionYear = -1;
@@ -2918,24 +2864,23 @@ class Timezone {
     this.fromData(data);
   }
 
-
   /**
    * Timezone identifier
    * @type {String}
    */
-  tzid = "";
+  tzid = '';
 
   /**
    * Timezone location
    * @type {String}
    */
-  location = "";
+  location = '';
 
   /**
    * Alternative timezone name, for the string representation
    * @type {String}
    */
-  tznames = "";
+  tznames = '';
 
   /**
    * The primary latitude for the timezone.
@@ -2970,7 +2915,7 @@ class Timezone {
    * @type {String}
    * @default "icaltimezone"
    */
-  icalclass = "icaltimezone";
+  icalclass = 'icaltimezone';
 
   /**
    * Sets up the current instance using members from the passed data object.
@@ -2991,17 +2936,17 @@ class Timezone {
     this.expandedUntilYear = 0;
     this.changes = [];
 
-    if (aData instanceof Component) {
+    if(aData instanceof Component) {
       // Either a component is passed directly
       this.component = aData;
     } else {
       // Otherwise the component may be in the data object
-      if (aData && "component" in aData) {
-        if (typeof aData.component == "string") {
+      if(aData && 'component' in aData) {
+        if(typeof aData.component == 'string') {
           // If a string was passed, parse it as a component
           let jCal = parse(aData.component);
           this.component = new Component(jCal);
-        } else if (aData.component instanceof Component) {
+        } else if(aData.component instanceof Component) {
           // If it was a component already, then just set it
           this.component = aData.component;
         } else {
@@ -3011,8 +2956,8 @@ class Timezone {
       }
 
       // Copy remaining passed properties
-      for (let prop of OPTIONS) {
-        if (aData && prop in aData) {
+      for(let prop of OPTIONS) {
+        if(aData && prop in aData) {
           this[prop] = aData[prop];
         }
       }
@@ -3020,7 +2965,7 @@ class Timezone {
 
     // If we have a component but no TZID, attempt to get it from the
     // component's properties.
-    if (this.component instanceof Component && !this.tzid) {
+    if(this.component instanceof Component && !this.tzid) {
       this.tzid = this.component.getFirstPropertyValue('tzid');
     }
 
@@ -3034,13 +2979,13 @@ class Timezone {
    * @return {Number}         utc offset in seconds
    */
   utcOffset(tt) {
-    if (this == Timezone.utcTimezone || this == Timezone.localTimezone) {
+    if(this == Timezone.utcTimezone || this == Timezone.localTimezone) {
       return 0;
     }
 
     this._ensureCoverage(tt.year);
 
-    if (!this.changes.length) {
+    if(!this.changes.length) {
       return 0;
     }
 
@@ -3050,7 +2995,7 @@ class Timezone {
       day: tt.day,
       hour: tt.hour,
       minute: tt.minute,
-      second: tt.second
+      second: tt.second,
     };
 
     let change_num = this._findNearbyChange(tt_change);
@@ -3058,34 +3003,33 @@ class Timezone {
     let step = 1;
 
     // TODO: replace with bin search?
-    for (;;) {
+    for(;;) {
       let change = clone(this.changes[change_num], true);
-      if (change.utcOffset < change.prevUtcOffset) {
+      if(change.utcOffset < change.prevUtcOffset) {
         Timezone.adjust_change(change, 0, 0, 0, change.utcOffset);
       } else {
-        Timezone.adjust_change(change, 0, 0, 0,
-                                        change.prevUtcOffset);
+        Timezone.adjust_change(change, 0, 0, 0, change.prevUtcOffset);
       }
 
       let cmp = Timezone._compare_change_fn(tt_change, change);
 
-      if (cmp >= 0) {
+      if(cmp >= 0) {
         change_num_to_use = change_num;
       } else {
         step = -1;
       }
 
-      if (step == -1 && change_num_to_use != -1) {
+      if(step == -1 && change_num_to_use != -1) {
         break;
       }
 
       change_num += step;
 
-      if (change_num < 0) {
+      if(change_num < 0) {
         return 0;
       }
 
-      if (change_num >= this.changes.length) {
+      if(change_num >= this.changes.length) {
         break;
       }
     }
@@ -3093,17 +3037,16 @@ class Timezone {
     let zone_change = this.changes[change_num_to_use];
     let utcOffset_change = zone_change.utcOffset - zone_change.prevUtcOffset;
 
-    if (utcOffset_change < 0 && change_num_to_use > 0) {
+    if(utcOffset_change < 0 && change_num_to_use > 0) {
       let tmp_change = clone(zone_change, true);
       Timezone.adjust_change(tmp_change, 0, 0, 0, tmp_change.prevUtcOffset);
 
-      if (Timezone._compare_change_fn(tt_change, tmp_change) < 0) {
+      if(Timezone._compare_change_fn(tt_change, tmp_change) < 0) {
         let prev_zone_change = this.changes[change_num_to_use - 1];
 
         let want_daylight = false; // TODO
 
-        if (zone_change.is_daylight != want_daylight &&
-            prev_zone_change.is_daylight == want_daylight) {
+        if(zone_change.is_daylight != want_daylight && prev_zone_change.is_daylight == want_daylight) {
           zone_change = prev_zone_change;
         }
       }
@@ -3115,13 +3058,9 @@ class Timezone {
 
   _findNearbyChange(change) {
     // find the closest match
-    let idx = binsearchInsert(
-      this.changes,
-      change,
-      Timezone._compare_change_fn
-    );
+    let idx = binsearchInsert(this.changes, change, Timezone._compare_change_fn);
 
-    if (idx >= this.changes.length) {
+    if(idx >= this.changes.length) {
       return this.changes.length - 1;
     }
 
@@ -3129,27 +3068,25 @@ class Timezone {
   }
 
   _ensureCoverage(aYear) {
-    if (Timezone._minimumExpansionYear == -1) {
+    if(Timezone._minimumExpansionYear == -1) {
       let today = Time.now();
       Timezone._minimumExpansionYear = today.year;
     }
 
     let changesEndYear = aYear;
-    if (changesEndYear < Timezone._minimumExpansionYear) {
+    if(changesEndYear < Timezone._minimumExpansionYear) {
       changesEndYear = Timezone._minimumExpansionYear;
     }
 
     changesEndYear += Timezone.EXTRA_COVERAGE;
 
-    if (!this.changes.length || this.expandedUntilYear < aYear) {
+    if(!this.changes.length || this.expandedUntilYear < aYear) {
       let subcomps = this.component.getAllSubcomponents();
       let compLen = subcomps.length;
       let compIdx = 0;
 
-      for (; compIdx < compLen; compIdx++) {
-        this._expandComponent(
-          subcomps[compIdx], changesEndYear, this.changes
-        );
+      for(; compIdx < compLen; compIdx++) {
+        this._expandComponent(subcomps[compIdx], changesEndYear, this.changes);
       }
 
       this.changes.sort(Timezone._compare_change_fn);
@@ -3158,13 +3095,11 @@ class Timezone {
   }
 
   _expandComponent(aComponent, aYear, changes) {
-    if (!aComponent.hasProperty("dtstart") ||
-        !aComponent.hasProperty("tzoffsetto") ||
-        !aComponent.hasProperty("tzoffsetfrom")) {
+    if(!aComponent.hasProperty('dtstart') || !aComponent.hasProperty('tzoffsetto') || !aComponent.hasProperty('tzoffsetfrom')) {
       return null;
     }
 
-    let dtstart = aComponent.getFirstProperty("dtstart").getFirstValue();
+    let dtstart = aComponent.getFirstProperty('dtstart').getFirstValue();
     let change;
 
     function convert_tzoffset(offset) {
@@ -3173,19 +3108,15 @@ class Timezone {
 
     function init_changes() {
       let changebase = {};
-      changebase.is_daylight = (aComponent.name == "daylight");
-      changebase.utcOffset = convert_tzoffset(
-        aComponent.getFirstProperty("tzoffsetto").getFirstValue()
-      );
+      changebase.is_daylight = aComponent.name == 'daylight';
+      changebase.utcOffset = convert_tzoffset(aComponent.getFirstProperty('tzoffsetto').getFirstValue());
 
-      changebase.prevUtcOffset = convert_tzoffset(
-        aComponent.getFirstProperty("tzoffsetfrom").getFirstValue()
-      );
+      changebase.prevUtcOffset = convert_tzoffset(aComponent.getFirstProperty('tzoffsetfrom').getFirstValue());
 
       return changebase;
     }
 
-    if (!aComponent.hasProperty("rrule") && !aComponent.hasProperty("rdate")) {
+    if(!aComponent.hasProperty('rrule') && !aComponent.hasProperty('rdate')) {
       change = init_changes();
       change.year = dtstart.year;
       change.month = dtstart.month;
@@ -3197,8 +3128,8 @@ class Timezone {
       Timezone.adjust_change(change, 0, 0, 0, -change.prevUtcOffset);
       changes.push(change);
     } else {
-      let props = aComponent.getAllProperties("rdate");
-      for (let rdate of props) {
+      let props = aComponent.getAllProperties('rdate');
+      for(let rdate of props) {
         let time = rdate.getFirstValue();
         change = init_changes();
 
@@ -3206,12 +3137,12 @@ class Timezone {
         change.month = time.month;
         change.day = time.day;
 
-        if (time.isDate) {
+        if(time.isDate) {
           change.hour = dtstart.hour;
           change.minute = dtstart.minute;
           change.second = dtstart.second;
 
-          if (dtstart.zone != Timezone.utcTimezone) {
+          if(dtstart.zone != Timezone.utcTimezone) {
             Timezone.adjust_change(change, 0, 0, 0, -change.prevUtcOffset);
           }
         } else {
@@ -3219,7 +3150,7 @@ class Timezone {
           change.minute = time.minute;
           change.second = time.second;
 
-          if (time.zone != Timezone.utcTimezone) {
+          if(time.zone != Timezone.utcTimezone) {
             Timezone.adjust_change(change, 0, 0, 0, -change.prevUtcOffset);
           }
         }
@@ -3227,13 +3158,13 @@ class Timezone {
         changes.push(change);
       }
 
-      let rrule = aComponent.getFirstProperty("rrule");
+      let rrule = aComponent.getFirstProperty('rrule');
 
-      if (rrule) {
+      if(rrule) {
         rrule = rrule.getFirstValue();
         change = init_changes();
 
-        if (rrule.until && rrule.until.zone == Timezone.utcTimezone) {
+        if(rrule.until && rrule.until.zone == Timezone.utcTimezone) {
           rrule.until.adjust(0, 0, 0, change.prevUtcOffset);
           rrule.until.zone = Timezone.localTimezone;
         }
@@ -3241,9 +3172,9 @@ class Timezone {
         let iterator = rrule.iterator(dtstart);
 
         let occ;
-        while ((occ = iterator.next())) {
+        while((occ = iterator.next())) {
           change = init_changes();
-          if (occ.year > aYear || !occ) {
+          if(occ.year > aYear || !occ) {
             break;
           }
 
@@ -3269,7 +3200,7 @@ class Timezone {
    * @return {String}
    */
   toString() {
-    return (this.tznames ? this.tznames : this.tzid);
+    return this.tznames ? this.tznames : this.tzid;
   }
 }
 
@@ -3277,7 +3208,6 @@ class Timezone {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 let zones = null;
 
@@ -3292,7 +3222,7 @@ let zones = null;
  */
 const TimezoneService = {
   get count() {
-    if (zones === null) {
+    if(zones === null) {
       return 0;
     }
 
@@ -3318,7 +3248,7 @@ const TimezoneService = {
    * @return {Boolean}        False, when not present
    */
   has: function(tzid) {
-    if (zones === null) {
+    if(zones === null) {
       return false;
     }
 
@@ -3332,7 +3262,7 @@ const TimezoneService = {
    * @return {Timezone | undefined}     The timezone, or undefined if not found
    */
   get: function(tzid) {
-    if (zones === null) {
+    if(zones === null) {
       this.reset();
     }
 
@@ -3350,32 +3280,32 @@ const TimezoneService = {
    *        passed.
    */
   register: function(timezone, name) {
-    if (zones === null) {
+    if(zones === null) {
       this.reset();
     }
 
     // This avoids a breaking change by the change of argument order
     // TODO remove in v3
-    if (typeof timezone === "string" && name instanceof Timezone) {
+    if(typeof timezone === 'string' && name instanceof Timezone) {
       [timezone, name] = [name, timezone];
     }
 
-    if (!name) {
-      if (timezone instanceof Timezone) {
+    if(!name) {
+      if(timezone instanceof Timezone) {
         name = timezone.tzid;
       } else {
-        if (timezone.name === 'vtimezone') {
+        if(timezone.name === 'vtimezone') {
           timezone = new Timezone(timezone);
           name = timezone.tzid;
         }
       }
     }
 
-    if (!name) {
-      throw new TypeError("Neither a timezone nor a name was passed");
+    if(!name) {
+      throw new TypeError('Neither a timezone nor a name was passed');
     }
 
-    if (timezone instanceof Timezone) {
+    if(timezone instanceof Timezone) {
       zones[name] = timezone;
     } else {
       throw new TypeError('timezone must be ICAL.Timezone or ICAL.Component');
@@ -3389,19 +3319,18 @@ const TimezoneService = {
    * @return {?Timezone}      The removed timezone, or null if not registered
    */
   remove: function(tzid) {
-    if (zones === null) {
+    if(zones === null) {
       return null;
     }
 
-    return (delete zones[tzid]);
-  }
+    return delete zones[tzid];
+  },
 };
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * Helper functions used in various places within ical.js
@@ -3420,7 +3349,7 @@ const TimezoneService = {
 function updateTimezones(vcal) {
   let allsubs, properties, vtimezones, reqTzid, i;
 
-  if (!vcal || vcal.name !== "vcalendar") {
+  if(!vcal || vcal.name !== 'vcalendar') {
     //not a top-level vcalendar component
     return vcal;
   }
@@ -3430,9 +3359,9 @@ function updateTimezones(vcal) {
   allsubs = vcal.getAllSubcomponents();
   properties = [];
   vtimezones = {};
-  for (i = 0; i < allsubs.length; i++) {
-    if (allsubs[i].name === "vtimezone") {
-      let tzid = allsubs[i].getFirstProperty("tzid").getFirstValue();
+  for(i = 0; i < allsubs.length; i++) {
+    if(allsubs[i].name === 'vtimezone') {
+      let tzid = allsubs[i].getFirstProperty('tzid').getFirstValue();
       vtimezones[tzid] = allsubs[i];
     } else {
       properties = properties.concat(allsubs[i].getAllProperties());
@@ -3441,23 +3370,23 @@ function updateTimezones(vcal) {
 
   //create an object with one entry for each required tz
   reqTzid = {};
-  for (i = 0; i < properties.length; i++) {
-    let tzid = properties[i].getParameter("tzid");
-    if (tzid) {
+  for(i = 0; i < properties.length; i++) {
+    let tzid = properties[i].getParameter('tzid');
+    if(tzid) {
       reqTzid[tzid] = true;
     }
   }
 
   //delete any vtimezones that are not on the reqTzid list.
-  for (let [tzid, comp] of Object.entries(vtimezones)) {
-    if (!reqTzid[tzid]) {
+  for(let [tzid, comp] of Object.entries(vtimezones)) {
+    if(!reqTzid[tzid]) {
       vcal.removeSubcomponent(comp);
     }
   }
 
   //create any missing, but registered timezones
-  for (let tzid of Object.keys(reqTzid)) {
-    if (!vtimezones[tzid] && TimezoneService.has(tzid)) {
+  for(let tzid of Object.keys(reqTzid)) {
+    if(!vtimezones[tzid] && TimezoneService.has(tzid)) {
       vcal.addSubcomponent(TimezoneService.get(tzid).component);
     }
   }
@@ -3472,7 +3401,7 @@ function updateTimezones(vcal) {
  * @return {Boolean}          True, if the number is strictly NaN
  */
 function isStrictlyNaN(number) {
-  return typeof(number) === 'number' && isNaN(number);
+  return typeof number === 'number' && isNaN(number);
 }
 
 /**
@@ -3485,10 +3414,8 @@ function isStrictlyNaN(number) {
 function strictParseInt(string) {
   let result = parseInt(string, 10);
 
-  if (isStrictlyNaN(result)) {
-    throw new Error(
-      'Could not extract integer from "' + string + '"'
-    );
+  if(isStrictlyNaN(result)) {
+    throw new Error('Could not extract integer from "' + string + '"');
   }
 
   return result;
@@ -3515,11 +3442,11 @@ function strictParseInt(string) {
  * @return {?}                An instance of the found type.
  */
 function formatClassType(data, type) {
-  if (typeof(data) === 'undefined') {
+  if(typeof data === 'undefined') {
     return undefined;
   }
 
-  if (data instanceof type) {
+  if(data instanceof type) {
     return data;
   }
   return new type(data);
@@ -3535,8 +3462,8 @@ function formatClassType(data, type) {
  * @return {Number}               The position, or -1 if not found
  */
 function unescapedIndexOf(buffer, search, pos) {
-  while ((pos = buffer.indexOf(search, pos)) !== -1) {
-    if (pos > 0 && buffer[pos - 1] === '\\') {
+  while((pos = buffer.indexOf(search, pos)) !== -1) {
+    if(pos > 0 && buffer[pos - 1] === '\\') {
       pos += 1;
     } else {
       return pos;
@@ -3555,30 +3482,26 @@ function unescapedIndexOf(buffer, search, pos) {
  * @return {Number}               The insert position
  */
 function binsearchInsert(list, seekVal, cmpfunc) {
-  if (!list.length)
-    return 0;
+  if(!list.length) return 0;
 
-  let low = 0, high = list.length - 1,
-      mid, cmpval;
+  let low = 0,
+    high = list.length - 1,
+    mid,
+    cmpval;
 
-  while (low <= high) {
+  while(low <= high) {
     mid = low + Math.floor((high - low) / 2);
     cmpval = cmpfunc(seekVal, list[mid]);
 
-    if (cmpval < 0)
-      high = mid - 1;
-    else if (cmpval > 0)
-      low = mid + 1;
-    else
-      break;
+    if(cmpval < 0) high = mid - 1;
+    else if(cmpval > 0) low = mid + 1;
+    else break;
   }
 
-  if (cmpval < 0)
+  if(cmpval < 0)
     return mid; // insertion is displacing, so use mid outright.
-  else if (cmpval > 0)
-    return mid + 1;
-  else
-    return mid;
+  else if(cmpval > 0) return mid + 1;
+  else return mid;
 }
 
 /**
@@ -3590,22 +3513,22 @@ function binsearchInsert(list, seekVal, cmpfunc) {
  * @return {*}                The copy of the thing
  */
 function clone(aSrc, aDeep) {
-  if (!aSrc || typeof aSrc != "object") {
+  if(!aSrc || typeof aSrc != 'object') {
     return aSrc;
-  } else if (aSrc instanceof Date) {
+  } else if(aSrc instanceof Date) {
     return new Date(aSrc.getTime());
-  } else if ("clone" in aSrc) {
+  } else if('clone' in aSrc) {
     return aSrc.clone();
-  } else if (Array.isArray(aSrc)) {
+  } else if(Array.isArray(aSrc)) {
     let arr = [];
-    for (let i = 0; i < aSrc.length; i++) {
+    for(let i = 0; i < aSrc.length; i++) {
       arr.push(aDeep ? clone(aSrc[i], true) : aSrc[i]);
     }
     return arr;
   } else {
     let obj = {};
-    for (let [name, value] of Object.entries(aSrc)) {
-      if (aDeep) {
+    for(let [name, value] of Object.entries(aSrc)) {
+      if(aDeep) {
         obj[name] = clone(value, true);
       } else {
         obj[name] = value;
@@ -3627,20 +3550,22 @@ function clone(aSrc, aDeep) {
  * @return {String}           The folded line
  */
 function foldline(aLine) {
-  let result = "";
-  let line = aLine || "", pos = 0, line_length = 0;
+  let result = '';
+  let line = aLine || '',
+    pos = 0,
+    line_length = 0;
   //pos counts position in line for the UTF-16 presentation
   //line_length counts the bytes for the UTF-8 presentation
-  while (line.length) {
+  while(line.length) {
     let cp = line.codePointAt(pos);
-    if (cp < 128) ++line_length;
-    else if (cp < 2048) line_length += 2;//needs 2 UTF-8 bytes
-    else if (cp < 65536) line_length += 3;
+    if(cp < 128) ++line_length;
+    else if(cp < 2048)
+      line_length += 2; //needs 2 UTF-8 bytes
+    else if(cp < 65536) line_length += 3;
     else line_length += 4; //cp is less than 1114112
-    if (line_length < ICALmodule.foldLength + 1)
-      pos += cp > 65535 ? 2 : 1;
+    if(line_length < ICALmodule.foldLength + 1) pos += cp > 65535 ? 2 : 1;
     else {
-      result += ICALmodule.newLineChar + " " + line.slice(0, Math.max(0, pos));
+      result += ICALmodule.newLineChar + ' ' + line.slice(0, Math.max(0, pos));
       line = line.slice(Math.max(0, pos));
       pos = line_length = 0;
     }
@@ -3656,9 +3581,9 @@ function foldline(aLine) {
  * @return {String}               The number padded as a string
  */
 function pad2(data) {
-  if (typeof(data) !== 'string') {
+  if(typeof data !== 'string') {
     // handle fractions.
-    if (typeof(data) === 'number') {
+    if(typeof data === 'number') {
       data = parseInt(data);
     }
     data = String(data);
@@ -3683,7 +3608,7 @@ function pad2(data) {
  * @return {Number}           The truncated number
  */
 function trunc(number) {
-  return (number < 0 ? Math.ceil(number) : Math.floor(number));
+  return number < 0 ? Math.ceil(number) : Math.floor(number);
 }
 
 /**
@@ -3701,16 +3626,16 @@ function trunc(number) {
  * @return {Object}           Returns the target.
  */
 function extend(source, target) {
-  for (let key in source) {
+  for(let key in source) {
     let descr = Object.getOwnPropertyDescriptor(source, key);
-    if (descr && !Object.getOwnPropertyDescriptor(target, key)) {
+    if(descr && !Object.getOwnPropertyDescriptor(target, key)) {
       Object.defineProperty(target, key, descr);
     }
   }
   return target;
 }
 
-var helpers = /*#__PURE__*/Object.freeze({
+var helpers = /*#__PURE__*/ Object.freeze({
   __proto__: null,
   binsearchInsert: binsearchInsert,
   clone: clone,
@@ -3722,14 +3647,13 @@ var helpers = /*#__PURE__*/Object.freeze({
   strictParseInt: strictParseInt,
   trunc: trunc,
   unescapedIndexOf: unescapedIndexOf,
-  updateTimezones: updateTimezones
+  updateTimezones: updateTimezones,
 });
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This class represents the "utc-offset" value type, with various calculation and manipulation
@@ -3748,7 +3672,7 @@ class UtcOffset {
     // -05:00
     let options = {};
     //TODO: support seconds per rfc5545 ?
-    options.factor = (aString[0] === '+') ? 1 : -1;
+    options.factor = aString[0] === '+' ? 1 : -1;
     options.hours = strictParseInt(aString.slice(1, 3));
     options.minutes = strictParseInt(aString.slice(4, 6));
 
@@ -3804,7 +3728,7 @@ class UtcOffset {
    * @type {String}
    * @default "utc-offset"
    */
-  icaltype = "utc-offset";
+  icaltype = 'utc-offset';
 
   /**
    * Returns a clone of the utc offset object.
@@ -3824,8 +3748,8 @@ class UtcOffset {
    * @param {Number=} aData.factor  The factor for the utc-offset, either -1 or 1
    */
   fromData(aData) {
-    if (aData) {
-      for (let [key, value] of Object.entries(aData)) {
+    if(aData) {
+      for(let [key, value] of Object.entries(aData)) {
         this[key] = value;
       }
     }
@@ -3845,7 +3769,7 @@ class UtcOffset {
     this.factor = aSeconds < 0 ? -1 : 1;
     this.hours = trunc(secs / 3600);
 
-    secs -= (this.hours * 3600);
+    secs -= this.hours * 3600;
     this.minutes = trunc(secs / 60);
     return this;
   }
@@ -3875,17 +3799,19 @@ class UtcOffset {
     // Range: 97200 seconds (with 1 hour inbetween)
     let secs = this.toSeconds();
     let factor = this.factor;
-    while (secs < -43200) { // = UTC-12:00
+    while(secs < -43200) {
+      // = UTC-12:00
       secs += 97200;
     }
-    while (secs > 50400) { // = UTC+14:00
+    while(secs > 50400) {
+      // = UTC+14:00
       secs -= 97200;
     }
 
     this.fromSeconds(secs);
 
     // Avoid changing the factor when on zero seconds
-    if (secs == 0) {
+    if(secs == 0) {
       this.factor = factor;
     }
   }
@@ -3903,7 +3829,7 @@ class UtcOffset {
    * @return {String}
    */
   toString() {
-    return (this.factor == 1 ? "+" : "-") + pad2(this.hours) + ':' + pad2(this.minutes);
+    return (this.factor == 1 ? '+' : '-') + pad2(this.hours) + ':' + pad2(this.minutes);
   }
 }
 
@@ -3911,7 +3837,6 @@ class UtcOffset {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * Describes a vCard time, which has slight differences to the ICAL.Time.
@@ -3940,9 +3865,11 @@ class VCardTime extends Time {
       return v ? strictParseInt(v.slice(s, s + e)) : null;
     }
     let parts = aValue.split('T');
-    let dt = parts[0], tmz = parts[1];
+    let dt = parts[0],
+      tmz = parts[1];
     let splitzone = tmz ? design.vcard.value.time._splitZone(tmz) : [];
-    let zone = splitzone[0], tm = splitzone[1];
+    let zone = splitzone[0],
+      tm = splitzone[1];
 
     let dtlen = dt ? dt.length : 0;
     let tmlen = tm ? tm.length : 0;
@@ -3956,13 +3883,13 @@ class VCardTime extends Time {
       day: dtlen == 5 ? part(dt, 3, 2) : dtlen == 7 && hasDashDate ? part(dt, 5, 2) : dtlen == 10 ? part(dt, 8, 2) : null,
 
       hour: hasDashTime ? null : part(tm, 0, 2),
-      minute: hasDashTime && tmlen == 3 ? part(tm, 1, 2) : tmlen > 4 ? hasDashTime ? part(tm, 1, 2) : part(tm, 3, 2) : null,
-      second: tmlen == 4 ? part(tm, 2, 2) : tmlen == 6 ? part(tm, 4, 2) : tmlen == 8 ? part(tm, 6, 2) : null
+      minute: hasDashTime && tmlen == 3 ? part(tm, 1, 2) : tmlen > 4 ? (hasDashTime ? part(tm, 1, 2) : part(tm, 3, 2)) : null,
+      second: tmlen == 4 ? part(tm, 2, 2) : tmlen == 6 ? part(tm, 4, 2) : tmlen == 8 ? part(tm, 6, 2) : null,
     };
 
-    if (zone == 'Z') {
+    if(zone == 'Z') {
       zone = Timezone.utcTimezone;
-    } else if (zone && zone[3] == ':') {
+    } else if(zone && zone[3] == ':') {
       zone = UtcOffset.fromString(zone);
     } else {
       zone = null;
@@ -3970,7 +3897,6 @@ class VCardTime extends Time {
 
     return new VCardTime(o, zone, aIcalType);
   }
-
 
   /**
    * Creates a new ICAL.VCardTime instance.
@@ -3987,7 +3913,7 @@ class VCardTime extends Time {
    */
   constructor(data, zone, icaltype) {
     super(data, zone);
-    this.icaltype = icaltype || "date-and-or-time";
+    this.icaltype = icaltype || 'date-and-or-time';
   }
 
   /**
@@ -3996,14 +3922,14 @@ class VCardTime extends Time {
    * @type {String}
    * @default "vcardtime"
    */
-  icalclass = "vcardtime";
+  icalclass = 'vcardtime';
 
   /**
    * The type name, to be used in the jCal object.
    * @type {String}
    * @default "date-and-or-time"
    */
-  icaltype = "date-and-or-time";
+  icaltype = 'date-and-or-time';
 
   /**
    * Returns a clone of the vcard date/time object.
@@ -4022,7 +3948,7 @@ class VCardTime extends Time {
    * @inheritdoc
    */
   utcOffset() {
-    if (this.zone instanceof UtcOffset) {
+    if(this.zone instanceof UtcOffset) {
       return this.zone.toSeconds();
     } else {
       return Time.prototype.utcOffset.apply(this, arguments);
@@ -4044,28 +3970,37 @@ class VCardTime extends Time {
    * @return {String}
    */
   toString() {
-    let y = this.year, m = this.month, d = this.day;
-    let h = this.hour, mm = this.minute, s = this.second;
+    let y = this.year,
+      m = this.month,
+      d = this.day;
+    let h = this.hour,
+      mm = this.minute,
+      s = this.second;
 
-    let hasYear = y !== null, hasMonth = m !== null, hasDay = d !== null;
-    let hasHour = h !== null, hasMinute = mm !== null, hasSecond = s !== null;
+    let hasYear = y !== null,
+      hasMonth = m !== null,
+      hasDay = d !== null;
+    let hasHour = h !== null,
+      hasMinute = mm !== null,
+      hasSecond = s !== null;
 
-    let datepart = (hasYear ? pad2(y) + (hasMonth || hasDay ? '-' : '') : (hasMonth || hasDay ? '--' : '')) +
-                   (hasMonth ? pad2(m) : '') +
-                   (hasDay ? '-' + pad2(d) : '');
-    let timepart = (hasHour ? pad2(h) : '-') + (hasHour && hasMinute ? ':' : '') +
-                   (hasMinute ? pad2(mm) : '') + (!hasHour && !hasMinute ? '-' : '') +
-                   (hasMinute && hasSecond ? ':' : '') +
-                   (hasSecond ? pad2(s) : '');
+    let datepart = (hasYear ? pad2(y) + (hasMonth || hasDay ? '-' : '') : hasMonth || hasDay ? '--' : '') + (hasMonth ? pad2(m) : '') + (hasDay ? '-' + pad2(d) : '');
+    let timepart =
+      (hasHour ? pad2(h) : '-') +
+      (hasHour && hasMinute ? ':' : '') +
+      (hasMinute ? pad2(mm) : '') +
+      (!hasHour && !hasMinute ? '-' : '') +
+      (hasMinute && hasSecond ? ':' : '') +
+      (hasSecond ? pad2(s) : '');
 
     let zone;
-    if (this.zone === Timezone.utcTimezone) {
+    if(this.zone === Timezone.utcTimezone) {
       zone = 'Z';
-    } else if (this.zone instanceof UtcOffset) {
+    } else if(this.zone instanceof UtcOffset) {
       zone = this.zone.toString();
-    } else if (this.zone === Timezone.localTimezone) {
+    } else if(this.zone === Timezone.localTimezone) {
       zone = '';
-    } else if (this.zone instanceof Timezone) {
+    } else if(this.zone instanceof Timezone) {
       let offset = UtcOffset.fromSeconds(this.zone.utcOffset(this));
       zone = offset.toString();
     } else {
@@ -4073,12 +4008,12 @@ class VCardTime extends Time {
     }
 
     switch (this.icaltype) {
-      case "time":
+      case 'time':
         return timepart + zone;
-      case "date-and-or-time":
-      case "date-time":
+      case 'date-and-or-time':
+      case 'date-time':
         return datepart + (timepart == '--' ? '' : 'T' + timepart + zone);
-      case "date":
+      case 'date':
         return datepart;
     }
     return null;
@@ -4089,7 +4024,6 @@ class VCardTime extends Time {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This lets typescript resolve our custom types in the
@@ -4109,25 +4043,25 @@ class VCardTime extends Time {
  */
 class RecurIterator {
   static _indexMap = {
-    "BYSECOND": 0,
-    "BYMINUTE": 1,
-    "BYHOUR": 2,
-    "BYDAY": 3,
-    "BYMONTHDAY": 4,
-    "BYYEARDAY": 5,
-    "BYWEEKNO": 6,
-    "BYMONTH": 7,
-    "BYSETPOS": 8
+    BYSECOND: 0,
+    BYMINUTE: 1,
+    BYHOUR: 2,
+    BYDAY: 3,
+    BYMONTHDAY: 4,
+    BYYEARDAY: 5,
+    BYWEEKNO: 6,
+    BYMONTH: 7,
+    BYSETPOS: 8,
   };
 
   static _expandMap = {
-    "SECONDLY": [1, 1, 1, 1, 1, 1, 1, 1],
-    "MINUTELY": [2, 1, 1, 1, 1, 1, 1, 1],
-    "HOURLY": [2, 2, 1, 1, 1, 1, 1, 1],
-    "DAILY": [2, 2, 2, 1, 1, 1, 1, 1],
-    "WEEKLY": [2, 2, 2, 2, 3, 3, 1, 1],
-    "MONTHLY": [2, 2, 2, 2, 2, 3, 3, 1],
-    "YEARLY": [2, 2, 2, 2, 2, 2, 2, 2]
+    SECONDLY: [1, 1, 1, 1, 1, 1, 1, 1],
+    MINUTELY: [2, 1, 1, 1, 1, 1, 1, 1],
+    HOURLY: [2, 2, 1, 1, 1, 1, 1, 1],
+    DAILY: [2, 2, 2, 1, 1, 1, 1, 1],
+    WEEKLY: [2, 2, 2, 2, 3, 3, 1, 1],
+    MONTHLY: [2, 2, 2, 2, 2, 3, 3, 1],
+    YEARLY: [2, 2, 2, 2, 2, 2, 2, 2],
   };
 
   static UNKNOWN = 0;
@@ -4231,51 +4165,50 @@ class RecurIterator {
   fromData(options) {
     this.rule = formatClassType(options.rule, Recur);
 
-    if (!this.rule) {
+    if(!this.rule) {
       throw new Error('iterator requires a (ICAL.Recur) rule');
     }
 
     this.dtstart = formatClassType(options.dtstart, Time);
 
-    if (!this.dtstart) {
+    if(!this.dtstart) {
       throw new Error('iterator requires a (ICAL.Time) dtstart');
     }
 
-    if (options.by_data) {
+    if(options.by_data) {
       this.by_data = options.by_data;
     } else {
       this.by_data = clone(this.rule.parts, true);
     }
 
-    if (options.occurrence_number)
-      this.occurrence_number = options.occurrence_number;
+    if(options.occurrence_number) this.occurrence_number = options.occurrence_number;
 
     this.days = options.days || [];
-    if (options.last) {
+    if(options.last) {
       this.last = formatClassType(options.last, Time);
     }
 
     this.by_indices = options.by_indices;
 
-    if (!this.by_indices) {
+    if(!this.by_indices) {
       this.by_indices = {
-        "BYSECOND": 0,
-        "BYMINUTE": 0,
-        "BYHOUR": 0,
-        "BYDAY": 0,
-        "BYMONTH": 0,
-        "BYWEEKNO": 0,
-        "BYMONTHDAY": 0
+        BYSECOND: 0,
+        BYMINUTE: 0,
+        BYHOUR: 0,
+        BYDAY: 0,
+        BYMONTH: 0,
+        BYWEEKNO: 0,
+        BYMONTHDAY: 0,
       };
     }
 
     this.initialized = options.initialized || false;
 
-    if (!this.initialized) {
+    if(!this.initialized) {
       try {
         this.init();
-      } catch (e) {
-        if (e instanceof InvalidRecurrenceRuleError) {
+      } catch(e) {
+        if(e instanceof InvalidRecurrenceRuleError) {
           // Init may error if there are no possible recurrence instances from
           // the rule, but we don't want to bubble this error up. Instead, we
           // create an empty iterator.
@@ -4297,55 +4230,52 @@ class RecurIterator {
     this.last = this.dtstart.clone();
     let parts = this.by_data;
 
-    if ("BYDAY" in parts) {
+    if('BYDAY' in parts) {
       // libical does this earlier when the rule is loaded, but we postpone to
       // now so we can preserve the original order.
       this.sort_byday_rules(parts.BYDAY);
     }
 
     // The BYYEARDAY may only appear with BYDAY
-    if ("BYYEARDAY" in parts) {
-      if ("BYMONTH" in parts || "BYWEEKNO" in parts ||
-          "BYMONTHDAY" in parts) {
-        throw new Error("Invalid BYYEARDAY rule");
+    if('BYYEARDAY' in parts) {
+      if('BYMONTH' in parts || 'BYWEEKNO' in parts || 'BYMONTHDAY' in parts) {
+        throw new Error('Invalid BYYEARDAY rule');
       }
     }
 
     // BYWEEKNO and BYMONTHDAY rule parts may not both appear
-    if ("BYWEEKNO" in parts && "BYMONTHDAY" in parts) {
-      throw new Error("BYWEEKNO does not fit to BYMONTHDAY");
+    if('BYWEEKNO' in parts && 'BYMONTHDAY' in parts) {
+      throw new Error('BYWEEKNO does not fit to BYMONTHDAY');
     }
 
     // For MONTHLY recurrences (FREQ=MONTHLY) neither BYYEARDAY nor
     // BYWEEKNO may appear.
-    if (this.rule.freq == "MONTHLY" &&
-        ("BYYEARDAY" in parts || "BYWEEKNO" in parts)) {
-      throw new Error("For MONTHLY recurrences neither BYYEARDAY nor BYWEEKNO may appear");
+    if(this.rule.freq == 'MONTHLY' && ('BYYEARDAY' in parts || 'BYWEEKNO' in parts)) {
+      throw new Error('For MONTHLY recurrences neither BYYEARDAY nor BYWEEKNO may appear');
     }
 
     // For WEEKLY recurrences (FREQ=WEEKLY) neither BYMONTHDAY nor
     // BYYEARDAY may appear.
-    if (this.rule.freq == "WEEKLY" &&
-        ("BYYEARDAY" in parts || "BYMONTHDAY" in parts)) {
-      throw new Error("For WEEKLY recurrences neither BYMONTHDAY nor BYYEARDAY may appear");
+    if(this.rule.freq == 'WEEKLY' && ('BYYEARDAY' in parts || 'BYMONTHDAY' in parts)) {
+      throw new Error('For WEEKLY recurrences neither BYMONTHDAY nor BYYEARDAY may appear');
     }
 
     // BYYEARDAY may only appear in YEARLY rules
-    if (this.rule.freq != "YEARLY" && "BYYEARDAY" in parts) {
-      throw new Error("BYYEARDAY may only appear in YEARLY rules");
+    if(this.rule.freq != 'YEARLY' && 'BYYEARDAY' in parts) {
+      throw new Error('BYYEARDAY may only appear in YEARLY rules');
     }
 
-    this.last.second = this.setup_defaults("BYSECOND", "SECONDLY", this.dtstart.second);
-    this.last.minute = this.setup_defaults("BYMINUTE", "MINUTELY", this.dtstart.minute);
-    this.last.hour = this.setup_defaults("BYHOUR", "HOURLY", this.dtstart.hour);
-    this.last.day = this.setup_defaults("BYMONTHDAY", "DAILY", this.dtstart.day);
-    this.last.month = this.setup_defaults("BYMONTH", "MONTHLY", this.dtstart.month);
+    this.last.second = this.setup_defaults('BYSECOND', 'SECONDLY', this.dtstart.second);
+    this.last.minute = this.setup_defaults('BYMINUTE', 'MINUTELY', this.dtstart.minute);
+    this.last.hour = this.setup_defaults('BYHOUR', 'HOURLY', this.dtstart.hour);
+    this.last.day = this.setup_defaults('BYMONTHDAY', 'DAILY', this.dtstart.day);
+    this.last.month = this.setup_defaults('BYMONTH', 'MONTHLY', this.dtstart.month);
 
-    if (this.rule.freq == "WEEKLY") {
-      if ("BYDAY" in parts) {
+    if(this.rule.freq == 'WEEKLY') {
+      if('BYDAY' in parts) {
         let [, dow] = this.ruleDayOfWeek(parts.BYDAY[0], this.rule.wkst);
         let wkdy = dow - this.last.dayOfWeek(this.rule.wkst);
-        if ((this.last.dayOfWeek(this.rule.wkst) < dow && wkdy >= 0) || wkdy < 0) {
+        if((this.last.dayOfWeek(this.rule.wkst) < dow && wkdy >= 0) || wkdy < 0) {
           // Initial time is after first day of BYDAY data
           this.last.day += wkdy;
         }
@@ -4355,7 +4285,7 @@ class RecurIterator {
       }
     }
 
-    if (this.rule.freq == "YEARLY") {
+    if(this.rule.freq == 'YEARLY') {
       // Some yearly recurrence rules may be specific enough to not actually
       // occur on a yearly basis, e.g. the 29th day of February or the fifth
       // Monday of a given month. The standard isn't clear on the intended
@@ -4366,51 +4296,51 @@ class RecurIterator {
       // through the 21st. Detecting these is non-trivial, so ensure that we
       // stop iterating at some point.
       const untilYear = this.rule.until ? this.rule.until.year : 20000;
-      while (this.last.year <= untilYear) {
+      while(this.last.year <= untilYear) {
         this.expand_year_days(this.last.year);
-        if (this.days.length > 0) {
+        if(this.days.length > 0) {
           break;
         }
         this.increment_year(this.rule.interval);
       }
 
-      if (this.days.length == 0) {
+      if(this.days.length == 0) {
         throw new InvalidRecurrenceRuleError();
       }
 
       // If there's no occurrence in this year, try the following years. This
       // would only happen looking for day 366 or -366.
-      if (!this._nextByYearDay() && !this.next_year() && !this.next_year() && !this.next_year()) {
+      if(!this._nextByYearDay() && !this.next_year() && !this.next_year() && !this.next_year()) {
         // This should not be possible, but just in case it is, stop.
         throw new InvalidRecurrenceRuleError();
       }
     }
 
-    if (this.rule.freq == "MONTHLY") {
-      if (this.has_by_data("BYDAY")) {
+    if(this.rule.freq == 'MONTHLY') {
+      if(this.has_by_data('BYDAY')) {
         let tempLast = null;
         let initLast = this.last.clone();
         let daysInMonth = Time.daysInMonth(this.last.month, this.last.year);
 
         // Check every weekday in BYDAY with relative dow and pos.
-        for (let bydow of this.by_data.BYDAY) {
+        for(let bydow of this.by_data.BYDAY) {
           this.last = initLast.clone();
           let [pos, dow] = this.ruleDayOfWeek(bydow);
           let dayOfMonth = this.last.nthWeekDay(dow, pos);
 
           // If |pos| >= 6, the byday is invalid for a monthly rule.
-          if (pos >= 6 || pos <= -6) {
-            throw new Error("Malformed values in BYDAY part");
+          if(pos >= 6 || pos <= -6) {
+            throw new Error('Malformed values in BYDAY part');
           }
 
           // If a Byday with pos=+/-5 is not in the current month it
           // must be searched in the next months.
-          if (dayOfMonth > daysInMonth || dayOfMonth <= 0) {
+          if(dayOfMonth > daysInMonth || dayOfMonth <= 0) {
             // Skip if we have already found a "last" in this month.
-            if (tempLast && tempLast.month == initLast.month) {
+            if(tempLast && tempLast.month == initLast.month) {
               continue;
             }
-            while (dayOfMonth > daysInMonth || dayOfMonth <= 0) {
+            while(dayOfMonth > daysInMonth || dayOfMonth <= 0) {
               this.increment_month();
               daysInMonth = Time.daysInMonth(this.last.month, this.last.year);
               dayOfMonth = this.last.nthWeekDay(dow, pos);
@@ -4418,7 +4348,7 @@ class RecurIterator {
           }
 
           this.last.day = dayOfMonth;
-          if (!tempLast || this.last.compare(tempLast) < 0) {
+          if(!tempLast || this.last.compare(tempLast) < 0) {
             tempLast = this.last.clone();
           }
         }
@@ -4429,25 +4359,21 @@ class RecurIterator {
         //     this case. It accepts a special flag which will avoid incrementing
         //     the initial value without the flag days that match the start time
         //     would be missed.
-        if (this.has_by_data('BYMONTHDAY')) {
+        if(this.has_by_data('BYMONTHDAY')) {
           this._byDayAndMonthDay(true);
         }
 
-        if (this.last.day > daysInMonth || this.last.day == 0) {
-          throw new Error("Malformed values in BYDAY part");
+        if(this.last.day > daysInMonth || this.last.day == 0) {
+          throw new Error('Malformed values in BYDAY part');
         }
-      } else if (this.has_by_data("BYMONTHDAY")) {
+      } else if(this.has_by_data('BYMONTHDAY')) {
         // Change the day value so that normalisation won't change the month.
         this.last.day = 1;
 
         // Get a sorted list of days in the starting month that match the rule.
-        let normalized = this.normalizeByMonthDayRules(
-          this.last.year,
-          this.last.month,
-          this.rule.parts.BYMONTHDAY
-        ).filter(d => d >= this.last.day);
+        let normalized = this.normalizeByMonthDayRules(this.last.year, this.last.month, this.rule.parts.BYMONTHDAY).filter(d => d >= this.last.day);
 
-        if (normalized.length) {
+        if(normalized.length) {
           // There's at least one valid day, use it.
           this.last.day = normalized[0];
           this.by_data.BYMONTHDAY = normalized;
@@ -4455,7 +4381,7 @@ class RecurIterator {
           // There's no occurrence in this month, find the next valid month.
           // The longest possible sequence of skipped months is February-April-June,
           // so we might need to call next_month up to three times.
-          if (!this.next_month() && !this.next_month() && !this.next_month()) {
+          if(!this.next_month() && !this.next_month() && !this.next_month()) {
             throw new InvalidRecurrenceRuleError();
           }
         }
@@ -4468,18 +4394,17 @@ class RecurIterator {
    * @return {Time}
    */
   next(again = false) {
-    let before = (this.last ? this.last.clone() : null);
+    let before = this.last ? this.last.clone() : null;
 
-    if ((this.rule.count && this.occurrence_number >= this.rule.count) ||
-        (this.rule.until && this.last.compare(this.rule.until) > 0)) {
+    if((this.rule.count && this.occurrence_number >= this.rule.count) || (this.rule.until && this.last.compare(this.rule.until) > 0)) {
       this.completed = true;
     }
 
-    if (this.completed) {
+    if(this.completed) {
       return null;
     }
 
-    if (this.occurrence_number == 0 && this.last.compare(this.dtstart) >= 0) {
+    if(this.occurrence_number == 0 && this.last.compare(this.dtstart) >= 0) {
       // First of all, give the instance that was initialized
       this.occurrence_number++;
       return this.last;
@@ -4491,59 +4416,57 @@ class RecurIterator {
       valid = 1;
 
       switch (this.rule.freq) {
-      case "SECONDLY":
-        this.next_second();
-        break;
-      case "MINUTELY":
-        this.next_minute();
-        break;
-      case "HOURLY":
-        this.next_hour();
-        break;
-      case "DAILY":
-        this.next_day();
-        break;
-      case "WEEKLY":
-        this.next_week();
-        break;
-      case "MONTHLY":
-        valid = this.next_month();
-        if (valid) {
-          invalid_count = 0;
-        } else if (++invalid_count == 336) {
-          // We've been through all 91 month variations and not found a recurrence. Stop.
-          // (12 months and 29-day February × 7 starting days.)
-          this.completed = true;
-          return null;
-        }
-        break;
-      case "YEARLY":
-        valid = this.next_year();
-        if (valid) {
-          invalid_count = 0;
-        } else if (++invalid_count == 28) {
-          // We've been through all 14 year variations and not found a recurrence. Stop.
-          // (365-day and 366-day years × 7 starting days.)
-          this.completed = true;
-          return null;
-        }
-        break;
+        case 'SECONDLY':
+          this.next_second();
+          break;
+        case 'MINUTELY':
+          this.next_minute();
+          break;
+        case 'HOURLY':
+          this.next_hour();
+          break;
+        case 'DAILY':
+          this.next_day();
+          break;
+        case 'WEEKLY':
+          this.next_week();
+          break;
+        case 'MONTHLY':
+          valid = this.next_month();
+          if(valid) {
+            invalid_count = 0;
+          } else if(++invalid_count == 336) {
+            // We've been through all 91 month variations and not found a recurrence. Stop.
+            // (12 months and 29-day February × 7 starting days.)
+            this.completed = true;
+            return null;
+          }
+          break;
+        case 'YEARLY':
+          valid = this.next_year();
+          if(valid) {
+            invalid_count = 0;
+          } else if(++invalid_count == 28) {
+            // We've been through all 14 year variations and not found a recurrence. Stop.
+            // (365-day and 366-day years × 7 starting days.)
+            this.completed = true;
+            return null;
+          }
+          break;
 
-      default:
-        return null;
+        default:
+          return null;
       }
-    } while (!this.check_contracting_rules() ||
-             this.last.compare(this.dtstart) < 0 ||
-             !valid);
+    } while(!this.check_contracting_rules() || this.last.compare(this.dtstart) < 0 || !valid);
 
-    if (this.last.compare(before) == 0) {
-      if (again) {
-        throw new Error("Same occurrence found twice, protecting you from death by recursion");
+    if(this.last.compare(before) == 0) {
+      if(again) {
+        throw new Error('Same occurrence found twice, protecting you from death by recursion');
       }
       this.next(true);
     }
 
-    if (this.rule.until && this.last.compare(this.rule.until) > 0) {
+    if(this.rule.until && this.last.compare(this.rule.until) > 0) {
       this.completed = true;
       return null;
     } else {
@@ -4553,39 +4476,37 @@ class RecurIterator {
   }
 
   next_second() {
-    return this.next_generic("BYSECOND", "SECONDLY", "second", "minute");
+    return this.next_generic('BYSECOND', 'SECONDLY', 'second', 'minute');
   }
 
   increment_second(inc) {
-    return this.increment_generic(inc, "second", 60, "minute");
+    return this.increment_generic(inc, 'second', 60, 'minute');
   }
 
   next_minute() {
-    return this.next_generic("BYMINUTE", "MINUTELY",
-                             "minute", "hour", "next_second");
+    return this.next_generic('BYMINUTE', 'MINUTELY', 'minute', 'hour', 'next_second');
   }
 
   increment_minute(inc) {
-    return this.increment_generic(inc, "minute", 60, "hour");
+    return this.increment_generic(inc, 'minute', 60, 'hour');
   }
 
   next_hour() {
-    return this.next_generic("BYHOUR", "HOURLY", "hour",
-                             "monthday", "next_minute");
+    return this.next_generic('BYHOUR', 'HOURLY', 'hour', 'monthday', 'next_minute');
   }
 
   increment_hour(inc) {
-    this.increment_generic(inc, "hour", 24, "monthday");
+    this.increment_generic(inc, 'hour', 24, 'monthday');
   }
 
   next_day() {
-    let this_freq = (this.rule.freq == "DAILY");
+    let this_freq = this.rule.freq == 'DAILY';
 
-    if (this.next_hour() == 0) {
+    if(this.next_hour() == 0) {
       return 0;
     }
 
-    if (this_freq) {
+    if(this_freq) {
       this.increment_monthday(this.rule.interval);
     } else {
       this.increment_monthday(1);
@@ -4597,14 +4518,14 @@ class RecurIterator {
   next_week() {
     let end_of_data = 0;
 
-    if (this.next_weekday_by_week() == 0) {
+    if(this.next_weekday_by_week() == 0) {
       return end_of_data;
     }
 
-    if (this.has_by_data("BYWEEKNO")) {
+    if(this.has_by_data('BYWEEKNO')) {
       this.by_indices.BYWEEKNO++;
 
-      if (this.by_indices.BYWEEKNO == this.by_data.BYWEEKNO.length) {
+      if(this.by_indices.BYWEEKNO == this.by_data.BYWEEKNO.length) {
         this.by_indices.BYWEEKNO = 0;
         end_of_data = 1;
       }
@@ -4617,7 +4538,7 @@ class RecurIterator {
 
       this.last.day += 7 * week_no;
 
-      if (end_of_data) {
+      if(end_of_data) {
         this.increment_year(1);
       }
     } else {
@@ -4653,37 +4574,38 @@ class RecurIterator {
     let len = rules.length;
     let rule;
 
-    for (; ruleIdx < len; ruleIdx++) {
+    for(; ruleIdx < len; ruleIdx++) {
       rule = parseInt(rules[ruleIdx], 10);
-      if (isNaN(rule)) {
+      if(isNaN(rule)) {
         throw new Error('Invalid BYMONTHDAY value');
       }
 
       // if this rule falls outside of given
       // month discard it.
-      if (Math.abs(rule) > daysInMonth) {
+      if(Math.abs(rule) > daysInMonth) {
         continue;
       }
 
       // negative case
-      if (rule < 0) {
+      if(rule < 0) {
         // we add (not subtract it is a negative number)
         // one from the rule because 1 === last day of month
         rule = daysInMonth + (rule + 1);
-      } else if (rule === 0) {
+      } else if(rule === 0) {
         // skip zero: it is invalid.
         continue;
       }
 
       // only add unique items...
-      if (newRules.indexOf(rule) === -1) {
+      if(newRules.indexOf(rule) === -1) {
         newRules.push(rule);
       }
-
     }
 
     // unique and sort
-    return newRules.sort(function(a, b) { return a - b; });
+    return newRules.sort(function (a, b) {
+      return a - b;
+    });
   }
 
   /**
@@ -4716,15 +4638,9 @@ class RecurIterator {
     let lastDay = this.last.day;
 
     function initMonth() {
-      daysInMonth = Time.daysInMonth(
-        self.last.month, self.last.year
-      );
+      daysInMonth = Time.daysInMonth(self.last.month, self.last.year);
 
-      byMonthDay = self.normalizeByMonthDayRules(
-        self.last.year,
-        self.last.month,
-        self.by_data.BYMONTHDAY
-      );
+      byMonthDay = self.normalizeByMonthDayRules(self.last.year, self.last.month, self.by_data.BYMONTHDAY);
 
       dateLen = byMonthDay.length;
 
@@ -4733,9 +4649,7 @@ class RecurIterator {
       // found date or at the last BYMONTHDAY, unless we are
       // initializing the iterator because in this case we have
       // to consider the last found date too.
-      while (byMonthDay[dateIdx] <= lastDay &&
-             !(isInit && byMonthDay[dateIdx] == lastDay) &&
-             dateIdx < dateLen - 1) {
+      while(byMonthDay[dateIdx] <= lastDay && !(isInit && byMonthDay[dateIdx] == lastDay) && dateIdx < dateLen - 1) {
         dateIdx++;
       }
     }
@@ -4752,7 +4666,7 @@ class RecurIterator {
     initMonth();
 
     // should come after initMonth
-    if (isInit) {
+    if(isInit) {
       lastDay -= 1;
     }
 
@@ -4760,7 +4674,7 @@ class RecurIterator {
     // Stop checking after 4 years so we consider also a leap year.
     let monthsCounter = 48;
 
-    while (!dataIsValid && monthsCounter) {
+    while(!dataIsValid && monthsCounter) {
       monthsCounter--;
       // increment the current date. This is really
       // important otherwise we may fall into the infinite
@@ -4769,7 +4683,7 @@ class RecurIterator {
       // for.
       date = lastDay + 1;
 
-      if (date > daysInMonth) {
+      if(date > daysInMonth) {
         nextMonth();
         continue;
       }
@@ -4779,7 +4693,7 @@ class RecurIterator {
 
       // this logic is dependent on the BYMONTHDAYS
       // being in order (which is done by #normalizeByMonthDayRules)
-      if (next >= date) {
+      if(next >= date) {
         // if the next month day is in the future jump to it.
         lastDay = next;
       } else {
@@ -4791,13 +4705,13 @@ class RecurIterator {
 
       // Now we can loop through the day rules to see
       // if one matches the current month date.
-      for (let dayIdx = 0; dayIdx < dayLen; dayIdx++) {
+      for(let dayIdx = 0; dayIdx < dayLen; dayIdx++) {
         let parts = this.ruleDayOfWeek(byDay[dayIdx]);
         let pos = parts[0];
         let dow = parts[1];
 
         this.last.day = lastDay;
-        if (this.last.isNthWeekDay(dow, pos)) {
+        if(this.last.isNthWeekDay(dow, pos)) {
           // when we find the valid one we can mark
           // the conditions as met and break the loop.
           // (Because we have this condition above
@@ -4813,18 +4727,17 @@ class RecurIterator {
       // in the current month we iterate to the next one.
       // since dateIdx is incremented right after getting
       // "next", we don't need dateLen -1 here.
-      if (!dataIsValid && dateIdx === dateLen) {
+      if(!dataIsValid && dateIdx === dateLen) {
         nextMonth();
         continue;
       }
     }
 
-    if (monthsCounter <= 0) {
+    if(monthsCounter <= 0) {
       // Checked 4 years without finding a Byday that matches
       // a Bymonthday. Maybe the rule is not correct.
-      throw new Error("Malformed values in BYDAY combined with BYMONTHDAY parts");
+      throw new Error('Malformed values in BYDAY combined with BYMONTHDAY parts');
     }
-
 
     return dataIsValid;
   }
@@ -4832,24 +4745,24 @@ class RecurIterator {
   next_month() {
     let data_valid = 1;
 
-    if (this.next_hour() == 0) {
+    if(this.next_hour() == 0) {
       return data_valid;
     }
 
-    if (this.has_by_data("BYDAY") && this.has_by_data("BYMONTHDAY")) {
+    if(this.has_by_data('BYDAY') && this.has_by_data('BYMONTHDAY')) {
       data_valid = this._byDayAndMonthDay();
-    } else if (this.has_by_data("BYDAY")) {
+    } else if(this.has_by_data('BYDAY')) {
       let daysInMonth = Time.daysInMonth(this.last.month, this.last.year);
       let setpos = 0;
       let setpos_total = 0;
 
-      if (this.has_by_data("BYSETPOS")) {
+      if(this.has_by_data('BYSETPOS')) {
         let last_day = this.last.day;
-        for (let day = 1; day <= daysInMonth; day++) {
+        for(let day = 1; day <= daysInMonth; day++) {
           this.last.day = day;
-          if (this.is_day_in_byday(this.last)) {
+          if(this.is_day_in_byday(this.last)) {
             setpos_total++;
-            if (day <= last_day) {
+            if(day <= last_day) {
               setpos++;
             }
           }
@@ -4859,39 +4772,36 @@ class RecurIterator {
 
       data_valid = 0;
       let day;
-      for (day = this.last.day + 1; day <= daysInMonth; day++) {
+      for(day = this.last.day + 1; day <= daysInMonth; day++) {
         this.last.day = day;
 
-        if (this.is_day_in_byday(this.last)) {
-          if (!this.has_by_data("BYSETPOS") ||
-              this.check_set_position(++setpos) ||
-              this.check_set_position(setpos - setpos_total - 1)) {
-
+        if(this.is_day_in_byday(this.last)) {
+          if(!this.has_by_data('BYSETPOS') || this.check_set_position(++setpos) || this.check_set_position(setpos - setpos_total - 1)) {
             data_valid = 1;
             break;
           }
         }
       }
 
-      if (day > daysInMonth) {
+      if(day > daysInMonth) {
         this.last.day = 1;
         this.increment_month();
 
-        if (this.is_day_in_byday(this.last)) {
-          if (!this.has_by_data("BYSETPOS") || this.check_set_position(1)) {
+        if(this.is_day_in_byday(this.last)) {
+          if(!this.has_by_data('BYSETPOS') || this.check_set_position(1)) {
             data_valid = 1;
           }
         } else {
           data_valid = 0;
         }
       }
-    } else if (this.has_by_data("BYMONTHDAY")) {
+    } else if(this.has_by_data('BYMONTHDAY')) {
       this.by_indices.BYMONTHDAY++;
 
-      if (this.by_indices.BYMONTHDAY >= this.by_data.BYMONTHDAY.length) {
+      if(this.by_indices.BYMONTHDAY >= this.by_data.BYMONTHDAY.length) {
         this.by_indices.BYMONTHDAY = 0;
         this.increment_month();
-        if (this.by_indices.BYMONTHDAY >= this.by_data.BYMONTHDAY.length) {
+        if(this.by_indices.BYMONTHDAY >= this.by_data.BYMONTHDAY.length) {
           return 0;
         }
       }
@@ -4899,11 +4809,11 @@ class RecurIterator {
       let daysInMonth = Time.daysInMonth(this.last.month, this.last.year);
       let day = this.by_data.BYMONTHDAY[this.by_indices.BYMONTHDAY];
 
-      if (day < 0) {
+      if(day < 0) {
         day = daysInMonth + day + 1;
       }
 
-      if (day > daysInMonth) {
+      if(day > daysInMonth) {
         this.last.day = 1;
         data_valid = this.is_day_in_byday(this.last);
       } else {
@@ -4912,7 +4822,7 @@ class RecurIterator {
     } else {
       this.increment_month();
       let daysInMonth = Time.daysInMonth(this.last.month, this.last.year);
-      if (this.by_data.BYMONTHDAY[0] > daysInMonth) {
+      if(this.by_data.BYMONTHDAY[0] > daysInMonth) {
         data_valid = 0;
       } else {
         this.last.day = this.by_data.BYMONTHDAY[0];
@@ -4925,19 +4835,19 @@ class RecurIterator {
   next_weekday_by_week() {
     let end_of_data = 0;
 
-    if (this.next_hour() == 0) {
+    if(this.next_hour() == 0) {
       return end_of_data;
     }
 
-    if (!this.has_by_data("BYDAY")) {
+    if(!this.has_by_data('BYDAY')) {
       return 1;
     }
 
-    for (;;) {
+    for(;;) {
       let tt = new Time();
       this.by_indices.BYDAY++;
 
-      if (this.by_indices.BYDAY == Object.keys(this.by_data.BYDAY).length) {
+      if(this.by_indices.BYDAY == Object.keys(this.by_data.BYDAY).length) {
         this.by_indices.BYDAY = 0;
         end_of_data = 1;
       }
@@ -4948,7 +4858,7 @@ class RecurIterator {
 
       dow -= this.rule.wkst;
 
-      if (dow < 0) {
+      if(dow < 0) {
         dow += 7;
       }
 
@@ -4958,9 +4868,9 @@ class RecurIterator {
 
       let startOfWeek = tt.startDoyWeek(this.rule.wkst);
 
-      if (dow + startOfWeek < 1) {
+      if(dow + startOfWeek < 1) {
         // The selected date is in the previous year
-        if (!end_of_data) {
+        if(!end_of_data) {
           continue;
         }
       }
@@ -4981,22 +4891,18 @@ class RecurIterator {
   }
 
   next_year() {
-    if (this.next_hour() == 0) {
+    if(this.next_hour() == 0) {
       return 0;
     }
 
-    if (this.days.length == 0 || ++this.days_index == this.days.length) {
+    if(this.days.length == 0 || ++this.days_index == this.days.length) {
       this.days_index = 0;
       this.increment_year(this.rule.interval);
-      if (this.has_by_data("BYMONTHDAY")) {
-        this.by_data.BYMONTHDAY = this.normalizeByMonthDayRules(
-          this.last.year,
-          this.last.month,
-          this.rule.parts.BYMONTHDAY
-        );
+      if(this.has_by_data('BYMONTHDAY')) {
+        this.by_data.BYMONTHDAY = this.normalizeByMonthDayRules(this.last.year, this.last.month, this.rule.parts.BYMONTHDAY);
       }
       this.expand_year_days(this.last.year);
-      if (this.days.length == 0) {
+      if(this.days.length == 0) {
         return 0;
       }
     }
@@ -5008,17 +4914,17 @@ class RecurIterator {
     let doy = this.days[this.days_index];
     let year = this.last.year;
 
-    if (Math.abs(doy) == 366 && !Time.isLeapYear(this.last.year)) {
+    if(Math.abs(doy) == 366 && !Time.isLeapYear(this.last.year)) {
       return 0;
     }
 
-    if (doy < 1) {
-        // Time.fromDayOfYear(doy, year) indexes relative to the
-        // start of the given year. That is different from the
-        // semantics of BYYEARDAY where negative indexes are an
-        // offset from the end of the given year.
-        doy += 1;
-        year += 1;
+    if(doy < 1) {
+      // Time.fromDayOfYear(doy, year) indexes relative to the
+      // start of the given year. That is different from the
+      // semantics of BYYEARDAY where negative indexes are an
+      // offset from the end of the given year.
+      doy += 1;
+      year += 1;
     }
     let next = Time.fromDayOfYear(doy, year);
     this.last.day = next.day;
@@ -5034,7 +4940,7 @@ class RecurIterator {
    */
   ruleDayOfWeek(dow, aWeekStart) {
     let matches = dow.match(/([+-]?[0-9])?(MO|TU|WE|TH|FR|SA|SU)/);
-    if (matches) {
+    if(matches) {
       let pos = parseInt(matches[1] || 0, 10);
       dow = Recur.icalDayToNumericDay(matches[2], aWeekStart);
       return [pos, dow];
@@ -5044,40 +4950,40 @@ class RecurIterator {
   }
 
   next_generic(aRuleType, aInterval, aDateAttr, aFollowingAttr, aPreviousIncr) {
-    let has_by_rule = (aRuleType in this.by_data);
-    let this_freq = (this.rule.freq == aInterval);
+    let has_by_rule = aRuleType in this.by_data;
+    let this_freq = this.rule.freq == aInterval;
     let end_of_data = 0;
 
-    if (aPreviousIncr && this[aPreviousIncr]() == 0) {
+    if(aPreviousIncr && this[aPreviousIncr]() == 0) {
       return end_of_data;
     }
 
-    if (has_by_rule) {
+    if(has_by_rule) {
       this.by_indices[aRuleType]++;
       let dta = this.by_data[aRuleType];
 
-      if (this.by_indices[aRuleType] == dta.length) {
+      if(this.by_indices[aRuleType] == dta.length) {
         this.by_indices[aRuleType] = 0;
         end_of_data = 1;
       }
       this.last[aDateAttr] = dta[this.by_indices[aRuleType]];
-    } else if (this_freq) {
-      this["increment_" + aDateAttr](this.rule.interval);
+    } else if(this_freq) {
+      this['increment_' + aDateAttr](this.rule.interval);
     }
 
-    if (has_by_rule && end_of_data && this_freq) {
-      this["increment_" + aFollowingAttr](1);
+    if(has_by_rule && end_of_data && this_freq) {
+      this['increment_' + aFollowingAttr](1);
     }
 
     return end_of_data;
   }
 
   increment_monthday(inc) {
-    for (let i = 0; i < inc; i++) {
+    for(let i = 0; i < inc; i++) {
       let daysInMonth = Time.daysInMonth(this.last.month, this.last.year);
       this.last.day++;
 
-      if (this.last.day > daysInMonth) {
+      if(this.last.day > daysInMonth) {
         this.last.day -= daysInMonth;
         this.increment_month();
       }
@@ -5086,17 +4992,17 @@ class RecurIterator {
 
   increment_month() {
     this.last.day = 1;
-    if (this.has_by_data("BYMONTH")) {
+    if(this.has_by_data('BYMONTH')) {
       this.by_indices.BYMONTH++;
 
-      if (this.by_indices.BYMONTH == this.by_data.BYMONTH.length) {
+      if(this.by_indices.BYMONTH == this.by_data.BYMONTH.length) {
         this.by_indices.BYMONTH = 0;
         this.increment_year(1);
       }
 
       this.last.month = this.by_data.BYMONTH[this.by_indices.BYMONTH];
     } else {
-      if (this.rule.freq == "MONTHLY") {
+      if(this.rule.freq == 'MONTHLY') {
         this.last.month += this.rule.interval;
       } else {
         this.last.month++;
@@ -5107,17 +5013,13 @@ class RecurIterator {
       this.last.month %= 12;
       this.last.month++;
 
-      if (years != 0) {
+      if(years != 0) {
         this.increment_year(years);
       }
     }
 
-    if (this.has_by_data("BYMONTHDAY")) {
-      this.by_data.BYMONTHDAY = this.normalizeByMonthDayRules(
-        this.last.year,
-        this.last.month,
-        this.rule.parts.BYMONTHDAY
-      );
+    if(this.has_by_data('BYMONTHDAY')) {
+      this.by_data.BYMONTHDAY = this.normalizeByMonthDayRules(this.last.year, this.last.month, this.rule.parts.BYMONTHDAY);
     }
   }
 
@@ -5131,13 +5033,13 @@ class RecurIterator {
     this.last[aDateAttr] += inc;
     let nextunit = trunc(this.last[aDateAttr] / aFactor);
     this.last[aDateAttr] %= aFactor;
-    if (nextunit != 0) {
-      this["increment_" + aNextIncrement](nextunit);
+    if(nextunit != 0) {
+      this['increment_' + aNextIncrement](nextunit);
     }
   }
 
   has_by_data(aRuleType) {
-    return (aRuleType in this.rule.parts);
+    return aRuleType in this.rule.parts;
   }
 
   expand_year_days(aYear) {
@@ -5146,41 +5048,41 @@ class RecurIterator {
 
     // We need our own copy with a few keys set
     let parts = {};
-    let rules = ["BYDAY", "BYWEEKNO", "BYMONTHDAY", "BYMONTH", "BYYEARDAY"];
-    for (let part of rules) {
-      if (part in this.rule.parts) {
+    let rules = ['BYDAY', 'BYWEEKNO', 'BYMONTHDAY', 'BYMONTH', 'BYYEARDAY'];
+    for(let part of rules) {
+      if(part in this.rule.parts) {
         parts[part] = this.rule.parts[part];
       }
     }
 
-    if ("BYMONTH" in parts && "BYWEEKNO" in parts) {
+    if('BYMONTH' in parts && 'BYWEEKNO' in parts) {
       let valid = 1;
       let validWeeks = {};
       t.year = aYear;
       t.isDate = true;
 
-      for (let monthIdx = 0; monthIdx < this.by_data.BYMONTH.length; monthIdx++) {
+      for(let monthIdx = 0; monthIdx < this.by_data.BYMONTH.length; monthIdx++) {
         let month = this.by_data.BYMONTH[monthIdx];
         t.month = month;
         t.day = 1;
         let first_week = t.weekNumber(this.rule.wkst);
         t.day = Time.daysInMonth(month, aYear);
         let last_week = t.weekNumber(this.rule.wkst);
-        for (monthIdx = first_week; monthIdx < last_week; monthIdx++) {
+        for(monthIdx = first_week; monthIdx < last_week; monthIdx++) {
           validWeeks[monthIdx] = 1;
         }
       }
 
-      for (let weekIdx = 0; weekIdx < this.by_data.BYWEEKNO.length && valid; weekIdx++) {
+      for(let weekIdx = 0; weekIdx < this.by_data.BYWEEKNO.length && valid; weekIdx++) {
         let weekno = this.by_data.BYWEEKNO[weekIdx];
-        if (weekno < 52) {
+        if(weekno < 52) {
           valid &= validWeeks[weekIdx];
         } else {
           valid = 0;
         }
       }
 
-      if (valid) {
+      if(valid) {
         delete parts.BYMONTH;
       } else {
         delete parts.BYWEEKNO;
@@ -5189,22 +5091,22 @@ class RecurIterator {
 
     let partCount = Object.keys(parts).length;
 
-    if (partCount == 0) {
+    if(partCount == 0) {
       let t1 = this.dtstart.clone();
       t1.year = this.last.year;
       this.days.push(t1.dayOfYear());
-    } else if (partCount == 1 && "BYMONTH" in parts) {
-      for (let month of this.by_data.BYMONTH) {
+    } else if(partCount == 1 && 'BYMONTH' in parts) {
+      for(let month of this.by_data.BYMONTH) {
         let t2 = this.dtstart.clone();
         t2.year = aYear;
         t2.month = month;
         t2.isDate = true;
         this.days.push(t2.dayOfYear());
       }
-    } else if (partCount == 1 && "BYMONTHDAY" in parts) {
-      for (let monthday of this.by_data.BYMONTHDAY) {
+    } else if(partCount == 1 && 'BYMONTHDAY' in parts) {
+      for(let monthday of this.by_data.BYMONTHDAY) {
         let t3 = this.dtstart.clone();
-        if (monthday < 0) {
+        if(monthday < 0) {
           let daysInMonth = Time.daysInMonth(t3.month, aYear);
           monthday = monthday + daysInMonth + 1;
         }
@@ -5213,13 +5115,11 @@ class RecurIterator {
         t3.isDate = true;
         this.days.push(t3.dayOfYear());
       }
-    } else if (partCount == 2 &&
-               "BYMONTHDAY" in parts &&
-               "BYMONTH" in parts) {
-      for (let month of this.by_data.BYMONTH) {
+    } else if(partCount == 2 && 'BYMONTHDAY' in parts && 'BYMONTH' in parts) {
+      for(let month of this.by_data.BYMONTH) {
         let daysInMonth = Time.daysInMonth(month, aYear);
-        for (let monthday of this.by_data.BYMONTHDAY) {
-          if (monthday < 0) {
+        for(let monthday of this.by_data.BYMONTHDAY) {
+          if(monthday < 0) {
             monthday = monthday + daysInMonth + 1;
           }
           t.day = monthday;
@@ -5230,12 +5130,12 @@ class RecurIterator {
           this.days.push(t.dayOfYear());
         }
       }
-    } else if (partCount == 1 && "BYWEEKNO" in parts) ; else if (partCount == 2 &&
-               "BYWEEKNO" in parts &&
-               "BYMONTHDAY" in parts) ; else if (partCount == 1 && "BYDAY" in parts) {
+    } else if(partCount == 1 && 'BYWEEKNO' in parts);
+    else if(partCount == 2 && 'BYWEEKNO' in parts && 'BYMONTHDAY' in parts);
+    else if(partCount == 1 && 'BYDAY' in parts) {
       this.days = this.days.concat(this.expand_by_day(aYear));
-    } else if (partCount == 2 && "BYDAY" in parts && "BYMONTH" in parts) {
-      for (let month of this.by_data.BYMONTH) {
+    } else if(partCount == 2 && 'BYDAY' in parts && 'BYMONTH' in parts) {
+      for(let month of this.by_data.BYMONTH) {
         let daysInMonth = Time.daysInMonth(month, aYear);
 
         t.year = aYear;
@@ -5249,23 +5149,22 @@ class RecurIterator {
         t.day = daysInMonth;
         let last_dow = t.dayOfWeek();
 
-        if (this.has_by_data("BYSETPOS")) {
+        if(this.has_by_data('BYSETPOS')) {
           let by_month_day = [];
-          for (let day = 1; day <= daysInMonth; day++) {
+          for(let day = 1; day <= daysInMonth; day++) {
             t.day = day;
-            if (this.is_day_in_byday(t)) {
+            if(this.is_day_in_byday(t)) {
               by_month_day.push(day);
             }
           }
 
-          for (let spIndex = 0; spIndex < by_month_day.length; spIndex++) {
-            if (this.check_set_position(spIndex + 1) ||
-                this.check_set_position(spIndex - by_month_day.length)) {
+          for(let spIndex = 0; spIndex < by_month_day.length; spIndex++) {
+            if(this.check_set_position(spIndex + 1) || this.check_set_position(spIndex - by_month_day.length)) {
               this.days.push(doy_offset + by_month_day[spIndex]);
             }
           }
         } else {
-          for (let coded_day of this.by_data.BYDAY) {
+          for(let coded_day of this.by_data.BYDAY) {
             let bydayParts = this.ruleDayOfWeek(coded_day);
             let pos = bydayParts[0];
             let dow = bydayParts[1];
@@ -5274,20 +5173,20 @@ class RecurIterator {
             let first_matching_day = ((dow + 7 - first_dow) % 7) + 1;
             let last_matching_day = daysInMonth - ((last_dow + 7 - dow) % 7);
 
-            if (pos == 0) {
-              for (let day = first_matching_day; day <= daysInMonth; day += 7) {
+            if(pos == 0) {
+              for(let day = first_matching_day; day <= daysInMonth; day += 7) {
                 this.days.push(doy_offset + day);
               }
-            } else if (pos > 0) {
+            } else if(pos > 0) {
               month_day = first_matching_day + (pos - 1) * 7;
 
-              if (month_day <= daysInMonth) {
+              if(month_day <= daysInMonth) {
                 this.days.push(doy_offset + month_day);
               }
             } else {
               month_day = last_matching_day + (pos + 1) * 7;
 
-              if (month_day > 0) {
+              if(month_day > 0) {
                 this.days.push(doy_offset + month_day);
               }
             }
@@ -5296,56 +5195,52 @@ class RecurIterator {
       }
       // Return dates in order of occurrence (1,2,3,...) instead
       // of by groups of weekdays (1,8,15,...,2,9,16,...).
-      this.days.sort(function(a, b) { return a - b; }); // Comparator function allows to sort numbers.
-    } else if (partCount == 2 && "BYDAY" in parts && "BYMONTHDAY" in parts) {
+      this.days.sort(function (a, b) {
+        return a - b;
+      }); // Comparator function allows to sort numbers.
+    } else if(partCount == 2 && 'BYDAY' in parts && 'BYMONTHDAY' in parts) {
       let expandedDays = this.expand_by_day(aYear);
 
-      for (let day of expandedDays) {
+      for(let day of expandedDays) {
         let tt = Time.fromDayOfYear(day, aYear);
-        if (this.by_data.BYMONTHDAY.indexOf(tt.day) >= 0) {
+        if(this.by_data.BYMONTHDAY.indexOf(tt.day) >= 0) {
           this.days.push(day);
         }
       }
-    } else if (partCount == 3 &&
-               "BYDAY" in parts &&
-               "BYMONTHDAY" in parts &&
-               "BYMONTH" in parts) {
+    } else if(partCount == 3 && 'BYDAY' in parts && 'BYMONTHDAY' in parts && 'BYMONTH' in parts) {
       let expandedDays = this.expand_by_day(aYear);
 
-      for (let day of expandedDays) {
+      for(let day of expandedDays) {
         let tt = Time.fromDayOfYear(day, aYear);
 
-        if (this.by_data.BYMONTH.indexOf(tt.month) >= 0 &&
-            this.by_data.BYMONTHDAY.indexOf(tt.day) >= 0) {
+        if(this.by_data.BYMONTH.indexOf(tt.month) >= 0 && this.by_data.BYMONTHDAY.indexOf(tt.day) >= 0) {
           this.days.push(day);
         }
       }
-    } else if (partCount == 2 && "BYDAY" in parts && "BYWEEKNO" in parts) {
+    } else if(partCount == 2 && 'BYDAY' in parts && 'BYWEEKNO' in parts) {
       let expandedDays = this.expand_by_day(aYear);
 
-      for (let day of expandedDays) {
+      for(let day of expandedDays) {
         let tt = Time.fromDayOfYear(day, aYear);
         let weekno = tt.weekNumber(this.rule.wkst);
 
-        if (this.by_data.BYWEEKNO.indexOf(weekno)) {
+        if(this.by_data.BYWEEKNO.indexOf(weekno)) {
           this.days.push(day);
         }
       }
-    } else if (partCount == 3 &&
-               "BYDAY" in parts &&
-               "BYWEEKNO" in parts &&
-               "BYMONTHDAY" in parts) ; else if (partCount == 1 && "BYYEARDAY" in parts) {
+    } else if(partCount == 3 && 'BYDAY' in parts && 'BYWEEKNO' in parts && 'BYMONTHDAY' in parts);
+    else if(partCount == 1 && 'BYYEARDAY' in parts) {
       this.days = this.days.concat(this.by_data.BYYEARDAY);
-    } else if (partCount == 2 && "BYYEARDAY" in parts && "BYDAY" in parts) {
+    } else if(partCount == 2 && 'BYYEARDAY' in parts && 'BYDAY' in parts) {
       let daysInYear = Time.isLeapYear(aYear) ? 366 : 365;
       let expandedDays = new Set(this.expand_by_day(aYear));
 
-      for (let doy of this.by_data.BYYEARDAY) {
-        if (doy < 0) {
+      for(let doy of this.by_data.BYYEARDAY) {
+        if(doy < 0) {
           doy += daysInYear + 1;
         }
 
-        if (expandedDays.has(doy)) {
+        if(expandedDays.has(doy)) {
           this.days.push(doy);
         }
       }
@@ -5355,8 +5250,8 @@ class RecurIterator {
 
     let daysInYear = Time.isLeapYear(aYear) ? 366 : 365;
     this.days.sort((a, b) => {
-      if (a < 0) a += daysInYear + 1;
-      if (b < 0) b += daysInYear + 1;
+      if(a < 0) a += daysInYear + 1;
+      if(b < 0) b += daysInYear + 1;
       return a - b;
     });
 
@@ -5364,7 +5259,6 @@ class RecurIterator {
   }
 
   expand_by_day(aYear) {
-
     let days_list = [];
     let tmp = this.last.clone();
 
@@ -5382,21 +5276,20 @@ class RecurIterator {
     let end_dow = tmp.dayOfWeek();
     let end_year_day = tmp.dayOfYear();
 
-    for (let day of this.by_data.BYDAY) {
+    for(let day of this.by_data.BYDAY) {
       let parts = this.ruleDayOfWeek(day);
       let pos = parts[0];
       let dow = parts[1];
 
-      if (pos == 0) {
+      if(pos == 0) {
         let tmp_start_doy = ((dow + 7 - start_dow) % 7) + 1;
 
-        for (let doy = tmp_start_doy; doy <= end_year_day; doy += 7) {
+        for(let doy = tmp_start_doy; doy <= end_year_day; doy += 7) {
           days_list.push(doy);
         }
-
-      } else if (pos > 0) {
+      } else if(pos > 0) {
         let first;
-        if (dow >= start_dow) {
+        if(dow >= start_dow) {
           first = dow - start_dow + 1;
         } else {
           first = dow - start_dow + 8;
@@ -5407,7 +5300,7 @@ class RecurIterator {
         let last;
         pos = -pos;
 
-        if (dow <= end_dow) {
+        if(dow <= end_dow) {
           last = end_year_day - end_dow + dow;
         } else {
           last = end_year_day - end_dow + dow - 7;
@@ -5420,15 +5313,14 @@ class RecurIterator {
   }
 
   is_day_in_byday(tt) {
-    if (this.by_data.BYDAY) {
-      for (let day of this.by_data.BYDAY) {
+    if(this.by_data.BYDAY) {
+      for(let day of this.by_data.BYDAY) {
         let parts = this.ruleDayOfWeek(day);
         let pos = parts[0];
         let dow = parts[1];
         let this_dow = tt.dayOfWeek();
 
-        if ((pos == 0 && dow == this_dow) ||
-            (tt.nthWeekDay(dow, pos) == tt.day)) {
+        if((pos == 0 && dow == this_dow) || tt.nthWeekDay(dow, pos) == tt.day) {
           return 1;
         }
       }
@@ -5446,7 +5338,7 @@ class RecurIterator {
    *                   and the given value is present in rules.
    */
   check_set_position(aPos) {
-    if (this.has_by_data('BYSETPOS')) {
+    if(this.has_by_data('BYSETPOS')) {
       let idx = this.by_data.BYSETPOS.indexOf(aPos);
       // negative numbers are not false-y
       return idx !== -1;
@@ -5455,12 +5347,12 @@ class RecurIterator {
   }
 
   sort_byday_rules(aRules) {
-    for (let i = 0; i < aRules.length; i++) {
-      for (let j = 0; j < i; j++) {
+    for(let i = 0; i < aRules.length; i++) {
+      for(let j = 0; j < i; j++) {
         let one = this.ruleDayOfWeek(aRules[j], this.rule.wkst)[1];
         let two = this.ruleDayOfWeek(aRules[i], this.rule.wkst)[1];
 
-        if (one > two) {
+        if(one > two) {
           let tmp = aRules[i];
           aRules[i] = aRules[j];
           aRules[j] = tmp;
@@ -5474,13 +5366,11 @@ class RecurIterator {
     let ruleMapValue = RecurIterator._expandMap[this.rule.freq][indexMapValue];
     let pass = false;
 
-    if (aRuleType in this.by_data &&
-        ruleMapValue == RecurIterator.CONTRACT) {
-
+    if(aRuleType in this.by_data && ruleMapValue == RecurIterator.CONTRACT) {
       let ruleType = this.by_data[aRuleType];
 
-      for (let bydata of ruleType) {
-        if (bydata == v) {
+      for(let bydata of ruleType) {
+        if(bydata == v) {
           pass = true;
           break;
         }
@@ -5497,25 +5387,27 @@ class RecurIterator {
     let weekNo = this.last.weekNumber(this.rule.wkst);
     let doy = this.last.dayOfYear();
 
-    return (this.check_contract_restriction("BYSECOND", this.last.second) &&
-            this.check_contract_restriction("BYMINUTE", this.last.minute) &&
-            this.check_contract_restriction("BYHOUR", this.last.hour) &&
-            this.check_contract_restriction("BYDAY", Recur.numericDayToIcalDay(dow)) &&
-            this.check_contract_restriction("BYWEEKNO", weekNo) &&
-            this.check_contract_restriction("BYMONTHDAY", this.last.day) &&
-            this.check_contract_restriction("BYMONTH", this.last.month) &&
-            this.check_contract_restriction("BYYEARDAY", doy));
+    return (
+      this.check_contract_restriction('BYSECOND', this.last.second) &&
+      this.check_contract_restriction('BYMINUTE', this.last.minute) &&
+      this.check_contract_restriction('BYHOUR', this.last.hour) &&
+      this.check_contract_restriction('BYDAY', Recur.numericDayToIcalDay(dow)) &&
+      this.check_contract_restriction('BYWEEKNO', weekNo) &&
+      this.check_contract_restriction('BYMONTHDAY', this.last.day) &&
+      this.check_contract_restriction('BYMONTH', this.last.month) &&
+      this.check_contract_restriction('BYYEARDAY', doy)
+    );
   }
 
   setup_defaults(aRuleType, req, deftime) {
     let indexMapValue = RecurIterator._indexMap[aRuleType];
     let ruleMapValue = RecurIterator._expandMap[this.rule.freq][indexMapValue];
 
-    if (ruleMapValue != RecurIterator.CONTRACT) {
-      if (!(aRuleType in this.by_data)) {
+    if(ruleMapValue != RecurIterator.CONTRACT) {
+      if(!(aRuleType in this.by_data)) {
         this.by_data[aRuleType] = [deftime];
       }
-      if (this.rule.freq != req) {
+      if(this.rule.freq != req) {
         return this.by_data[aRuleType][0];
       }
     }
@@ -5553,7 +5445,7 @@ class RecurIterator {
  */
 class InvalidRecurrenceRuleError extends Error {
   constructor() {
-    super("Recurrence rule has no valid occurrences");
+    super('Recurrence rule has no valid occurrences');
   }
 }
 
@@ -5561,7 +5453,6 @@ class InvalidRecurrenceRuleError extends Error {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This lets typescript resolve our custom types in the
@@ -5584,13 +5475,12 @@ const DOW_MAP = {
   WE: Time.WEDNESDAY,
   TH: Time.THURSDAY,
   FR: Time.FRIDAY,
-  SA: Time.SATURDAY
+  SA: Time.SATURDAY,
 };
 
 const REVERSE_DOW_MAP = Object.fromEntries(Object.entries(DOW_MAP).map(entry => entry.reverse()));
 
-const ALLOWED_FREQ = ['SECONDLY', 'MINUTELY', 'HOURLY',
-                      'DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'];
+const ALLOWED_FREQ = ['SECONDLY', 'MINUTELY', 'HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'];
 
 /**
  * This class represents the "recur" value type, used for example by RRULE. It provides methods to
@@ -5652,24 +5542,24 @@ class Recur {
     let values = string.split(';');
     let len = values.length;
 
-    for (let i = 0; i < len; i++) {
+    for(let i = 0; i < len; i++) {
       let parts = values[i].split('=');
       let ucname = parts[0].toUpperCase();
       let lcname = parts[0].toLowerCase();
-      let name = (fmtIcal ? lcname : ucname);
+      let name = fmtIcal ? lcname : ucname;
       let value = parts[1];
 
-      if (ucname in partDesign) {
+      if(ucname in partDesign) {
         let partArr = value.split(',');
         let partSet = new Set();
 
-        for (let part of partArr) {
+        for(let part of partArr) {
           partSet.add(partDesign[ucname](part));
         }
         partArr = [...partSet];
 
-        dict[name] = (partArr.length == 1 ? partArr[0] : partArr);
-      } else if (ucname in optionDesign) {
+        dict[name] = partArr.length == 1 ? partArr[0] : partArr;
+      } else if(ucname in optionDesign) {
         optionDesign[ucname](value, dict, fmtIcal);
       } else {
         // Don't swallow unknown values. Just set them as they are.
@@ -5709,8 +5599,8 @@ class Recur {
     //     Also, this allows consistent mapping between day numbers and day
     //     names for external users.
     let firstDow = aWeekStart || Time.SUNDAY;
-    let dow = (num + firstDow - Time.SUNDAY);
-    if (dow > 7) {
+    let dow = num + firstDow - Time.SUNDAY;
+    if(dow > 7) {
       dow -= 7;
     }
     return REVERSE_DOW_MAP[dow];
@@ -5739,7 +5629,7 @@ class Recur {
     this.wrappedJSObject = this;
     this.parts = {};
 
-    if (data && typeof(data) === 'object') {
+    if(data && typeof data === 'object') {
       this.fromData(data);
     }
   }
@@ -5803,7 +5693,7 @@ class Recur {
    * @type {String}
    * @default "icalrecur"
    */
-  icalclass = "icalrecur";
+  icalclass = 'icalrecur';
 
   /**
    * The type name, to be used in the jCal object.
@@ -5811,7 +5701,7 @@ class Recur {
    * @type {String}
    * @default "recur"
    */
-  icaltype = "recur";
+  icaltype = 'recur';
 
   /**
    * Create a new iterator for this recurrence rule. The passed start date
@@ -5822,8 +5712,8 @@ class Recur {
    * let recur = comp.getFirstPropertyValue('rrule');
    * let dtstart = comp.getFirstPropertyValue('dtstart');
    * let iter = recur.iterator(dtstart);
-   * for (let next = iter.next(); next; next = iter.next()) {
-   *   if (next.compare(rangeStart) < 0) {
+   * for(let next = iter.next(); next; next = iter.next()) {
+   *   if(next.compare(rangeStart) < 0) {
    *     continue;
    *   }
    *   console.log(next.toString());
@@ -5835,7 +5725,7 @@ class Recur {
   iterator(aStart) {
     return new RecurIterator({
       rule: this,
-      dtstart: aStart
+      dtstart: aStart,
     });
   }
 
@@ -5877,7 +5767,7 @@ class Recur {
    */
   addComponent(aType, aValue) {
     let ucname = aType.toUpperCase();
-    if (ucname in this.parts) {
+    if(ucname in this.parts) {
       this.parts[ucname].push(aValue);
     } else {
       this.parts[ucname] = [aValue];
@@ -5902,7 +5792,7 @@ class Recur {
    */
   getComponent(aType) {
     let ucname = aType.toUpperCase();
-    return (ucname in this.parts ? this.parts[ucname].slice() : []);
+    return ucname in this.parts ? this.parts[ucname].slice() : [];
   }
 
   /**
@@ -5925,9 +5815,9 @@ class Recur {
 
     do {
       next = iter.next();
-    } while (next && next.compare(aRecurrenceId) <= 0);
+    } while(next && next.compare(aRecurrenceId) <= 0);
 
-    if (next && aRecurrenceId.zone) {
+    if(next && aRecurrenceId.zone) {
       next.zone = aRecurrenceId.zone;
     }
 
@@ -5954,11 +5844,11 @@ class Recur {
    * @param {Array.<Number>=} data.bysetpos             The positionals for the BYSETPOS part
    */
   fromData(data) {
-    for (let key in data) {
+    for(let key in data) {
       let uckey = key.toUpperCase();
 
-      if (uckey in partDesign) {
-        if (Array.isArray(data[key])) {
+      if(uckey in partDesign) {
+        if(Array.isArray(data[key])) {
           this.parts[uckey] = data[key];
         } else {
           this.parts[uckey] = [data[key]];
@@ -5968,15 +5858,15 @@ class Recur {
       }
     }
 
-    if (this.interval && typeof this.interval != "number") {
+    if(this.interval && typeof this.interval != 'number') {
       optionDesign.INTERVAL(this.interval, this);
     }
 
-    if (this.wkst && typeof this.wkst != "number") {
+    if(this.wkst && typeof this.wkst != 'number') {
       this.wkst = Recur.icalDayToNumericDay(this.wkst);
     }
 
-    if (this.until && !(this.until instanceof Time)) {
+    if(this.until && !(this.until instanceof Time)) {
       this.until = Time.fromString(this.until);
     }
   }
@@ -5989,26 +5879,26 @@ class Recur {
     let res = Object.create(null);
     res.freq = this.freq;
 
-    if (this.count) {
+    if(this.count) {
       res.count = this.count;
     }
 
-    if (this.interval > 1) {
+    if(this.interval > 1) {
       res.interval = this.interval;
     }
 
-    for (let [k, kparts] of Object.entries(this.parts)) {
-      if (Array.isArray(kparts) && kparts.length == 1) {
+    for(let [k, kparts] of Object.entries(this.parts)) {
+      if(Array.isArray(kparts) && kparts.length == 1) {
         res[k.toLowerCase()] = kparts[0];
       } else {
         res[k.toLowerCase()] = clone(kparts);
       }
     }
 
-    if (this.until) {
+    if(this.until) {
       res.until = this.until.toString();
     }
-    if ('wkst' in this && this.wkst !== Time.DEFAULT_WEEK_START) {
+    if('wkst' in this && this.wkst !== Time.DEFAULT_WEEK_START) {
       res.wkst = Recur.numericDayToIcalDay(this.wkst);
     }
     return res;
@@ -6020,20 +5910,20 @@ class Recur {
    */
   toString() {
     // TODO retain order
-    let str = "FREQ=" + this.freq;
-    if (this.count) {
-      str += ";COUNT=" + this.count;
+    let str = 'FREQ=' + this.freq;
+    if(this.count) {
+      str += ';COUNT=' + this.count;
     }
-    if (this.interval > 1) {
-      str += ";INTERVAL=" + this.interval;
+    if(this.interval > 1) {
+      str += ';INTERVAL=' + this.interval;
     }
-    for (let [k, v] of Object.entries(this.parts)) {
-      str += ";" + k + "=" + v;
+    for(let [k, v] of Object.entries(this.parts)) {
+      str += ';' + k + '=' + v;
     }
-    if (this.until) {
+    if(this.until) {
       str += ';UNTIL=' + this.until.toICALString();
     }
-    if ('wkst' in this && this.wkst !== Time.DEFAULT_WEEK_START) {
+    if('wkst' in this && this.wkst !== Time.DEFAULT_WEEK_START) {
       str += ';WKST=' + Recur.numericDayToIcalDay(this.wkst);
     }
     return str;
@@ -6043,22 +5933,18 @@ class Recur {
 function parseNumericValue(type, min, max, value) {
   let result = value;
 
-  if (value[0] === '+') {
+  if(value[0] === '+') {
     result = value.slice(1);
   }
 
   result = strictParseInt(result);
 
-  if (min !== undefined && value < min) {
-    throw new Error(
-      type + ': invalid value "' + value + '" must be > ' + min
-    );
+  if(min !== undefined && value < min) {
+    throw new Error(type + ': invalid value "' + value + '" must be > ' + min);
   }
 
-  if (max !== undefined && value > max) {
-    throw new Error(
-      type + ': invalid value "' + value + '" must be < ' + min
-    );
+  if(max !== undefined && value > max) {
+    throw new Error(type + ': invalid value "' + value + '" must be < ' + min);
   }
 
   return result;
@@ -6068,13 +5954,10 @@ const optionDesign = {
   FREQ: function(value, dict, fmtIcal) {
     // yes this is actually equal or faster then regex.
     // upside here is we can enumerate the valid values.
-    if (ALLOWED_FREQ.indexOf(value) !== -1) {
+    if(ALLOWED_FREQ.indexOf(value) !== -1) {
       dict.freq = value;
     } else {
-      throw new Error(
-        'invalid frequency "' + value + '" expected: "' +
-        ALLOWED_FREQ.join(', ') + '"'
-      );
+      throw new Error('invalid frequency "' + value + '" expected: "' + ALLOWED_FREQ.join(', ') + '"');
     }
   },
 
@@ -6084,7 +5967,7 @@ const optionDesign = {
 
   INTERVAL: function(value, dict, fmtIcal) {
     dict.interval = strictParseInt(value);
-    if (dict.interval < 1) {
+    if(dict.interval < 1) {
       // 0 or negative values are not allowed, some engines seem to generate
       // it though. Assume 1 instead.
       dict.interval = 1;
@@ -6092,23 +5975,23 @@ const optionDesign = {
   },
 
   UNTIL: function(value, dict, fmtIcal) {
-    if (value.length > 10) {
+    if(value.length > 10) {
       dict.until = design.icalendar.value['date-time'].fromICAL(value);
     } else {
       dict.until = design.icalendar.value.date.fromICAL(value);
     }
-    if (!fmtIcal) {
+    if(!fmtIcal) {
       dict.until = Time.fromString(dict.until);
     }
   },
 
   WKST: function(value, dict, fmtIcal) {
-    if (VALID_DAY_NAMES.test(value)) {
+    if(VALID_DAY_NAMES.test(value)) {
       dict.wkst = Recur.icalDayToNumericDay(value);
     } else {
       throw new Error('invalid WKST value "' + value + '"');
     }
-  }
+  },
 };
 
 const partDesign = {
@@ -6116,7 +5999,7 @@ const partDesign = {
   BYMINUTE: parseNumericValue.bind(undefined, 'BYMINUTE', 0, 59),
   BYHOUR: parseNumericValue.bind(undefined, 'BYHOUR', 0, 23),
   BYDAY: function(value) {
-    if (VALID_BYDAY_PART.test(value)) {
+    if(VALID_BYDAY_PART.test(value)) {
       return value;
     } else {
       throw new Error('invalid BYDAY value "' + value + '"');
@@ -6126,14 +6009,13 @@ const partDesign = {
   BYYEARDAY: parseNumericValue.bind(undefined, 'BYYEARDAY', -366, 366),
   BYWEEKNO: parseNumericValue.bind(undefined, 'BYWEEKNO', -53, 53),
   BYMONTH: parseNumericValue.bind(undefined, 'BYMONTH', 1, 12),
-  BYSETPOS: parseNumericValue.bind(undefined, 'BYSETPOS', -366, 366)
+  BYSETPOS: parseNumericValue.bind(undefined, 'BYSETPOS', -366, 366),
 };
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This lets typescript resolve our custom types in the
@@ -6161,51 +6043,50 @@ function createTextType(fromNewline, toNewline) {
 
     toICAL: function(aValue, structuredEscape) {
       let regEx = toNewline;
-      if (structuredEscape)
-         regEx = new RegExp(regEx.source + '|' + structuredEscape, regEx.flags);
+      if(structuredEscape) regEx = new RegExp(regEx.source + '|' + structuredEscape, regEx.flags);
       return aValue.replace(regEx, function(str) {
         switch (str) {
-        case "\\":
-          return "\\\\";
-        case ";":
-          return "\\;";
-        case ",":
-          return "\\,";
-        case "\n":
-          return "\\n";
-        /* c8 ignore next 2 */
-        default:
-          return str;
+          case '\\':
+            return '\\\\';
+          case ';':
+            return '\\;';
+          case ',':
+            return '\\,';
+          case '\n':
+            return '\\n';
+          /* c8 ignore next 2 */
+          default:
+            return str;
         }
       });
-    }
+    },
   };
   return result;
 }
 
 // default types used multiple times
-const DEFAULT_TYPE_TEXT = { defaultType: "text" };
-const DEFAULT_TYPE_TEXT_MULTI = { defaultType: "text", multiValue: "," };
-const DEFAULT_TYPE_TEXT_STRUCTURED = { defaultType: "text", structuredValue: ";" };
-const DEFAULT_TYPE_INTEGER = { defaultType: "integer" };
-const DEFAULT_TYPE_DATETIME_DATE = { defaultType: "date-time", allowedTypes: ["date-time", "date"] };
-const DEFAULT_TYPE_DATETIME = { defaultType: "date-time" };
-const DEFAULT_TYPE_URI = { defaultType: "uri" };
-const DEFAULT_TYPE_UTCOFFSET = { defaultType: "utc-offset" };
-const DEFAULT_TYPE_RECUR = { defaultType: "recur" };
-const DEFAULT_TYPE_DATE_ANDOR_TIME = { defaultType: "date-and-or-time", allowedTypes: ["date-time", "date", "text"] };
+const DEFAULT_TYPE_TEXT = { defaultType: 'text' };
+const DEFAULT_TYPE_TEXT_MULTI = { defaultType: 'text', multiValue: ',' };
+const DEFAULT_TYPE_TEXT_STRUCTURED = { defaultType: 'text', structuredValue: ';' };
+const DEFAULT_TYPE_INTEGER = { defaultType: 'integer' };
+const DEFAULT_TYPE_DATETIME_DATE = { defaultType: 'date-time', allowedTypes: ['date-time', 'date'] };
+const DEFAULT_TYPE_DATETIME = { defaultType: 'date-time' };
+const DEFAULT_TYPE_URI = { defaultType: 'uri' };
+const DEFAULT_TYPE_UTCOFFSET = { defaultType: 'utc-offset' };
+const DEFAULT_TYPE_RECUR = { defaultType: 'recur' };
+const DEFAULT_TYPE_DATE_ANDOR_TIME = { defaultType: 'date-and-or-time', allowedTypes: ['date-time', 'date', 'text'] };
 
 function replaceNewlineReplace(string) {
   switch (string) {
-    case "\\\\":
-      return "\\";
-    case "\\;":
-      return ";";
-    case "\\,":
-      return ",";
-    case "\\n":
-    case "\\N":
-      return "\n";
+    case '\\\\':
+      return '\\';
+    case '\\;':
+      return ';';
+    case '\\,':
+      return ',';
+    case '\\n':
+    case '\\N':
+      return '\n';
     /* c8 ignore next 2 */
     default:
       return string;
@@ -6214,24 +6095,23 @@ function replaceNewlineReplace(string) {
 
 function replaceNewline(value, newline, structuredEscape) {
   // avoid regex when possible.
-  if (value.indexOf('\\') === -1) {
+  if(value.indexOf('\\') === -1) {
     return value;
   }
-  if (structuredEscape)
-     newline = new RegExp(newline.source + '|\\\\' + structuredEscape, newline.flags);
+  if(structuredEscape) newline = new RegExp(newline.source + '|\\\\' + structuredEscape, newline.flags);
   return value.replace(newline, replaceNewlineReplace);
 }
 
 let commonProperties = {
-  "categories": DEFAULT_TYPE_TEXT_MULTI,
-  "url": DEFAULT_TYPE_URI,
-  "version": DEFAULT_TYPE_TEXT,
-  "uid": DEFAULT_TYPE_TEXT
+  categories: DEFAULT_TYPE_TEXT_MULTI,
+  url: DEFAULT_TYPE_URI,
+  version: DEFAULT_TYPE_TEXT,
+  uid: DEFAULT_TYPE_TEXT,
 };
 
 let commonValues = {
-  "boolean": {
-    values: ["TRUE", "FALSE"],
+  boolean: {
+    values: ['TRUE', 'FALSE'],
 
     fromICAL: function(aValue) {
       switch (aValue) {
@@ -6246,19 +6126,18 @@ let commonValues = {
     },
 
     toICAL: function(aValue) {
-      if (aValue) {
+      if(aValue) {
         return 'TRUE';
       }
       return 'FALSE';
-    }
-
+    },
   },
   float: {
     matches: /^[+-]?\d+\.\d+$/,
 
     fromICAL: function(aValue) {
       let parsed = parseFloat(aValue);
-      if (isStrictlyNaN(parsed)) {
+      if(isStrictlyNaN(parsed)) {
         // TODO: parser warning
         return 0.0;
       }
@@ -6267,12 +6146,12 @@ let commonValues = {
 
     toICAL: function(aValue) {
       return String(aValue);
-    }
+    },
   },
   integer: {
     fromICAL: function(aValue) {
       let parsed = parseInt(aValue);
-      if (isStrictlyNaN(parsed)) {
+      if(isStrictlyNaN(parsed)) {
         return 0;
       }
       return parsed;
@@ -6280,36 +6159,30 @@ let commonValues = {
 
     toICAL: function(aValue) {
       return String(aValue);
-    }
+    },
   },
-  "utc-offset": {
+  'utc-offset': {
     toICAL: function(aValue) {
-      if (aValue.length < 7) {
+      if(aValue.length < 7) {
         // no seconds
         // -0500
-        return aValue.slice(0, 3) +
-               aValue.slice(4, 6);
+        return aValue.slice(0, 3) + aValue.slice(4, 6);
       } else {
         // seconds
         // -050000
-        return aValue.slice(0, 3) +
-               aValue.slice(4, 6) +
-               aValue.slice(7, 9);
+        return aValue.slice(0, 3) + aValue.slice(4, 6) + aValue.slice(7, 9);
       }
     },
 
     fromICAL: function(aValue) {
-      if (aValue.length < 6) {
+      if(aValue.length < 6) {
         // no seconds
         // -05:00
-        return aValue.slice(0, 3) + ':' +
-               aValue.slice(3, 5);
+        return aValue.slice(0, 3) + ':' + aValue.slice(3, 5);
       } else {
         // seconds
         // -05:00:00
-        return aValue.slice(0, 3) + ':' +
-               aValue.slice(3, 5) + ':' +
-               aValue.slice(5, 7);
+        return aValue.slice(0, 3) + ':' + aValue.slice(3, 5) + ':' + aValue.slice(5, 7);
       }
     },
 
@@ -6319,8 +6192,8 @@ let commonValues = {
 
     undecorate: function(aValue) {
       return aValue.toString();
-    }
-  }
+    },
+  },
 };
 
 let icalParams = {
@@ -6337,79 +6210,75 @@ let icalParams = {
   // CN just wants a param-value
   // "CN": { ... }
 
-  "cutype": {
-    values: ["INDIVIDUAL", "GROUP", "RESOURCE", "ROOM", "UNKNOWN"],
+  cutype: {
+    values: ['INDIVIDUAL', 'GROUP', 'RESOURCE', 'ROOM', 'UNKNOWN'],
     allowXName: true,
-    allowIanaToken: true
+    allowIanaToken: true,
   },
 
-  "delegated-from": {
-    valueType: "cal-address",
-    multiValue: ",",
-    multiValueSeparateDQuote: true
+  'delegated-from': {
+    valueType: 'cal-address',
+    multiValue: ',',
+    multiValueSeparateDQuote: true,
   },
-  "delegated-to": {
-    valueType: "cal-address",
-    multiValue: ",",
-    multiValueSeparateDQuote: true
+  'delegated-to': {
+    valueType: 'cal-address',
+    multiValue: ',',
+    multiValueSeparateDQuote: true,
   },
   // "DIR": { ... }, // See ALTREP
-  "encoding": {
-    values: ["8BIT", "BASE64"]
+  encoding: {
+    values: ['8BIT', 'BASE64'],
   },
   // "FMTTYPE": { ... }, // See ALTREP
-  "fbtype": {
-    values: ["FREE", "BUSY", "BUSY-UNAVAILABLE", "BUSY-TENTATIVE"],
+  fbtype: {
+    values: ['FREE', 'BUSY', 'BUSY-UNAVAILABLE', 'BUSY-TENTATIVE'],
     allowXName: true,
-    allowIanaToken: true
+    allowIanaToken: true,
   },
   // "LANGUAGE": { ... }, // See ALTREP
-  "member": {
-    valueType: "cal-address",
-    multiValue: ",",
-    multiValueSeparateDQuote: true
+  member: {
+    valueType: 'cal-address',
+    multiValue: ',',
+    multiValueSeparateDQuote: true,
   },
-  "partstat": {
+  partstat: {
     // TODO These values are actually different per-component
-    values: ["NEEDS-ACTION", "ACCEPTED", "DECLINED", "TENTATIVE",
-             "DELEGATED", "COMPLETED", "IN-PROCESS"],
+    values: ['NEEDS-ACTION', 'ACCEPTED', 'DECLINED', 'TENTATIVE', 'DELEGATED', 'COMPLETED', 'IN-PROCESS'],
     allowXName: true,
-    allowIanaToken: true
+    allowIanaToken: true,
   },
-  "range": {
-    values: ["THISANDFUTURE"]
+  range: {
+    values: ['THISANDFUTURE'],
   },
-  "related": {
-    values: ["START", "END"]
+  related: {
+    values: ['START', 'END'],
   },
-  "reltype": {
-    values: ["PARENT", "CHILD", "SIBLING"],
+  reltype: {
+    values: ['PARENT', 'CHILD', 'SIBLING'],
     allowXName: true,
-    allowIanaToken: true
+    allowIanaToken: true,
   },
-  "role": {
-    values: ["REQ-PARTICIPANT", "CHAIR",
-             "OPT-PARTICIPANT", "NON-PARTICIPANT"],
+  role: {
+    values: ['REQ-PARTICIPANT', 'CHAIR', 'OPT-PARTICIPANT', 'NON-PARTICIPANT'],
     allowXName: true,
-    allowIanaToken: true
+    allowIanaToken: true,
   },
-  "rsvp": {
-    values: ["TRUE", "FALSE"]
+  rsvp: {
+    values: ['TRUE', 'FALSE'],
   },
-  "sent-by": {
-    valueType: "cal-address"
+  'sent-by': {
+    valueType: 'cal-address',
   },
-  "tzid": {
-    matches: /^\//
+  tzid: {
+    matches: /^\//,
   },
-  "value": {
+  value: {
     // since the value here is a 'type' lowercase is used.
-    values: ["binary", "boolean", "cal-address", "date", "date-time",
-             "duration", "float", "integer", "period", "recur", "text",
-             "time", "uri", "utc-offset"],
+    values: ['binary', 'boolean', 'cal-address', 'date', 'date-time', 'duration', 'float', 'integer', 'period', 'recur', 'text', 'time', 'uri', 'utc-offset'],
     allowXName: true,
-    allowIanaToken: true
-  }
+    allowIanaToken: true,
+  },
 };
 
 // When adding a value here, be sure to add it to the parameter types!
@@ -6421,21 +6290,21 @@ const icalValues = extend(commonValues, {
     /* ... */
   },
 
-  "binary": {
+  binary: {
     decorate: function(aString) {
       return Binary.fromString(aString);
     },
 
     undecorate: function(aBinary) {
       return aBinary.toString();
-    }
+    },
   },
-  "cal-address": {
+  'cal-address': {
     // needs to be an uri
   },
-  "date": {
+  date: {
     decorate: function(aValue, aProp) {
-      if (design.strict) {
+      if(design.strict) {
         return Time.fromDateString(aValue, aProp);
       } else {
         return Time.fromString(aValue, aProp);
@@ -6452,13 +6321,11 @@ const icalValues = extend(commonValues, {
     fromICAL: function(aValue) {
       // from: 20120901
       // to: 2012-09-01
-      if (!design.strict && aValue.length >= 15) {
+      if(!design.strict && aValue.length >= 15) {
         // This is probably a date-time, e.g. 20120901T130000Z
-        return icalValues["date-time"].fromICAL(aValue);
+        return icalValues['date-time'].fromICAL(aValue);
       } else {
-        return aValue.slice(0, 4) + '-' +
-               aValue.slice(4, 6) + '-' +
-               aValue.slice(6, 8);
+        return aValue.slice(0, 4) + '-' + aValue.slice(4, 6) + '-' + aValue.slice(6, 8);
       }
     },
 
@@ -6467,35 +6334,27 @@ const icalValues = extend(commonValues, {
       // to: 20120901
       let len = aValue.length;
 
-      if (len == 10) {
-        return aValue.slice(0, 4) +
-               aValue.slice(5, 7) +
-               aValue.slice(8, 10);
-      } else if (len >= 19) {
-        return icalValues["date-time"].toICAL(aValue);
+      if(len == 10) {
+        return aValue.slice(0, 4) + aValue.slice(5, 7) + aValue.slice(8, 10);
+      } else if(len >= 19) {
+        return icalValues['date-time'].toICAL(aValue);
       } else {
         //TODO: serialize warning?
         return aValue;
       }
-
-    }
+    },
   },
-  "date-time": {
+  'date-time': {
     fromICAL: function(aValue) {
       // from: 20120901T130000
       // to: 2012-09-01T13:00:00
-      if (!design.strict && aValue.length == 8) {
+      if(!design.strict && aValue.length == 8) {
         // This is probably a date, e.g. 20120901
         return icalValues.date.fromICAL(aValue);
       } else {
-        let result = aValue.slice(0, 4) + '-' +
-                     aValue.slice(4, 6) + '-' +
-                     aValue.slice(6, 8) + 'T' +
-                     aValue.slice(9, 11) + ':' +
-                     aValue.slice(11, 13) + ':' +
-                     aValue.slice(13, 15);
+        let result = aValue.slice(0, 4) + '-' + aValue.slice(4, 6) + '-' + aValue.slice(6, 8) + 'T' + aValue.slice(9, 11) + ':' + aValue.slice(11, 13) + ':' + aValue.slice(13, 15);
 
-        if (aValue[15] && aValue[15] === 'Z') {
+        if(aValue[15] && aValue[15] === 'Z') {
           result += 'Z';
         }
 
@@ -6508,19 +6367,20 @@ const icalValues = extend(commonValues, {
       // to: 20120901T130000
       let len = aValue.length;
 
-      if (len == 10 && !design.strict) {
+      if(len == 10 && !design.strict) {
         return icalValues.date.toICAL(aValue);
-      } else if (len >= 19) {
-        let result = aValue.slice(0, 4) +
-                     aValue.slice(5, 7) +
-                     // grab the (DDTHH) segment
-                     aValue.slice(8, 13) +
-                     // MM
-                     aValue.slice(14, 16) +
-                     // SS
-                     aValue.slice(17, 19);
+      } else if(len >= 19) {
+        let result =
+          aValue.slice(0, 4) +
+          aValue.slice(5, 7) +
+          // grab the (DDTHH) segment
+          aValue.slice(8, 13) +
+          // MM
+          aValue.slice(14, 16) +
+          // SS
+          aValue.slice(17, 19);
 
-        if (aValue[19] && aValue[19] === 'Z') {
+        if(aValue[19] && aValue[19] === 'Z') {
           result += 'Z';
         }
         return result;
@@ -6531,7 +6391,7 @@ const icalValues = extend(commonValues, {
     },
 
     decorate: function(aValue, aProp) {
-      if (design.strict) {
+      if(design.strict) {
         return Time.fromDateTimeString(aValue, aProp);
       } else {
         return Time.fromString(aValue, aProp);
@@ -6540,7 +6400,7 @@ const icalValues = extend(commonValues, {
 
     undecorate: function(aValue) {
       return aValue.toString();
-    }
+    },
   },
   duration: {
     decorate: function(aValue) {
@@ -6548,14 +6408,14 @@ const icalValues = extend(commonValues, {
     },
     undecorate: function(aValue) {
       return aValue.toString();
-    }
+    },
   },
   period: {
     fromICAL: function(string) {
       let parts = string.split('/');
       parts[0] = icalValues['date-time'].fromICAL(parts[0]);
 
-      if (!Duration.isValueString(parts[1])) {
+      if(!Duration.isValueString(parts[1])) {
         parts[1] = icalValues['date-time'].fromICAL(parts[1]);
       }
 
@@ -6564,21 +6424,21 @@ const icalValues = extend(commonValues, {
 
     toICAL: function(parts) {
       parts = parts.slice();
-      if (!design.strict && parts[0].length == 10) {
+      if(!design.strict && parts[0].length == 10) {
         parts[0] = icalValues.date.toICAL(parts[0]);
       } else {
         parts[0] = icalValues['date-time'].toICAL(parts[0]);
       }
 
-      if (!Duration.isValueString(parts[1])) {
-        if (!design.strict && parts[1].length == 10) {
+      if(!Duration.isValueString(parts[1])) {
+        if(!design.strict && parts[1].length == 10) {
           parts[1] = icalValues.date.toICAL(parts[1]);
         } else {
           parts[1] = icalValues['date-time'].toICAL(parts[1]);
         }
       }
 
-      return parts.join("/");
+      return parts.join('/');
     },
 
     decorate: function(aValue, aProp) {
@@ -6587,7 +6447,7 @@ const icalValues = extend(commonValues, {
 
     undecorate: function(aValue) {
       return aValue.toJSON();
-    }
+    },
   },
   recur: {
     fromICAL: function(string) {
@@ -6595,22 +6455,22 @@ const icalValues = extend(commonValues, {
     },
 
     toICAL: function(data) {
-      let str = "";
-      for (let [k, val] of Object.entries(data)) {
-        if (k == "until") {
-          if (val.length > 10) {
+      let str = '';
+      for(let [k, val] of Object.entries(data)) {
+        if(k == 'until') {
+          if(val.length > 10) {
             val = icalValues['date-time'].toICAL(val);
           } else {
             val = icalValues.date.toICAL(val);
           }
-        } else if (k == "wkst") {
-          if (typeof val === 'number') {
+        } else if(k == 'wkst') {
+          if(typeof val === 'number') {
             val = Recur.numericDayToIcalDay(val);
           }
-        } else if (Array.isArray(val)) {
-          val = val.join(",");
+        } else if(Array.isArray(val)) {
+          val = val.join(',');
         }
-        str += k.toUpperCase() + "=" + val + ";";
+        str += k.toUpperCase() + '=' + val + ';';
       }
       return str.slice(0, Math.max(0, str.length - 1));
     },
@@ -6621,24 +6481,22 @@ const icalValues = extend(commonValues, {
 
     undecorate: function(aRecur) {
       return aRecur.toJSON();
-    }
+    },
   },
 
   time: {
     fromICAL: function(aValue) {
       // from: MMHHSS(Z)?
       // to: HH:MM:SS(Z)?
-      if (aValue.length < 6) {
+      if(aValue.length < 6) {
         // TODO: parser exception?
         return aValue;
       }
 
       // HH::MM::SSZ?
-      let result = aValue.slice(0, 2) + ':' +
-                   aValue.slice(2, 4) + ':' +
-                   aValue.slice(4, 6);
+      let result = aValue.slice(0, 2) + ':' + aValue.slice(2, 4) + ':' + aValue.slice(4, 6);
 
-      if (aValue[6] === 'Z') {
+      if(aValue[6] === 'Z') {
         result += 'Z';
       }
 
@@ -6648,83 +6506,80 @@ const icalValues = extend(commonValues, {
     toICAL: function(aValue) {
       // from: HH:MM:SS(Z)?
       // to: MMHHSS(Z)?
-      if (aValue.length < 8) {
+      if(aValue.length < 8) {
         //TODO: error
         return aValue;
       }
 
-      let result = aValue.slice(0, 2) +
-                   aValue.slice(3, 5) +
-                   aValue.slice(6, 8);
+      let result = aValue.slice(0, 2) + aValue.slice(3, 5) + aValue.slice(6, 8);
 
-      if (aValue[8] === 'Z') {
+      if(aValue[8] === 'Z') {
         result += 'Z';
       }
 
       return result;
-    }
-  }
+    },
+  },
 });
 
 let icalProperties = extend(commonProperties, {
-
-  "action": DEFAULT_TYPE_TEXT,
-  "attach": { defaultType: "uri" },
-  "attendee": { defaultType: "cal-address" },
-  "calscale": DEFAULT_TYPE_TEXT,
-  "class": DEFAULT_TYPE_TEXT,
-  "comment": DEFAULT_TYPE_TEXT,
-  "completed": DEFAULT_TYPE_DATETIME,
-  "contact": DEFAULT_TYPE_TEXT,
-  "created": DEFAULT_TYPE_DATETIME,
-  "description": DEFAULT_TYPE_TEXT,
-  "dtend": DEFAULT_TYPE_DATETIME_DATE,
-  "dtstamp": DEFAULT_TYPE_DATETIME,
-  "dtstart": DEFAULT_TYPE_DATETIME_DATE,
-  "due": DEFAULT_TYPE_DATETIME_DATE,
-  "duration": { defaultType: "duration" },
-  "exdate": {
-    defaultType: "date-time",
-    allowedTypes: ["date-time", "date"],
-    multiValue: ','
+  action: DEFAULT_TYPE_TEXT,
+  attach: { defaultType: 'uri' },
+  attendee: { defaultType: 'cal-address' },
+  calscale: DEFAULT_TYPE_TEXT,
+  class: DEFAULT_TYPE_TEXT,
+  comment: DEFAULT_TYPE_TEXT,
+  completed: DEFAULT_TYPE_DATETIME,
+  contact: DEFAULT_TYPE_TEXT,
+  created: DEFAULT_TYPE_DATETIME,
+  description: DEFAULT_TYPE_TEXT,
+  dtend: DEFAULT_TYPE_DATETIME_DATE,
+  dtstamp: DEFAULT_TYPE_DATETIME,
+  dtstart: DEFAULT_TYPE_DATETIME_DATE,
+  due: DEFAULT_TYPE_DATETIME_DATE,
+  duration: { defaultType: 'duration' },
+  exdate: {
+    defaultType: 'date-time',
+    allowedTypes: ['date-time', 'date'],
+    multiValue: ',',
   },
-  "exrule": DEFAULT_TYPE_RECUR,
-  "freebusy": { defaultType: "period", multiValue: "," },
-  "geo": { defaultType: "float", structuredValue: ";" },
-  "last-modified": DEFAULT_TYPE_DATETIME,
-  "location": DEFAULT_TYPE_TEXT,
-  "method": DEFAULT_TYPE_TEXT,
-  "organizer": { defaultType: "cal-address" },
-  "percent-complete": DEFAULT_TYPE_INTEGER,
-  "priority": DEFAULT_TYPE_INTEGER,
-  "prodid": DEFAULT_TYPE_TEXT,
-  "related-to": DEFAULT_TYPE_TEXT,
-  "repeat": DEFAULT_TYPE_INTEGER,
-  "rdate": {
-    defaultType: "date-time",
-    allowedTypes: ["date-time", "date", "period"],
+  exrule: DEFAULT_TYPE_RECUR,
+  freebusy: { defaultType: 'period', multiValue: ',' },
+  geo: { defaultType: 'float', structuredValue: ';' },
+  'last-modified': DEFAULT_TYPE_DATETIME,
+  location: DEFAULT_TYPE_TEXT,
+  method: DEFAULT_TYPE_TEXT,
+  organizer: { defaultType: 'cal-address' },
+  'percent-complete': DEFAULT_TYPE_INTEGER,
+  priority: DEFAULT_TYPE_INTEGER,
+  prodid: DEFAULT_TYPE_TEXT,
+  'related-to': DEFAULT_TYPE_TEXT,
+  repeat: DEFAULT_TYPE_INTEGER,
+  rdate: {
+    defaultType: 'date-time',
+    allowedTypes: ['date-time', 'date', 'period'],
     multiValue: ',',
     detectType: function(string) {
-      if (string.indexOf('/') !== -1) {
+      if(string.indexOf('/') !== -1) {
         return 'period';
       }
-      return (string.indexOf('T') === -1) ? 'date' : 'date-time';
-    }
+      return string.indexOf('T') === -1 ? 'date' : 'date-time';
+    },
   },
-  "recurrence-id": DEFAULT_TYPE_DATETIME_DATE,
-  "resources": DEFAULT_TYPE_TEXT_MULTI,
-  "request-status": DEFAULT_TYPE_TEXT_STRUCTURED,
-  "rrule": DEFAULT_TYPE_RECUR,
-  "sequence": DEFAULT_TYPE_INTEGER,
-  "status": DEFAULT_TYPE_TEXT,
-  "summary": DEFAULT_TYPE_TEXT,
-  "transp": DEFAULT_TYPE_TEXT,
-  "trigger": { defaultType: "duration", allowedTypes: ["duration", "date-time"] },
-  "tzoffsetfrom": DEFAULT_TYPE_UTCOFFSET,
-  "tzoffsetto": DEFAULT_TYPE_UTCOFFSET,
-  "tzurl": DEFAULT_TYPE_URI,
-  "tzid": DEFAULT_TYPE_TEXT,
-  "tzname": DEFAULT_TYPE_TEXT
+  'recurrence-id': DEFAULT_TYPE_DATETIME_DATE,
+  resources: DEFAULT_TYPE_TEXT_MULTI,
+  'request-status': DEFAULT_TYPE_TEXT_STRUCTURED,
+  rrule: DEFAULT_TYPE_RECUR,
+  sequence: DEFAULT_TYPE_INTEGER,
+  status: DEFAULT_TYPE_TEXT,
+  summary: DEFAULT_TYPE_TEXT,
+  transp: DEFAULT_TYPE_TEXT,
+  trigger: { defaultType: 'duration', allowedTypes: ['duration', 'date-time'] },
+  tzoffsetfrom: DEFAULT_TYPE_UTCOFFSET,
+  tzoffsetto: DEFAULT_TYPE_UTCOFFSET,
+  tzurl: DEFAULT_TYPE_URI,
+  tzid: DEFAULT_TYPE_TEXT,
+  tzname: DEFAULT_TYPE_TEXT,
 });
 
 // When adding a value here, be sure to add it to the parameter types!
@@ -6734,55 +6589,54 @@ const vcardValues = extend(commonValues, {
 
   date: {
     decorate: function(aValue) {
-      return VCardTime.fromDateAndOrTimeString(aValue, "date");
+      return VCardTime.fromDateAndOrTimeString(aValue, 'date');
     },
     undecorate: function(aValue) {
       return aValue.toString();
     },
     fromICAL: function(aValue) {
-      if (aValue.length == 8) {
+      if(aValue.length == 8) {
         return icalValues.date.fromICAL(aValue);
-      } else if (aValue[0] == '-' && aValue.length == 6) {
+      } else if(aValue[0] == '-' && aValue.length == 6) {
         return aValue.slice(0, 4) + '-' + aValue.slice(4);
       } else {
         return aValue;
       }
     },
     toICAL: function(aValue) {
-      if (aValue.length == 10) {
+      if(aValue.length == 10) {
         return icalValues.date.toICAL(aValue);
-      } else if (aValue[0] == '-' && aValue.length == 7) {
+      } else if(aValue[0] == '-' && aValue.length == 7) {
         return aValue.slice(0, 4) + aValue.slice(5);
       } else {
         return aValue;
       }
-    }
+    },
   },
 
   time: {
     decorate: function(aValue) {
-      return VCardTime.fromDateAndOrTimeString("T" + aValue, "time");
+      return VCardTime.fromDateAndOrTimeString('T' + aValue, 'time');
     },
     undecorate: function(aValue) {
       return aValue.toString();
     },
     fromICAL: function(aValue) {
       let splitzone = vcardValues.time._splitZone(aValue, true);
-      let zone = splitzone[0], value = splitzone[1];
+      let zone = splitzone[0],
+        value = splitzone[1];
 
       //console.log("SPLIT: ",splitzone);
 
-      if (value.length == 6) {
-        value = value.slice(0, 2) + ':' +
-                value.slice(2, 4) + ':' +
-                value.slice(4, 6);
-      } else if (value.length == 4 && value[0] != '-') {
+      if(value.length == 6) {
+        value = value.slice(0, 2) + ':' + value.slice(2, 4) + ':' + value.slice(4, 6);
+      } else if(value.length == 4 && value[0] != '-') {
         value = value.slice(0, 2) + ':' + value.slice(2, 4);
-      } else if (value.length == 5) {
+      } else if(value.length == 5) {
         value = value.slice(0, 3) + ':' + value.slice(3, 5);
       }
 
-      if (zone.length == 5 && (zone[0] == '-' || zone[0] == '+')) {
+      if(zone.length == 5 && (zone[0] == '-' || zone[0] == '+')) {
         zone = zone.slice(0, 3) + ':' + zone.slice(3);
       }
 
@@ -6791,19 +6645,18 @@ const vcardValues = extend(commonValues, {
 
     toICAL: function(aValue) {
       let splitzone = vcardValues.time._splitZone(aValue);
-      let zone = splitzone[0], value = splitzone[1];
+      let zone = splitzone[0],
+        value = splitzone[1];
 
-      if (value.length == 8) {
-        value = value.slice(0, 2) +
-                value.slice(3, 5) +
-                value.slice(6, 8);
-      } else if (value.length == 5 && value[0] != '-') {
+      if(value.length == 8) {
+        value = value.slice(0, 2) + value.slice(3, 5) + value.slice(6, 8);
+      } else if(value.length == 5 && value[0] != '-') {
         value = value.slice(0, 2) + value.slice(3, 5);
-      } else if (value.length == 6) {
+      } else if(value.length == 6) {
         value = value.slice(0, 3) + value.slice(4, 6);
       }
 
-      if (zone.length == 6 && (zone[0] == '-' || zone[0] == '+')) {
+      if(zone.length == 6 && (zone[0] == '-' || zone[0] == '+')) {
         zone = zone.slice(0, 3) + zone.slice(4);
       }
 
@@ -6816,24 +6669,24 @@ const vcardValues = extend(commonValues, {
       let sign = aValue[signChar];
       let zone, value;
 
-      if (aValue[lastChar] == 'Z') {
+      if(aValue[lastChar] == 'Z') {
         zone = aValue[lastChar];
         value = aValue.slice(0, Math.max(0, lastChar));
-      } else if (aValue.length > 6 && (sign == '-' || sign == '+')) {
+      } else if(aValue.length > 6 && (sign == '-' || sign == '+')) {
         zone = aValue.slice(signChar);
         value = aValue.slice(0, Math.max(0, signChar));
       } else {
-        zone = "";
+        zone = '';
         value = aValue;
       }
 
       return [zone, value];
-    }
+    },
   },
 
-  "date-time": {
+  'date-time': {
     decorate: function(aValue) {
-      return VCardTime.fromDateAndOrTimeString(aValue, "date-time");
+      return VCardTime.fromDateAndOrTimeString(aValue, 'date-time');
     },
 
     undecorate: function(aValue) {
@@ -6846,12 +6699,12 @@ const vcardValues = extend(commonValues, {
 
     toICAL: function(aValue) {
       return vcardValues['date-and-or-time'].toICAL(aValue);
-    }
+    },
   },
 
-  "date-and-or-time": {
+  'date-and-or-time': {
     decorate: function(aValue) {
-      return VCardTime.fromDateAndOrTimeString(aValue, "date-and-or-time");
+      return VCardTime.fromDateAndOrTimeString(aValue, 'date-and-or-time');
     },
 
     undecorate: function(aValue) {
@@ -6860,94 +6713,93 @@ const vcardValues = extend(commonValues, {
 
     fromICAL: function(aValue) {
       let parts = aValue.split('T');
-      return (parts[0] ? vcardValues.date.fromICAL(parts[0]) : '') +
-             (parts[1] ? 'T' + vcardValues.time.fromICAL(parts[1]) : '');
+      return (parts[0] ? vcardValues.date.fromICAL(parts[0]) : '') + (parts[1] ? 'T' + vcardValues.time.fromICAL(parts[1]) : '');
     },
 
     toICAL: function(aValue) {
       let parts = aValue.split('T');
-      return vcardValues.date.toICAL(parts[0]) +
-             (parts[1] ? 'T' + vcardValues.time.toICAL(parts[1]) : '');
-
-    }
+      return vcardValues.date.toICAL(parts[0]) + (parts[1] ? 'T' + vcardValues.time.toICAL(parts[1]) : '');
+    },
   },
   timestamp: icalValues['date-time'],
-  "language-tag": {
-    matches: /^[a-zA-Z0-9-]+$/ // Could go with a more strict regex here
+  'language-tag': {
+    matches: /^[a-zA-Z0-9-]+$/, // Could go with a more strict regex here
   },
-  "phone-number": {
+  'phone-number': {
     fromICAL: function(aValue) {
-      return Array.from(aValue).filter(function(c) {
+      return Array.from(aValue)
+        .filter(function (c) {
           return c === '\\' ? undefined : c;
-        }).join('');
+        })
+        .join('');
     },
     toICAL: function(aValue) {
-      return Array.from(aValue).map(function(c) {
-        return c === ',' || c === ";" ? '\\' + c : c;
-      }).join('');
-    }
-  }
+      return Array.from(aValue)
+        .map(function (c) {
+          return c === ',' || c === ';' ? '\\' + c : c;
+        })
+        .join('');
+    },
+  },
 });
 
 let vcardParams = {
-  "type": {
-    valueType: "text",
-    multiValue: ","
+  type: {
+    valueType: 'text',
+    multiValue: ',',
   },
-  "value": {
+  value: {
     // since the value here is a 'type' lowercase is used.
-    values: ["text", "uri", "date", "time", "date-time", "date-and-or-time",
-             "timestamp", "boolean", "integer", "float", "utc-offset",
-             "language-tag"],
+    values: ['text', 'uri', 'date', 'time', 'date-time', 'date-and-or-time', 'timestamp', 'boolean', 'integer', 'float', 'utc-offset', 'language-tag'],
     allowXName: true,
-    allowIanaToken: true
-  }
+    allowIanaToken: true,
+  },
 };
 
 let vcardProperties = extend(commonProperties, {
-  "adr": { defaultType: "text", structuredValue: ";", multiValue: "," },
-  "anniversary": DEFAULT_TYPE_DATE_ANDOR_TIME,
-  "bday": DEFAULT_TYPE_DATE_ANDOR_TIME,
-  "caladruri": DEFAULT_TYPE_URI,
-  "caluri": DEFAULT_TYPE_URI,
-  "clientpidmap": DEFAULT_TYPE_TEXT_STRUCTURED,
-  "email": DEFAULT_TYPE_TEXT,
-  "fburl": DEFAULT_TYPE_URI,
-  "fn": DEFAULT_TYPE_TEXT,
-  "gender": DEFAULT_TYPE_TEXT_STRUCTURED,
-  "geo": DEFAULT_TYPE_URI,
-  "impp": DEFAULT_TYPE_URI,
-  "key": DEFAULT_TYPE_URI,
-  "kind": DEFAULT_TYPE_TEXT,
-  "lang": { defaultType: "language-tag" },
-  "logo": DEFAULT_TYPE_URI,
-  "member": DEFAULT_TYPE_URI,
-  "n": { defaultType: "text", structuredValue: ";", multiValue: "," },
-  "nickname": DEFAULT_TYPE_TEXT_MULTI,
-  "note": DEFAULT_TYPE_TEXT,
-  "org": { defaultType: "text", structuredValue: ";" },
-  "photo": DEFAULT_TYPE_URI,
-  "related": DEFAULT_TYPE_URI,
-  "rev": { defaultType: "timestamp" },
-  "role": DEFAULT_TYPE_TEXT,
-  "sound": DEFAULT_TYPE_URI,
-  "source": DEFAULT_TYPE_URI,
-  "tel": { defaultType: "uri", allowedTypes: ["uri", "text"] },
-  "title": DEFAULT_TYPE_TEXT,
-  "tz": { defaultType: "text", allowedTypes: ["text", "utc-offset", "uri"] },
-  "xml": DEFAULT_TYPE_TEXT
+  adr: { defaultType: 'text', structuredValue: ';', multiValue: ',' },
+  anniversary: DEFAULT_TYPE_DATE_ANDOR_TIME,
+  bday: DEFAULT_TYPE_DATE_ANDOR_TIME,
+  caladruri: DEFAULT_TYPE_URI,
+  caluri: DEFAULT_TYPE_URI,
+  clientpidmap: DEFAULT_TYPE_TEXT_STRUCTURED,
+  email: DEFAULT_TYPE_TEXT,
+  fburl: DEFAULT_TYPE_URI,
+  fn: DEFAULT_TYPE_TEXT,
+  gender: DEFAULT_TYPE_TEXT_STRUCTURED,
+  geo: DEFAULT_TYPE_URI,
+  impp: DEFAULT_TYPE_URI,
+  key: DEFAULT_TYPE_URI,
+  kind: DEFAULT_TYPE_TEXT,
+  lang: { defaultType: 'language-tag' },
+  logo: DEFAULT_TYPE_URI,
+  member: DEFAULT_TYPE_URI,
+  n: { defaultType: 'text', structuredValue: ';', multiValue: ',' },
+  nickname: DEFAULT_TYPE_TEXT_MULTI,
+  note: DEFAULT_TYPE_TEXT,
+  org: { defaultType: 'text', structuredValue: ';' },
+  photo: DEFAULT_TYPE_URI,
+  related: DEFAULT_TYPE_URI,
+  rev: { defaultType: 'timestamp' },
+  role: DEFAULT_TYPE_TEXT,
+  sound: DEFAULT_TYPE_URI,
+  source: DEFAULT_TYPE_URI,
+  tel: { defaultType: 'uri', allowedTypes: ['uri', 'text'] },
+  title: DEFAULT_TYPE_TEXT,
+  tz: { defaultType: 'text', allowedTypes: ['text', 'utc-offset', 'uri'] },
+  xml: DEFAULT_TYPE_TEXT,
 });
 
 let vcard3Values = extend(commonValues, {
   binary: icalValues.binary,
   date: vcardValues.date,
-  "date-time": vcardValues["date-time"],
-  "phone-number": vcardValues["phone-number"],
+  'date-time': vcardValues['date-time'],
+  'phone-number': vcardValues['phone-number'],
   uri: icalValues.uri,
   text: vcardValues.text,
   time: icalValues.time,
   vcard: icalValues.text,
-  "utc-offset": {
+  'utc-offset': {
     toICAL: function(aValue) {
       return aValue.slice(0, 7);
     },
@@ -6962,67 +6814,66 @@ let vcard3Values = extend(commonValues, {
 
     undecorate: function(aValue) {
       return aValue.toString();
-    }
-  }
+    },
+  },
 });
 
 let vcard3Params = {
-  "type": {
-    valueType: "text",
-    multiValue: ","
+  type: {
+    valueType: 'text',
+    multiValue: ',',
   },
-  "value": {
+  value: {
     // since the value here is a 'type' lowercase is used.
-    values: ["text", "uri", "date", "date-time", "phone-number", "time",
-             "boolean", "integer", "float", "utc-offset", "vcard", "binary"],
+    values: ['text', 'uri', 'date', 'date-time', 'phone-number', 'time', 'boolean', 'integer', 'float', 'utc-offset', 'vcard', 'binary'],
     allowXName: true,
-    allowIanaToken: true
-  }
+    allowIanaToken: true,
+  },
 };
 
 let vcard3Properties = extend(commonProperties, {
   fn: DEFAULT_TYPE_TEXT,
-  n: { defaultType: "text", structuredValue: ";", multiValue: "," },
+  n: { defaultType: 'text', structuredValue: ';', multiValue: ',' },
   nickname: DEFAULT_TYPE_TEXT_MULTI,
-  photo: { defaultType: "binary", allowedTypes: ["binary", "uri"] },
+  photo: { defaultType: 'binary', allowedTypes: ['binary', 'uri'] },
   bday: {
-    defaultType: "date-time",
-    allowedTypes: ["date-time", "date"],
+    defaultType: 'date-time',
+    allowedTypes: ['date-time', 'date'],
     detectType: function(string) {
-      return (string.indexOf('T') === -1) ? 'date' : 'date-time';
-    }
+      return string.indexOf('T') === -1 ? 'date' : 'date-time';
+    },
   },
 
-  adr: { defaultType: "text", structuredValue: ";", multiValue: "," },
+  adr: { defaultType: 'text', structuredValue: ';', multiValue: ',' },
   label: DEFAULT_TYPE_TEXT,
 
-  tel: { defaultType: "phone-number" },
+  tel: { defaultType: 'phone-number' },
   email: DEFAULT_TYPE_TEXT,
   mailer: DEFAULT_TYPE_TEXT,
 
-  tz: { defaultType: "utc-offset", allowedTypes: ["utc-offset", "text"] },
-  geo: { defaultType: "float", structuredValue: ";" },
+  tz: { defaultType: 'utc-offset', allowedTypes: ['utc-offset', 'text'] },
+  geo: { defaultType: 'float', structuredValue: ';' },
 
   title: DEFAULT_TYPE_TEXT,
   role: DEFAULT_TYPE_TEXT,
-  logo: { defaultType: "binary", allowedTypes: ["binary", "uri"] },
-  agent: { defaultType: "vcard", allowedTypes: ["vcard", "text", "uri"] },
+  logo: { defaultType: 'binary', allowedTypes: ['binary', 'uri'] },
+  agent: { defaultType: 'vcard', allowedTypes: ['vcard', 'text', 'uri'] },
   org: DEFAULT_TYPE_TEXT_STRUCTURED,
 
   note: DEFAULT_TYPE_TEXT_MULTI,
   prodid: DEFAULT_TYPE_TEXT,
   rev: {
-    defaultType: "date-time",
-    allowedTypes: ["date-time", "date"],
+    defaultType: 'date-time',
+    allowedTypes: ['date-time', 'date'],
     detectType: function(string) {
-      return (string.indexOf('T') === -1) ? 'date' : 'date-time';
-    }
+      return string.indexOf('T') === -1 ? 'date' : 'date-time';
+    },
   },
-  "sort-string": DEFAULT_TYPE_TEXT,
-  sound: { defaultType: "binary", allowedTypes: ["binary", "uri"] },
+  'sort-string': DEFAULT_TYPE_TEXT,
+  sound: { defaultType: 'binary', allowedTypes: ['binary', 'uri'] },
 
   class: DEFAULT_TYPE_TEXT,
-  key: { defaultType: "binary", allowedTypes: ["binary", "text"] }
+  key: { defaultType: 'binary', allowedTypes: ['binary', 'text'] },
 });
 
 /**
@@ -7030,11 +6881,11 @@ let vcard3Properties = extend(commonProperties, {
  * @type {designSet}
  */
 let icalSet = {
-  name: "ical",
+  name: 'ical',
   value: icalValues,
   param: icalParams,
   property: icalProperties,
-  propertyGroups: false
+  propertyGroups: false,
 };
 
 /**
@@ -7042,11 +6893,11 @@ let icalSet = {
  * @type {designSet}
  */
 let vcardSet = {
-  name: "vcard4",
+  name: 'vcard4',
   value: vcardValues,
   param: vcardParams,
   property: vcardProperties,
-  propertyGroups: true
+  propertyGroups: true,
 };
 
 /**
@@ -7054,11 +6905,11 @@ let vcardSet = {
  * @type {designSet}
  */
 let vcard3Set = {
-  name: "vcard3",
+  name: 'vcard3',
   value: vcard3Values,
   param: vcard3Params,
   property: vcard3Properties,
-  propertyGroups: true
+  propertyGroups: true,
 };
 
 /**
@@ -7103,7 +6954,7 @@ const design = {
    * let propertyName = 'fn';
    * let componentDesign = ICAL.design.components.vcard;
    * let propertyDetails = componentDesign.property[propertyName];
-   * if (propertyDetails.defaultType == 'text') {
+   * if(propertyDetails.defaultType == 'text') {
    *   // Yep, sure is...
    * }
    */
@@ -7116,9 +6967,8 @@ const design = {
     valarm: icalSet,
     vtimezone: icalSet,
     daylight: icalSet,
-    standard: icalSet
+    standard: icalSet,
   },
-
 
   /**
    * The design set for iCalendar (rfc5545/rfc7265) components.
@@ -7147,14 +6997,13 @@ const design = {
   getDesignSet: function(componentName) {
     let isInDesign = componentName && componentName in design.components;
     return isInDesign ? design.components[componentName] : design.defaultSet;
-  }
+  },
 };
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This lets typescript resolve our custom types in the
@@ -7168,7 +7017,7 @@ const design = {
 
 const LINE_ENDING = '\r\n';
 const DEFAULT_VALUE_TYPE = 'unknown';
-const RFC6868_REPLACE_MAP = { '"': "^'", "\n": "^n", "^": "^^" };
+const RFC6868_REPLACE_MAP = { '"': "^'", '\n': '^n', '^': '^^' };
 
 /**
  * Convert a full jCal/jCard array into a iCalendar/vCard string.
@@ -7179,7 +7028,7 @@ const RFC6868_REPLACE_MAP = { '"': "^'", "\n": "^n", "^": "^^" };
  * @return {String}       The stringified iCalendar/vCard document
  */
 function stringify(jCal) {
-  if (typeof jCal[0] == "string") {
+  if(typeof jCal[0] == 'string') {
     // This is a single component
     jCal = [jCal];
   }
@@ -7188,7 +7037,7 @@ function stringify(jCal) {
   let len = jCal.length;
   let result = '';
 
-  for (; i < len; i++) {
+  for(; i < len; i++) {
     result += stringify.component(jCal[i]) + LINE_ENDING;
   }
 
@@ -7220,13 +7069,12 @@ stringify.component = function(component, designSet) {
   let designSetName = component[0];
   // rfc6350 requires that in vCard 4.0 the first component is the VERSION
   // component with as value 4.0, note that 3.0 does not have this requirement.
-  if (designSetName === 'vcard' && component[1].length > 0 &&
-          !(component[1][0][0] === "version" && component[1][0][3] === "4.0")) {
-    designSetName = "vcard3";
+  if(designSetName === 'vcard' && component[1].length > 0 && !(component[1][0][0] === 'version' && component[1][0][3] === '4.0')) {
+    designSetName = 'vcard3';
   }
   designSet = designSet || design.getDesignSet(designSetName);
 
-  for (; propIdx < propLen; propIdx++) {
+  for(; propIdx < propLen; propIdx++) {
     result += stringify.property(props[propIdx], designSet) + LINE_ENDING;
   }
 
@@ -7235,7 +7083,7 @@ stringify.component = function(component, designSet) {
   let compIdx = 0;
   let compLen = comps.length;
 
-  for (; compIdx < compLen; compIdx++) {
+  for(; compIdx < compLen; compIdx++) {
     result += stringify.component(comps[compIdx], designSet) + LINE_ENDING;
   }
 
@@ -7260,32 +7108,32 @@ stringify.property = function(property, designSet, noFold) {
   let jsName = property[0];
   let params = property[1];
 
-  if (!designSet) {
+  if(!designSet) {
     designSet = design.defaultSet;
   }
 
   let groupName = params.group;
   let line;
-  if (designSet.propertyGroups && groupName) {
-    line = groupName.toUpperCase() + "." + name;
+  if(designSet.propertyGroups && groupName) {
+    line = groupName.toUpperCase() + '.' + name;
   } else {
     line = name;
   }
 
-  for (let [paramName, value] of Object.entries(params)) {
-    if (designSet.propertyGroups && paramName == 'group') {
+  for(let [paramName, value] of Object.entries(params)) {
+    if(designSet.propertyGroups && paramName == 'group') {
       continue;
     }
 
     let paramDesign = designSet.param[paramName];
     let multiValue = paramDesign && paramDesign.multiValue;
-    if (multiValue && Array.isArray(value)) {
-      value = value.map(function(val) {
+    if(multiValue && Array.isArray(value)) {
+      value = value.map(function (val) {
         val = stringify._rfc6868Unescape(val);
         val = stringify.paramPropertyValue(val, paramDesign.multiValueSeparateDQuote);
         return val;
       });
-      value = stringify.multiValue(value, multiValue, "unknown", null, designSet);
+      value = stringify.multiValue(value, multiValue, 'unknown', null, designSet);
     } else {
       value = stringify._rfc6868Unescape(value);
       value = stringify.paramPropertyValue(value);
@@ -7294,7 +7142,7 @@ stringify.property = function(property, designSet, noFold) {
     line += ';' + paramName.toUpperCase() + '=' + value;
   }
 
-  if (property.length === 3) {
+  if(property.length === 3) {
     // If there are no values, we must assume a blank value
     return line + ':';
   }
@@ -7306,53 +7154,47 @@ stringify.property = function(property, designSet, noFold) {
   let structuredValue = false;
   let isDefault = false;
 
-  if (jsName in designSet.property) {
+  if(jsName in designSet.property) {
     propDetails = designSet.property[jsName];
 
-    if ('multiValue' in propDetails) {
+    if('multiValue' in propDetails) {
       multiValue = propDetails.multiValue;
     }
 
-    if (('structuredValue' in propDetails) && Array.isArray(property[3])) {
+    if('structuredValue' in propDetails && Array.isArray(property[3])) {
       structuredValue = propDetails.structuredValue;
     }
 
-    if ('defaultType' in propDetails) {
-      if (valueType === propDetails.defaultType) {
+    if('defaultType' in propDetails) {
+      if(valueType === propDetails.defaultType) {
         isDefault = true;
       }
     } else {
-      if (valueType === DEFAULT_VALUE_TYPE) {
+      if(valueType === DEFAULT_VALUE_TYPE) {
         isDefault = true;
       }
     }
   } else {
-    if (valueType === DEFAULT_VALUE_TYPE) {
+    if(valueType === DEFAULT_VALUE_TYPE) {
       isDefault = true;
     }
   }
 
   // push the VALUE property if type is not the default
   // for the current property.
-  if (!isDefault) {
+  if(!isDefault) {
     // value will never contain ;/:/, so we don't escape it here.
     line += ';VALUE=' + valueType.toUpperCase();
   }
 
   line += ':';
 
-  if (multiValue && structuredValue) {
-    line += stringify.multiValue(
-      property[3], structuredValue, valueType, multiValue, designSet, structuredValue
-    );
-  } else if (multiValue) {
-    line += stringify.multiValue(
-      property.slice(3), multiValue, valueType, null, designSet, false
-    );
-  } else if (structuredValue) {
-    line += stringify.multiValue(
-      property[3], structuredValue, valueType, null, designSet, structuredValue
-    );
+  if(multiValue && structuredValue) {
+    line += stringify.multiValue(property[3], structuredValue, valueType, multiValue, designSet, structuredValue);
+  } else if(multiValue) {
+    line += stringify.multiValue(property.slice(3), multiValue, valueType, null, designSet, false);
+  } else if(structuredValue) {
+    line += stringify.multiValue(property[3], structuredValue, valueType, null, designSet, structuredValue);
   } else {
     line += stringify.value(property[3], valueType, designSet, false);
   }
@@ -7374,11 +7216,7 @@ stringify.property = function(property, designSet, noFold) {
  * @return {String}           Given or escaped value when needed
  */
 stringify.paramPropertyValue = function(value, force) {
-  if (!force &&
-      (value.indexOf(',') === -1) &&
-      (value.indexOf(':') === -1) &&
-      (value.indexOf(';') === -1)) {
-
+  if(!force && value.indexOf(',') === -1 && value.indexOf(':') === -1 && value.indexOf(';') === -1) {
     return value;
   }
 
@@ -7406,14 +7244,14 @@ stringify.multiValue = function(values, delim, type, innerMulti, designSet, stru
   let len = values.length;
   let i = 0;
 
-  for (; i < len; i++) {
-    if (innerMulti && Array.isArray(values[i])) {
+  for(; i < len; i++) {
+    if(innerMulti && Array.isArray(values[i])) {
       result += stringify.multiValue(values[i], innerMulti, type, null, designSet, structuredValue);
     } else {
       result += stringify.value(values[i], type, designSet, structuredValue);
     }
 
-    if (i !== (len - 1)) {
+    if(i !== len - 1) {
       result += delim;
     }
   }
@@ -7432,7 +7270,7 @@ stringify.multiValue = function(values, delim, type, innerMulti, designSet, stru
  * @return {String}                   iCalendar/vCard value for single value
  */
 stringify.value = function(value, type, designSet, structuredValue) {
-  if (type in designSet.value && 'toICAL' in designSet.value[type]) {
+  if(type in designSet.value && 'toICAL' in designSet.value[type]) {
     return designSet.value[type].toICAL(value, structuredValue);
   }
   return value;
@@ -7504,7 +7342,7 @@ class Property {
   constructor(jCal, parent) {
     this._parent = parent || null;
 
-    if (typeof(jCal) === 'string') {
+    if(typeof jCal === 'string') {
       // We are creating the property by name and need to detect the type
       this.jCal = [jCal, {}, design.defaultType];
       this.jCal[TYPE_INDEX] = this.getDefaultType();
@@ -7545,7 +7383,7 @@ class Property {
 
     this._parent = p;
 
-    if (this.type == design.defaultType && designSetChanged) {
+    if(this.type == design.defaultType && designSetChanged) {
       this.jCal[TYPE_INDEX] = this.getDefaultType();
       this._updateType();
     }
@@ -7569,16 +7407,16 @@ class Property {
   _updateType() {
     let designSet = this._designSet;
 
-    if (this.type in designSet.value) {
-      if ('decorate' in designSet.value[this.type]) {
+    if(this.type in designSet.value) {
+      if('decorate' in designSet.value[this.type]) {
         this.isDecorated = true;
       } else {
         this.isDecorated = false;
       }
 
-      if (this.name in designSet.property) {
-        this.isMultiValue = ('multiValue' in designSet.property[this.name]);
-        this.isStructuredValue = ('structuredValue' in designSet.property[this.name]);
+      if(this.name in designSet.property) {
+        this.isMultiValue = 'multiValue' in designSet.property[this.name];
+        this.isStructuredValue = 'structuredValue' in designSet.property[this.name];
       }
     }
   }
@@ -7592,22 +7430,20 @@ class Property {
    * @return {?Object}             The decorated value.
    */
   _hydrateValue(index) {
-    if (this._values && this._values[index]) {
+    if(this._values && this._values[index]) {
       return this._values[index];
     }
 
     // for the case where there is no value.
-    if (this.jCal.length <= (VALUE_INDEX + index)) {
+    if(this.jCal.length <= VALUE_INDEX + index) {
       return null;
     }
 
-    if (this.isDecorated) {
-      if (!this._values) {
+    if(this.isDecorated) {
+      if(!this._values) {
         this._values = [];
       }
-      return (this._values[index] = this._decorate(
-        this.jCal[VALUE_INDEX + index]
-      ));
+      return (this._values[index] = this._decorate(this.jCal[VALUE_INDEX + index]));
     } else {
       return this.jCal[VALUE_INDEX + index];
     }
@@ -7645,11 +7481,11 @@ class Property {
    * @param {Number} index        The index to set it at
    */
   _setDecoratedValue(value, index) {
-    if (!this._values) {
+    if(!this._values) {
       this._values = [];
     }
 
-    if (typeof(value) === 'object' && 'icaltype' in value) {
+    if(typeof value === 'object' && 'icaltype' in value) {
       // decorated value
       this.jCal[VALUE_INDEX + index] = this._undecorate(value);
       this._values[index] = value;
@@ -7667,7 +7503,7 @@ class Property {
    * @return {Array|String}        Parameter value
    */
   getParameter(name) {
-    if (name in this.jCal[PROP_INDEX]) {
+    if(name in this.jCal[PROP_INDEX]) {
       return this.jCal[PROP_INDEX][name];
     } else {
       return undefined;
@@ -7683,7 +7519,7 @@ class Property {
   getFirstParameter(name) {
     let parameters = this.getParameter(name);
 
-    if (Array.isArray(parameters)) {
+    if(Array.isArray(parameters)) {
       return parameters[0];
     }
 
@@ -7698,10 +7534,8 @@ class Property {
    */
   setParameter(name, value) {
     let lcname = name.toLowerCase();
-    if (typeof value === "string" &&
-        lcname in this._designSet.param &&
-        'multiValue' in this._designSet.param[lcname]) {
-        value = [value];
+    if(typeof value === 'string' && lcname in this._designSet.param && 'multiValue' in this._designSet.param[lcname]) {
+      value = [value];
     }
     this.jCal[PROP_INDEX][name] = value;
   }
@@ -7724,9 +7558,9 @@ class Property {
     let name = this.jCal[NAME_INDEX$1];
     let designSet = this._designSet;
 
-    if (name in designSet.property) {
+    if(name in designSet.property) {
       let details = designSet.property[name];
-      if ('defaultType' in details) {
+      if('defaultType' in details) {
         return details.defaultType;
       }
     }
@@ -7765,7 +7599,7 @@ class Property {
   getValues() {
     let len = this.jCal.length - VALUE_INDEX;
 
-    if (len < 1) {
+    if(len < 1) {
       // it is possible for a property to have no value.
       return [];
     }
@@ -7773,7 +7607,7 @@ class Property {
     let i = 0;
     let result = [];
 
-    for (; i < len; i++) {
+    for(; i < len; i++) {
       result[i] = this._hydrateValue(i);
     }
 
@@ -7784,7 +7618,7 @@ class Property {
    * Removes all values from this property
    */
   removeAllValues() {
-    if (this._values) {
+    if(this._values) {
       this._values.length = 0;
     }
     this.jCal.length = 3;
@@ -7797,29 +7631,24 @@ class Property {
    * @param {Array} values    An array of values
    */
   setValues(values) {
-    if (!this.isMultiValue) {
-      throw new Error(
-        this.name + ': does not not support mulitValue.\n' +
-        'override isMultiValue'
-      );
+    if(!this.isMultiValue) {
+      throw new Error(this.name + ': does not not support mulitValue.\n' + 'override isMultiValue');
     }
 
     let len = values.length;
     let i = 0;
     this.removeAllValues();
 
-    if (len > 0 &&
-        typeof(values[0]) === 'object' &&
-        'icaltype' in values[0]) {
+    if(len > 0 && typeof values[0] === 'object' && 'icaltype' in values[0]) {
       this.resetType(values[0].icaltype);
     }
 
-    if (this.isDecorated) {
-      for (; i < len; i++) {
+    if(this.isDecorated) {
+      for(; i < len; i++) {
         this._setDecoratedValue(values[i], i);
       }
     } else {
-      for (; i < len; i++) {
+      for(; i < len; i++) {
         this.jCal[VALUE_INDEX + i] = values[i];
       }
     }
@@ -7833,11 +7662,11 @@ class Property {
    */
   setValue(value) {
     this.removeAllValues();
-    if (typeof(value) === 'object' && 'icaltype' in value) {
+    if(typeof value === 'object' && 'icaltype' in value) {
       this.resetType(value.icaltype);
     }
 
-    if (this.isDecorated) {
+    if(this.isDecorated) {
       this._setDecoratedValue(value, 0);
     } else {
       this.jCal[VALUE_INDEX] = value;
@@ -7858,9 +7687,7 @@ class Property {
    * @return {String}
    */
   toICALString() {
-    return stringify.property(
-      this.jCal, this._designSet, true
-    );
+    return stringify.property(this.jCal, this._designSet, true);
   }
 }
 
@@ -7868,7 +7695,6 @@ class Property {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This lets typescript resolve our custom types in the
@@ -7912,7 +7738,7 @@ class Component {
    * @param {Component=} parent     Parent component to associate
    */
   constructor(jCal, parent) {
-    if (typeof(jCal) === 'string') {
+    if(typeof jCal === 'string') {
       // jCal spec (name, properties, components)
       jCal = [jCal, [], []];
     }
@@ -7922,7 +7748,7 @@ class Component {
 
     this.parent = parent || null;
 
-    if (!this.parent && this.name === 'vcalendar') {
+    if(!this.parent && this.name === 'vcalendar') {
       this._timezoneCache = new Map();
     }
   }
@@ -7983,14 +7809,14 @@ class Component {
    */
   get _designSet() {
     let parentDesign = this.parent && this.parent._designSet;
-    if (!parentDesign && this.name == "vcard") {
+    if(!parentDesign && this.name == 'vcard') {
       // We can't decide on vcard3 vs vcard4 just based on the component name, the version number is
       // in the version property. We also can't use hydrated properties here because it would lead
       // to recursion, but the spec says that the version property needs to be the very first one.
       let versionProp = this.jCal[PROPERTY_INDEX]?.[0];
 
-      if (versionProp && versionProp[PROPERTY_NAME_INDEX] == "version" && versionProp[PROPERTY_VALUE_INDEX] == "3.0") {
-        return design.getDesignSet("vcard3");
+      if(versionProp && versionProp[PROPERTY_NAME_INDEX] == 'version' && versionProp[PROPERTY_VALUE_INDEX] == '3.0') {
+        return design.getDesignSet('vcard3');
       }
     }
 
@@ -8001,19 +7827,16 @@ class Component {
    * @private
    */
   _hydrateComponent(index) {
-    if (!this._components) {
+    if(!this._components) {
       this._components = [];
       this._hydratedComponentCount = 0;
     }
 
-    if (this._components[index]) {
+    if(this._components[index]) {
       return this._components[index];
     }
 
-    let comp = new Component(
-      this.jCal[COMPONENT_INDEX][index],
-      this
-    );
+    let comp = new Component(this.jCal[COMPONENT_INDEX][index], this);
 
     this._hydratedComponentCount++;
     return (this._components[index] = comp);
@@ -8023,19 +7846,16 @@ class Component {
    * @private
    */
   _hydrateProperty(index) {
-    if (!this._properties) {
+    if(!this._properties) {
       this._properties = [];
       this._hydratedPropertyCount = 0;
     }
 
-    if (this._properties[index]) {
+    if(this._properties[index]) {
       return this._properties[index];
     }
 
-    let prop = new Property(
-      this.jCal[PROPERTY_INDEX][index],
-      this
-    );
+    let prop = new Property(this.jCal[PROPERTY_INDEX][index], this);
 
     this._hydratedPropertyCount++;
     return (this._properties[index] = prop);
@@ -8048,19 +7868,19 @@ class Component {
    * @return {?Component}     The found subcomponent
    */
   getFirstSubcomponent(name) {
-    if (name) {
+    if(name) {
       let i = 0;
       let comps = this.jCal[COMPONENT_INDEX];
       let len = comps.length;
 
-      for (; i < len; i++) {
-        if (comps[i][NAME_INDEX] === name) {
+      for(; i < len; i++) {
+        if(comps[i][NAME_INDEX] === name) {
           let result = this._hydrateComponent(i);
           return result;
         }
       }
     } else {
-      if (this.jCal[COMPONENT_INDEX].length) {
+      if(this.jCal[COMPONENT_INDEX].length) {
         return this._hydrateComponent(0);
       }
     }
@@ -8079,22 +7899,19 @@ class Component {
     let jCalLen = this.jCal[COMPONENT_INDEX].length;
     let i = 0;
 
-    if (name) {
+    if(name) {
       let comps = this.jCal[COMPONENT_INDEX];
       let result = [];
 
-      for (; i < jCalLen; i++) {
-        if (name === comps[i][NAME_INDEX]) {
-          result.push(
-            this._hydrateComponent(i)
-          );
+      for(; i < jCalLen; i++) {
+        if(name === comps[i][NAME_INDEX]) {
+          result.push(this._hydrateComponent(i));
         }
       }
       return result;
     } else {
-      if (!this._components ||
-          (this._hydratedComponentCount !== jCalLen)) {
-        for (; i < jCalLen; i++) {
+      if(!this._components || this._hydratedComponentCount !== jCalLen) {
+        for(; i < jCalLen; i++) {
           this._hydrateComponent(i);
         }
       }
@@ -8114,9 +7931,9 @@ class Component {
     let len = props.length;
 
     let i = 0;
-    for (; i < len; i++) {
+    for(; i < len; i++) {
       // 0 is property name
-      if (props[i][NAME_INDEX] === name) {
+      if(props[i][NAME_INDEX] === name) {
         return true;
       }
     }
@@ -8131,19 +7948,19 @@ class Component {
    * @return {?Property}     The found property
    */
   getFirstProperty(name) {
-    if (name) {
+    if(name) {
       let i = 0;
       let props = this.jCal[PROPERTY_INDEX];
       let len = props.length;
 
-      for (; i < len; i++) {
-        if (props[i][NAME_INDEX] === name) {
+      for(; i < len; i++) {
+        if(props[i][NAME_INDEX] === name) {
           let result = this._hydrateProperty(i);
           return result;
         }
       }
     } else {
-      if (this.jCal[PROPERTY_INDEX].length) {
+      if(this.jCal[PROPERTY_INDEX].length) {
         return this._hydrateProperty(0);
       }
     }
@@ -8160,7 +7977,7 @@ class Component {
    */
   getFirstPropertyValue(name) {
     let prop = this.getFirstProperty(name);
-    if (prop) {
+    if(prop) {
       return prop.getFirstValue();
     }
 
@@ -8177,22 +7994,19 @@ class Component {
     let jCalLen = this.jCal[PROPERTY_INDEX].length;
     let i = 0;
 
-    if (name) {
+    if(name) {
       let props = this.jCal[PROPERTY_INDEX];
       let result = [];
 
-      for (; i < jCalLen; i++) {
-        if (name === props[i][NAME_INDEX]) {
-          result.push(
-            this._hydrateProperty(i)
-          );
+      for(; i < jCalLen; i++) {
+        if(name === props[i][NAME_INDEX]) {
+          result.push(this._hydrateProperty(i));
         }
       }
       return result;
     } else {
-      if (!this._properties ||
-          (this._hydratedPropertyCount !== jCalLen)) {
-        for (; i < jCalLen; i++) {
+      if(!this._properties || this._hydratedPropertyCount !== jCalLen) {
+        for(; i < jCalLen; i++) {
           this._hydrateProperty(i);
         }
       }
@@ -8207,10 +8021,10 @@ class Component {
   _removeObjectByIndex(jCalIndex, cache, index) {
     cache = cache || [];
     // remove cached version
-    if (cache[index]) {
+    if(cache[index]) {
       let obj = cache[index];
-      if ("parent" in obj) {
-          obj.parent = null;
+      if('parent' in obj) {
+        obj.parent = null;
       }
     }
 
@@ -8229,16 +8043,16 @@ class Component {
     let len = objects.length;
     let cached = this[cache];
 
-    if (typeof(nameOrObject) === 'string') {
-      for (; i < len; i++) {
-        if (objects[i][NAME_INDEX] === nameOrObject) {
+    if(typeof nameOrObject === 'string') {
+      for(; i < len; i++) {
+        if(objects[i][NAME_INDEX] === nameOrObject) {
           this._removeObjectByIndex(jCalIndex, cached, i);
           return true;
         }
       }
-    } else if (cached) {
-      for (; i < len; i++) {
-        if (cached[i] && cached[i] === nameOrObject) {
+    } else if(cached) {
+      for(; i < len; i++) {
+        if(cached[i] && cached[i] === nameOrObject) {
           this._removeObjectByIndex(jCalIndex, cached, i);
           return true;
         }
@@ -8261,8 +8075,8 @@ class Component {
 
     // descending search required because splice
     // is used and will effect the indices.
-    for (; i >= 0; i--) {
-      if (!name || objects[i][NAME_INDEX] === name) {
+    for(; i >= 0; i--) {
+      if(!name || objects[i][NAME_INDEX] === name) {
         this._removeObjectByIndex(jCalIndex, cached, i);
       }
     }
@@ -8275,12 +8089,12 @@ class Component {
    * @return {Component}                 The passed in component
    */
   addSubcomponent(component) {
-    if (!this._components) {
+    if(!this._components) {
       this._components = [];
       this._hydratedComponentCount = 0;
     }
 
-    if (component.parent) {
+    if(component.parent) {
       component.parent.removeSubcomponent(component);
     }
 
@@ -8300,7 +8114,7 @@ class Component {
    */
   removeSubcomponent(nameOrComp) {
     let removed = this._removeObject(COMPONENT_INDEX, '_components', nameOrComp);
-    if (removed) {
+    if(removed) {
       this._hydratedComponentCount--;
     }
     return removed;
@@ -8325,16 +8139,16 @@ class Component {
    * @return {Property}              The passed in property
    */
   addProperty(property) {
-    if (!(property instanceof Property)) {
+    if(!(property instanceof Property)) {
       throw new TypeError('must be instance of ICAL.Property');
     }
 
-    if (!this._properties) {
+    if(!this._properties) {
       this._properties = [];
       this._hydratedPropertyCount = 0;
     }
 
-    if (property.parent) {
+    if(property.parent) {
       property.parent.removeProperty(property);
     }
 
@@ -8373,7 +8187,7 @@ class Component {
   updatePropertyWithValue(name, value) {
     let prop = this.getFirstProperty(name);
 
-    if (prop) {
+    if(prop) {
       prop.setValue(value);
     } else {
       prop = this.addPropertyWithValue(name, value);
@@ -8391,7 +8205,7 @@ class Component {
    */
   removeProperty(nameOrProp) {
     let removed = this._removeObject(PROPERTY_INDEX, '_properties', nameOrProp);
-    if (removed) {
+    if(removed) {
       this._hydratedPropertyCount--;
     }
     return removed;
@@ -8424,9 +8238,7 @@ class Component {
    * @return {String}
    */
   toString() {
-    return stringify.component(
-      this.jCal, this._designSet
-    );
+    return stringify.component(this.jCal, this._designSet);
   }
 
   /**
@@ -8440,25 +8252,25 @@ class Component {
   getTimeZoneByID(tzid) {
     // VTIMEZONE components can only appear as a child of the VCALENDAR
     // component; walk the tree if we're not the root.
-    if (this.parent) {
+    if(this.parent) {
       return this.parent.getTimeZoneByID(tzid);
     }
 
     // If there is no time zone cache, we are probably parsing an incomplete
     // file and will have no time zone definitions.
-    if (!this._timezoneCache) {
+    if(!this._timezoneCache) {
       return null;
     }
 
-    if (this._timezoneCache.has(tzid)) {
+    if(this._timezoneCache.has(tzid)) {
       return this._timezoneCache.get(tzid);
     }
 
     // If the time zone is not already cached, hydrate it from the
     // subcomponents.
     const zones = this.getAllSubcomponents('vtimezone');
-    for (const zone of zones) {
-      if (zone.getFirstProperty('tzid').getFirstValue() === tzid) {
+    for(const zone of zones) {
+      if(zone.getFirstProperty('tzid').getFirstValue() === tzid) {
         const hydratedZone = new Timezone({
           component: zone,
           tzid: tzid,
@@ -8480,7 +8292,6 @@ class Component {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * Primary class for expanding recurring rules.  Can take multiple rrules, rdates, exdate(s) and
@@ -8507,7 +8318,7 @@ class Component {
  * // next is always an ICAL.Time or null
  * var next;
  *
- * while (someCondition && (next = expand.next())) {
+ * while(someCondition && (next = expand.next())) {
  *   // do something with next
  * }
  *
@@ -8632,39 +8443,39 @@ class RecurExpansion {
   fromData(options) {
     let start = formatClassType(options.dtstart, Time);
 
-    if (!start) {
+    if(!start) {
       throw new Error('.dtstart (ICAL.Time) must be given');
     } else {
       this.dtstart = start;
     }
 
-    if (options.component) {
+    if(options.component) {
       this._init(options.component);
     } else {
       this.last = formatClassType(options.last, Time) || start.clone();
 
-      if (!options.ruleIterators) {
+      if(!options.ruleIterators) {
         throw new Error('.ruleIterators or .component must be given');
       }
 
-      this.ruleIterators = options.ruleIterators.map(function(item) {
+      this.ruleIterators = options.ruleIterators.map(function (item) {
         return formatClassType(item, RecurIterator);
       });
 
       this.ruleDateInc = options.ruleDateInc;
       this.exDateInc = options.exDateInc;
 
-      if (options.ruleDates) {
+      if(options.ruleDates) {
         this.ruleDates = options.ruleDates.map(item => formatClassType(item, Time));
         this.ruleDate = this.ruleDates[this.ruleDateInc];
       }
 
-      if (options.exDates) {
+      if(options.exDates) {
         this.exDates = options.exDates.map(item => formatClassType(item, Time));
         this.exDate = this.exDates[this.exDateInc];
       }
 
-      if (typeof(options.complete) !== 'undefined') {
+      if(typeof options.complete !== 'undefined') {
         this.complete = options.complete;
       }
     }
@@ -8679,8 +8490,7 @@ class RecurExpansion {
    * @param {Time} b   The other object to compare
    */
   _compare_special(a, b) {
-    if (!a.isDate && b.isDate)
-      return new Time({ year: a.year, month: a.month, day: a.day }).compare(b);
+    if(!a.isDate && b.isDate) return new Time({ year: a.year, month: a.month, day: a.day }).compare(b);
     return a.compare(b);
   }
 
@@ -8696,11 +8506,9 @@ class RecurExpansion {
     let maxTries = 500;
     let currentTry = 0;
 
-    while (true) {
-      if (currentTry++ > maxTries) {
-        throw new Error(
-          'max tries have occurred, rule may be impossible to fulfill.'
-        );
+    while(true) {
+      if(currentTry++ > maxTries) {
+        throw new Error('max tries have occurred, rule may be impossible to fulfill.');
       }
 
       next = this.ruleDate;
@@ -8711,14 +8519,14 @@ class RecurExpansion {
       // _after_ we choose a value this should be
       // the only spot where we need to worry about the
       // end of events.
-      if (!next && !iter) {
+      if(!next && !iter) {
         // there are no more iterators or rdates
         this.complete = true;
         break;
       }
 
       // no next rule day or recurrence rule is first.
-      if (!next || (iter && next.compare(iter.last) > 0)) {
+      if(!next || (iter && next.compare(iter.last) > 0)) {
         // must be cloned, recur will reuse the time element.
         next = iter.last.clone();
         // move to next so we can continue
@@ -8726,23 +8534,23 @@ class RecurExpansion {
       }
 
       // if the ruleDate is still next increment it.
-      if (this.ruleDate === next) {
+      if(this.ruleDate === next) {
         this._nextRuleDay();
       }
 
       this.last = next;
 
       // check the negative rules
-      if (this.exDate) {
+      if(this.exDate) {
         // EXDATE can be in DATE format, but DTSTART is in DATE-TIME format
         compare = this._compare_special(this.last, this.exDate);
 
-        if (compare > 0) {
+        if(compare > 0) {
           this._nextExDay();
         }
 
         // if the current rule is excluded skip it.
-        if (compare === 0) {
+        if(compare === 0) {
           this._nextExDay();
           continue;
         }
@@ -8770,11 +8578,11 @@ class RecurExpansion {
     let result = Object.create(null);
     result.ruleIterators = this.ruleIterators.map(toJSON);
 
-    if (this.ruleDates) {
+    if(this.ruleDates) {
       result.ruleDates = this.ruleDates.map(toJSON);
     }
 
-    if (this.exDates) {
+    if(this.exDates) {
       result.exDates = this.exDates.map(toJSON);
     }
 
@@ -8800,13 +8608,9 @@ class RecurExpansion {
     let result = [];
     let props = component.getAllProperties(propertyName);
 
-    for (let i = 0, len = props.length; i < len; i++) {
-      for (let prop of props[i].getValues()) {
-        let idx = binsearchInsert(
-          result,
-          prop,
-          (a, b) => a.compare(b)
-        );
+    for(let i = 0, len = props.length; i < len; i++) {
+      for(let prop of props[i].getValues()) {
+        let idx = binsearchInsert(result, prop, (a, b) => a.compare(b));
 
         // ordered insert
         result.splice(idx, 0, prop);
@@ -8830,38 +8634,30 @@ class RecurExpansion {
     // to provide api consistency non-recurring
     // events can also use the iterator though it will
     // only return a single time.
-    if (!component.hasProperty('rdate') &&
-        !component.hasProperty('rrule') &&
-        !component.hasProperty('recurrence-id')) {
+    if(!component.hasProperty('rdate') && !component.hasProperty('rrule') && !component.hasProperty('recurrence-id')) {
       this.ruleDate = this.last.clone();
       this.complete = true;
       return;
     }
 
-    if (component.hasProperty('rdate')) {
+    if(component.hasProperty('rdate')) {
       this.ruleDates = this._extractDates(component, 'rdate');
 
       // special hack for cases where first rdate is prior
       // to the start date. We only check for the first rdate.
       // This is mostly for google's crazy recurring date logic
       // (contacts birthdays).
-      if ((this.ruleDates[0]) &&
-          (this.ruleDates[0].compare(this.dtstart) < 0)) {
-
+      if(this.ruleDates[0] && this.ruleDates[0].compare(this.dtstart) < 0) {
         this.ruleDateInc = 0;
         this.last = this.ruleDates[0].clone();
       } else {
-        this.ruleDateInc = binsearchInsert(
-          this.ruleDates,
-          this.last,
-          (a, b) => a.compare(b)
-        );
+        this.ruleDateInc = binsearchInsert(this.ruleDates, this.last, (a, b) => a.compare(b));
       }
 
       this.ruleDate = this.ruleDates[this.ruleDateInc];
     }
 
-    if (component.hasProperty('rrule')) {
+    if(component.hasProperty('rrule')) {
       let rules = component.getAllProperties('rrule');
       let i = 0;
       let len = rules.length;
@@ -8869,7 +8665,7 @@ class RecurExpansion {
       let rule;
       let iter;
 
-      for (; i < len; i++) {
+      for(; i < len; i++) {
         rule = rules[i].getFirstValue();
         iter = rule.iterator(this.dtstart);
         this.ruleIterators.push(iter);
@@ -8881,16 +8677,12 @@ class RecurExpansion {
       }
     }
 
-    if (component.hasProperty('exdate')) {
+    if(component.hasProperty('exdate')) {
       this.exDates = this._extractDates(component, 'exdate');
       // if we have a .last day we increment the index to beyond it.
       // When DTSTART is in DATE-TIME format, EXDATE is in DATE format and EXDATE is
       // the date of DTSTART, _compare_special finds this out and compareTime fails.
-      this.exDateInc = binsearchInsert(
-        this.exDates,
-        this.last,
-        this._compare_special
-      );
+      this.exDateInc = binsearchInsert(this.exDates, this.last, this._compare_special);
 
       this.exDate = this.exDates[this.exDateInc];
     }
@@ -8922,7 +8714,7 @@ class RecurExpansion {
   _nextRecurrenceIter() {
     let iters = this.ruleIterators;
 
-    if (iters.length === 0) {
+    if(iters.length === 0) {
       return null;
     }
 
@@ -8933,16 +8725,16 @@ class RecurExpansion {
     let chosenIter;
 
     // loop through each iterator
-    for (; iterIdx < len; iterIdx++) {
+    for(; iterIdx < len; iterIdx++) {
       iter = iters[iterIdx];
       iterTime = iter.last;
 
       // if iteration is complete
       // then we must exclude it from
       // the search and remove it.
-      if (iter.completed) {
+      if(iter.completed) {
         len--;
-        if (iterIdx !== 0) {
+        if(iterIdx !== 0) {
           iterIdx--;
         }
         iters.splice(iterIdx, 1);
@@ -8950,7 +8742,7 @@ class RecurExpansion {
       }
 
       // find the most recent possible choice
-      if (!chosenIter || chosenIter.last.compare(iterTime) > 0) {
+      if(!chosenIter || chosenIter.last.compare(iterTime) > 0) {
         // that iterator is saved
         chosenIter = iter;
       }
@@ -8966,7 +8758,6 @@ class RecurExpansion {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * This lets typescript resolve our custom types in the
@@ -9001,12 +8792,12 @@ class Event {
    *            component's parent
    */
   constructor(component, options) {
-    if (!(component instanceof Component)) {
+    if(!(component instanceof Component)) {
       options = component;
       component = null;
     }
 
-    if (component) {
+    if(component) {
       this.component = component;
     } else {
       this.component = new Component('vevent');
@@ -9016,21 +8807,20 @@ class Event {
     this.exceptions = Object.create(null);
     this.rangeExceptions = [];
 
-    if (options && options.strictExceptions) {
+    if(options && options.strictExceptions) {
       this.strictExceptions = options.strictExceptions;
     }
 
-    if (options && options.exceptions) {
+    if(options && options.exceptions) {
       options.exceptions.forEach(this.relateException, this);
-    } else if (this.component.parent && !this.isRecurrenceException()) {
-      this.component.parent.getAllSubcomponents('vevent').forEach(function(event) {
-        if (event.hasProperty('recurrence-id')) {
+    } else if(this.component.parent && !this.isRecurrenceException()) {
+      this.component.parent.getAllSubcomponents('vevent').forEach(function (event) {
+        if(event.hasProperty('recurrence-id')) {
           this.relateException(event);
         }
       }, this);
     }
   }
-
 
   static THISANDFUTURE = 'THISANDFUTURE';
 
@@ -9059,15 +8849,15 @@ class Event {
    * @param {Component|Event} obj       Component or event
    */
   relateException(obj) {
-    if (this.isRecurrenceException()) {
+    if(this.isRecurrenceException()) {
       throw new Error('cannot relate exception to exceptions');
     }
 
-    if (obj instanceof Component) {
+    if(obj instanceof Component) {
       obj = new Event(obj);
     }
 
-    if (this.strictExceptions && obj.uid !== this.uid) {
+    if(this.strictExceptions && obj.uid !== this.uid) {
       throw new Error('attempted to relate unrelated exception');
     }
 
@@ -9079,18 +8869,12 @@ class Event {
 
     // index RANGE=THISANDFUTURE exceptions so we can
     // look them up later in getOccurrenceDetails.
-    if (obj.modifiesFuture()) {
-      let item = [
-        obj.recurrenceId.toUnixTime(), id
-      ];
+    if(obj.modifiesFuture()) {
+      let item = [obj.recurrenceId.toUnixTime(), id];
 
       // we keep them sorted so we can find the nearest
       // value later on...
-      let idx = binsearchInsert(
-        this.rangeExceptions,
-        item,
-        compareRangeException
-      );
+      let idx = binsearchInsert(this.rangeExceptions, item, compareRangeException);
 
       this.rangeExceptions.splice(idx, 0, item);
     }
@@ -9103,7 +8887,7 @@ class Event {
    * @return {Boolean}        True, when exception is within range
    */
   modifiesFuture() {
-    if (!this.component.hasProperty('recurrence-id')) {
+    if(!this.component.hasProperty('recurrence-id')) {
       return false;
     }
 
@@ -9118,28 +8902,24 @@ class Event {
    * @return {?Event}     the related event/exception or null
    */
   findRangeException(time) {
-    if (!this.rangeExceptions.length) {
+    if(!this.rangeExceptions.length) {
       return null;
     }
 
     let utc = time.toUnixTime();
-    let idx = binsearchInsert(
-      this.rangeExceptions,
-      [utc],
-      compareRangeException
-    );
+    let idx = binsearchInsert(this.rangeExceptions, [utc], compareRangeException);
 
     idx -= 1;
 
     // occurs before
-    if (idx < 0) {
+    if(idx < 0) {
       return null;
     }
 
     let rangeItem = this.rangeExceptions[idx];
 
     /* c8 ignore next 4 */
-    if (utc < rangeItem[0]) {
+    if(utc < rangeItem[0]) {
       // sanity check only
       return null;
     }
@@ -9163,15 +8943,15 @@ class Event {
     let item;
     let result = {
       //XXX: Clone?
-      recurrenceId: occurrence
+      recurrenceId: occurrence,
     };
 
-    if (id in this.exceptions) {
+    if(id in this.exceptions) {
       item = result.item = this.exceptions[id];
       result.startDate = item.startDate;
       result.endDate = item.endDate;
       result.item = item;
-    } else if (utcId in this.exceptions) {
+    } else if(utcId in this.exceptions) {
       item = this.exceptions[utcId];
       result.startDate = item.startDate;
       result.endDate = item.endDate;
@@ -9181,12 +8961,10 @@ class Event {
       // lower priority then direct exceptions but
       // must be accounted for first. Their item is
       // always the first exception with the range prop.
-      let rangeExceptionId = this.findRangeException(
-        occurrence
-      );
+      let rangeExceptionId = this.findRangeException(occurrence);
       let end;
 
-      if (rangeExceptionId) {
+      if(rangeExceptionId) {
         let exception = this.exceptions[rangeExceptionId];
 
         // range exception must modify standard time
@@ -9195,7 +8973,7 @@ class Event {
 
         let startDiff = this._rangeExceptionCache[rangeExceptionId];
 
-        if (!startDiff) {
+        if(!startDiff) {
           let original = exception.recurrenceId.clone();
           let newStart = exception.startDate.clone();
 
@@ -9239,7 +9017,7 @@ class Event {
   iterator(startTime) {
     return new RecurExpansion({
       component: this.component,
-      dtstart: startTime || this.startDate
+      dtstart: startTime || this.startDate,
     });
   }
 
@@ -9284,7 +9062,7 @@ class Event {
     let len = rules.length;
     let result = Object.create(null);
 
-    for (; i < len; i++) {
+    for(; i < len; i++) {
       let value = rules[i].getFirstValue();
       result[value.freq] = true;
     }
@@ -9324,20 +9102,20 @@ class Event {
    */
   get endDate() {
     let endDate = this._firstProp('dtend');
-    if (!endDate) {
-        let duration = this._firstProp('duration');
-        endDate = this.startDate.clone();
-        if (duration) {
-            endDate.addDuration(duration);
-        } else if (endDate.isDate) {
-            endDate.day += 1;
-        }
+    if(!endDate) {
+      let duration = this._firstProp('duration');
+      endDate = this.startDate.clone();
+      if(duration) {
+        endDate.addDuration(duration);
+      } else if(endDate.isDate) {
+        endDate.day += 1;
+      }
     }
     return endDate;
   }
 
   set endDate(value) {
-    if (this.component.hasProperty('duration')) {
+    if(this.component.hasProperty('duration')) {
       this.component.removeProperty('duration');
     }
     this._setTime('dtend', value);
@@ -9351,14 +9129,14 @@ class Event {
    */
   get duration() {
     let duration = this._firstProp('duration');
-    if (!duration) {
+    if(!duration) {
       return this.endDate.subtractDateTz(this.startDate);
     }
     return duration;
   }
 
   set duration(value) {
-    if (this.component.hasProperty('dtend')) {
+    if(this.component.hasProperty('dtend')) {
       this.component.removeProperty('dtend');
     }
 
@@ -9479,16 +9257,13 @@ class Event {
   _setTime(propName, time) {
     let prop = this.component.getFirstProperty(propName);
 
-    if (!prop) {
+    if(!prop) {
       prop = new Property(propName);
       this.component.addProperty(prop);
     }
 
     // utc and local don't get a tzid
-    if (
-      time.zone === Timezone.localTimezone ||
-      time.zone === Timezone.utcTimezone
-    ) {
+    if(time.zone === Timezone.localTimezone || time.zone === Timezone.utcTimezone) {
       // remove the tzid
       prop.removeParameter('tzid');
     } else {
@@ -9516,8 +9291,8 @@ class Event {
 }
 
 function compareRangeException(a, b) {
-  if (a[0] > b[0]) return 1;
-  if (b[0] > a[0]) return -1;
+  if(a[0] > b[0]) return 1;
+  if(b[0] > a[0]) return -1;
   return 0;
 }
 
@@ -9525,7 +9300,6 @@ function compareRangeException(a, b) {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * The ComponentParser is used to process a String or jCal Object,
@@ -9563,11 +9337,11 @@ class ComponentParser {
    * @param {Boolean} options.parseTimezeone    Whether timezones should be parsed
    */
   constructor(options) {
-    if (typeof(options) === 'undefined') {
+    if(typeof options === 'undefined') {
       options = {};
     }
 
-    for (let [key, value] of Object.entries(options)) {
+    for(let [key, value] of Object.entries(options)) {
       this[key] = value;
     }
   }
@@ -9585,7 +9359,6 @@ class ComponentParser {
    * @type {Boolean}
    */
   parseTimezone = true;
-
 
   /* SAX like events here for reference */
 
@@ -9630,11 +9403,11 @@ class ComponentParser {
    */
   process(ical) {
     //TODO: this is sync now in the future we will have a incremental parser.
-    if (typeof(ical) === 'string') {
+    if(typeof ical === 'string') {
       ical = parse(ical);
     }
 
-    if (!(ical instanceof Component)) {
+    if(!(ical instanceof Component)) {
       ical = new Component(ical);
     }
 
@@ -9643,23 +9416,25 @@ class ComponentParser {
     let len = components.length;
     let component;
 
-    for (; i < len; i++) {
+    for(; i < len; i++) {
       component = components[i];
 
       switch (component.name) {
         case 'vtimezone':
-          if (this.parseTimezone) {
+          if(this.parseTimezone) {
             let tzid = component.getFirstPropertyValue('tzid');
-            if (tzid) {
-              this.ontimezone(new Timezone({
-                tzid: tzid,
-                component: component
-              }));
+            if(tzid) {
+              this.ontimezone(
+                new Timezone({
+                  tzid: tzid,
+                  component: component,
+                }),
+              );
             }
           }
           break;
         case 'vevent':
-          if (this.parseEvent) {
+          if(this.parseEvent) {
             this.onevent(new Event(component));
           }
           break;
@@ -9678,7 +9453,6 @@ class ComponentParser {
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * Portions Copyright (C) Philipp Kewisch */
-
 
 /**
  * The main ICAL module. Provides access to everything else.
@@ -9726,7 +9500,7 @@ var ICALmodule = {
   stringify,
 
   design,
-  helpers
+  helpers,
 };
 
 export { ICALmodule as default };
