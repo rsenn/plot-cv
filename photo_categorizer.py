@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 ╔══════════════════════════════════════════════════════════╗
 ║         YOLO + OpenCV  –  Foto Kategorisierung Demo      ║

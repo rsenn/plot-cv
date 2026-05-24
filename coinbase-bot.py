@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Coinbase Trading Bot mit PyTorch LSTM-Modell
 ============================================
