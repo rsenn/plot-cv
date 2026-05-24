@@ -12,10 +12,10 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { Mat, Size, Point, Scalar, Contour, CLAHE, imread, imwrite, cvtColor, GaussianBlur, Canny, findContours, approxPolyDP, arcLength, contourArea, drawContours, getPerspectiveTransform, warpPerspective, adaptiveThreshold, COLOR_BGR2GRAY, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, CV_8UC1, } from 'opencv.so';
+import { Mat, Size, Point, Scalar, Contour, CLAHE, imread, imwrite, cvtColor, GaussianBlur, Canny, findContours, approxPolyDP, arcLength, contourArea, drawContours, getPerspectiveTransform, warpPerspective, adaptiveThreshold, COLOR_BGR2GRAY, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, CV_8UC1, imshow, waitKey, } from 'opencv';
 
 function main() {
-  // ─── arg parsing ──────────────────────────────────────────────────────────
+  // --- arg parsing ----------------------------------------------------------
   const rawArgs = typeof scriptArgs !== 'undefined' ? scriptArgs : [];
   // scriptArgs[0] is the script path under qjs; strip it if present
   const args = rawArgs[0]?.endsWith?.('.js') ? rawArgs.slice(1) : rawArgs;
@@ -31,7 +31,7 @@ function main() {
   console.log('input  :', inputPath);
   console.log('prefix :', prefix);
 
-  // ─── 1. load source ───────────────────────────────────────────────────────
+  // --- 1. load source -------------------------------------------------------
   const src = imread(inputPath);
   if(!src || src.cols === 0 || src.rows === 0) throw new Error('could not read image: ' + inputPath);
 
@@ -39,7 +39,7 @@ function main() {
     H = src.rows;
   console.log('source :', W, 'x', H);
 
-  // ─── 2. preprocess for edge detection ─────────────────────────────────────
+  // --- 2. preprocess for edge detection -------------------------------------
   const gray = new Mat();
   const blurred = new Mat();
   const edges = new Mat();
@@ -48,16 +48,19 @@ function main() {
   GaussianBlur(gray, blurred, new Size(5, 5), 0);
   Canny(blurred, edges, 75, 200);
 
-  // ─── 3. find the page contour (largest 4-vertex approximation) ────────────
-  const result = findContours(edges, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-  const contours = Array.isArray(result) ? result[0] : result;
-  console.log('contours:', contours.length);
+  imwrite('edges.png', edges);
+
+  // --- 3. find the page contour (largest 4-vertex approximation) ------------
+  const contours = [];
+  /*const result =*/ findContours(edges, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+  console.log('contours:', contours);
 
   // sort candidates by area, descending, then find first that approximates to a quad
   const ranked = [...contours]
     .map(c => ({ c, area: contourArea(c) }))
-    .filter(o => o.area > W * H * 0.05) // ignore noise: < 5 % of frame
+    //.filter(o => o.area > W * H * 0.05) // ignore noise: < 5 % of frame
     .sort((a, b) => b.area - a.area);
+  console.log('ranked:', ranked.length);
 
   let pageContour = null;
   let pagePoints = null;
@@ -65,7 +68,8 @@ function main() {
   for(const { c, area } of ranked) {
     const peri = arcLength(c, true);
     const approx = new Contour();
-    approxPolyDP(c, approx, 0.02 * peri, true);
+    console.log('peri:', peri);
+    c.approxPolyDP(approx, 0.02 * peri, true);
     const pts = [...approx].map(p => ({ x: p.x, y: p.y }));
     if(pts.length === 4) {
       pageContour = approx;
@@ -77,10 +81,10 @@ function main() {
 
   if(!pageContour) throw new Error('no quadrilateral page outline found');
 
-  // ─── 4. order corners as TL, TR, BR, BL ───────────────────────────────────
+  // --- 4. order corners as TL, TR, BR, BL -----------------------------------
   const { tl, tr, br, bl } = orderCorners(pagePoints);
 
-  // ─── 5. estimate output size, snap to A4 aspect (1 : √2) ──────────────────
+  // --- 5. estimate output size, snap to A4 aspect (1 : √2) ------------------
   let outW = Math.max(dist(tr, tl), dist(br, bl));
   let outH = Math.max(dist(bl, tl), dist(br, tr));
 
@@ -92,7 +96,7 @@ function main() {
   outH = Math.round(outH);
   console.log('warp to:', outW, 'x', outH, '(A4)');
 
-  // ─── 6. perspective transform & warp ──────────────────────────────────────
+  // --- 6. perspective transform & warp --------------------------------------
   const srcQuad = [new Point(tl.x, tl.y), new Point(tr.x, tr.y), new Point(br.x, br.y), new Point(bl.x, bl.y)];
   const dstQuad = [new Point(0, 0), new Point(outW - 1, 0), new Point(outW - 1, outH - 1), new Point(0, outH - 1)];
 
@@ -100,7 +104,7 @@ function main() {
   const warped = new Mat();
   warpPerspective(src, warped, M, new Size(outW, outH));
 
-  // ─── 7. write contour JSON ────────────────────────────────────────────────
+  // --- 7. write contour JSON ------------------------------------------------
   const contourJson = {
     source: inputPath,
     imageSize: { width: W, height: H },
@@ -111,14 +115,14 @@ function main() {
   fs.writeFileSync(prefix + '_contour.json', JSON.stringify(contourJson, null, 2));
   console.log('wrote  :', prefix + '_contour.json');
 
-  // ─── 8. write mask: filled white quad on black, original frame size ───────
+  // --- 8. write mask: filled white quad on black, original frame size -------
   const mask = new Mat(new Size(W, H), CV_8UC1);
   mask.setTo(new Scalar(0));
   drawContours(mask, [pageContour], -1, new Scalar(255), -1); // thickness -1 = filled
   imwrite(prefix + '_mask.png', mask);
   console.log('wrote  :', prefix + '_mask.png');
 
-  // ─── 9. post-process the cut-out: gray → CLAHE → adaptiveThreshold ────────
+  // --- 9. post-process the cut-out: gray → CLAHE → adaptiveThreshold --------
   const warpedGray = new Mat();
   const equalised = new Mat();
   const scanned = new Mat();
@@ -144,7 +148,7 @@ function main() {
   console.log('done.');
 }
 
-// ─── helpers ────────────────────────────────────────────────────────────────
+// --- helpers ----------------------------------------------------------------
 function orderCorners(pts) {
   // top-left     has min(x + y)
   // bottom-right has max(x + y)
