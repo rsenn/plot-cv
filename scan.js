@@ -55,7 +55,7 @@ function main() {
   /*const result =*/ findContours(edges, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
   //console.log('contours:', contours);
 
-const MIN_AREA=W * H * 0.05;
+  const MIN_AREA = W * H * 0.05;
   console.log('MIN_AREA:', MIN_AREA);
 
   // sort candidates by area, descending, then find first that approximates to a quad
@@ -71,9 +71,9 @@ const MIN_AREA=W * H * 0.05;
 
   for(const { c, area } of ranked) {
     let peri = arcLength(c, true);
-    if(!Number.isFinite(peri)) peri=10000;
+    if(!Number.isFinite(peri)) peri = 10000;
     const approx = new Contour();
-   //console.log('peri:', peri);
+    //console.log('peri:', peri);
     c.approxPolyDP(approx, 0.02 * peri, true);
     const pts = [...approx].map(p => ({ x: p.x, y: p.y }));
     if(pts.length === 4) {
