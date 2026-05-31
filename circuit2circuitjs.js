@@ -1,4 +1,4 @@
-#!/usr/bin/env qjs
+#!/usr/bin/env qjsm
 //
 // circuit2circuitjs.js
 //   Best-effort conversion of a schematic photo into a circuitjs file.
@@ -27,7 +27,7 @@ console.log(`reading ${inputPath}`);
 
 // ---------- 1. load + preprocess ----------
 const src = imread(inputPath);
-if(!src || (src.empty && src.empty())) throw new Error('imread returned empty Mat');
+if(!src || src.empty) throw new Error('imread returned empty Mat');
 
 console.log(`image: ${src.cols} x ${src.rows}`);
 
