@@ -364,7 +364,7 @@ function evalGate(store, indicators, idx) {
     why = 'no prediction for this bar (model missed / gap)';
   } else if(!regimePass) {
     decision = 'HOLD';
-    why = 'regime off — chop / low volatility, fees would eat edge';
+    why = 'regime off — chop / low volatility\nfees would eat edge';
   } else if(!dirPass) {
     decision = 'HOLD';
     why = `direction prob ${dirP.toFixed(3)} < ${ENTRY_DIR}`;
@@ -931,7 +931,12 @@ class CandlePane extends Pane {
     y += 12;
     const decCol = g.decision === 'ENTER' ? COL.gateOk : g.decision === 'HALT' ? COL.gateFail : COL.text;
     app.font(12, decCol, ALIGN_LEFT | ALIGN_MIDDLE);
-    app.text(cardX + 12, y, `→ ${g.decision}: ${g.why}`);
+
+    let lines = g.why.split('\n');
+
+    for(let i = 0; i < lines.length; i++) {
+      app.text(cardX + 12, y + i * 12, (i == 0 ? `→ ${g.decision}: ` : `              `) + lines[i]);
+    }
   }
 
   priceStep(range) {
