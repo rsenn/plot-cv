@@ -23,7 +23,7 @@
 //
 // Run: qjsm tradeview.js [tradebot.db]
 
-import { CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, KEY_DOWN, KEY_END, KEY_ESCAPE, KEY_F, KEY_HOME, KEY_L, KEY_LEFT, KEY_PAGE_DOWN, KEY_PAGE_UP, KEY_Q, KEY_RIGHT, KEY_SPACE, KEY_UP, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, RESIZABLE, SAMPLES, Window, context, poll } from 'glfw';
+import { CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, KEY_DOWN, KEY_END, KEY_ESCAPE, KEY_F, KEY_HOME, KEY_L, KEY_LEFT, KEY_PAGE_DOWN, KEY_PAGE_UP, KEY_Q, KEY_RIGHT, KEY_SPACE, KEY_UP, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, RESIZABLE, SAMPLES, Window, context, poll, } from 'glfw';
 import { SQLite3 } from 'sqlite';
 import { ALIGN_LEFT, ALIGN_MIDDLE, ALIGN_RIGHT, ANTIALIAS, CreateGL3, DeleteGL3, RGB, RGBA, STENCIL_STROKES } from 'nanovg';
 
@@ -31,37 +31,63 @@ const MB_LEFT = 0;
 const PRESS = 1;
 
 const POLL_MS = 2000; // live DB poll interval
-const ENTRY_DIR = 0.45; // gate thresholds, mirror tradebot.Config
-const ENTRY_META = 0.58;
 const SPEEDS = [1, 2, 4, 8, 16, 32, 64, 128, 256]; // replay bars/second
 
+// ── tradebot.Config mirror ────────────────────────────────────────────────
+// Everything below is a bit-for-bit reproduction of the deterministic
+// (non-ML) side of tradebot.py so the viewer can compute the same features,
+// evaluate the same regime filter, and show *why* the bot would or would
+// not have entered on any given bar — no torch/xgboost needed.
+const FEE_RATE = 0.006;
+const ENTRY_DIR = 0.45; // primary direction prob gate
+const ENTRY_META = 0.58; // meta-model gate
+const REGIME_ADX_MIN = 20; // RegimeFilter.ok: adx > 20
+const REGIME_ATR_MIN = 2.5 * FEE_RATE; // and atr_rel > 2.5 × fee_rate
+const SEQ_LEN = 64; // LSTM lookback
+const MIN_BARS_FOR_PRED = SEQ_LEN + 60; // Bot.on_bar guard
+const STOP_ATR = 2.0;
+const TP_ATR = 3.0;
+const TARGET_VOL = 0.01;
+const MAX_POS_FRAC = 0.25;
+const DAILY_LOSS_LIMIT = 0.02;
+const MAX_DRAWDOWN = 0.1;
+const START_EQUITY = 10_000.0;
+
 const COL = {
-  bg: RGB(21, 24, 31),
-  panel: RGB(26, 30, 38),
-  grid: RGBA(255, 255, 255, 14),
-  axis: RGB(150, 158, 170),
-  text: RGB(190, 198, 210),
-  dim: RGB(110, 118, 130),
+  bg: RGB(248, 241, 215),
+  panel: RGB(236, 226, 192),
+  grid: RGBA(80, 60, 40, 32),
+  axis: RGB(70, 55, 40),
+  text: RGB(40, 32, 22),
+  dim: RGB(130, 115, 90),
   up: RGB(38, 166, 126),
   dn: RGB(226, 82, 80),
   upFill: RGBA(38, 166, 126, 220),
   dnFill: RGBA(226, 82, 80, 220),
-  regime: RGBA(128, 132, 140, 22),
-  entry: RGB(230, 234, 240),
-  stop: RGBA(226, 82, 80, 180),
-  tp: RGBA(38, 166, 126, 180),
-  pLong: RGB(80, 200, 140),
-  pShort: RGB(235, 110, 100),
-  meta: RGB(240, 180, 70),
-  thresh: RGBA(240, 180, 70, 90),
-  equity: RGB(120, 180, 250),
-  ddFill: RGBA(226, 82, 80, 40),
-  halt: RGBA(240, 180, 70, 45),
-  cursor: RGB(240, 200, 90),
-  viewRect: RGBA(120, 180, 250, 40),
-  viewEdge: RGBA(120, 180, 250, 160),
-  cross: RGBA(220, 224, 232, 90),
-  boxBg: RGBA(15, 17, 22, 235),
+  regime: RGBA(90, 70, 45, 28),
+  entry: RGB(40, 32, 22),
+  stop: RGBA(170, 50, 50, 200),
+  tp: RGBA(40, 120, 75, 200),
+  pLong: RGB(35, 85, 130),
+  pShort: RGB(160, 60, 50),
+  meta: RGB(150, 100, 30),
+  thresh: RGBA(150, 100, 30, 100),
+  equity: RGB(35, 60, 110),
+  ddFill: RGBA(170, 50, 50, 40),
+  halt: RGBA(180, 100, 30, 55),
+  cursor: RGB(140, 80, 30),
+  viewRect: RGBA(70, 90, 130, 45),
+  viewEdge: RGBA(40, 70, 120, 170),
+  cross: RGBA(70, 55, 40, 130),
+  boxBg: RGBA(230, 218, 180, 240),
+  cardBg: RGBA(244, 234, 200, 245),
+  cardEdge: RGBA(80, 60, 40, 140),
+  sma: RGB(40, 70, 110),
+  bbBand: RGBA(110, 90, 60, 110),
+  vwap: RGB(160, 120, 40),
+  gateOk: RGB(20, 100, 60),
+  gateFail: RGB(160, 45, 45),
+  gateSkip: RGB(120, 105, 80),
 };
 
 function fmtTs(ts) {
@@ -93,6 +119,284 @@ function dashedLine(vg, x1, y1, x2, y2, dash = 4, gap = 4) {
     vg.LineTo(x1 + ux * e, y1 + uy * e);
   }
   vg.Stroke();
+}
+
+// ────────────────────────────────────────────────────────────────────────
+// Math helpers — recursive EWM (pandas ewm(adjust=False)) and rolling
+// window primitives, kept simple; O(n) each and plenty fast for a viewer.
+// ────────────────────────────────────────────────────────────────────────
+function ewm(v, alpha) {
+  const n = v.length;
+  const out = new Float64Array(n);
+  if(n === 0) return out;
+  out[0] = v[0];
+  for(let i = 1; i < n; i++) out[i] = alpha * v[i] + (1 - alpha) * out[i - 1];
+  return out;
+}
+
+function rollingMean(v, w) {
+  const n = v.length;
+  const out = new Float64Array(n).fill(NaN);
+  let s = 0;
+  for(let i = 0; i < n; i++) {
+    s += v[i];
+    if(i >= w) s -= v[i - w];
+    if(i >= w - 1) out[i] = s / w;
+  }
+  return out;
+}
+
+function rollingSum(v, w) {
+  const n = v.length;
+  const out = new Float64Array(n).fill(NaN);
+  let s = 0;
+  for(let i = 0; i < n; i++) {
+    s += v[i];
+    if(i >= w) s -= v[i - w];
+    if(i >= w - 1) out[i] = s;
+  }
+  return out;
+}
+
+function rollingStd(v, w) {
+  // pandas default ddof=1 (sample std) — matches Bollinger convention
+  const n = v.length;
+  const out = new Float64Array(n).fill(NaN);
+  let s = 0;
+  let s2 = 0;
+  for(let i = 0; i < n; i++) {
+    s += v[i];
+    s2 += v[i] * v[i];
+    if(i >= w) {
+      s -= v[i - w];
+      s2 -= v[i - w] * v[i - w];
+    }
+    if(i >= w - 1) {
+      const m = s / w;
+      const varr = (s2 - w * m * m) / (w - 1);
+      out[i] = Math.sqrt(Math.max(0, varr));
+    }
+  }
+  return out;
+}
+
+// ────────────────────────────────────────────────────────────────────────
+// Indicators — deterministic replica of tradebot.py's FeatureEngine.
+//   sma20 / bb_upper / bb_lower  — 20-bar Bollinger context
+//   atr_abs (Wilder 14)          — used for stops, sizing, regime
+//   rsi14, macd_hist             — momentum
+//   vwap24, vol_z                — flow / volume
+//   adx14                        — trend strength for RegimeFilter
+//   regimeOk = adx > 20 AND atr_rel > 2.5 × fee_rate  (per-bar boolean)
+// Recomputed when the candle count changes; cheap enough to redo whole.
+// ────────────────────────────────────────────────────────────────────────
+class Indicators {
+  constructor(store) {
+    this.store = store;
+    this.n = -1;
+  }
+
+  refresh() {
+    const cs = this.store.candles;
+    if(this.n === cs.length) return;
+    const n = cs.length;
+    this.n = n;
+    if(n < 2) return;
+
+    const close = new Float64Array(n);
+    const high = new Float64Array(n);
+    const low = new Float64Array(n);
+    const vol = new Float64Array(n);
+    for(let i = 0; i < n; i++) {
+      close[i] = cs[i].close;
+      high[i] = cs[i].high;
+      low[i] = cs[i].low;
+      vol[i] = cs[i].volume;
+    }
+    this.close = close;
+    this.high = high;
+    this.low = low;
+    this.vol = vol;
+
+    // ── SMA(20) + Bollinger (20, 2σ) ──
+    this.sma20 = rollingMean(close, 20);
+    const std20 = rollingStd(close, 20);
+    this.bbUpper = new Float64Array(n);
+    this.bbLower = new Float64Array(n);
+    for(let i = 0; i < n; i++) {
+      this.bbUpper[i] = this.sma20[i] + 2 * std20[i];
+      this.bbLower[i] = this.sma20[i] - 2 * std20[i];
+    }
+
+    // ── True range → ATR (Wilder EWM 14) ──
+    const tr = new Float64Array(n);
+    tr[0] = high[0] - low[0];
+    for(let i = 1; i < n; i++) {
+      tr[i] = Math.max(high[i] - low[i], Math.abs(high[i] - close[i - 1]), Math.abs(low[i] - close[i - 1]));
+    }
+    this.atrAbs = ewm(tr, 1 / 14);
+    this.atrRel = new Float64Array(n);
+    for(let i = 0; i < n; i++) this.atrRel[i] = this.atrAbs[i] / close[i];
+
+    // ── RSI(14, Wilder) ──
+    const up = new Float64Array(n);
+    const dn = new Float64Array(n);
+    for(let i = 1; i < n; i++) {
+      const d = close[i] - close[i - 1];
+      up[i] = d > 0 ? d : 0;
+      dn[i] = d < 0 ? -d : 0;
+    }
+    const avgUp = ewm(up, 1 / 14);
+    const avgDn = ewm(dn, 1 / 14);
+    this.rsi = new Float64Array(n);
+    for(let i = 0; i < n; i++) {
+      const rs = avgUp[i] / (avgDn[i] + 1e-12);
+      this.rsi[i] = 100 - 100 / (1 + rs);
+    }
+
+    // ── MACD histogram (12, 26, 9); α = 2/(span+1), recursive ──
+    const ema12 = ewm(close, 2 / 13);
+    const ema26 = ewm(close, 2 / 27);
+    const macd = new Float64Array(n);
+    for(let i = 0; i < n; i++) macd[i] = ema12[i] - ema26[i];
+    const macdSig = ewm(macd, 2 / 10);
+    this.macdHist = new Float64Array(n);
+    for(let i = 0; i < n; i++) this.macdHist[i] = macd[i] - macdSig[i];
+
+    // ── VWAP over rolling 24 bars ──
+    const cv = new Float64Array(n);
+    for(let i = 0; i < n; i++) cv[i] = close[i] * vol[i];
+    const cvSum = rollingSum(cv, 24);
+    const vSum = rollingSum(vol, 24);
+    this.vwap24 = new Float64Array(n);
+    for(let i = 0; i < n; i++) this.vwap24[i] = cvSum[i] / (vSum[i] + 1e-12);
+
+    // ── Volume z-score (48) ──
+    const volMean = rollingMean(vol, 48);
+    const volStd = rollingStd(vol, 48);
+    this.volZ = new Float64Array(n);
+    for(let i = 0; i < n; i++) this.volZ[i] = (vol[i] - volMean[i]) / (volStd[i] + 1e-12);
+
+    // ── ADX(14, Wilder) — trend strength; regime uses this ──
+    const pdm = new Float64Array(n);
+    const ndm = new Float64Array(n);
+    for(let i = 1; i < n; i++) {
+      const upM = high[i] - high[i - 1];
+      const dnM = low[i - 1] - low[i];
+      pdm[i] = upM > dnM && upM > 0 ? upM : 0;
+      ndm[i] = dnM > upM && dnM > 0 ? dnM : 0;
+    }
+    const pdmS = ewm(pdm, 1 / 14);
+    const ndmS = ewm(ndm, 1 / 14);
+    const dx = new Float64Array(n);
+    for(let i = 0; i < n; i++) {
+      const pdi = (100 * pdmS[i]) / (this.atrAbs[i] + 1e-12);
+      const ndi = (100 * ndmS[i]) / (this.atrAbs[i] + 1e-12);
+      dx[i] = (100 * Math.abs(pdi - ndi)) / (pdi + ndi + 1e-12);
+    }
+    this.adx = ewm(dx, 1 / 14);
+
+    // ── RegimeFilter.ok per bar ──
+    this.regimeOk = new Uint8Array(n);
+    for(let i = 0; i < n; i++) {
+      this.regimeOk[i] = this.adx[i] > REGIME_ADX_MIN && this.atrRel[i] > REGIME_ATR_MIN ? 1 : 0;
+    }
+  }
+
+  // RiskManager.position_size mirror — returns {size, sizeEur}
+  positionSize(equity, i) {
+    if(i < 0 || i >= this.n) return { size: 0, sizeEur: 0 };
+    const price = this.close[i];
+    const atrRel = this.atrRel[i];
+    if(!isFinite(atrRel) || atrRel <= 0) return { size: 0, sizeEur: 0 };
+    const riskEur = TARGET_VOL * equity;
+    const sizeEur = Math.min(riskEur / (STOP_ATR * atrRel), MAX_POS_FRAC * equity);
+    return { size: sizeEur / price, sizeEur };
+  }
+}
+
+// Evaluate every gate the bot checks in on_bar(), so we can render *why*
+// it did (or would have) HOLD/ENTER/HALT on this bar. Returns null if the
+// bar index is out of range.
+function evalGate(store, indicators, idx) {
+  if(idx < 0 || idx >= store.candles.length || !indicators.adx) return null;
+  const c = store.candles[idx];
+  const pred = store.predByTs.get(c.ts);
+  const st = store.state;
+
+  const adx = indicators.adx[idx];
+  const atrRel = indicators.atrRel[idx];
+  const adxPass = adx > REGIME_ADX_MIN;
+  const atrPass = atrRel > REGIME_ATR_MIN;
+  const regimePass = adxPass && atrPass;
+
+  const dirP = pred ? Math.max(pred.p_long, pred.p_short) : NaN;
+  const dirPass = pred ? dirP >= ENTRY_DIR : null;
+  const metaPass = pred ? pred.meta_p >= ENTRY_META : null;
+
+  const halted = st.halted === true;
+  const dayStartEq = st.day_start_eq ?? st.equity ?? START_EQUITY;
+  const equity = st.equity ?? START_EQUITY;
+  const dayPnl = equity - dayStartEq;
+  const dayLimit = dayPnl <= -DAILY_LOSS_LIMIT * dayStartEq;
+  const riskPass = !halted && !dayLimit;
+
+  const totalPreds = store.predByTs.size;
+  const modelVer = pred?.model_ver ?? st.model_version ?? 'untrained';
+  const barsReady = store.candles.length >= MIN_BARS_FOR_PRED;
+
+  let decision;
+  let why;
+  if(halted) {
+    decision = 'HALT';
+    why = 'kill switch (max drawdown hit) — manual reset-halt needed';
+  } else if(dayLimit) {
+    decision = 'HALT';
+    why = `daily loss limit hit (${dayPnl.toFixed(2)})`;
+  } else if(!barsReady) {
+    decision = 'HOLD';
+    why = `only ${store.candles.length} bars — need ≥ ${MIN_BARS_FOR_PRED}`;
+  } else if(totalPreds === 0) {
+    decision = 'HOLD';
+    why = 'model never ran — no predictions logged in DB';
+  } else if(!pred) {
+    decision = 'HOLD';
+    why = 'no prediction for this bar (model missed / gap)';
+  } else if(!regimePass) {
+    decision = 'HOLD';
+    why = 'regime off — chop / low volatility, fees would eat edge';
+  } else if(!dirPass) {
+    decision = 'HOLD';
+    why = `direction prob ${dirP.toFixed(3)} < ${ENTRY_DIR}`;
+  } else if(!metaPass) {
+    decision = 'HOLD';
+    why = `meta prob ${pred.meta_p.toFixed(3)} < ${ENTRY_META}`;
+  } else {
+    decision = 'ENTER';
+    why = (pred.p_long > pred.p_short ? 'LONG' : 'SHORT') + ' cleared all gates';
+  }
+
+  return {
+    pred,
+    adx,
+    atrRel,
+    adxPass,
+    atrPass,
+    regimePass,
+    dirP,
+    dirPass,
+    metaPass,
+    riskPass,
+    halted,
+    dayLimit,
+    dayPnl,
+    equity,
+    totalPreds,
+    modelVer,
+    barsReady,
+    decision,
+    why,
+  };
 }
 
 // ────────────────────────────────────────────────────────────────────────
@@ -365,7 +669,7 @@ class Pane {
 
 class CandlePane extends Pane {
   draw(app) {
-    const { vg, store, view, replay } = app;
+    const { vg, store, view, replay, indicators } = app;
     const r = this.rect;
     const maxIdx = replay.maxIdx;
     const cs = store.candles;
@@ -378,14 +682,16 @@ class CandlePane extends Pane {
     const a = Math.max(0, Math.floor(view.i0));
     const b = Math.min(maxIdx, Math.ceil(view.i1));
 
-    // regime shading: grey columns where the filter said "don't trade"
+    // regime shading — driven by the *replicated* RegimeFilter so every
+    // bar is annotated, not just the ones the bot happened to log.
     vg.FillColor(COL.regime);
-    for(let i = a; i <= b; i++) {
-      const p = store.predByTs.get(cs[i].ts);
-      if(p && !p.regime_ok) {
-        vg.BeginPath();
-        vg.Rect(view.xOfIndex(i, r), r.y, bw, r.h);
-        vg.Fill();
+    if(indicators.regimeOk) {
+      for(let i = a; i <= b; i++) {
+        if(!indicators.regimeOk[i]) {
+          vg.BeginPath();
+          vg.Rect(view.xOfIndex(i, r), r.y, bw, r.h);
+          vg.Fill();
+        }
       }
     }
 
@@ -436,7 +742,9 @@ class CandlePane extends Pane {
       }
     }
 
+    this.drawOverlays(app, a, b);
     this.drawTrades(app, a, b);
+    this.drawHypotheticalBrackets(app);
     this.drawCrosshair(app);
     vg.Restore();
 
@@ -451,6 +759,179 @@ class CandlePane extends Pane {
       app.font(11, COL.cursor, ALIGN_LEFT | ALIGN_MIDDLE);
       app.text(r.x + r.w - view.axisW + 6, y, fmtNum(last));
     }
+
+    // legend + gate status card (drawn unclipped, on top of everything)
+    this.drawLegend(app);
+    this.drawGateStatus(app);
+  }
+
+  // draw a price-space line from an indicator array, skipping NaN
+  drawSeries(app, arr, a, b, color, width) {
+    const { vg, view } = app;
+    const r = this.rect;
+    const bw = view.barW(r);
+    vg.BeginPath();
+    let started = false;
+    for(let i = a; i <= b; i++) {
+      const v = arr[i];
+      if(!isFinite(v)) continue;
+      const x = view.xOfIndex(i, r) + bw / 2;
+      const y = view.yOfPrice(v, r);
+      if(!started) {
+        vg.MoveTo(x, y);
+        started = true;
+      } else vg.LineTo(x, y);
+    }
+    vg.StrokeColor(color);
+    vg.StrokeWidth(width);
+    vg.Stroke();
+  }
+
+  drawOverlays(app, a, b) {
+    const { indicators } = app;
+    if(!indicators.sma20) return;
+    this.drawSeries(app, indicators.bbUpper, a, b, COL.bbBand, 1);
+    this.drawSeries(app, indicators.bbLower, a, b, COL.bbBand, 1);
+    this.drawSeries(app, indicators.vwap24, a, b, COL.vwap, 1.2);
+    this.drawSeries(app, indicators.sma20, a, b, COL.sma, 1.4);
+  }
+
+  // dashed stop/TP levels at the right edge, showing what a hypothetical
+  // entry at the current bar's close would target — reads exactly what
+  // RiskManager+bot would place (stop_atr / tp_atr × ATR).
+  drawHypotheticalBrackets(app) {
+    const { vg, view, indicators, replay } = app;
+    const r = this.rect;
+    const idx = replay.maxIdx;
+    if(idx < 0 || !indicators.atrAbs) return;
+    const atr = indicators.atrAbs[idx];
+    const price = indicators.close[idx];
+    if(!isFinite(atr) || !isFinite(price)) return;
+
+    const x0 = view.xOfIndex(idx, r) + view.barW(r) / 2;
+    const x1 = r.x + r.w - view.axisW;
+    if(x0 > x1 - 6) return;
+
+    const tp = price + TP_ATR * atr;
+    const sl = price - STOP_ATR * atr;
+    vg.StrokeWidth(1);
+    vg.StrokeColor(COL.tp);
+    dashedLine(vg, x0, view.yOfPrice(tp, r), x1, view.yOfPrice(tp, r), 2, 6);
+    vg.StrokeColor(COL.stop);
+    dashedLine(vg, x0, view.yOfPrice(sl, r), x1, view.yOfPrice(sl, r), 2, 6);
+
+    app.font(9, COL.tp, ALIGN_RIGHT | ALIGN_MIDDLE);
+    app.text(x1 - 4, view.yOfPrice(tp, r) - 7, `hyp TP +${TP_ATR}×ATR`);
+    app.font(9, COL.stop, ALIGN_RIGHT | ALIGN_MIDDLE);
+    app.text(x1 - 4, view.yOfPrice(sl, r) + 7, `hyp SL -${STOP_ATR}×ATR`);
+  }
+
+  drawLegend(app) {
+    const { vg } = app;
+    const r = this.rect;
+    const y = r.y + r.h - 14;
+    let x = r.x + 12;
+    const chip = (color, label, w) => {
+      vg.BeginPath();
+      vg.MoveTo(x, y);
+      vg.LineTo(x + 18, y);
+      vg.StrokeColor(color);
+      vg.StrokeWidth(w);
+      vg.Stroke();
+      app.font(10, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
+      app.text(x + 22, y, label);
+      x += 22 + label.length * 6 + 12;
+    };
+    chip(COL.sma, 'SMA(20)', 1.4);
+    chip(COL.bbBand, 'BB(20,2σ)', 1);
+    chip(COL.vwap, 'VWAP(24)', 1.2);
+    chip(COL.regime, 'regime-off shade', 6);
+  }
+
+  drawGateStatus(app) {
+    const { vg, store, indicators, replay } = app;
+    const r = this.rect;
+    const idx = replay.maxIdx;
+    const g = evalGate(store, indicators, idx);
+    if(!g) return;
+    const c = store.candles[idx];
+
+    const cardW = 306;
+    const cardH = 224;
+    const cardX = r.x + 12;
+    const cardY = r.y + 12;
+
+    vg.BeginPath();
+    vg.RoundedRect(cardX, cardY, cardW, cardH, 6);
+    vg.FillColor(COL.cardBg);
+    vg.Fill();
+    vg.StrokeColor(COL.cardEdge);
+    vg.StrokeWidth(1);
+    vg.Stroke();
+
+    app.font(12, COL.text, ALIGN_LEFT | ALIGN_MIDDLE);
+    app.text(cardX + 12, cardY + 14, `GATE STATUS — ${fmtTs(c.ts)}`);
+
+    // subheader: model + bars context
+    app.font(10, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
+    app.text(cardX + 12, cardY + 30, `model: ${g.modelVer}   (${g.totalPreds} preds logged)`);
+    app.text(cardX + 12, cardY + 44, `bars: ${store.candles.length} (min ${MIN_BARS_FOR_PRED})   equity: ${fmtNum(g.equity)}`);
+
+    // divider
+    const hr = y => {
+      vg.BeginPath();
+      vg.MoveTo(cardX + 8, y);
+      vg.LineTo(cardX + cardW - 8, y);
+      vg.StrokeColor(COL.grid);
+      vg.StrokeWidth(1);
+      vg.Stroke();
+    };
+    hr(cardY + 54);
+
+    const row = (y, label, val, pass) => {
+      const dotCol = pass === null || pass === undefined ? COL.gateSkip : pass ? COL.gateOk : COL.gateFail;
+      vg.BeginPath();
+      vg.Circle(cardX + 14, y, 4);
+      vg.FillColor(dotCol);
+      vg.Fill();
+      app.font(11, COL.text, ALIGN_LEFT | ALIGN_MIDDLE);
+      app.text(cardX + 26, y, label);
+      if(val !== null && val !== undefined) {
+        const valCol = pass === false ? COL.gateFail : COL.text;
+        app.font(11, valCol, ALIGN_RIGHT | ALIGN_MIDDLE);
+        app.text(cardX + cardW - 12, y, val);
+      }
+    };
+
+    let y = cardY + 68;
+    const rowH = 17;
+    row(y, 'Regime filter', g.regimePass ? 'PASS' : 'FAIL', g.regimePass);
+    y += rowH;
+    row(y, `  ADX > ${REGIME_ADX_MIN}`, `${g.adx.toFixed(1)}`, g.adxPass);
+    y += rowH;
+    row(y, `  ATR% > ${(REGIME_ATR_MIN * 100).toFixed(2)}%`, `${(g.atrRel * 100).toFixed(2)}%`, g.atrPass);
+    y += rowH + 3;
+
+    if(g.pred) {
+      row(y, `Direction ≥ ${ENTRY_DIR}`, `${g.dirP.toFixed(3)}`, g.dirPass);
+      y += rowH;
+      row(y, `Meta ≥ ${ENTRY_META}`, `${g.pred.meta_p.toFixed(3)}`, g.metaPass);
+    } else {
+      row(y, `Direction ≥ ${ENTRY_DIR}`, g.totalPreds === 0 ? 'no model' : 'n/a', null);
+      y += rowH;
+      row(y, `Meta ≥ ${ENTRY_META}`, g.totalPreds === 0 ? 'no model' : 'n/a', null);
+    }
+    y += rowH + 3;
+
+    const riskLabel = g.halted ? 'HALTED' : g.dayLimit ? 'DAY LIMIT' : 'ok';
+    row(y, 'Risk / kill switch', riskLabel, g.riskPass);
+    y += rowH + 5;
+
+    hr(y);
+    y += 12;
+    const decCol = g.decision === 'ENTER' ? COL.gateOk : g.decision === 'HALT' ? COL.gateFail : COL.text;
+    app.font(12, decCol, ALIGN_LEFT | ALIGN_MIDDLE);
+    app.text(cardX + 12, y, `→ ${g.decision}: ${g.why}`);
   }
 
   priceStep(range) {
@@ -516,7 +997,7 @@ class CandlePane extends Pane {
   }
 
   drawCrosshair(app) {
-    const { vg, store, view, replay, mouse } = app;
+    const { vg, store, view, replay, mouse, indicators } = app;
     const r = this.rect;
     if(!this.contains(mouse.x, mouse.y)) return;
 
@@ -536,6 +1017,15 @@ class CandlePane extends Pane {
     vg.Stroke();
 
     const lines = [`${fmtTs(c.ts)}  O ${fmtNum(c.open)}  H ${fmtNum(c.high)}  L ${fmtNum(c.low)}  C ${fmtNum(c.close)}  V ${fmtNum(c.volume, 3)}`];
+    if(indicators.rsi && isFinite(indicators.rsi[i])) {
+      const vwapD = ((c.close / indicators.vwap24[i] - 1) * 100).toFixed(2);
+      lines.push(
+        `RSI ${indicators.rsi[i].toFixed(1)}  MACDh ${(indicators.macdHist[i] * 100).toFixed(3)}%  ADX ${indicators.adx[i].toFixed(1)}  ATR% ${(indicators.atrRel[i] * 100).toFixed(2)}%  vwap-d ${vwapD}%  volZ ${indicators.volZ[i].toFixed(2)}`,
+      );
+      const okAdx = indicators.adx[i] > REGIME_ADX_MIN;
+      const okAtr = indicators.atrRel[i] > REGIME_ATR_MIN;
+      lines.push(`regime: adx>${REGIME_ADX_MIN}? ${okAdx ? 'yes' : 'NO'}   atr>${(REGIME_ATR_MIN * 100).toFixed(2)}%? ${okAtr ? 'yes' : 'NO'}   → ${indicators.regimeOk[i] ? 'TRADEABLE' : 'off'}`);
+    }
     const p = store.predByTs.get(c.ts);
     if(p) lines.push(`long ${fmtNum(p.p_long, 3)}  flat ${fmtNum(p.p_flat, 3)}  short ${fmtNum(p.p_short, 3)}  meta ${fmtNum(p.meta_p, 3)}  regime ${p.regime_ok ? 'ok' : 'OFF'}  ${p.model_ver}`);
     for(const act of store.actsByTs.get(c.ts) ?? []) lines.push(`${act.action}  ${act.reason}`);
@@ -682,6 +1172,94 @@ class EquityPane extends Pane {
   }
 }
 
+// RegimePane — shows ADX and ATR% as *ratios* to their trade-enable
+// thresholds. Everything above y = 1.0 is a passing gate; the shaded
+// columns are the exact bars where CandlePane also greys out.
+class RegimePane extends Pane {
+  draw(app) {
+    const { vg, view, indicators, store, replay } = app;
+    const r = this.rect;
+    vg.Save();
+    vg.IntersectScissor(r.x, r.y, r.w, r.h);
+
+    if(!indicators.adx) {
+      app.font(11, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
+      app.text(r.x + 6, r.y + 10, 'regime (indicators warming up…)');
+      vg.Restore();
+      return;
+    }
+
+    const yMax = 3;
+    const yOf = v => r.y + r.h * (1 - Math.min(v, yMax) / yMax);
+
+    const bw = view.barW(r);
+    const a = Math.max(0, Math.floor(view.i0));
+    const b = Math.min(replay.maxIdx, Math.ceil(view.i1));
+
+    // regime-off shading (matches CandlePane)
+    vg.FillColor(COL.regime);
+    for(let i = a; i <= b; i++) {
+      if(!indicators.regimeOk[i]) {
+        vg.BeginPath();
+        vg.Rect(view.xOfIndex(i, r), r.y, bw, r.h);
+        vg.Fill();
+      }
+    }
+
+    // gridline at ratio = 2 (comfortably above threshold)
+    vg.StrokeColor(COL.grid);
+    vg.StrokeWidth(1);
+    vg.BeginPath();
+    vg.MoveTo(r.x, yOf(2));
+    vg.LineTo(r.x + r.w - view.axisW, yOf(2));
+    vg.Stroke();
+
+    // pass/fail threshold at ratio = 1
+    vg.StrokeColor(COL.thresh);
+    dashedLine(vg, r.x, yOf(1), r.x + r.w - view.axisW, yOf(1), 3, 5);
+
+    const drawRatio = (getRaw, thr, color) => {
+      vg.BeginPath();
+      let started = false;
+      for(let i = a; i <= b; i++) {
+        const raw = getRaw(i);
+        if(!isFinite(raw)) continue;
+        const v = raw / thr;
+        const x = view.xOfIndex(i, r) + bw / 2;
+        const y = yOf(v);
+        if(!started) {
+          vg.MoveTo(x, y);
+          started = true;
+        } else vg.LineTo(x, y);
+      }
+      vg.StrokeColor(color);
+      vg.StrokeWidth(1.3);
+      vg.Stroke();
+    };
+    drawRatio(i => indicators.adx[i], REGIME_ADX_MIN, COL.sma);
+    drawRatio(i => indicators.atrRel[i], REGIME_ATR_MIN, COL.vwap);
+
+    // labels
+    app.font(11, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
+    app.text(r.x + 6, r.y + 10, `regime: ADX/${REGIME_ADX_MIN} (navy)  &  ATR%/${(REGIME_ATR_MIN * 100).toFixed(1)}% (ochre)  — both must exceed 1`);
+    app.font(10, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
+    app.text(r.x + r.w - view.axisW + 6, yOf(1), 'thresh');
+    app.text(r.x + r.w - view.axisW + 6, yOf(2), '2×');
+
+    // current values readout on the right
+    const idx = replay.maxIdx;
+    if(idx >= 0 && idx < store.candles.length && isFinite(indicators.adx[idx])) {
+      const adx = indicators.adx[idx];
+      const atrPct = indicators.atrRel[idx] * 100;
+      const ok = indicators.regimeOk[idx];
+      app.font(11, ok ? COL.gateOk : COL.gateFail, ALIGN_RIGHT | ALIGN_MIDDLE);
+      app.text(r.x + r.w - view.axisW - 8, r.y + 10, `ADX ${adx.toFixed(1)}   ATR ${atrPct.toFixed(2)}%   ${ok ? 'TRADEABLE' : 'OFF'}`);
+    }
+
+    vg.Restore();
+  }
+}
+
 class Minimap extends Pane {
   draw(app) {
     const { vg, store, view, replay } = app;
@@ -795,12 +1373,15 @@ class StatusBar extends Pane {
 class App {
   constructor(dbPath) {
     this.store = new Store(new Db(dbPath));
+    this.indicators = new Indicators(this.store);
+    this.indicators.refresh();
     this.view = new Viewport(this.store);
     this.replay = new Replay(this.store);
     this.follow = true;
 
     this.candlePane = new CandlePane();
     this.signalPane = new SignalPane();
+    this.regimePane = new RegimePane();
     this.equityPane = new EquityPane();
     this.minimap = new Minimap();
     this.statusBar = new StatusBar();
@@ -842,15 +1423,18 @@ class App {
     const statusH = 26;
     const miniH = 56;
     const rest = this.height - statusH - miniH;
-    const candleH = Math.floor(rest * 0.62);
-    const sigH = Math.floor(rest * 0.19);
-    const eqH = rest - candleH - sigH;
+    const candleH = Math.floor(rest * 0.52);
+    const sigH = Math.floor(rest * 0.16);
+    const regH = Math.floor(rest * 0.14);
+    const eqH = rest - candleH - sigH - regH;
 
     let y = 0;
     this.candlePane.layout(0, y, w, candleH);
     y += candleH;
     this.signalPane.layout(0, y, w, sigH);
     y += sigH;
+    this.regimePane.layout(0, y, w, regH);
+    y += regH;
     this.equityPane.layout(0, y, w, eqH);
     y += eqH;
     this.minimap.layout(0, y, w, miniH);
@@ -895,7 +1479,7 @@ class App {
       handleKey(keyCode, scancode, action) {
         if(!action) return;
         const { replay, view, store } = app;
-        switch(keyCode) {
+        switch (keyCode) {
           case KEY_ESCAPE:
           case KEY_Q:
             app.running = false;
@@ -965,6 +1549,7 @@ class App {
       const grew = store.poll(Date.now());
       if(grew && this.follow) this.view.follow();
     }
+    this.indicators.refresh();
     replay.advance(dt);
     // keep replay cursor in view while playing
     if(replay.mode === 'REPLAY' && replay.playing) {
@@ -982,6 +1567,7 @@ class App {
 
     this.candlePane.draw(this);
     this.signalPane.draw(this);
+    this.regimePane.draw(this);
     this.equityPane.draw(this);
     this.minimap.draw(this);
     this.statusBar.draw(this);
