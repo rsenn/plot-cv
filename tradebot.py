@@ -60,8 +60,8 @@ except ImportError:
 @dataclass
 class Config:
     # exchange
-    api_key: str = os.environ.get("CB_API_KEY", "")
-    api_secret: str = os.environ.get("CB_API_SECRET", "")
+    api_key: str = os.environ.get("COINBASE_API_KEY", "")
+    api_secret: str = os.environ.get("COINBASE_API_SECRET", "")
     product: str = "BTC-EUR"
     paper: bool = True                    # dry trading — flip only after 2 months
     # timeframe
