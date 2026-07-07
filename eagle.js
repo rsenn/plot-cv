@@ -5,13 +5,25 @@ function FindChild(element, name) {
   return element.children[Node.raw(element).children.findIndex(e => e.tagName == name)];
 }
 
+function ChildrenByTag(element, tag) {
+  return new HTMLCollection(Node.raw(element).children, element, e => e.tagName == tag);
+}
+
+function NamedChildByAttr(element, tag, attr = 'name') {
+  return new NamedNodeMap(
+    {
+      get: name => [...element.children].find(e => e.tagName == tag && e.getAttribute(attr) == name),
+      keys: () => [...element.children].filter(e => e.tagName == tag).map(e => e.getAttribute(attr)),
+    },
+    element,
+  );
+}
+
 export class EagleProject {
   #filename;
   #parser;
 
   constructor(filename) {
-    console.log('EagleProject.constructor', filename);
-
     this.#filename = filename.replace(/\.(brd|sch)$/gi, '');
     this.#parser = new EagleParser();
 
@@ -45,6 +57,15 @@ export class EagleDocument extends Document {
   /* prettier-ignore */ get library() { return this.eagle.drawing.library; }
   /* prettier-ignore */ get layers() { return this.eagle.drawing.layers; }
   /* prettier-ignore */ get type() { return this.eagle.drawing.type; }
+
+  static open(filename, readFn) {
+    const parser = new EagleParser();
+    let doc;
+    if(readFn) doc = parser.parseFromString(readFn(filename));
+    else doc = parser.parseFromFile(filename);
+    doc.filename = filename;
+    return doc;
+  }
 }
 
 export class EagleElement extends Element {
@@ -65,9 +86,7 @@ export class EagleElement extends Element {
   }
 
   static elements = Prototypes({
-    /*
-     * Common Eagle Elements
-     */
+    /* Common */
     eagle: class EagleElement extends this {
       /* prettier-ignore */ get drawing() { return FindChild(this, 'drawing'); }
     },
@@ -77,14 +96,13 @@ export class EagleElement extends Element {
       /* prettier-ignore */ get layers() { return FindChild(this, 'layers'); }
       /* prettier-ignore */ get schematic() { return FindChild(this, 'schematic'); }
       /* prettier-ignore */ get board() { return FindChild(this, 'board'); }
-      /* prettier-ignore */ get library() { return FindChild(this, 'board'); }
+      /* prettier-ignore */ get library() { return FindChild(this, 'library'); }
       /* prettier-ignore */ get type() { return [...this.children].find(e => ['schematic', 'board', 'library'].includes(e.tagName))?.tagName; }
     },
     settings: class SettingsElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
     },
     setting: class SettingElement extends this {
@@ -95,7 +113,6 @@ export class EagleElement extends Element {
     layers: class LayersElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
         return NamedMap(
           this,
           n => this.querySelector(`layer[name=${n}]`),
@@ -112,17 +129,17 @@ export class EagleElement extends Element {
       /* prettier-ignore */ get active() { return this.getAttribute('active') == 'yes'; }
     },
     description: class DescriptionElement extends this {},
+
     plain: class PlainElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
-
-      wires = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'wire');
-      texts = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'text');
-      dimensions = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'dimension');
+      /* prettier-ignore */ get wires() { return ChildrenByTag(this, 'wire'); }
+      /* prettier-ignore */ get texts() { return ChildrenByTag(this, 'text'); }
+      /* prettier-ignore */ get dimensions() { return ChildrenByTag(this, 'dimension'); }
     },
+
     wire: class WireElement extends this {
       /* prettier-ignore */ get x1() { return +this.getAttribute('x1'); }
       /* prettier-ignore */ get y1() { return +this.getAttribute('y1'); }
@@ -152,24 +169,12 @@ export class EagleElement extends Element {
     package: class PackageElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
-
       /* prettier-ignore */ get description() { return FindChild(this, 'description'); }
-      pads = new NamedNodeMap(
-        {
-          get: name => [...this.children].find(e => e.tagName == 'pad' && e.getAttribute('name') == name),
-          keys: () =>
-            [...this.children]
-              .filter(e => e.tagName == 'pad')
-              .map(e => e.getAttribute('name'))
-              .reduce((acc, e) => ((acc[e] = e), acc), []),
-        },
-        this,
-      );
-      wires = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'wire');
-      texts = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'text');
+      /* prettier-ignore */ get pads() { return NamedChildByAttr(this, 'pad'); }
+      /* prettier-ignore */ get wires() { return ChildrenByTag(this, 'wire'); }
+      /* prettier-ignore */ get texts() { return ChildrenByTag(this, 'text'); }
     },
     pad: class PadElement extends this {
       /* prettier-ignore */ get name() { return this.getAttribute('name'); }
@@ -211,20 +216,16 @@ export class EagleElement extends Element {
     class: class ClassElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
       /* prettier-ignore */ get number() { return +this.getAttribute('number'); }
       /* prettier-ignore */ get name() { return this.getAttribute('name'); }
       /* prettier-ignore */ get width() { return +this.getAttribute('width'); }
       /* prettier-ignore */ get drill() { return +this.getAttribute('drill'); }
-
-      clearances = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'clearance');
+      /* prettier-ignore */ get clearances() { return ChildrenByTag(this, 'clearance'); }
     },
 
-    /*
-     * Eagle Schematic Elements
-     */
+    /* Schematic */
     schematic: class SchematicElement extends this {
       /* prettier-ignore */ get description() { return FindChild(this, 'description'); }
       /* prettier-ignore */ get libraries() { return FindChild(this, 'libraries'); }
@@ -244,20 +245,12 @@ export class EagleElement extends Element {
     symbol: class SymbolElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
       /* prettier-ignore */ get name() { return this.getAttribute('name'); }
-
-      pins = new NamedNodeMap(
-        {
-          get: name => [...this.children].find(e => e.tagName == 'pin' && e.getAttribute('name') == name),
-          keys: () => [...this.children].filter(e => e.tagName == 'pin').map(e => e.getAttribute('name')),
-        },
-        this,
-      );
-      wires = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'wire');
-      texts = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'text');
+      /* prettier-ignore */ get pins() { return NamedChildByAttr(this, 'pin'); }
+      /* prettier-ignore */ get wires() { return ChildrenByTag(this, 'wire'); }
+      /* prettier-ignore */ get texts() { return ChildrenByTag(this, 'text'); }
     },
     pin: class PinElement extends this {
       /* prettier-ignore */ get name() { return this.getAttribute('name'); }
@@ -303,8 +296,7 @@ export class EagleElement extends Element {
     connects: class ConnectsElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
     },
     connect: class ConnectElement extends this {
@@ -337,7 +329,7 @@ export class EagleElement extends Element {
     sheets: class SheetsElement extends this {
       constructor(node, parent) {
         super(node, parent);
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
     },
     sheet: class SheetElement extends this {
@@ -350,7 +342,7 @@ export class EagleElement extends Element {
     instances: class InstancesElement extends this {
       constructor(node, parent) {
         super(node, parent);
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
     },
     instance: class InstanceElement extends this {
@@ -367,7 +359,7 @@ export class EagleElement extends Element {
       }
     },
     bus: class BusElement extends this {
-      segments = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'segment');
+      /* prettier-ignore */ get segments() { return ChildrenByTag(this, 'segment'); }
     },
     nets: class NetsElement extends this {
       constructor(node, parent) {
@@ -378,14 +370,13 @@ export class EagleElement extends Element {
     net: class NetElement extends this {
       /* prettier-ignore */ get name() { return this.getAttribute('name'); }
       /* prettier-ignore */ get class() { return this.ownerDocument.schematic.classes[this.getAttribute('class')]; }
-
-      segments = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'segment');
+      /* prettier-ignore */ get segments() { return ChildrenByTag(this, 'segment'); }
     },
     segment: class SegmentElement extends this {
-      pinrefs = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'pinref');
-      wires = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'wire');
-      labels = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'label');
-      junctions = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'junction');
+      /* prettier-ignore */ get pinrefs() { return ChildrenByTag(this, 'pinref'); }
+      /* prettier-ignore */ get wires() { return ChildrenByTag(this, 'wire'); }
+      /* prettier-ignore */ get labels() { return ChildrenByTag(this, 'label'); }
+      /* prettier-ignore */ get junctions() { return ChildrenByTag(this, 'junction'); }
     },
     label: class LabelElement extends this {
       /* prettier-ignore */ get x() { return +this.getAttribute('x'); }
@@ -403,7 +394,7 @@ export class EagleElement extends Element {
       /* prettier-ignore */ get y() { return +this.getAttribute('y'); }
     },
 
-    /* board */
+    /* Board */
     board: class BoardElement extends this {
       /* prettier-ignore */ get description() { return FindChild(this, 'description'); }
       /* prettier-ignore */ get plain() { return FindChild(this, 'plain'); }
@@ -419,17 +410,10 @@ export class EagleElement extends Element {
     designrules: class DesignrulesElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
       /* prettier-ignore */ get name() { return this.getAttribute('name'); }
-      params = new NamedNodeMap(
-        {
-          get: name => [...this.children].find(e => e.tagName == 'param' && e.getAttribute('name') == name),
-          keys: () => [...this.children].filter(e => e.tagName == 'param').map(e => e.getAttribute('name')),
-        },
-        this,
-      );
+      /* prettier-ignore */ get params() { return NamedChildByAttr(this, 'param'); }
     },
     param: class ParamElement extends this {
       /* prettier-ignore */ get name() { return this.getAttribute('name'); }
@@ -438,33 +422,17 @@ export class EagleElement extends Element {
     autorouter: class AutorouterElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
-      passes = new NamedNodeMap(
-        {
-          get: name => [...this.children].find(e => e.tagName == 'pass' && e.getAttribute('name') == name),
-          keys: () => [...this.children].filter(e => e.tagName == 'pass').map(e => e.getAttribute('name')),
-        },
-        this,
-      );
+      /* prettier-ignore */ get passes() { return NamedChildByAttr(this, 'pass'); }
     },
     pass: class PassElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
-
       /* prettier-ignore */ get name() { return this.getAttribute('name'); }
-
-      params = new NamedNodeMap(
-        {
-          get: name => [...this.children].find(e => e.tagName == 'param' && e.getAttribute('name') == name),
-          keys: () => [...this.children].filter(e => e.tagName == 'param').map(e => e.getAttribute('name')),
-        },
-        this,
-      );
+      /* prettier-ignore */ get params() { return NamedChildByAttr(this, 'param'); }
     },
     elements: class ElementsElement extends this {
       constructor(node, parent) {
@@ -488,10 +456,9 @@ export class EagleElement extends Element {
     },
     signal: class SignalElement extends this {
       /* prettier-ignore */ get name() { return this.getAttribute('name'); }
-
-      contactrefs = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'contactref');
-      wires = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'wire');
-      vias = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'via');
+      /* prettier-ignore */ get contactrefs() { return ChildrenByTag(this, 'contactref'); }
+      /* prettier-ignore */ get wires() { return ChildrenByTag(this, 'wire'); }
+      /* prettier-ignore */ get vias() { return ChildrenByTag(this, 'via'); }
     },
     contactref: class ContactrefElement extends this {
       /* prettier-ignore */ get element() { return this.ownerDocument.board.elements[this.getAttribute('element')]; }
@@ -523,19 +490,15 @@ export class EagleElement extends Element {
     compatibility: class CompatibilityElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
-      notes = new HTMLCollection(Node.raw(this).children, this, e => e.tagName == 'note');
+      /* prettier-ignore */ get notes() { return ChildrenByTag(this, 'note'); }
     },
-
     note: class NoteElement extends this {},
-
     errors: class ErrorsElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
     },
     module: class ModuleElement extends this {
@@ -543,7 +506,6 @@ export class EagleElement extends Element {
       /* prettier-ignore */ get prefix() { return this.getAttribute('prefix'); }
       /* prettier-ignore */ get dx() { return +this.getAttribute('dx'); }
       /* prettier-ignore */ get dy() { return +this.getAttribute('dy'); }
-
       /* prettier-ignore */ get ports() { return FindChild(this, 'ports'); }
       /* prettier-ignore */ get variantdefs() { return FindChild(this, 'variantdefs'); }
       /* prettier-ignore */ get parts() { return FindChild(this, 'parts'); }
@@ -567,7 +529,6 @@ export class EagleElement extends Element {
         return NamedMap(this, 'name');
       }
     },
-
     dimension: class DimensionElement extends this {
       /* prettier-ignore */ get x1() { return +this.getAttribute('x1'); }
       /* prettier-ignore */ get y1() { return +this.getAttribute('y1'); }
@@ -593,12 +554,10 @@ export class EagleElement extends Element {
       /* prettier-ignore */ get y() { return +this.getAttribute('y'); }
       /* prettier-ignore */ get drill() { return +this.getAttribute('drill'); }
     },
-
     polygon: class PolygonElement extends this {
       constructor(node, parent) {
         super(node, parent);
-
-        return Collection(this);
+        /* Collection wrapper skipped */
       }
       /* prettier-ignore */ get layer() { return this.ownerDocument.layers[this.getAttribute('layer')]; }
       /* prettier-ignore */ get width() { return +this.getAttribute('width'); }

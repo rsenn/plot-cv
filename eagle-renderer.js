@@ -376,44 +376,36 @@ function renderPackage(pkg, doc, palette) {
   );
 }
 
+function q(root, selector) {
+  try { return root.querySelector(selector); } catch { return null; }
+}
+
 function findLibrary(doc, name) {
-  const libs = doc.eagle.drawing.schematic?.libraries || doc.eagle.drawing.board?.libraries;
-  if(!libs) return null;
-  return [...libs.children].find(l => l.getAttribute('name') === name);
+  return q(doc, `schematic > libraries > library[name="${name}"]`) ||
+    q(doc, `board > libraries > library[name="${name}"]`);
 }
 
 function findSymbol(doc, libName, symName) {
   const lib = findLibrary(doc, libName);
-  if(!lib) return null;
-  const symbols = findChild(lib, 'symbols');
-  return symbols && [...symbols.children].find(s => s.getAttribute('name') === symName);
+  return lib && q(lib, `symbols > symbol[name="${symName}"]`);
 }
 
 function findPackage(doc, libName, pkgName) {
   const lib = findLibrary(doc, libName);
-  if(!lib) return null;
-  const packages = findChild(lib, 'packages');
-  return packages && [...packages.children].find(p => p.getAttribute('name') === pkgName);
+  return lib && q(lib, `packages > package[name="${pkgName}"]`);
 }
 
 function findPart(doc, partName) {
-  const schematic = doc.eagle.drawing.schematic;
-  if(!schematic) return null;
-  const parts = findChild(schematic, 'parts');
-  return parts && [...parts.children].find(p => p.getAttribute('name') === partName);
+  return q(doc, `schematic > parts > part[name="${partName}"]`);
 }
 
 function findGateSymbol(doc, part, gateName) {
   if(!part) return null;
   const libName = part.getAttribute('library');
-  const deviceSetName = part.getAttribute('deviceset');
+  const dsName = part.getAttribute('deviceset');
   const lib = findLibrary(doc, libName);
   if(!lib) return null;
-  const devicesets = findChild(lib, 'devicesets');
-  const ds = devicesets && [...devicesets.children].find(d => d.getAttribute('name') === deviceSetName);
-  if(!ds) return null;
-  const gates = findChild(ds, 'gates');
-  const gate = gates && [...gates.children].find(g => g.getAttribute('name') === gateName);
+  const gate = q(lib, `devicesets > deviceset[name="${dsName}"] > gates > gate[name="${gateName}"]`);
   if(!gate) return null;
   return findSymbol(doc, libName, gate.getAttribute('symbol'));
 }
@@ -508,10 +500,9 @@ function computeBounds(doc) {
       if(meas) bb.update(meas);
       else bboxOfContainer(plain, bb);
     }
-    for(const e of filterChildren(findChild(board, 'elements') || board, 'element'))
-      bb.add(num(e, 'x'), -num(e, 'y'));
-    for(const s of filterChildren(findChild(board, 'signals') || board, 'signal'))
-      bboxOfContainer(s, bb);
+    const elts = findChild(board, 'elements');
+    if(elts) for(const e of elts.children)
+      if(e.tagName === 'element') bb.add(num(e, 'x'), -num(e, 'y'));
   } else if(doc.type === 'library') {
     const lib = drawing.library;
     const symbols = findChild(lib, 'symbols');

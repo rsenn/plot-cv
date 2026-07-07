@@ -1,6 +1,7 @@
 import child_process from 'child_process';
 import * as fs from 'fs';
 
+import { Renderer, SchematicRenderer, BoardRenderer, LibraryRenderer } from './eagle-renderer.js';
 
 import { EagleElement,EagleDocument, EagleProject } from './eagle.js';
 import { Node,Element } from 'dom';
@@ -16,9 +17,9 @@ import * as deep from './lib/deep.js';
 import { forwardRef, Fragment, h, React, ReactComponent, render, toChildArray } from './lib/dom/preactComponent.js';
 
 import { GetElements, GetInstances, GetParts, GetPositions, num2color, scientific } from './eagle-commands.js';
-import { EagleSVGRenderer, useTrkl, Renderer, ImmutablePath, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug,  EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes,  DereferenceError } from './lib/eagle.js';
+//import { EagleSVGRenderer, useTrkl, Renderer, ImmutablePath, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug,  EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes,  DereferenceError } from './lib/eagle.js';
 
-import { ElementNameToComponent, ElementToComponent, PinSizes } from './lib/eagle/components.js';
+//import { ElementNameToComponent, ElementToComponent, PinSizes } from './lib/eagle/components.js';
 
 import CircuitJS from './lib/eda/circuitjs.js';
 import { GetColorBands, GetFactor, GetMultipliers } from './lib/eda/colorCoding.js';
@@ -301,19 +302,10 @@ function main(...args) {
     EagleDocument,
     EagleProject,
     SaveLibraries,
-    EagleSVGRenderer,
     SchematicRenderer,
     BoardRenderer,
     LibraryRenderer,
-    useTrkl,
-    RAD2DEG,
-    DEG2RAD,
-    VERTICAL,
-    HORIZONTAL,
-    HORIZONTAL_VERTICAL,
-    DEBUG,
-    setDebug,
-    PinSizes,
+    /*PinSizes,
     EscapeClassName,
     UnescapeClassName,
     LayerToClass,
@@ -334,10 +326,8 @@ function main(...args) {
     CalculateArcRadius,
     LinesToPath,
     MakeCoordTransformer,
-    useAttributes,
+    useAttributes,*/
     Renderer,
-    ImmutablePath,
-    DereferenceError,
     GetNames,
     GetByName,
     CorrelateSchematicAndBoard,
@@ -436,7 +426,6 @@ function main(...args) {
     CollectElements,
     CollectPartsElements,
     EaglePrint,
-    setDebug,
   });
 
   Object.assign(globalThis, {
@@ -590,8 +579,6 @@ function main(...args) {
   });
 
   Object.assign(globalThis, {
-    ElementNameToComponent,
-    ElementToComponent,
     EagleToGerber,
     GerberToGcode,
     ExecTool,
