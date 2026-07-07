@@ -1063,7 +1063,9 @@ function BoardFromSchematic(doc = project.schematic, f = 1, r = 0.5) {
 }
 
 function InitBoard(doc = project.board) {
-  let commands = [...doc.elements].map(([name, e]) => {
+  let commands = [...brd.querySelectorAll('element')].map(e => {
+    const name= e.getAttribute('name');
+    
     const p = new Point(e).div(25.4).round(0.005);
 
     let s = `MOVE '${name}' (${[...p].join(' ')});`;
