@@ -38,7 +38,7 @@
     "lib/stack.js": "quickjs/qjs-modules/lib/stack.js",
     "xrepl.js": "quickjs/qjs-modules/lib/repl.js",
     "terminal.js": "quickjs/qjs-modules/lib/terminal.js",
-    "x/quickjs/qjs-ffi/examples/socket.js": "sockets",
+    "x/quickjs/qjs-ffi/examples/socket.js": "socket",
     "lib/objectInspect.js": "inspect",
     "lib/location.js": "location",
     "lib/pointer.js": "pointer",
