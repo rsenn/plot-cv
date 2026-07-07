@@ -3,9 +3,39 @@
 // Renders candles, model predictions, bot actions, trade brackets and the
 // equity curve from tradebot.db — live (WAL polling) or as bar-by-bar replay.
 //
+// ─── Primer for JS devs who've never traded ─────────────────────────────
+// The full walkthrough lives in "tradeview - Complete Documentation.md".
+// Quick glossary so the source reads sensibly:
+//   candle       one time slice as (open, high, low, close, volume). A "1h
+//                candle" = the first/last/max/min trade price over that
+//                hour plus the total traded amount.
+//   long/short   long = bought, wins if price rises. short = "sold-what-
+//                you-don't-own", wins if price falls. Spot exchanges don't
+//                let you short, so the bot only shorts in paper mode.
+//   SMA(N)      simple moving average — mean of the last N closes. Slow
+//                trend anchor.
+//   Bollinger   SMA ± 2·rolling_std. An envelope of "typical" prices.
+//   VWAP        volume-weighted mean of close — "fair" intraday price.
+//   ATR         average true range = "average candle size". Volatility
+//                yardstick. Stops are placed a few ATRs away so calm and
+//                wild markets get proportional room.
+//   ADX         trend-strength index in [0..100]. >20 ≈ trending, <20 ≈
+//                sideways chop.
+//   regime OK   the deterministic pre-filter tradebot uses: ADX > 20 AND
+//                ATR% > 2.5·fee_rate. Off = market too flat, fees would
+//                eat the edge.
+//   gate        the ordered pipeline of yes/no checks the bot runs before
+//                opening a trade; the Gate Status card enumerates them.
+//   drawdown    percent fall from all-time equity peak. 10% triggers a
+//                kill switch.
+//   equity      simulated (paper mode) or real account value in EUR.
+// The full doc explains each in more depth.
+//
 // Layout, top to bottom:
-//   CandlePane  — candles, regime shading, trade brackets, entry/exit markers
+//   CandlePane  — candles, MA/BB/VWAP overlays, regime shading, trade
+//                 brackets, entry/exit markers, Gate Status card
 //   SignalPane  — p_long / p_short / meta_p with entry thresholds
+//   RegimePane  — ADX and ATR% plotted as ratios to their pass thresholds
 //   EquityPane  — equity curve, drawdown fill, HALT columns
 //   Minimap     — whole-history overview, draggable viewport, replay cursor
 //   StatusBar   — mode, price, model version, equity, last action + reason
@@ -38,20 +68,26 @@ const SPEEDS = [1, 2, 4, 8, 16, 32, 64, 128, 256]; // replay bars/second
 // (non-ML) side of tradebot.py so the viewer can compute the same features,
 // evaluate the same regime filter, and show *why* the bot would or would
 // not have entered on any given bar — no torch/xgboost needed.
-const FEE_RATE = 0.006;
-const ENTRY_DIR = 0.45; // primary direction prob gate
-const ENTRY_META = 0.58; // meta-model gate
-const REGIME_ADX_MIN = 20; // RegimeFilter.ok: adx > 20
-const REGIME_ATR_MIN = 2.5 * FEE_RATE; // and atr_rel > 2.5 × fee_rate
-const SEQ_LEN = 64; // LSTM lookback
-const MIN_BARS_FOR_PRED = SEQ_LEN + 60; // Bot.on_bar guard
-const STOP_ATR = 2.0;
-const TP_ATR = 3.0;
-const TARGET_VOL = 0.01;
-const MAX_POS_FRAC = 0.25;
-const DAILY_LOSS_LIMIT = 0.02;
-const MAX_DRAWDOWN = 0.1;
-const START_EQUITY = 10_000.0;
+//
+// If a value looks arbitrary: it usually isn't. Comments spell out the
+// trading reasoning so a JS-only reader can follow.
+const FEE_RATE = 0.006; // Coinbase taker fee, 0.6% per side. Any strategy
+//                              must clear this per round-trip just to be flat.
+const ENTRY_DIR = 0.45; // "will price move" prob must reach this to enter
+const ENTRY_META = 0.58; // second-opinion prob "trust the direction?" gate
+const REGIME_ADX_MIN = 20; // ADX (trend strength 0..100) — under 20 = chop
+const REGIME_ATR_MIN = 2.5 * FEE_RATE; // avg candle must span ≥2.5× fees, or
+//                              even a correct call can't pay for the trade
+const SEQ_LEN = 64; // LSTM lookback (bars). Purely informational here.
+const MIN_BARS_FOR_PRED = SEQ_LEN + 60; // bot needs this much history to
+//                              even *attempt* a prediction (see Bot.on_bar)
+const STOP_ATR = 2.0; // stop-loss placed 2× ATR from entry
+const TP_ATR = 3.0; // take-profit placed 3× ATR from entry (3:2 R:R)
+const TARGET_VOL = 0.01; // risk 1% of equity per trade
+const MAX_POS_FRAC = 0.25; // hard cap: no single trade ≥ 25% of equity
+const DAILY_LOSS_LIMIT = 0.02; // -2% day → pause until next UTC day
+const MAX_DRAWDOWN = 0.1; // -10% from peak → HALT (manual reset required)
+const START_EQUITY = 10_000.0; // paper starting capital, in EUR
 
 const COL = {
   bg: RGB(248, 241, 215),
@@ -88,6 +124,7 @@ const COL = {
   gateOk: RGB(20, 100, 60),
   gateFail: RGB(160, 45, 45),
   gateSkip: RGB(120, 105, 80),
+  rowHover: RGBA(80, 60, 40, 32),
 };
 
 function fmtTs(ts) {
@@ -102,6 +139,26 @@ function fmtNum(x, digits = 2) {
 
 function clamp(x, lo, hi) {
   return x < lo ? lo : x > hi ? hi : x;
+}
+
+// Greedy word-wrap by *approximate* pixel width, using the same 6.4 px/char
+// factor the crosshair tooltip uses. Handles embedded '\n' as forced breaks.
+function wrapText(text, maxWidth, charW = 6.4, pad = 20) {
+  const maxLen = Math.max(4, Math.floor((maxWidth - pad) / charW));
+  const out = [];
+  for(const para of String(text).split('\n')) {
+    const words = para.split(' ');
+    let cur = '';
+    for(const w of words) {
+      const test = cur ? cur + ' ' + w : w;
+      if(test.length > maxLen && cur.length > 0) {
+        out.push(cur);
+        cur = w;
+      } else cur = test;
+    }
+    if(cur.length) out.push(cur);
+  }
+  return out;
 }
 
 // nanovg has no dash pattern; emulate with segments.
@@ -125,6 +182,13 @@ function dashedLine(vg, x1, y1, x2, y2, dash = 4, gap = 4) {
 // Math helpers — recursive EWM (pandas ewm(adjust=False)) and rolling
 // window primitives, kept simple; O(n) each and plenty fast for a viewer.
 // ────────────────────────────────────────────────────────────────────────
+
+// ewm — one-pole IIR low-pass:  y[i] = α · x[i] + (1-α) · y[i-1]
+// Same recurrence you'd use for a signal-processing exponential smoother,
+// and it's what pandas .ewm(adjust=False) does. Small α = long memory
+// (smooth), large α = reactive. "Wilder 14" (α = 1/14) is the classic
+// technical-analysis smoothing. The first output = first input, so the
+// filter warms up over roughly 1/α samples.
 function ewm(v, alpha) {
   const n = v.length;
   const out = new Float64Array(n);
@@ -134,6 +198,9 @@ function ewm(v, alpha) {
   return out;
 }
 
+// rollingMean — mean of the last `w` samples, one output per input. The
+// first (w-1) outputs are NaN because the window isn't full yet. Runs
+// with an O(1) update per step (add newcomer, drop the one falling off).
 function rollingMean(v, w) {
   const n = v.length;
   const out = new Float64Array(n).fill(NaN);
@@ -146,6 +213,8 @@ function rollingMean(v, w) {
   return out;
 }
 
+// rollingSum — like rollingMean but without the divide. Used for VWAP
+// where we need Σ(price·vol) and Σ(vol) separately.
 function rollingSum(v, w) {
   const n = v.length;
   const out = new Float64Array(n).fill(NaN);
@@ -219,6 +288,11 @@ class Indicators {
     this.vol = vol;
 
     // ── SMA(20) + Bollinger (20, 2σ) ──
+    // SMA = plain arithmetic mean over the last 20 closes → slow trend line.
+    // Bollinger = SMA ± 2·(sample std of the same window). ~95% of closes
+    // sit inside the band; touches of the outer bands are "unusually far
+    // from average". Traders read a squeeze (narrow band) as pent-up
+    // volatility about to release.
     this.sma20 = rollingMean(close, 20);
     const std20 = rollingStd(close, 20);
     this.bbUpper = new Float64Array(n);
@@ -229,6 +303,12 @@ class Indicators {
     }
 
     // ── True range → ATR (Wilder EWM 14) ──
+    // True range = candle height in "gap-aware" terms:
+    //   TR = max(high−low, |high−prev_close|, |low−prev_close|)
+    // The last two terms handle gaps between yesterday's close and today's
+    // open. ATR = Wilder-smoothed TR → "typical candle size, in price
+    // units, right now". atrRel = ATR / price → same thing as a fraction
+    // of price (e.g. 0.008 = "candles are typically ±0.8% tall").
     const tr = new Float64Array(n);
     tr[0] = high[0] - low[0];
     for(let i = 1; i < n; i++) {
@@ -239,6 +319,12 @@ class Indicators {
     for(let i = 0; i < n; i++) this.atrRel[i] = this.atrAbs[i] / close[i];
 
     // ── RSI(14, Wilder) ──
+    // Momentum oscillator in [0..100]. Split close-to-close moves into
+    // "up part" (positive delta) and "down part" (magnitude of negative
+    // delta), Wilder-smooth each, then rs = avgUp / avgDn and
+    //   rsi = 100 − 100 / (1 + rs).
+    // Convention: RSI < 30 = "oversold" (recent drops are extreme),
+    // > 70 = "overbought". Not a signal on its own — a tension gauge.
     const up = new Float64Array(n);
     const dn = new Float64Array(n);
     for(let i = 1; i < n; i++) {
@@ -254,7 +340,13 @@ class Indicators {
       this.rsi[i] = 100 - 100 / (1 + rs);
     }
 
-    // ── MACD histogram (12, 26, 9); α = 2/(span+1), recursive ──
+    // ── MACD histogram (12, 26, 9) ──
+    // MACD = fast EMA − slow EMA of close (12 vs 26 bars). Signal =
+    // 9-bar EMA of MACD. Histogram = MACD − signal. It's a differentiator:
+    // hist crossing zero upward means the fast average just overtook the
+    // slow one, historically a trend-flip cue. We store the hist / close
+    // ratio for scale independence. α = 2/(span+1) is the standard
+    // conversion from pandas "span" to the recursive smoother's decay.
     const ema12 = ewm(close, 2 / 13);
     const ema26 = ewm(close, 2 / 27);
     const macd = new Float64Array(n);
@@ -264,6 +356,11 @@ class Indicators {
     for(let i = 0; i < n; i++) this.macdHist[i] = macd[i] - macdSig[i];
 
     // ── VWAP over rolling 24 bars ──
+    // VWAP = Σ(price·volume) / Σ(volume) over a window. It's the mean
+    // price weighted by how much actually traded. Institutional traders
+    // measure fills against VWAP ("did I get a good price today?"), and
+    // (close/vwap − 1) tells you whether current price sits above or
+    // below the volume-weighted centre of the last day.
     const cv = new Float64Array(n);
     for(let i = 0; i < n; i++) cv[i] = close[i] * vol[i];
     const cvSum = rollingSum(cv, 24);
@@ -272,12 +369,23 @@ class Indicators {
     for(let i = 0; i < n; i++) this.vwap24[i] = cvSum[i] / (vSum[i] + 1e-12);
 
     // ── Volume z-score (48) ──
+    // Standard z-score of volume vs its 48-bar mean and std. |z| > 2 means
+    // "unusually heavy volume for this hour of the week" — a candle worth
+    // paying attention to.
     const volMean = rollingMean(vol, 48);
     const volStd = rollingStd(vol, 48);
     this.volZ = new Float64Array(n);
     for(let i = 0; i < n; i++) this.volZ[i] = (vol[i] - volMean[i]) / (volStd[i] + 1e-12);
 
     // ── ADX(14, Wilder) — trend strength; regime uses this ──
+    // Wilder's Directional Movement:
+    //   +DM = "how much higher" today's high is vs yesterday's, but only
+    //         if that up-move exceeds the down-move (else 0). −DM mirrors.
+    // Smooth both with the Wilder EWM, divide by ATR to get +DI and −DI
+    // (directional indexes). Their normalized gap
+    //   DX = 100 · |+DI − −DI| / (+DI + −DI)
+    // measures how one-sided moves have been. ADX = smoothed DX ∈ [0..100]:
+    // > 20 ≈ trending, < 20 ≈ chopping. tradebot uses > 20 as the pass gate.
     const pdm = new Float64Array(n);
     const ndm = new Float64Array(n);
     for(let i = 1; i < n; i++) {
@@ -303,7 +411,16 @@ class Indicators {
     }
   }
 
-  // RiskManager.position_size mirror — returns {size, sizeEur}
+  // RiskManager.position_size mirror.
+  //
+  // Volatility targeting: instead of "always buy X coins", risk a fixed
+  // *fraction of equity* per trade (TARGET_VOL, 1%). The stop is at
+  // STOP_ATR × ATR away — so if the stop hits, we lose ~(stop distance ×
+  // position size), and we want that to equal riskEur. Solve for size:
+  //   sizeEur = riskEur / (STOP_ATR × atrRel)
+  // then hard-cap at MAX_POS_FRAC (25%) of equity so a single trade can't
+  // blow the account even if the stop slips. Finally divide by price to
+  // convert EUR notional into base-coin units (e.g. BTC).
   positionSize(equity, i) {
     if(i < 0 || i >= this.n) return { size: 0, sizeEur: 0 };
     const price = this.close[i];
@@ -316,8 +433,20 @@ class Indicators {
 }
 
 // Evaluate every gate the bot checks in on_bar(), so we can render *why*
-// it did (or would have) HOLD/ENTER/HALT on this bar. Returns null if the
-// bar index is out of range.
+// it did (or would have) HOLD/ENTER/HALT on this bar.
+//
+// The pipeline order matters — it's a short-circuit chain, and the first
+// failing gate is the one we surface to the user:
+//   1. halted?                       → HALT (kill switch)
+//   2. daily loss limit hit today?   → HALT (paused till next UTC day)
+//   3. enough bars to predict?       → HOLD (warmup)
+//   4. any predictions logged ever?  → HOLD (model never ran)
+//   5. prediction for THIS bar?      → HOLD (gap in log)
+//   6. regime OK (adx & atr)?        → HOLD (market too flat / choppy)
+//   7. direction prob ≥ 0.45?        → HOLD (model unsure)
+//   8. meta prob ≥ 0.58?             → HOLD (meta model distrusts primary)
+//   9. → ENTER (LONG or SHORT)
+// Returns null if the bar index is out of range.
 function evalGate(store, indicators, idx) {
   if(idx < 0 || idx >= store.candles.length || !indicators.adx) return null;
   const c = store.candles[idx];
@@ -364,7 +493,7 @@ function evalGate(store, indicators, idx) {
     why = 'no prediction for this bar (model missed / gap)';
   } else if(!regimePass) {
     decision = 'HOLD';
-    why = 'regime off — chop / low volatility\nfees would eat edge';
+    why = 'regime off — chop / low volatility, fees would eat edge';
   } else if(!dirPass) {
     decision = 'HOLD';
     why = `direction prob ${dirP.toFixed(3)} < ${ENTRY_DIR}`;
@@ -710,17 +839,33 @@ class CandlePane extends Pane {
     }
 
     // candles
+    //
+    // Anatomy of a candlestick:
+    //   ─┬─       ← high (top of upper wick)
+    //    │
+    //   ┌┴┐  ← body top    = max(open, close)
+    //   │ │  ← body        = filled green if close ≥ open (bull), red else
+    //   └┬┘  ← body bottom = min(open, close)
+    //    │
+    //   ─┴─       ← low  (bottom of lower wick)
+    //
+    // So we draw two things per bar: the thin wick line (high→bodyTop and
+    // bodyBottom→low as two separate segments so it doesn't cross the
+    // filled body) and the body rectangle. `forming` = the last live bar
+    // isn't closed yet, so we draw its body as an outline to signal
+    // "still mutating".
     const now = Date.now() / 1000;
     for(let i = a; i <= b; i++) {
       const c = cs[i];
       const x = view.xOfIndex(i, r);
-      const cx = x + bw / 2;
+      const cx = x + bw / 2; // centre of the bar column, where the wick sits
       const up = c.close >= c.open;
       const col = up ? COL.upFill : COL.dnFill;
-      const yB0 = view.yOfPrice(Math.max(c.open, c.close), r);
-      const yB1 = view.yOfPrice(Math.min(c.open, c.close), r);
+      const yB0 = view.yOfPrice(Math.max(c.open, c.close), r); // body top
+      const yB1 = view.yOfPrice(Math.min(c.open, c.close), r); // body bottom
       const forming = replay.mode === 'LIVE' && i === cs.length - 1 && now - c.ts < store.tf;
 
+      // wicks — two segments so the line doesn't cross the body fill
       vg.BeginPath();
       vg.MoveTo(cx, view.yOfPrice(c.high, r));
       vg.LineTo(cx, yB0);
@@ -730,6 +875,7 @@ class CandlePane extends Pane {
       vg.StrokeWidth(Math.max(1, bw * 0.08));
       vg.Stroke();
 
+      // body: centred rectangle taking 70% of column width
       vg.BeginPath();
       vg.Rect(x + bw * 0.15, yB0, bw * 0.7, Math.max(1, yB1 - yB0));
       if(forming) {
@@ -848,19 +994,121 @@ class CandlePane extends Pane {
     chip(COL.regime, 'regime-off shade', 6);
   }
 
-  drawGateStatus(app) {
-    const { vg, store, indicators, replay } = app;
+  // Rect for the Gate Status card. Base position is top-left of the candle
+  // pane, offset by app.gateCardOffset (user can drag the card). Height is
+  // dynamic — grown to fit the wrapped decision text — and cached from the
+  // previous frame in this.gateCardH (one-frame lag is invisible).
+  _gateCardRect(app) {
     const r = this.rect;
+    const off = app.gateCardOffset;
+    return { x: r.x + 12 + off.dx, y: r.y + 12 + off.dy, w: 306, h: this.gateCardH || 224 };
+  }
+
+  drawGateStatus(app) {
+    const { vg, store, indicators, replay, mouse } = app;
+    const gc = this._gateCardRect(app);
     const idx = replay.maxIdx;
     const g = evalGate(store, indicators, idx);
     if(!g) return;
     const c = store.candles[idx];
 
-    const cardW = 306;
-    const cardH = 224;
-    const cardX = r.x + 12;
-    const cardY = r.y + 12;
+    const cardX = gc.x;
+    const cardY = gc.y;
+    const cardW = gc.w;
+    const rowH = 17;
 
+    // ── Build hotspots (rect + tooltip text) as data. Everything painted
+    //    below reads from these arrays, so hit-testing and rendering can't
+    //    disagree about where a row is.
+    const hotspots = [];
+    const hs = (y, h, tt) => hotspots.push({ y, h, tt });
+
+    // header rows
+    hs(cardY + 14, 14, "The bar this card describes. In replay use ←/→ to step — every gate below re-evaluates for that bar's state.");
+    hs(cardY + 30, 14, `Model version = timestamp of the last successful train. "(N preds logged)" = bars for which the ML stack ran and wrote a row into the predictions table. If 0, the bot has never trained; run 'python tradebot.py train'.`);
+    hs(cardY + 44, 14, `Bars available in the DB. LSTM needs ≥ SEQ_LEN(64) + feature warmup(60) = ${MIN_BARS_FOR_PRED} bars to attempt any prediction. Equity = paper account value, simulated from €${START_EQUITY.toFixed(0)}.`);
+
+    // gate rows
+    const gateRows = [];
+    let y = cardY + 68;
+
+    gateRows.push({
+      y, label: 'Regime filter', val: g.regimePass ? 'PASS' : 'FAIL', pass: g.regimePass,
+      tt: 'Compound gate: both ADX and ATR% must clear. This one filter probably matters more than the entire ML stack — trading in choppy, low-volatility markets is how accounts bleed to fees.',
+    });
+    y += rowH;
+    gateRows.push({
+      y, label: `  ADX > ${REGIME_ADX_MIN}`, val: g.adx.toFixed(1), pass: g.adxPass,
+      tt: 'Average Directional Index ∈ [0..100]. Measures trend STRENGTH (not direction). >20 ≈ a real trend exists; <20 ≈ sideways chop. Wilder\'s original 1978 threshold.',
+    });
+    y += rowH;
+    gateRows.push({
+      y, label: `  ATR% > ${(REGIME_ATR_MIN * 100).toFixed(2)}%`, val: `${(g.atrRel * 100).toFixed(2)}%`, pass: g.atrPass,
+      tt: `ATR ÷ price = "how tall are candles?". Threshold = 2.5 × the taker fee (0.6%). Below this, even a perfectly correct call can't cover the round-trip fee + slippage — the market is too calm to pay for the trade.`,
+    });
+    y += rowH + 3;
+
+    if(g.pred) {
+      gateRows.push({
+        y, label: `Direction ≥ ${ENTRY_DIR}`, val: g.dirP.toFixed(3), pass: g.dirPass,
+        tt: 'max(p_long, p_short) from the LSTM + XGBoost primary ensemble. Read as "model\'s confidence that price will move 1.5×ATR within 12 bars, in either direction". Below 0.45 the model is essentially guessing between up/flat/down.',
+      });
+      y += rowH;
+      gateRows.push({
+        y, label: `Meta ≥ ${ENTRY_META}`, val: g.pred.meta_p.toFixed(3), pass: g.metaPass,
+        tt: 'Second-opinion XGBoost, trained on the question "was the primary signal actually right?". A meta model that grades whether to trust the primary. Filters over-confident false positives from the LSTM+XGB ensemble.',
+      });
+    } else {
+      const na = g.totalPreds === 0 ? 'no model' : 'n/a';
+      gateRows.push({
+        y, label: `Direction ≥ ${ENTRY_DIR}`, val: na, pass: null,
+        tt: 'max(p_long, p_short) from the LSTM + XGBoost ensemble. Blank because no prediction was logged for this bar (see the "model" line above the divider).',
+      });
+      y += rowH;
+      gateRows.push({
+        y, label: `Meta ≥ ${ENTRY_META}`, val: na, pass: null,
+        tt: 'Second-opinion XGBoost that grades the primary signal. Blank because no prediction was logged for this bar.',
+      });
+    }
+    y += rowH + 3;
+
+    const riskLabel = g.halted ? 'HALTED' : g.dayLimit ? 'DAY LIMIT' : 'ok';
+    gateRows.push({
+      y, label: 'Risk / kill switch', val: riskLabel, pass: g.riskPass,
+      tt: 'Two circuit breakers. Soft: -2% intraday loss pauses trading until 00:00 UTC. Hard: -10% drawdown from equity peak triggers HALT that only clears via CLI `python tradebot.py reset-halt`.',
+    });
+    y += rowH + 5;
+
+    // decision area — wrap the "→ HOLD/HALT/ENTER: <reason>" text to the
+    // card width so long reasons flow onto multiple lines instead of
+    // running off the right edge.
+    const dividerY = y;
+    const decY = y + 12;
+    const decLineH = 14;
+    const decLines = wrapText(`→ ${g.decision}: ${g.why}`, cardW - 24);
+    // grow the card if the decision took more than one line
+    const cardH = Math.max(224, decY + decLines.length * decLineH + 10 - cardY);
+    this.gateCardH = cardH;
+
+    // one combined hotspot for the whole decision block
+    hs(decY + (decLines.length - 1) * decLineH / 2, decLines.length * decLineH,
+      'The first failing gate above, spelled out. To reach ENTER, every gate must be green. HALT = risk breaker fired; HOLD = a trading gate blocked.');
+
+    for(const gr of gateRows) hs(gr.y, rowH, gr.tt);
+
+    // find hovered hotspot (mouse must be inside the card box)
+    let hovered = null;
+    if(mouse.x >= cardX + 4 && mouse.x < cardX + cardW - 4) {
+      for(const h of hotspots) {
+        if(mouse.y >= h.y - h.h / 2 && mouse.y < h.y + h.h / 2) {
+          hovered = h;
+          break;
+        }
+      }
+    }
+
+    // ── Now draw: card background, hover highlight, header, divider, rows,
+    //    decision — in that z-order — then the floating tooltip on top.
     vg.BeginPath();
     vg.RoundedRect(cardX, cardY, cardW, cardH, 6);
     vg.FillColor(COL.cardBg);
@@ -869,74 +1117,82 @@ class CandlePane extends Pane {
     vg.StrokeWidth(1);
     vg.Stroke();
 
+    if(hovered) {
+      vg.BeginPath();
+      vg.Rect(cardX + 4, hovered.y - hovered.h / 2, cardW - 8, hovered.h);
+      vg.FillColor(COL.rowHover);
+      vg.Fill();
+    }
+
     app.font(12, COL.text, ALIGN_LEFT | ALIGN_MIDDLE);
     app.text(cardX + 12, cardY + 14, `GATE STATUS — ${fmtTs(c.ts)}`);
 
-    // subheader: model + bars context
     app.font(10, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
     app.text(cardX + 12, cardY + 30, `model: ${g.modelVer}   (${g.totalPreds} preds logged)`);
     app.text(cardX + 12, cardY + 44, `bars: ${store.candles.length} (min ${MIN_BARS_FOR_PRED})   equity: ${fmtNum(g.equity)}`);
 
-    // divider
-    const hr = y => {
+    const hr = hy => {
       vg.BeginPath();
-      vg.MoveTo(cardX + 8, y);
-      vg.LineTo(cardX + cardW - 8, y);
+      vg.MoveTo(cardX + 8, hy);
+      vg.LineTo(cardX + cardW - 8, hy);
       vg.StrokeColor(COL.grid);
       vg.StrokeWidth(1);
       vg.Stroke();
     };
     hr(cardY + 54);
 
-    const row = (y, label, val, pass) => {
-      const dotCol = pass === null || pass === undefined ? COL.gateSkip : pass ? COL.gateOk : COL.gateFail;
+    for(const gr of gateRows) {
+      const dotCol = gr.pass === null || gr.pass === undefined ? COL.gateSkip : gr.pass ? COL.gateOk : COL.gateFail;
       vg.BeginPath();
-      vg.Circle(cardX + 14, y, 4);
+      vg.Circle(cardX + 14, gr.y, 4);
       vg.FillColor(dotCol);
       vg.Fill();
       app.font(11, COL.text, ALIGN_LEFT | ALIGN_MIDDLE);
-      app.text(cardX + 26, y, label);
-      if(val !== null && val !== undefined) {
-        const valCol = pass === false ? COL.gateFail : COL.text;
+      app.text(cardX + 26, gr.y, gr.label);
+      if(gr.val !== null && gr.val !== undefined) {
+        const valCol = gr.pass === false ? COL.gateFail : COL.text;
         app.font(11, valCol, ALIGN_RIGHT | ALIGN_MIDDLE);
-        app.text(cardX + cardW - 12, y, val);
+        app.text(cardX + cardW - 12, gr.y, gr.val);
       }
-    };
-
-    let y = cardY + 68;
-    const rowH = 17;
-    row(y, 'Regime filter', g.regimePass ? 'PASS' : 'FAIL', g.regimePass);
-    y += rowH;
-    row(y, `  ADX > ${REGIME_ADX_MIN}`, `${g.adx.toFixed(1)}`, g.adxPass);
-    y += rowH;
-    row(y, `  ATR% > ${(REGIME_ATR_MIN * 100).toFixed(2)}%`, `${(g.atrRel * 100).toFixed(2)}%`, g.atrPass);
-    y += rowH + 3;
-
-    if(g.pred) {
-      row(y, `Direction ≥ ${ENTRY_DIR}`, `${g.dirP.toFixed(3)}`, g.dirPass);
-      y += rowH;
-      row(y, `Meta ≥ ${ENTRY_META}`, `${g.pred.meta_p.toFixed(3)}`, g.metaPass);
-    } else {
-      row(y, `Direction ≥ ${ENTRY_DIR}`, g.totalPreds === 0 ? 'no model' : 'n/a', null);
-      y += rowH;
-      row(y, `Meta ≥ ${ENTRY_META}`, g.totalPreds === 0 ? 'no model' : 'n/a', null);
     }
-    y += rowH + 3;
 
-    const riskLabel = g.halted ? 'HALTED' : g.dayLimit ? 'DAY LIMIT' : 'ok';
-    row(y, 'Risk / kill switch', riskLabel, g.riskPass);
-    y += rowH + 5;
-
-    hr(y);
-    y += 12;
+    hr(dividerY);
     const decCol = g.decision === 'ENTER' ? COL.gateOk : g.decision === 'HALT' ? COL.gateFail : COL.text;
     app.font(12, decCol, ALIGN_LEFT | ALIGN_MIDDLE);
-
-    let lines = g.why.split('\n');
-
-    for(let i = 0; i < lines.length; i++) {
-      app.text(cardX + 12, y + i * 12, (i == 0 ? `→ ${g.decision}: ` : `              `) + lines[i]);
+    for(let i = 0; i < decLines.length; i++) {
+      app.text(cardX + 12, decY + i * decLineH, decLines[i]);
     }
+
+    if(hovered) this.drawGateTooltip(app, hovered.tt, cardX, cardY, cardW, cardH);
+  }
+
+  drawGateTooltip(app, text, cardX, cardY, cardW, cardH) {
+    const { vg, mouse } = app;
+    const r = this.rect;
+    const ttW = 300;
+    const lines = wrapText(text, ttW);
+    const lineH = 15;
+    const ttH = 14 + lines.length * lineH;
+
+    // prefer right of the card; fall back to below if we'd run off-pane
+    let ttX = cardX + cardW + 8;
+    let ttY = clamp(mouse.y - ttH / 2, r.y + 8, r.y + r.h - ttH - 8);
+    if(ttX + ttW > r.x + r.w - 8) {
+      ttX = cardX;
+      ttY = cardY + cardH + 8;
+      if(ttY + ttH > r.y + r.h - 8) ttY = Math.max(r.y + 8, cardY - ttH - 8);
+    }
+
+    vg.BeginPath();
+    vg.RoundedRect(ttX, ttY, ttW, ttH, 5);
+    vg.FillColor(COL.boxBg);
+    vg.Fill();
+    vg.StrokeColor(COL.cardEdge);
+    vg.StrokeWidth(1);
+    vg.Stroke();
+
+    app.font(11, COL.text, ALIGN_LEFT | ALIGN_MIDDLE);
+    for(let k = 0; k < lines.length; k++) app.text(ttX + 10, ttY + 12 + k * lineH, lines[k]);
   }
 
   priceStep(range) {
@@ -1005,6 +1261,11 @@ class CandlePane extends Pane {
     const { vg, store, view, replay, mouse, indicators } = app;
     const r = this.rect;
     if(!this.contains(mouse.x, mouse.y)) return;
+
+    // Gate-card hover takes precedence — its own tooltip is drawn later, and
+    // the crosshair line/box across the card would just be visual noise.
+    const gc = this._gateCardRect(app);
+    if(mouse.x >= gc.x && mouse.x < gc.x + gc.w && mouse.y >= gc.y && mouse.y < gc.y + gc.h) return;
 
     const i = clamp(Math.floor(view.indexOfX(mouse.x, r)), 0, replay.maxIdx);
     if(i < 0 || i >= store.candles.length) return;
@@ -1180,6 +1441,13 @@ class EquityPane extends Pane {
 // RegimePane — shows ADX and ATR% as *ratios* to their trade-enable
 // thresholds. Everything above y = 1.0 is a passing gate; the shaded
 // columns are the exact bars where CandlePane also greys out.
+//
+// Why plot ratios instead of raw values? ADX lives in [0..100] and ATR%
+// lives in roughly [0..0.05]. Sharing one y-axis would squash one of them
+// into a flat line at the bottom. Dividing each by its own pass threshold
+// puts them on the same "1.0 = just passing" scale, so both are readable
+// on one chart and the horizontal line at y = 1 is a literal answer to
+// "does this bar clear the regime filter?".
 class RegimePane extends Pane {
   draw(app) {
     const { vg, view, indicators, store, replay } = app;
@@ -1194,6 +1462,8 @@ class RegimePane extends Pane {
       return;
     }
 
+    // y-axis maps 0..3 → bottom..top; anything larger is clamped so a
+    // huge ADX spike doesn't rescale the whole pane.
     const yMax = 3;
     const yOf = v => r.y + r.h * (1 - Math.min(v, yMax) / yMax);
 
@@ -1309,6 +1579,24 @@ class Minimap extends Pane {
     vg.StrokeWidth(1);
     vg.Stroke();
 
+    // resize handles: thicker vertical bars at each edge, with a small
+    // notch in the middle, so the drag zones are visually obvious.
+    vg.StrokeColor(COL.viewEdge);
+    vg.StrokeWidth(3);
+    const midY = r.y + r.h / 2;
+    for(const hx of [vx0, vx1]) {
+      vg.BeginPath();
+      vg.MoveTo(hx, r.y + 4);
+      vg.LineTo(hx, r.y + r.h - 4);
+      vg.Stroke();
+      vg.BeginPath();
+      vg.MoveTo(hx - 3, midY);
+      vg.LineTo(hx + 3, midY);
+      vg.StrokeWidth(1);
+      vg.Stroke();
+      vg.StrokeWidth(3);
+    }
+
     // replay cursor
     if(replay.mode === 'REPLAY') {
       const cx = xOf(replay.cursor);
@@ -1321,15 +1609,49 @@ class Minimap extends Pane {
     }
   }
 
-  // drag → recenter the viewport on that fraction of history
-  dragTo(app, mx) {
+  // Convert a minimap x-pixel to a candle index in [0..n-1].
+  _idxOfX(app, mx) {
+    const n = app.store.candles.length;
+    const frac = clamp((mx - this.rect.x) / this.rect.w, 0, 1);
+    return frac * Math.max(1, n - 1);
+  }
+
+  // hitTest — classify a click on the minimap into one of four zones:
+  //   'leftEdge'  — within EDGE px of the viewport rect's left edge
+  //   'rightEdge' — within EDGE px of the viewport rect's right edge
+  //   'inside'    — inside the viewport rect (not on an edge)
+  //   'outside'   — anywhere else on the minimap
+  // 'leftEdge'/'rightEdge' let the user resize the range (change zoom).
+  // 'inside'/'outside' pan the range (recenter).
+  hitTest(app, mx) {
     const { store, view } = app;
     const n = store.candles.length;
-    const frac = clamp((mx - this.rect.x) / this.rect.w, 0, 1);
-    const center = frac * (n - 1);
-    const span = view.span;
-    view.i0 = center - span / 2;
-    view.i1 = center + span / 2;
+    if(n < 2) return 'outside';
+    const xOf = i => this.rect.x + (i / (n - 1)) * this.rect.w;
+    const vx0 = xOf(clamp(view.i0, 0, n - 1));
+    const vx1 = xOf(clamp(view.i1, 0, n - 1));
+    const EDGE = 8;
+    if(Math.abs(mx - vx0) < EDGE) return 'leftEdge';
+    if(Math.abs(mx - vx1) < EDGE) return 'rightEdge';
+    if(mx > vx0 && mx < vx1) return 'inside';
+    return 'outside';
+  }
+
+  // applyDrag — the drag body. Dispatches on the mode captured at press.
+  //   left/right edge → move only that edge (change span → zoom)
+  //   inside/outside  → recenter viewport on the mouse (pan, span kept)
+  applyDrag(app, mx, mode) {
+    const { view } = app;
+    const idx = this._idxOfX(app, mx);
+    if(mode === 'leftEdge') {
+      view.i0 = Math.min(idx, view.i1 - 10);
+    } else if(mode === 'rightEdge') {
+      view.i1 = Math.max(idx, view.i0 + 10);
+    } else {
+      const span = view.span;
+      view.i0 = idx - span / 2;
+      view.i1 = idx + span / 2;
+    }
     app.follow = false;
   }
 }
@@ -1392,8 +1714,11 @@ class App {
     this.statusBar = new StatusBar();
 
     this.mouse = { x: 0, y: 0 };
-    this.dragPane = null; // 'chart' | 'minimap'
+    this.dragPane = null; // 'chart' | 'minimap' | 'gateCard'
     this.dragX = 0;
+    this.minimapMode = 'inside'; // 'leftEdge' | 'rightEdge' | 'inside' | 'outside'
+    this.gateCardOffset = { dx: 0, dy: 0 };
+    this.dragStart = null; // snapshot at press-time for delta-based dragging
     this.running = true;
     this.hasFont = false;
   }
@@ -1457,7 +1782,19 @@ class App {
           app.dragX = x;
           app.follow = false;
         } else if(app.dragPane === 'minimap') {
-          app.minimap.dragTo(app, x);
+          app.minimap.applyDrag(app, x, app.minimapMode);
+        } else if(app.dragPane === 'gateCard') {
+          // Move the card by the mouse delta since press. Clamp so the
+          // card's header (title bar) always stays inside the candle pane —
+          // otherwise you could throw it off-screen and never grab it back.
+          const ds = app.dragStart;
+          const cpr = app.candlePane.rect;
+          const w = 306;
+          const headerH = 54;
+          const dxRaw = ds.dx + (x - ds.x);
+          const dyRaw = ds.dy + (y - ds.y);
+          app.gateCardOffset.dx = clamp(dxRaw, -12, cpr.w - w - 12);
+          app.gateCardOffset.dy = clamp(dyRaw, -12, cpr.h - headerH - 12);
         }
         app.mouse = { x, y };
       },
@@ -1465,11 +1802,27 @@ class App {
         if(button !== MB_LEFT) return;
         if(action !== PRESS) {
           app.dragPane = null;
+          app.dragStart = null;
           return;
         }
+        // Gate card wins over chart/pane hit-tests: header area = drag
+        // handle, body below is left alone so hover tooltips work.
+        if(app.candlePane.contains(app.mouse.x, app.mouse.y)) {
+          const gc = app.candlePane._gateCardRect(app);
+          const inCard = app.mouse.x >= gc.x && app.mouse.x < gc.x + gc.w &&
+                         app.mouse.y >= gc.y && app.mouse.y < gc.y + gc.h;
+          if(inCard && app.mouse.y < gc.y + 54) {
+            app.dragPane = 'gateCard';
+            app.dragStart = { x: app.mouse.x, y: app.mouse.y,
+                              dx: app.gateCardOffset.dx, dy: app.gateCardOffset.dy };
+            return;
+          }
+          if(inCard) return; // click on card body → do nothing; keeps hover live
+        }
         if(app.minimap.contains(app.mouse.x, app.mouse.y)) {
+          app.minimapMode = app.minimap.hitTest(app, app.mouse.x);
           app.dragPane = 'minimap';
-          app.minimap.dragTo(app, app.mouse.x);
+          app.minimap.applyDrag(app, app.mouse.x, app.minimapMode);
         } else if(app.candlePane.contains(app.mouse.x, app.mouse.y) || app.signalPane.contains(app.mouse.x, app.mouse.y) || app.equityPane.contains(app.mouse.x, app.mouse.y)) {
           app.dragPane = 'chart';
           app.dragX = app.mouse.x;
@@ -1505,11 +1858,18 @@ class App {
           case KEY_DOWN:
             replay.speedIdx = clamp(replay.speedIdx - 1, 0, SPEEDS.length - 1);
             break;
-          case KEY_HOME:
+          case KEY_HOME: {
+            // Preserve the current zoom; anchor the left edge at bar 0.
+            // (Older code called view.fit(200, 0) which collapsed the
+            // viewport to a 2-bar span — replay then dragged bars in one
+            // at a time because auto-scroll preserves span across frames.)
+            const span = Math.max(Math.round(view.span), 10);
             replay.enterReplay();
             replay.cursor = 0;
-            view.fit(200, 0);
+            view.i0 = 0;
+            view.i1 = span;
             break;
+          }
           case KEY_END:
             replay.enterReplay();
             replay.cursor = store.candles.length - 1;
