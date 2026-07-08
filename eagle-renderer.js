@@ -434,7 +434,7 @@ export class SchematicRenderer extends EagleSVGRenderer {
     const bounds = new BBox();
     if(plain) bboxOfContainer(plain, bounds);
     if(instances) for(const inst of filterChildren(instances, 'instance')) bounds.add(num(inst, 'x'), -num(inst, 'y'));
-    if(nets) for(const net of filterChildren(nets, 'net')) for(const seg of filterChildren(net, 'segment')) bboxOfContainer(seg, bounds);
+    if(nets) for(const net of filterChildren(nets, 'net')) for (const seg of filterChildren(net, 'segment')) bboxOfContainer(seg, bounds);
     if(!bounds.valid) bounds.add(0, 0);
     bounds.outset(2.54);
 
@@ -513,7 +513,10 @@ export class LibraryRenderer extends EagleSVGRenderer {
   render() {
     const { adapter, transform } = this;
     const library = findChild(adapter.drawing, 'library');
-    const boardAdapter = new EagleAdapter(this.doc, Palette.board((r, g, b) => new RGBA(r, g, b)));
+    const boardAdapter = new EagleAdapter(
+      this.doc,
+      Palette.board((r, g, b) => new RGBA(r, g, b)),
+    );
     const gap = 2.54;
 
     const bounds = new BBox();
@@ -533,9 +536,7 @@ export class LibraryRenderer extends EagleSVGRenderer {
 
         const dx = x - bb.x1;
 
-        children.push(
-          h('g', { class: `${tag} ${item.getAttribute('name')}`, transform: `translate(${dx},0)` }, [h(component, { data: itemAdapter.wrap(item), opts: { transformation: transform } })]),
-        );
+        children.push(h('g', { class: `${tag} ${item.getAttribute('name')}`, transform: `translate(${dx},0)` }, [h(component, { data: itemAdapter.wrap(item), opts: { transformation: transform } })]));
 
         bounds.add(bb.x1 + dx, bb.y1);
         bounds.add(bb.x2 + dx, bb.y2);

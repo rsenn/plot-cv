@@ -3,8 +3,8 @@ import * as fs from 'fs';
 
 import { Renderer, SchematicRenderer, BoardRenderer, LibraryRenderer } from './eagle-renderer.js';
 
-import { EagleElement,EagleDocument, EagleProject } from './eagle.js';
-import { Node,Element } from 'dom';
+import { EagleElement, EagleDocument, EagleProject } from './eagle.js';
+import { Node, Element } from 'dom';
 
 import { className, define, entries, getOpt, glob, GLOB_BRACE, intersect, difference, isObject, lazyProperties, memoize, range, unique, weakDefine } from 'util';
 
@@ -109,9 +109,8 @@ const GetGlobalFunctions = (() => {
 })();
 
 function toXML(obj) {
-  if(isObject(obj) && 'outerHTML' in obj)
-    return obj.outerHTML;
-  
+  if(isObject(obj) && 'outerHTML' in obj) return obj.outerHTML;
+
   deep.forEach(obj, a => Array.isArray(a.children) && a.children.length == 0 && delete a.children);
   return writeXML(obj);
 }
@@ -297,7 +296,8 @@ function main(...args) {
   Object.assign(globalThis, { Console, GetGlobalFunctions, className });
 
   Object.assign(globalThis, {
-    Node,Element,
+    Node,
+    Element,
     EagleElement,
     EagleDocument,
     EagleProject,
@@ -1064,8 +1064,8 @@ function BoardFromSchematic(doc = project.schematic, f = 1, r = 0.5) {
 
 function InitBoard(doc = project.board) {
   let commands = [...brd.querySelectorAll('element')].map(e => {
-    const name= e.getAttribute('name');
-    
+    const name = e.getAttribute('name');
+
     const p = new Point(e).div(25.4).round(0.005);
 
     let s = `MOVE '${name}' (${[...p].join(' ')});`;

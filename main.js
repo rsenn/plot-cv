@@ -20,7 +20,7 @@ import keysim from './lib/dom/keysim.js';
 import { h, render, useState, Fragment, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 import { ColorMap } from './lib/draw/colorMap.js';
 import { BoardRenderer, LibraryRenderer, Renderer, SchematicRenderer } from './lib/eagle.js';
-import { DereferenceError, EagleParser, EagleFactory, EagleDocument, EagleElement, EagleProject, Node as EagleNode,Serializer } from './lib/eagle-dom.js';
+import { DereferenceError, EagleParser, EagleFactory, EagleDocument, EagleElement, EagleProject, Node as EagleNode, Serializer } from './lib/eagle-dom.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
 import { EventIterator } from './lib/iterator/event.js';
@@ -1680,10 +1680,10 @@ const AppMain = (window.onload = async () => {
   weakDefine(window, { rpc:rpc2 });
   weakDefine(window, imports);
   weakDefine(window.Element, getMethods(dom.Element));
-  weakDefine(window,  geom, imports, localFunctions);
+  weakDefine(window, geom, imports, localFunctions);
   weakDefine(window, {
     functions: filter(localFunctions, v => typeof v == 'function'),
-     geom,
+    geom,
     config,
     loading,
     filePanel,

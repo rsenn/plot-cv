@@ -741,17 +741,19 @@ function main(...args) {
 
       ...callbacks,
       onCheckAccessRights(req, url) {
-    
-if(/\.js$/i.test(url)) {
-  url=url.replace(/^\/*/g, '');
-  (globalThis.urls??=[]).pushUnique(url);
-  console.log(url);
-  return 0;
-}
+        if(/\.js$/i.test(url)) {
+          url = url.replace(/^\/*/g, '');
+          (globalThis.urls ??= []).pushUnique(url);
+          console.log(url);
+          return 0;
+        }
 
-        const {headers}=req;
+        const { headers } = req;
 
-        console.log('\x1b[38;5;33monCheckAccessRights\x1b[0m',console.config({compact:true }), {url,headers: [...headers.entries()].reduce((s,[k,v]) => (s ? s+'\n' : s)+ `${k}: ${v}`, '') });
+        console.log('\x1b[38;5;33monCheckAccessRights\x1b[0m', console.config({ compact: true }), {
+          url,
+          headers: [...headers.entries()].reduce((s, [k, v]) => (s ? s + '\n' : s) + `${k}: ${v}`, ''),
+        });
         return 0;
       },
       onConnect(ws, req) {

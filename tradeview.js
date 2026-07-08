@@ -1025,48 +1025,77 @@ class CandlePane extends Pane {
 
     // header rows
     hs(cardY + 14, 14, "The bar this card describes. In replay use ←/→ to step — every gate below re-evaluates for that bar's state.");
-    hs(cardY + 30, 14, `Model version = timestamp of the last successful train. "(N preds logged)" = bars for which the ML stack ran and wrote a row into the predictions table. If 0, the bot has never trained; run 'python tradebot.py train'.`);
-    hs(cardY + 44, 14, `Bars available in the DB. LSTM needs ≥ SEQ_LEN(64) + feature warmup(60) = ${MIN_BARS_FOR_PRED} bars to attempt any prediction. Equity = paper account value, simulated from €${START_EQUITY.toFixed(0)}.`);
+    hs(
+      cardY + 30,
+      14,
+      `Model version = timestamp of the last successful train. "(N preds logged)" = bars for which the ML stack ran and wrote a row into the predictions table. If 0, the bot has never trained; run 'python tradebot.py train'.`,
+    );
+    hs(
+      cardY + 44,
+      14,
+      `Bars available in the DB. LSTM needs ≥ SEQ_LEN(64) + feature warmup(60) = ${MIN_BARS_FOR_PRED} bars to attempt any prediction. Equity = paper account value, simulated from €${START_EQUITY.toFixed(0)}.`,
+    );
 
     // gate rows
     const gateRows = [];
     let y = cardY + 68;
 
     gateRows.push({
-      y, label: 'Regime filter', val: g.regimePass ? 'PASS' : 'FAIL', pass: g.regimePass,
+      y,
+      label: 'Regime filter',
+      val: g.regimePass ? 'PASS' : 'FAIL',
+      pass: g.regimePass,
       tt: 'Compound gate: both ADX and ATR% must clear. This one filter probably matters more than the entire ML stack — trading in choppy, low-volatility markets is how accounts bleed to fees.',
     });
     y += rowH;
     gateRows.push({
-      y, label: `  ADX > ${REGIME_ADX_MIN}`, val: g.adx.toFixed(1), pass: g.adxPass,
-      tt: 'Average Directional Index ∈ [0..100]. Measures trend STRENGTH (not direction). >20 ≈ a real trend exists; <20 ≈ sideways chop. Wilder\'s original 1978 threshold.',
+      y,
+      label: `  ADX > ${REGIME_ADX_MIN}`,
+      val: g.adx.toFixed(1),
+      pass: g.adxPass,
+      tt: "Average Directional Index ∈ [0..100]. Measures trend STRENGTH (not direction). >20 ≈ a real trend exists; <20 ≈ sideways chop. Wilder's original 1978 threshold.",
     });
     y += rowH;
     gateRows.push({
-      y, label: `  ATR% > ${(REGIME_ATR_MIN * 100).toFixed(2)}%`, val: `${(g.atrRel * 100).toFixed(2)}%`, pass: g.atrPass,
+      y,
+      label: `  ATR% > ${(REGIME_ATR_MIN * 100).toFixed(2)}%`,
+      val: `${(g.atrRel * 100).toFixed(2)}%`,
+      pass: g.atrPass,
       tt: `ATR ÷ price = "how tall are candles?". Threshold = 2.5 × the taker fee (0.6%). Below this, even a perfectly correct call can't cover the round-trip fee + slippage — the market is too calm to pay for the trade.`,
     });
     y += rowH + 3;
 
     if(g.pred) {
       gateRows.push({
-        y, label: `Direction ≥ ${ENTRY_DIR}`, val: g.dirP.toFixed(3), pass: g.dirPass,
+        y,
+        label: `Direction ≥ ${ENTRY_DIR}`,
+        val: g.dirP.toFixed(3),
+        pass: g.dirPass,
         tt: 'max(p_long, p_short) from the LSTM + XGBoost primary ensemble. Read as "model\'s confidence that price will move 1.5×ATR within 12 bars, in either direction". Below 0.45 the model is essentially guessing between up/flat/down.',
       });
       y += rowH;
       gateRows.push({
-        y, label: `Meta ≥ ${ENTRY_META}`, val: g.pred.meta_p.toFixed(3), pass: g.metaPass,
+        y,
+        label: `Meta ≥ ${ENTRY_META}`,
+        val: g.pred.meta_p.toFixed(3),
+        pass: g.metaPass,
         tt: 'Second-opinion XGBoost, trained on the question "was the primary signal actually right?". A meta model that grades whether to trust the primary. Filters over-confident false positives from the LSTM+XGB ensemble.',
       });
     } else {
       const na = g.totalPreds === 0 ? 'no model' : 'n/a';
       gateRows.push({
-        y, label: `Direction ≥ ${ENTRY_DIR}`, val: na, pass: null,
+        y,
+        label: `Direction ≥ ${ENTRY_DIR}`,
+        val: na,
+        pass: null,
         tt: 'max(p_long, p_short) from the LSTM + XGBoost ensemble. Blank because no prediction was logged for this bar (see the "model" line above the divider).',
       });
       y += rowH;
       gateRows.push({
-        y, label: `Meta ≥ ${ENTRY_META}`, val: na, pass: null,
+        y,
+        label: `Meta ≥ ${ENTRY_META}`,
+        val: na,
+        pass: null,
         tt: 'Second-opinion XGBoost that grades the primary signal. Blank because no prediction was logged for this bar.',
       });
     }
@@ -1074,7 +1103,10 @@ class CandlePane extends Pane {
 
     const riskLabel = g.halted ? 'HALTED' : g.dayLimit ? 'DAY LIMIT' : 'ok';
     gateRows.push({
-      y, label: 'Risk / kill switch', val: riskLabel, pass: g.riskPass,
+      y,
+      label: 'Risk / kill switch',
+      val: riskLabel,
+      pass: g.riskPass,
       tt: 'Two circuit breakers. Soft: -2% intraday loss pauses trading until 00:00 UTC. Hard: -10% drawdown from equity peak triggers HALT that only clears via CLI `python tradebot.py reset-halt`.',
     });
     y += rowH + 5;
@@ -1091,8 +1123,11 @@ class CandlePane extends Pane {
     this.gateCardH = cardH;
 
     // one combined hotspot for the whole decision block
-    hs(decY + (decLines.length - 1) * decLineH / 2, decLines.length * decLineH,
-      'The first failing gate above, spelled out. To reach ENTER, every gate must be green. HALT = risk breaker fired; HOLD = a trading gate blocked.');
+    hs(
+      decY + ((decLines.length - 1) * decLineH) / 2,
+      decLines.length * decLineH,
+      'The first failing gate above, spelled out. To reach ENTER, every gate must be green. HALT = risk breaker fired; HOLD = a trading gate blocked.',
+    );
 
     for(const gr of gateRows) hs(gr.y, rowH, gr.tt);
 
@@ -1809,12 +1844,10 @@ class App {
         // handle, body below is left alone so hover tooltips work.
         if(app.candlePane.contains(app.mouse.x, app.mouse.y)) {
           const gc = app.candlePane._gateCardRect(app);
-          const inCard = app.mouse.x >= gc.x && app.mouse.x < gc.x + gc.w &&
-                         app.mouse.y >= gc.y && app.mouse.y < gc.y + gc.h;
+          const inCard = app.mouse.x >= gc.x && app.mouse.x < gc.x + gc.w && app.mouse.y >= gc.y && app.mouse.y < gc.y + gc.h;
           if(inCard && app.mouse.y < gc.y + 54) {
             app.dragPane = 'gateCard';
-            app.dragStart = { x: app.mouse.x, y: app.mouse.y,
-                              dx: app.gateCardOffset.dx, dy: app.gateCardOffset.dy };
+            app.dragStart = { x: app.mouse.x, y: app.mouse.y, dx: app.gateCardOffset.dx, dy: app.gateCardOffset.dy };
             return;
           }
           if(inCard) return; // click on card body → do nothing; keeps hover live

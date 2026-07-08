@@ -171,7 +171,7 @@ export class Path {
     ['/foo/.', '.'],
     ['/foo/.', ''],
     ['/foo/', '.png'],
-    ['/foo/', 'png']
+    ['/foo/', 'png'],
   ];
 }
 
@@ -223,7 +223,7 @@ operators_set(
     '+=': (a, b) => a.concat(b),
     pos(a) {
       return valuePointer(a);
-    }
+    },
   },
   {
     right: [String, Number],
@@ -234,6 +234,6 @@ operators_set(
     '/='(a, b) {
       // console.log('/=', { a, b  });
       a.append(stringPointer(b));
-    }
-  }
+    },
+  },
 );
