@@ -1,24 +1,26 @@
-import {spawnSync, spawn } from 'child_process';
-import { reader, readerSync } from 'fs';
+import { spawnSync, spawn, WNOHANG } from 'child_process';
+import { reader, readerSync, readAll } from 'fs';
+import { TextDecoder } from 'textcode';
+import { quote, abbreviate } from 'util';
 
- function main(...args) {
+function main(...args) {
   for(let arg of args) {
-    let child = spawnSync('yt-dlp', ['-f', 'best', '--yes-playlist', '--skip-download', '-J', arg], {
-      block: false,
+    const child = spawnSync('yt-dlp', ['-f', 'best', '--yes-playlist', '--skip-download', '-J', arg], {
       stdio: ['inherit', 'pipe', 'pipe'],
     });
+    console.log('child', child);
 
-    const { stdio } = child;
+    const { stdout, stderr, status } = child;
+    console.log('stdout', abbreviate(stdout));
+    console.log('stderr', abbreviate(stderr));
 
-    console.log('child', { child, stdio, result });
-
-    let result =  child.wait();
-
+    /*    let result = child.waitSync(0);
+    console.log('result',  result ); */
   }
 }
 
 try {
-   main(...scriptArgs.slice(1));
+  main(...scriptArgs.slice(1));
 } catch(error) {
   console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
 } finally {
