@@ -26,7 +26,7 @@ import { RecursiveDirIterator } from './dir-helpers.js';
 import { MessageReceiver, MessageTransmitter, MessageTransceiver, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen, } from './quickjs/qjs-net/js/rpc.js';
 import { PromiseWorker } from './promise-worker.js';
 
-const DEBUG = false;
+const DEBUG = process.env.DEBUG ?? false;
 const isin = (other, p) => path.slice(other, 0, path.length(p)) == p;
 
 extendArray();
@@ -740,6 +740,20 @@ function main(...args) {
       ...url,
 
       ...callbacks,
+      onCheckAccessRights(req, url) {
+    
+if(/\.js$/i.test(url)) {
+  url=url.replace(/^\/*/g, '');
+  (globalThis.urls??=[]).pushUnique(url);
+  console.log(url);
+  return 0;
+}
+
+        const {headers}=req;
+
+        console.log('\x1b[38;5;33monCheckAccessRights\x1b[0m',console.config({compact:true }), {url,headers: [...headers.entries()].reduce((s,[k,v]) => (s ? s+'\n' : s)+ `${k}: ${v}`, '') });
+        return 0;
+      },
       onConnect(ws, req) {
         const { peer, address, port, protocol, tls } = ws;
 

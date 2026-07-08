@@ -19,7 +19,7 @@ import { eventIterator, iterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
 import { h, render, useState, Fragment, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 import { ColorMap } from './lib/draw/colorMap.js';
-import { BoardRenderer, EagleSVGRenderer, LibraryRenderer, Renderer, SchematicRenderer } from './lib/eagle.js';
+import { BoardRenderer, LibraryRenderer, Renderer, SchematicRenderer } from './lib/eagle.js';
 import { DereferenceError, EagleParser, EagleFactory, EagleDocument, EagleElement, EagleProject, Node as EagleNode,Serializer } from './lib/eagle-dom.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -50,7 +50,7 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 import objectInspect from './lib/objectInspect.js';
 import * as path from './lib/path.js';
 import renderToString from './lib/preact-render-to-string.js';
-import * as React from './lib/preact.mjs';
+import * as React from './lib/preact.js';
 import { useResult } from './lib/repeater/react-hooks.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import * as Timers from './lib/repeater/timers.js';
@@ -1556,7 +1556,7 @@ const AppMain = (window.onload = async () => {
   //prettier-ignore
 
   const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList,  ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, tlite, debounce, tXml, deep, Alea, path,  Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff,  XmlObject, XmlAttr, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, React, Fragment,  FileList, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
- CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleFactory,EagleParser,EagleDocument, EagleNode, EagleElement, EagleProject, Serializer, EagleSVGRenderer, Renderer, SchematicRenderer, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
+ CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleFactory,EagleParser,EagleDocument, EagleNode, EagleElement, EagleProject, Serializer, Renderer, SchematicRenderer, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
  classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
   Object.assign(globalThis, {
