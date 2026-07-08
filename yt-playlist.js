@@ -56,11 +56,12 @@ async function GetYouTubeJSON(url) {
   console.log('GetYouTubeJSON', { child });
 
   let output = '';
-  console.log('stdout', stdout);
-
+  
   for(;;) {
     await waitRead(stdout);
     const line = gets(stdout);
+
+  console.log('line', abbreviate(line));
 
     output += line;
     child.wait(WNOHANG);
