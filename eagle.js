@@ -1,19 +1,31 @@
 import { declare, properties, define } from './lib/misc.js';
-import { Prototypes, Factory, Parser, HTMLCollection, NamedMap, NamedNodeMap, Element, Document, Node, Collection } from './lib/dom.js';
+import { Prototypes, Factory, Parser, HTMLCollection, NamedMap, NamedNodeMap, Element, Document, Node, Collection, } from './lib/dom.js';
 
 function FindChild(element, name) {
-  return element.children[Node.raw(element).children.findIndex(e => e.tagName == name)];
+  return element.children[
+    Node.raw(element).children.findIndex(e => e.tagName == name)
+  ];
 }
 
 function ChildrenByTag(element, tag) {
-  return new HTMLCollection(Node.raw(element).children, element, e => e.tagName == tag);
+  return new HTMLCollection(
+    Node.raw(element).children,
+    element,
+    e => e.tagName == tag,
+  );
 }
 
 function NamedChildByAttr(element, tag, attr = 'name') {
   return new NamedNodeMap(
     {
-      get: name => [...element.children].find(e => e.tagName == tag && e.getAttribute(attr) == name),
-      keys: () => [...element.children].filter(e => e.tagName == tag).map(e => e.getAttribute(attr)),
+      get: name =>
+        [...element.children].find(
+          e => e.tagName == tag && e.getAttribute(attr) == name,
+        ),
+      keys: () =>
+        [...element.children]
+          .filter(e => e.tagName == tag)
+          .map(e => e.getAttribute(attr)),
     },
     element,
   );
@@ -74,7 +86,9 @@ export class EagleElement extends Element {
 
     for(let e of Element.hier(this)
       .slice(0, -1)
-      .filter(e => e.hasAttribute && (e.hasAttribute('name') || e.tagName == 'sheet'))) {
+      .filter(
+        e => e.hasAttribute && (e.hasAttribute('name') || e.tagName == 'sheet'),
+      )) {
       const { tagName } = e;
 
       if(!Reflect.has(this, tagName))
@@ -116,7 +130,14 @@ export class EagleElement extends Element {
         return NamedMap(
           this,
           n => this.querySelector(`layer[name=${n}]`),
-          () => [...this.children].reduce((acc, e) => ((acc[+e.getAttribute('number')] = e.getAttribute('name')), acc), []),
+          () =>
+            [...this.children].reduce(
+              (acc, e) => (
+                (acc[+e.getAttribute('number')] = e.getAttribute('name')),
+                acc
+              ),
+              [],
+            ),
         );
       }
     },

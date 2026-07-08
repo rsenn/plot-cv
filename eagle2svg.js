@@ -30,7 +30,13 @@ function render(doc, filename) {
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: 2, compact: false, customInspect: true },
+    inspectOptions: {
+      maxArrayLength: 100,
+      colors: true,
+      depth: 2,
+      compact: false,
+      customInspect: true,
+    },
   });
 
   const params = getOpt(

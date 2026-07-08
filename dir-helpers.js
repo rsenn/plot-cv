@@ -22,7 +22,11 @@ export function* DirIterator(...args) {
   }
 }
 
-export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => true, depth = 0) {
+export function* RecursiveDirIterator(
+  dir,
+  pred = (entry, file, dir, depth) => true,
+  depth = 0,
+) {
   let re;
   if(typeof pred != 'function') {
     if(!pred) pred = '.*';
@@ -153,7 +157,11 @@ export class Path {
   }
 
   [Symbol.inspect](depth, opts = {}) {
-    return `\x1b[1;31m${this[Symbol.toStringTag]}\x1b[0;32m ` + this.#string + `\x1b[0m`;
+    return (
+      `\x1b[1;31m${this[Symbol.toStringTag]}\x1b[0;32m ` +
+      this.#string +
+      `\x1b[0m`
+    );
   }
 
   static testPaths = [

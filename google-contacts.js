@@ -110,13 +110,16 @@ function doOAuthFlow(http, creds) {
     grant_type: 'authorization_code',
   });
 
-  if(r.status !== 200) die(`token exchange returned HTTP ${r.status}: ${r.body}`);
+  if(r.status !== 200)
+    die(`token exchange returned HTTP ${r.status}: ${r.body}`);
 
   const tokens = JSON.parse(r.body);
-  if(!tokens.access_token) die('token exchange response missing access_token: ' + r.body);
+  if(!tokens.access_token)
+    die('token exchange response missing access_token: ' + r.body);
 
   // Store absolute expiry so we can refresh proactively
-  tokens.expires_at = Math.floor(Date.now() / 1000) + (tokens.expires_in || 3600) - 60;
+  tokens.expires_at =
+    Math.floor(Date.now() / 1000) + (tokens.expires_in || 3600) - 60;
   writeJson(TOKENS_PATH, tokens);
   console.log('Tokens cached to', TOKENS_PATH);
   return tokens;
@@ -138,12 +141,14 @@ function refreshTokens(http, creds, refreshToken) {
 }
 
 function getAccessToken(http, creds, forceReauth) {
-  if(forceReauth || !fs.existsSync(TOKENS_PATH)) return doOAuthFlow(http, creds).access_token;
+  if(forceReauth || !fs.existsSync(TOKENS_PATH))
+    return doOAuthFlow(http, creds).access_token;
 
   const tokens = readJson(TOKENS_PATH);
   const now = Math.floor(Date.now() / 1000);
 
-  if(tokens.access_token && tokens.expires_at && now < tokens.expires_at) return tokens.access_token;
+  if(tokens.access_token && tokens.expires_at && now < tokens.expires_at)
+    return tokens.access_token;
 
   if(tokens.refresh_token) {
     console.log('Refreshing access token...');
@@ -184,11 +189,20 @@ function waitForAuthCode() {
             respond(
               wsi,
               200,
-              '<html><body style="font-family:sans-serif;padding:2em">' + '<h2>Authorization received.</h2>' + '<p>You can close this tab and return to the terminal.</p>' + '</body></html>',
+              '<html><body style="font-family:sans-serif;padding:2em">' +
+                '<h2>Authorization received.</h2>' +
+                '<p>You can close this tab and return to the terminal.</p>' +
+                '</body></html>',
             );
           } else if(params.error) {
             receivedError = params.error;
-            respond(wsi, 400, '<html><body>Authorization failed: ' + params.error + '</body></html>');
+            respond(
+              wsi,
+              400,
+              '<html><body>Authorization failed: ' +
+                params.error +
+                '</body></html>',
+            );
           } else {
             respond(wsi, 404, 'not found');
           }
@@ -222,36 +236,56 @@ function parseQuery(uri) {
 }
 
 function respond(wsi, status, body) {
-  const headers = `HTTP/1.1 ${status} ${status === 200 ? 'OK' : 'Error'}\r\n` + `Content-Type: text/html; charset=utf-8\r\n` + `Content-Length: ${body.length}\r\n` + `Connection: close\r\n\r\n`;
+  const headers =
+    `HTTP/1.1 ${status} ${status === 200 ? 'OK' : 'Error'}\r\n` +
+    `Content-Type: text/html; charset=utf-8\r\n` +
+    `Content-Length: ${body.length}\r\n` +
+    `Connection: close\r\n\r\n`;
   if(typeof wsi.writeRaw === 'function') wsi.writeRaw(headers + body);
   else if(typeof wsi.write === 'function') wsi.write(headers + body);
-  else if(typeof wsi.respond === 'function') wsi.respond(status, body, 'text/html');
+  else if(typeof wsi.respond === 'function')
+    wsi.respond(status, body, 'text/html');
 }
 
 //----------------------------------------------------------------------------
 // People API — using HttpClient for HTTPS
 //----------------------------------------------------------------------------
 function fetchAllContacts(http, accessToken) {
-  const fields = ['names', 'phoneNumbers', 'emailAddresses', 'organizations', 'metadata', 'biographies'].join(',');
+  const fields = [
+    'names',
+    'phoneNumbers',
+    'emailAddresses',
+    'organizations',
+    'metadata',
+    'biographies',
+  ].join(',');
 
   const out = [];
   let pageToken = null;
   let page = 0;
 
   do {
-    const params = [`personFields=${fields}`, 'pageSize=1000', 'sortOrder=LAST_MODIFIED_DESCENDING'];
+    const params = [
+      `personFields=${fields}`,
+      'pageSize=1000',
+      'sortOrder=LAST_MODIFIED_DESCENDING',
+    ];
     if(pageToken) params.push('pageToken=' + encodeURIComponent(pageToken));
 
-    const url = 'https://people.googleapis.com/v1/people/me/connections?' + params.join('&');
+    const url =
+      'https://people.googleapis.com/v1/people/me/connections?' +
+      params.join('&');
     const r = http.get(url, { Authorization: `Bearer ${accessToken}` });
 
-    if(r.status !== 200) die(`People API returned HTTP ${r.status}: ${r.body}`);
+    if(r.status !== 200)
+      die(`People API returned HTTP ${r.status}: ${r.body}`);
 
     const data = JSON.parse(r.body);
     if(data.connections) out.push(...data.connections);
 
     page++;
-    if(data.totalItems && page === 1) console.log(`(server reports ${data.totalItems} total contacts)`);
+    if(data.totalItems && page === 1)
+      console.log(`(server reports ${data.totalItems} total contacts)`);
 
     pageToken = data.nextPageToken || null;
   } while(pageToken);
@@ -267,11 +301,13 @@ function summarize(c) {
   const phones = (c.phoneNumbers || []).map(p => p.value).join(', ');
   const emails = (c.emailAddresses || []).map(e => e.value).join(', ');
   const org = c.organizations?.[0]?.name || '';
-  const note = c.biographies?.[0]?.value?.replace(/\s+/g, ' ').slice(0, 80) || '';
+  const note =
+    c.biographies?.[0]?.value?.replace(/\s+/g, ' ').slice(0, 80) || '';
 
   let earliest = null;
   for(const s of c.metadata?.sources || []) {
-    if(s.updateTime && (!earliest || s.updateTime < earliest)) earliest = s.updateTime;
+    if(s.updateTime && (!earliest || s.updateTime < earliest))
+      earliest = s.updateTime;
   }
   return { name, phones, emails, org, note, updateTime: earliest };
 }
@@ -280,7 +316,12 @@ function summarize(c) {
 // Main
 //----------------------------------------------------------------------------
 function parseArgs(argv) {
-  const args = { backend: 'curl', wantJson: false, forceReauth: false, since: null };
+  const args = {
+    backend: 'curl',
+    wantJson: false,
+    forceReauth: false,
+    since: null,
+  };
   for(let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if(a === '--json') args.wantJson = true;
@@ -298,7 +339,9 @@ function main() {
   const args = parseArgs(scriptArgs.slice(1));
 
   if(args.help) {
-    console.log('Usage: qjs google-contacts.js [--backend curl|lws] [--since YYYY-MM] [--json] [--reauth]');
+    console.log(
+      'Usage: qjs google-contacts.js [--backend curl|lws] [--since YYYY-MM] [--json] [--reauth]',
+    );
     return;
   }
 
@@ -314,9 +357,14 @@ function main() {
   if(creds.installed) creds = creds.installed;
   else if(creds.web) creds = creds.web;
 
-  if(!creds.client_id || !creds.client_secret) die(`credentials file ${CREDS_PATH} is missing client_id or client_secret`);
+  if(!creds.client_id || !creds.client_secret)
+    die(`credentials file ${CREDS_PATH} is missing client_id or client_secret`);
 
-  const http = new HttpClient({ backend: args.backend, verify: true, timeout: 30000 });
+  const http = new HttpClient({
+    backend: args.backend,
+    verify: true,
+    timeout: 30000,
+  });
 
   console.log(`(HTTPS backend: ${args.backend})`);
 
@@ -328,11 +376,17 @@ function main() {
     console.log(`Fetched ${raw.length} contacts.`);
 
     let summaries = raw.map(summarize);
-    summaries.sort((a, b) => (b.updateTime || '').localeCompare(a.updateTime || ''));
+    summaries.sort((a, b) =>
+      (b.updateTime || '').localeCompare(a.updateTime || ''),
+    );
 
     if(args.since) {
-      summaries = summaries.filter(s => s.updateTime && s.updateTime >= args.since);
-      console.log(`Filtered to ${summaries.length} contacts since ${args.since}.`);
+      summaries = summaries.filter(
+        s => s.updateTime && s.updateTime >= args.since,
+      );
+      console.log(
+        `Filtered to ${summaries.length} contacts since ${args.since}.`,
+      );
     }
 
     if(args.wantJson) {
@@ -356,5 +410,6 @@ function main() {
 try {
   main();
 } catch(e) {
-  if(String(e.message).indexOf('__exit__') < 0) console.log('Fatal:', e.message);
+  if(String(e.message).indexOf('__exit__') < 0)
+    console.log('Fatal:', e.message);
 }

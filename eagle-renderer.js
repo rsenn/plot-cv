@@ -15,7 +15,7 @@ import { h } from './lib/preact.js';
 import { Rect, TransformationList } from './lib/geom.js';
 import { RGBA } from './lib/color/rgba.js';
 import { Palette } from './lib/eagle/common.js';
-import { Background, Element, ElementToComponent, Grid, Instance, Pattern, Package, SchematicSymbol, Signals, SVG, Text } from './lib/eagle/components.js';
+import { Background, Element, ElementToComponent, Grid, Instance, Pattern, Package, SchematicSymbol, Signals, SVG, Text, } from './lib/eagle/components.js';
 
 const num = (el, name, dflt = 0) => {
   const v = el.getAttribute(name);
@@ -26,7 +26,8 @@ const str = (el, name, dflt = '') => el.getAttribute(name) ?? dflt;
 
 const findChild = (el, tag) => [...el.children].find(c => c.tagName === tag);
 
-const filterChildren = (el, tag) => [...el.children].filter(c => c.tagName === tag);
+const filterChildren = (el, tag) =>
+  [...el.children].filter(c => c.tagName === tag);
 
 function* descendants(el) {
   for(const c of el.children) {
@@ -39,7 +40,27 @@ function* descendants(el) {
  * Adapter: DOM element -> the API surface used by lib/eagle/components
  * ------------------------------------------------------------------ */
 
-const NUMERIC_ATTRS = new Set(['x', 'y', 'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'width', 'size', 'drill', 'diameter', 'dx', 'dy', 'radius', 'ratio', 'textsize', 'columns', 'rows']);
+const NUMERIC_ATTRS = new Set([
+  'x',
+  'y',
+  'x1',
+  'y1',
+  'x2',
+  'y2',
+  'x3',
+  'y3',
+  'width',
+  'size',
+  'drill',
+  'diameter',
+  'dx',
+  'dy',
+  'radius',
+  'ratio',
+  'textsize',
+  'columns',
+  'rows',
+]);
 
 /* async-iterable that never yields; keeps the components' useValue() harmless */
 const silentRepeater = {
@@ -51,7 +72,11 @@ const silentRepeater = {
 class EagleAdapter {
   constructor(doc, palette) {
     this.doc = doc;
-    this.palette = palette ?? Palette[doc.type == 'board' ? 'board' : 'schematic']((r, g, b) => new RGBA(r, g, b));
+    this.palette =
+      palette ??
+      Palette[doc.type == 'board' ? 'board' : 'schematic'](
+        (r, g, b) => new RGBA(r, g, b),
+      );
 
     const eagle = doc.querySelector('eagle');
     this.drawing = findChild(eagle, 'drawing');
@@ -63,7 +88,13 @@ class EagleAdapter {
     this.docFacade = {
       type: doc.type,
       getLayer: ref => this.getLayer(ref),
-      layers: new Proxy({}, { get: (_, prop) => (typeof prop == 'string' ? this.getLayer(prop) : undefined) }),
+      layers: new Proxy(
+        {},
+        {
+          get: (_, prop) =>
+            typeof prop == 'string' ? this.getLayer(prop) : undefined,
+        },
+      ),
     };
   }
 
@@ -74,12 +105,15 @@ class EagleAdapter {
     let layer = this.layerCache.get(key);
     if(layer) return layer;
 
-    const el = [...this.layersEl.children].find(l => l.getAttribute('number') == key || l.getAttribute('name') == key);
+    const el = [...this.layersEl.children].find(
+      l => l.getAttribute('number') == key || l.getAttribute('name') == key,
+    );
 
     layer = {
       number: el ? +el.getAttribute('number') : +key || 0,
       name: el ? el.getAttribute('name') : key,
-      color: (el && this.palette[+el.getAttribute('color')]) ?? this.palette[16],
+      color:
+        (el && this.palette[+el.getAttribute('color')]) ?? this.palette[16],
       handlers: { visible: (el && el.getAttribute('visible')) ?? 'yes' },
     };
 
@@ -91,7 +125,8 @@ class EagleAdapter {
     for(const section of ['board', 'schematic', 'library']) {
       const s = findChild(this.drawing, section);
       const libs = s && findChild(s, 'libraries');
-      const lib = libs && [...libs.children].find(l => l.getAttribute('name') == name);
+      const lib =
+        libs && [...libs.children].find(l => l.getAttribute('name') == name);
       if(lib) return lib;
     }
   }
@@ -110,7 +145,8 @@ class EagleAdapter {
 
   attributesOf(el) {
     const obj = {};
-    for(const name of el.getAttributeNames()) obj[name] = el.getAttribute(name);
+    for(const name of el.getAttributeNames())
+      obj[name] = el.getAttribute(name);
     return obj;
   }
 
@@ -173,21 +209,27 @@ class EagleAdapter {
             }
             break;
           case 'diameter':
-            if(target.tagName == 'via' && !target.hasAttribute('diameter')) return 'auto';
+            if(target.tagName == 'via' && !target.hasAttribute('diameter'))
+              return 'auto';
             break;
           case 'part':
           case 'gate':
-            if(target.tagName == 'instance' || target.tagName == 'pinref') return adapter.wrap(target[prop]);
+            if(target.tagName == 'instance' || target.tagName == 'pinref')
+              return adapter.wrap(target[prop]);
             break;
           case 'symbol':
-            if(target.tagName == 'instance') return adapter.wrap(target.gate?.symbol);
+            if(target.tagName == 'instance')
+              return adapter.wrap(target.gate?.symbol);
             if(target.tagName == 'gate') return adapter.wrap(target.symbol);
             break;
           case 'deviceset':
             if(target.tagName == 'part') return adapter.wrap(target.deviceset);
             break;
           case 'library':
-            if(target.tagName == 'element' || target.tagName == 'part') return adapter.wrap(adapter.findLibrary(target.getAttribute('library')));
+            if(target.tagName == 'element' || target.tagName == 'part')
+              return adapter.wrap(
+                adapter.findLibrary(target.getAttribute('library')),
+              );
             break;
         }
 
@@ -236,7 +278,12 @@ class BBox {
     this.y2 += d;
   }
   get valid() {
-    return isFinite(this.x1) && isFinite(this.y1) && isFinite(this.x2) && isFinite(this.y2);
+    return (
+      isFinite(this.x1) &&
+      isFinite(this.y1) &&
+      isFinite(this.x2) &&
+      isFinite(this.y2)
+    );
   }
   get width() {
     return this.x2 - this.x1;
@@ -284,7 +331,8 @@ function bboxOfPrimitive(el, into) {
       break;
     }
     case 'polygon':
-      for(const v of filterChildren(el, 'vertex')) into.add(num(v, 'x'), -num(v, 'y'));
+      for(const v of filterChildren(el, 'vertex'))
+        into.add(num(v, 'x'), -num(v, 'y'));
       break;
   }
 }
@@ -363,7 +411,10 @@ export class EagleSVGRenderer {
     const comp = ElementToComponent(el);
     if(!comp) return null;
 
-    return h(comp, { data: this.adapter.wrap(el), opts: { transformation: this.transform, ...opts } });
+    return h(comp, {
+      data: this.adapter.wrap(el),
+      opts: { transformation: this.transform, ...opts },
+    });
   }
 
   renderLabel(el, { labelText = '' } = {}) {
@@ -385,7 +436,12 @@ export class EagleSVGRenderer {
   renderCollection(collection, opts = {}) {
     const items = [...collection];
 
-    return [...items.filter(el => el.tagName != 'text'), ...items.filter(el => el.tagName == 'text')].map(el => this.renderItem(el, opts)).filter(Boolean);
+    return [
+      ...items.filter(el => el.tagName != 'text'),
+      ...items.filter(el => el.tagName == 'text'),
+    ]
+      .map(el => this.renderItem(el, opts))
+      .filter(Boolean);
   }
 
   /* bounds: BBox in final SVG coordinates (y down) */
@@ -400,11 +456,20 @@ export class EagleSVGRenderer {
         viewBox: `${x1} ${y1} ${width} ${height}`,
         width: `${width}mm`,
         height: `${height}mm`,
-        defs: grid ? h(Pattern, { data: this.adapter.wrap(grid), id: 'grid' }) : [],
+        defs: grid
+          ? h(Pattern, { data: this.adapter.wrap(grid), id: 'grid' })
+          : [],
       },
       [
         h(Background, { rect, attrs: { color: '#ffffff', visible: true } }),
-        grid ? h(Grid, { data: this.adapter.wrap(grid), id: 'grid', rect, attrs: { color: '#0000aa', visible: true } }) : null,
+        grid
+          ? h(Grid, {
+              data: this.adapter.wrap(grid),
+              id: 'grid',
+              rect,
+              attrs: { color: '#0000aa', visible: true },
+            })
+          : null,
         h(
           'g',
           {
@@ -426,21 +491,31 @@ export class SchematicRenderer extends EagleSVGRenderer {
   render(sheetNo = 0) {
     const { adapter, transform } = this;
     const schematic = findChild(adapter.drawing, 'schematic');
-    const sheet = filterChildren(findChild(schematic, 'sheets'), 'sheet')[sheetNo];
+    const sheet = filterChildren(findChild(schematic, 'sheets'), 'sheet')[
+      sheetNo
+    ];
     const plain = sheet && findChild(sheet, 'plain');
     const nets = sheet && findChild(sheet, 'nets');
     const instances = sheet && findChild(sheet, 'instances');
 
     const bounds = new BBox();
     if(plain) bboxOfContainer(plain, bounds);
-    if(instances) for(const inst of filterChildren(instances, 'instance')) bounds.add(num(inst, 'x'), -num(inst, 'y'));
-    if(nets) for(const net of filterChildren(nets, 'net')) for (const seg of filterChildren(net, 'segment')) bboxOfContainer(seg, bounds);
+    if(instances)
+      for(const inst of filterChildren(instances, 'instance'))
+        bounds.add(num(inst, 'x'), -num(inst, 'y'));
+    if(nets)
+      for(const net of filterChildren(nets, 'net'))
+        for(const seg of filterChildren(net, 'segment'))
+          bboxOfContainer(seg, bounds);
     if(!bounds.valid) bounds.add(0, 0);
     bounds.outset(2.54);
 
     const children = [];
 
-    if(plain) children.push(h('g', { class: 'plain' }, this.renderCollection(plain.children)));
+    if(plain)
+      children.push(
+        h('g', { class: 'plain' }, this.renderCollection(plain.children)),
+      );
 
     if(nets)
       children.push(
@@ -452,7 +527,11 @@ export class SchematicRenderer extends EagleSVGRenderer {
               'g',
               { class: 'net', 'data-name': net.getAttribute('name') },
               filterChildren(net, 'segment')
-                .map(seg => this.renderCollection(seg.children, { labelText: net.getAttribute('name') }))
+                .map(seg =>
+                  this.renderCollection(seg.children, {
+                    labelText: net.getAttribute('name'),
+                  }),
+                )
                 .flat(),
             ),
           ),
@@ -464,7 +543,12 @@ export class SchematicRenderer extends EagleSVGRenderer {
         h(
           'g',
           { class: 'instances' },
-          filterChildren(instances, 'instance').map(inst => h(Instance, { data: adapter.wrap(inst), opts: { transformation: transform } })),
+          filterChildren(instances, 'instance').map(inst =>
+            h(Instance, {
+              data: adapter.wrap(inst),
+              opts: { transformation: transform },
+            }),
+          ),
         ),
       );
 
@@ -484,24 +568,42 @@ export class BoardRenderer extends EagleSVGRenderer {
     if(!bounds) {
       bounds = new BBox();
       if(plain) bboxOfContainer(plain, bounds);
-      if(elements) for(const e of filterChildren(elements, 'element')) bounds.add(num(e, 'x'), -num(e, 'y'));
-      if(signals) for(const sig of filterChildren(signals, 'signal')) bboxOfContainer(sig, bounds);
+      if(elements)
+        for(const e of filterChildren(elements, 'element'))
+          bounds.add(num(e, 'x'), -num(e, 'y'));
+      if(signals)
+        for(const sig of filterChildren(signals, 'signal'))
+          bboxOfContainer(sig, bounds);
       if(!bounds.valid) bounds.add(0, 0);
     }
     bounds.outset(1.27);
 
     const children = [];
 
-    if(plain) children.push(h('g', { class: 'plain' }, this.renderCollection(plain.children)));
+    if(plain)
+      children.push(
+        h('g', { class: 'plain' }, this.renderCollection(plain.children)),
+      );
 
-    if(signals) children.push(h(Signals, { data: adapter.wrap(signals), opts: { transformation: transform } }));
+    if(signals)
+      children.push(
+        h(Signals, {
+          data: adapter.wrap(signals),
+          opts: { transformation: transform },
+        }),
+      );
 
     if(elements)
       children.push(
         h(
           'g',
           { class: 'elements' },
-          filterChildren(elements, 'element').map(el => h(Element, { data: adapter.wrap(el), opts: { transformation: transform } })),
+          filterChildren(elements, 'element').map(el =>
+            h(Element, {
+              data: adapter.wrap(el),
+              opts: { transformation: transform },
+            }),
+          ),
         ),
       );
 
@@ -536,7 +638,21 @@ export class LibraryRenderer extends EagleSVGRenderer {
 
         const dx = x - bb.x1;
 
-        children.push(h('g', { class: `${tag} ${item.getAttribute('name')}`, transform: `translate(${dx},0)` }, [h(component, { data: itemAdapter.wrap(item), opts: { transformation: transform } })]));
+        children.push(
+          h(
+            'g',
+            {
+              class: `${tag} ${item.getAttribute('name')}`,
+              transform: `translate(${dx},0)`,
+            },
+            [
+              h(component, {
+                data: itemAdapter.wrap(item),
+                opts: { transformation: transform },
+              }),
+            ],
+          ),
+        );
 
         bounds.add(bb.x1 + dx, bb.y1);
         bounds.add(bb.x2 + dx, bb.y2);

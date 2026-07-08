@@ -62,7 +62,8 @@ function parseUrl(u) {
 function makeResponse(status, headers, body) {
   // Normalize header names to lowercase for predictable access.
   const norm = {};
-  for(const k of Object.keys(headers || {})) norm[k.toLowerCase()] = headers[k];
+  for(const k of Object.keys(headers || {}))
+    norm[k.toLowerCase()] = headers[k];
   return { status, headers: norm, body };
 }
 
@@ -84,7 +85,8 @@ export class HttpClient {
       ['key', this.key],
       ['ca', this.ca],
     ]) {
-      if(p && !fs.existsSync(p)) throw new Error(`${name} PEM file not found: ${p}`);
+      if(p && !fs.existsSync(p))
+        throw new Error(`${name} PEM file not found: ${p}`);
     }
 
     if(this.backend === 'lws') this._initLws();
@@ -100,7 +102,8 @@ export class HttpClient {
 
   // Close any backend-held resources (LWS context, etc.)
   close() {
-    if(this._ctx && typeof this._ctx.destroy === 'function') this._ctx.destroy();
+    if(this._ctx && typeof this._ctx.destroy === 'function')
+      this._ctx.destroy();
     this._ctx = null;
   }
 
@@ -135,7 +138,8 @@ export class HttpClient {
     if(this.cert) args.push('--cert', shellQuote(this.cert));
     if(this.key) args.push('--key', shellQuote(this.key));
 
-    for(const [name, value] of Object.entries(req.headers || {})) args.push('-H', shellQuote(`${name}: ${value}`));
+    for(const [name, value] of Object.entries(req.headers || {}))
+      args.push('-H', shellQuote(`${name}: ${value}`));
 
     if(bodyFile) args.push('--data-binary', shellQuote('@' + bodyFile));
 
@@ -166,7 +170,8 @@ export class HttpClient {
       } catch(_) {}
     }
 
-    if(runError && status === 0) throw new Error('curl failed: ' + runError.message);
+    if(runError && status === 0)
+      throw new Error('curl failed: ' + runError.message);
 
     return makeResponse(status, respHeaders, stdout);
   }
@@ -223,10 +228,15 @@ export class HttpClient {
     let done = false;
     let errorMsg = null;
     let writeOffset = 0;
-    const bodyBytes = req.body ? (typeof req.body === 'string' ? new TextEncoder().encode(req.body) : new Uint8Array(req.body)) : null;
+    const bodyBytes = req.body
+      ? typeof req.body === 'string'
+        ? new TextEncoder().encode(req.body)
+        : new Uint8Array(req.body)
+      : null;
 
     const headersToSend = Object.assign({}, req.headers || {});
-    if(bodyBytes && !findHeaderCI(headersToSend, 'content-length')) headersToSend['Content-Length'] = String(bodyBytes.length);
+    if(bodyBytes && !findHeaderCI(headersToSend, 'content-length'))
+      headersToSend['Content-Length'] = String(bodyBytes.length);
 
     const connectOpts = {
       address: u.host,
@@ -250,7 +260,8 @@ export class HttpClient {
             // accept them up front via connectOpts.headers instead. We
             // populate both for safety.
             if(wsi && typeof wsi.appendHeader === 'function') {
-              for(const [k, v] of Object.entries(headersToSend)) wsi.appendHeader(k, v);
+              for(const [k, v] of Object.entries(headersToSend))
+                wsi.appendHeader(k, v);
             }
             return 0;
 
@@ -261,11 +272,18 @@ export class HttpClient {
               status = data.status || data.statusCode || 0;
               respHeaders = data.headers || {};
             } else if(wsi) {
-              if(typeof wsi.responseStatus === 'function') status = wsi.responseStatus();
-              if(typeof wsi.responseHeaders === 'function') respHeaders = wsi.responseHeaders();
+              if(typeof wsi.responseStatus === 'function')
+                status = wsi.responseStatus();
+              if(typeof wsi.responseHeaders === 'function')
+                respHeaders = wsi.responseHeaders();
             }
             // If we have a body to send, ask to be made writeable.
-            if(bodyBytes && wsi && typeof wsi.callbackOnWritable === 'function') wsi.callbackOnWritable();
+            if(
+              bodyBytes &&
+              wsi &&
+              typeof wsi.callbackOnWritable === 'function'
+            )
+              wsi.callbackOnWritable();
             return 0;
 
           case CLIENT_HTTP_WRITEABLE:
@@ -273,7 +291,11 @@ export class HttpClient {
               const chunk = bodyBytes.subarray(writeOffset);
               const n = wsi.write(chunk);
               writeOffset += typeof n === 'number' ? n : chunk.length;
-              if(writeOffset < bodyBytes.length && typeof wsi.callbackOnWritable === 'function') wsi.callbackOnWritable();
+              if(
+                writeOffset < bodyBytes.length &&
+                typeof wsi.callbackOnWritable === 'function'
+              )
+                wsi.callbackOnWritable();
             }
             return 0;
 
@@ -298,8 +320,10 @@ export class HttpClient {
     // Initiate the client connection. The exact method name depends on
     // the qjs-lws build — try the common ones in order.
     let wsi;
-    if(typeof this._ctx.connect === 'function') wsi = this._ctx.connect(connectOpts);
-    else if(typeof this._ctx.clientConnect === 'function') wsi = this._ctx.clientConnect(connectOpts);
+    if(typeof this._ctx.connect === 'function')
+      wsi = this._ctx.connect(connectOpts);
+    else if(typeof this._ctx.clientConnect === 'function')
+      wsi = this._ctx.clientConnect(connectOpts);
     else throw new Error('qjs-lws: no client-connect method on LWSContext');
 
     // Pump the event loop until the request finishes or times out.
@@ -317,7 +341,8 @@ export class HttpClient {
     }
 
     if(errorMsg) throw new Error('HTTPS request failed: ' + errorMsg);
-    if(!done) throw new Error('HTTPS request timed out after ' + this.timeout + 'ms');
+    if(!done)
+      throw new Error('HTTPS request timed out after ' + this.timeout + 'ms');
 
     const bodyStr = chunksToString(chunks);
     return makeResponse(status, respHeaders, bodyStr);
@@ -360,7 +385,8 @@ function shellQuote(s) {
 
 function findHeaderCI(headers, name) {
   const target = name.toLowerCase();
-  for(const k of Object.keys(headers)) if(k.toLowerCase() === target) return k;
+  for(const k of Object.keys(headers))
+    if(k.toLowerCase() === target) return k;
   return null;
 }
 
@@ -392,14 +418,25 @@ HttpClient.prototype.post = function(url, body, headers) {
 };
 
 HttpClient.prototype.postJson = function(url, obj, headers) {
-  const h = Object.assign({ 'Content-Type': 'application/json' }, headers || {});
-  return this.request({ method: 'POST', url, headers: h, body: JSON.stringify(obj) });
+  const h = Object.assign(
+    { 'Content-Type': 'application/json' },
+    headers || {},
+  );
+  return this.request({
+    method: 'POST',
+    url,
+    headers: h,
+    body: JSON.stringify(obj),
+  });
 };
 
 HttpClient.prototype.postForm = function(url, fields, headers) {
   const body = Object.keys(fields)
     .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(fields[k]))
     .join('&');
-  const h = Object.assign({ 'Content-Type': 'application/x-www-form-urlencoded' }, headers || {});
+  const h = Object.assign(
+    { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers || {},
+  );
   return this.request({ method: 'POST', url, headers: h, body });
 };

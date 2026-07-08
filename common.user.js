@@ -40,7 +40,12 @@
         y += e.offsetTop;
         x += e.offsetLeft;
       }
-      return y < window.pageYOffset + window.innerHeight && x < window.pageXOffset + window.innerWidth && y + h > window.pageYOffset && x + w > window.pageXOffset;
+      return (
+        y < window.pageYOffset + window.innerHeight &&
+        x < window.pageXOffset + window.innerWidth &&
+        y + h > window.pageYOffset &&
+        x + w > window.pageXOffset
+      );
     },
     quote: (s, rpl) =>
       s.replaceAll(
@@ -56,7 +61,9 @@
                 }[match] ?? match)),
       ),
     extractTable(t, tfn = e => quote(e.innerText, () => ' ').trimEnd()) {
-      const rows = [...t.querySelectorAll('tr')].map(e => [...e.children].map(tfn));
+      const rows = [...t.querySelectorAll('tr')].map(e =>
+        [...e.children].map(tfn),
+      );
       const max = Array.from({ length: rows[0].length }, e => 0);
 
       for(let row of rows) {
@@ -73,7 +80,10 @@
         cols: max.length,
         at(row, col) {
           if(col == this.cols - 1) return this[row][col];
-          return this[row][col].padEnd(max[col] + (col == this.cols - 1 ? 0 : 1), ' ');
+          return this[row][col].padEnd(
+            max[col] + (col == this.cols - 1 ? 0 : 1),
+            ' ',
+          );
         },
         row(row) {
           const r = [];
@@ -88,7 +98,8 @@
         },
         toString() {
           let s = '';
-          for(let i = 0; i < this.length; i++) s += this.row(i).toString() + '\n';
+          for(let i = 0; i < this.length; i++)
+            s += this.row(i).toString() + '\n';
           return s;
         },
         toJSON(...args) {
@@ -101,7 +112,9 @@
   function define(obj, ...args) {
     for(const props of args) {
       const desc = Object.getOwnPropertyDescriptors(props);
-      const keys = Object.getOwnPropertyNames(props).concat(Object.getOwnPropertySymbols(props));
+      const keys = Object.getOwnPropertyNames(props).concat(
+        Object.getOwnPropertySymbols(props),
+      );
       for(const prop of keys) {
         try {
           delete obj[prop];
@@ -116,7 +129,12 @@
 
   function nonenumerable(props, obj = Object.create(null)) {
     const desc = Object.getOwnPropertyDescriptors(props);
-    return Object.defineProperties(obj, Object.fromEntries(Object.entries(desc).map(([k, v]) => (delete v.enumerable, [k, v]))));
+    return Object.defineProperties(
+      obj,
+      Object.fromEntries(
+        Object.entries(desc).map(([k, v]) => (delete v.enumerable, [k, v])),
+      ),
+    );
   }
   function declare(obj, ...props) {
     return define(obj, ...props.map(o => nonenumerable(o)));

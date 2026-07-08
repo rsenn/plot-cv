@@ -1,6 +1,6 @@
-import { AddLayer, BoardToGerber, ClearCache, FetchURL, GcodeToPolylines, GerberToGcode, GetLayer, ListProjects, default as commands } from './commands.js';
+import { AddLayer, BoardToGerber, ClearCache, FetchURL, GcodeToPolylines, GerberToGcode, GetLayer, ListProjects, default as commands, } from './commands.js';
 import { Button, ButtonGroup, Chooser, ColorWheel, Conditional, CrossHair, DisplayList, DropDown, DynamicLabel, Fence, File, FileList, FloatingPanel, Panel, Ruler, Slider, Toggle, } from './components.js';
-import { AlignAll, GetElements, GetInstances, GetPositions, scientific, UpdateMeasures } from './eagle-commands.js';
+import { AlignAll, GetElements, GetInstances, GetPositions, scientific, UpdateMeasures, } from './eagle-commands.js';
 import Alea from './lib/alea.js';
 import debounce from './lib/async/debounce.js';
 import asyncHelpers from './lib/async/helpers.js';
@@ -8,7 +8,7 @@ import { makeLocalStorage } from './lib/autoStore.js';
 import { classNames } from './lib/classNames.js';
 import { ClipperLib } from './lib/clipper-lib.js';
 import Shape from './lib/clipper.js';
-import { HSLA, ImmutableHSLA, ImmutableRGBA, isHSLA, isRGBA, RGBA } from './lib/color.js';
+import { HSLA, ImmutableHSLA, ImmutableRGBA, isHSLA, isRGBA, RGBA, } from './lib/color.js';
 import { BinaryTree } from './lib/container/binaryTree.js';
 import * as deep from './lib/deep.js';
 import { devtools } from './lib/devtools.js';
@@ -17,10 +17,10 @@ import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
 import { eventIterator, iterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
-import { h, render, useState, Fragment, Portal, ReactComponent } from './lib/dom/preactComponent.js';
+import { h, render, useState, Fragment, Portal, ReactComponent, } from './lib/dom/preactComponent.js';
 import { ColorMap } from './lib/draw/colorMap.js';
-import { BoardRenderer, LibraryRenderer, Renderer, SchematicRenderer } from './lib/eagle.js';
-import { DereferenceError, EagleParser, EagleFactory, EagleDocument, EagleElement, EagleProject, Node as EagleNode, Serializer } from './lib/eagle-dom.js';
+import { BoardRenderer, LibraryRenderer, Renderer, SchematicRenderer, } from './lib/eagle.js';
+import { DereferenceError, EagleParser, EagleFactory, EagleDocument, EagleElement, EagleProject, Node as EagleNode, Serializer, } from './lib/eagle-dom.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
 import { EventIterator } from './lib/iterator/event.js';
@@ -28,20 +28,20 @@ import { Slot, SlotProvider } from './slots.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Alignment, AlignmentAngle, AlignmentAttrs, CalculateArcRadius, CartesianToPolar, ClampAngle, DEBUG, DEG2RAD, EagleAlignments, ElementToClass, EscapeClassName, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LayerToClass, LinesToPath, log, MakeCoordTransformer, MakeRotation, PinSizes, PolarToCartesian, RAD2DEG, RenderArc, RotateTransformation, setDebug, SVGAlignments, UnescapeClassName, useAttributes, useTrkl, VERTICAL, } from './lib/eagle/renderUtils.js';
 import * as ecmascript from './lib/ecmascript.js';
-import { BG, digit2color, GetColorBands, GetExponent, GetFactor, GetMantissa, GetMultipliers, NumberToValue, ValueToNumber } from './lib/eda/colorCoding.js';
+import { BG, digit2color, GetColorBands, GetExponent, GetFactor, GetMantissa, GetMultipliers, NumberToValue, ValueToNumber, } from './lib/eda/colorCoding.js';
 import { FetchCached, NormalizeResponse, ResponseData } from './lib/fetch.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 import { Functional } from './lib/functional.js';
 import { GCodeLineStream, GcodeObject, GcodeParser, gcodetogeometry, gcodeToObject, Interpreter, InterpretGcode, noop, objectToGcode, parseFile, parseFileSync, parseGcode, parseStream, parseString, parseStringSync, } from './lib/gcode.js';
-import { Arc, BBox, Circle, isBBox, LineList, Polygon, default as geom } from './lib/geom.js';
-import { MatrixTransformation, Rotation, Scaling, Transformation, TransformationList, Translation } from './lib/geom/transformation.js';
+import { Arc, BBox, Circle, isBBox, LineList, Polygon, default as geom, } from './lib/geom.js';
+import { MatrixTransformation, Rotation, Scaling, Transformation, TransformationList, Translation, } from './lib/geom/transformation.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { useDimensions } from './lib/hooks/useDimensions.js';
 import { useDoubleClick } from './lib/hooks/useDoubleClick.js';
 import { Iterator } from './lib/iterator.js';
 import { Pointer as ImmutablePath } from './lib/pointer.js';
-import { arrayDiff, /*ImmutablePath, */ MutablePath, objectDiff, toXML } from './lib/json.js';
+import { arrayDiff, /*ImmutablePath, */ MutablePath, objectDiff, toXML, } from './lib/json.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
 import LogJS from './lib/log.js';
 import { BaseCache, brcache, CachedFetch, lscache } from './lib/lscache.js';
@@ -56,7 +56,7 @@ import { Repeater } from './lib/repeater/repeater.js';
 import * as Timers from './lib/repeater/timers.js';
 import { FixedMedium } from './lib/svg/fixedMedium.js';
 import { SvgPath } from './lib/svg/path.js';
-import { normalizePath, reverseNormalizedPath, reversePath, reverseSubPath } from './lib/svg/pathReverse.js';
+import { normalizePath, reverseNormalizedPath, reversePath, reverseSubPath, } from './lib/svg/pathReverse.js';
 import tlite from './lib/tlite.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
@@ -123,7 +123,8 @@ const is = {
 
 const Timer = { ...Timers, once: dom.Timer };
 
-const putError = error => console.log('ERROR: ' + error.message + '\n' + error.stack);
+const putError = error =>
+  console.log('ERROR: ' + error.message + '\n' + error.stack);
 
 let currentProj = trkl.property(window, 'project');
 let layerList = trkl.property(window, 'layers', { value: [] });
@@ -197,7 +198,12 @@ let config = {
 };
 
 const GetProject = arg => {
-  let ret = typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find(p => p.name == arg) : arg;
+  let ret =
+    typeof arg == 'number'
+      ? projects()[arg]
+      : typeof arg == 'string'
+        ? projects().find(p => p.name == arg)
+        : arg;
   if(typeof ret == 'string') ret = { name: ret };
   return ret;
 };
@@ -219,7 +225,8 @@ config.zoomLog.subscribe(AdjustZoom);
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
 const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
-const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
+const trklGetSet = (get, set) => value =>
+  value !== undefined ? set(value) : get();
 //const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
 /*const MouseEvents = h => ({
@@ -283,7 +290,11 @@ function DrawSVG(...args) {
   let [tag, attrs, children] = args;
   if(typeof tag == 'string') {
     //console.log('draw(', ...args, ')');
-    e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
+    e = factory(
+      tag,
+      { stroke: c.hex(), 'stroke-width': 0.1, ...attrs },
+      children,
+    );
   } else if(Array.isArray(args[0])) {
     let items = args.shift();
     // document.querySelector('#main > div > div > div > svg:nth-child(2) > g');
@@ -310,14 +321,19 @@ function DrawSVG(...args) {
     let rect = new Rect(ownerSVG.getBBox());
     //console.log('ownerSVG:', ownerSVG, 'rect:', rect);
     ownerSVG.setAttribute('viewBox', rect + '');
-    if(!ownerSVG.style.maxHeight) Element.setCSS(ownerSVG, { maxWidth: '100vw', maxHeight: '100vh' });
+    if(!ownerSVG.style.maxHeight)
+      Element.setCSS(ownerSVG, { maxWidth: '100vw', maxHeight: '100vh' });
   }
 
   return e || factory;
 }
 
 function calcViewBox(box) {
-  box = box || (project && project.doc && BBox.from(project.doc.getMeasures(true) || project.doc.getBounds(0)));
+  box =
+    box ||
+    (project &&
+      project.doc &&
+      BBox.from(project.doc.getMeasures(true) || project.doc.getBounds(0)));
   box = box || Element.rect('.aspect-ratio-box-inside');
   const { width, height, x, y } = box;
   let { x1, y1, x2, y2 } = new Rect(x, y, width, height);
@@ -327,13 +343,17 @@ function calcViewBox(box) {
 }
 
 function setViewBox(svgOwner, box) {
-  svgOwner = svgOwner || [...Element.findAll('svg', Element.find('#main'))].reverse()[0];
+  svgOwner =
+    svgOwner || [...Element.findAll('svg', Element.find('#main'))].reverse()[0];
   const rect = box; // instanceof BBox ? box : DrawSVG.calcViewBox(box);
   rect.y1 -= rect.y2;
   rect.x2 -= rect.x1;
   //console.log('setViewBox', { svgOwner, rect, box });
   svgOwner.setAttribute('viewBox', rect.toString());
-  svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
+  svgOwner.lastElementChild.setAttribute(
+    'transform',
+    `scale(1,-1)  translate(0,${-rect.height})`,
+  );
   Element.attr(svgOwner.lastElementChild.firstElementChild, {
     ...rect.toRect(),
   });
@@ -348,8 +368,15 @@ const ElementToXML = (e, predicate) => {
     deep.set(x, path, value.trim().replace(/\s+/g, ' '));
   }
 
-  for(let [value, path] of deep.iterate(x, (v, k) => k[k.length - 1] == 'id' && v == 'rects')) deep.unset(x, path.slice(0, -1));
-  for(let [value, path] of deep.iterate(x, (v, k) => /(^data-|^class$)/.test(k[k.length - 1]))) deep.unset(x, path);
+  for(let [value, path] of deep.iterate(
+    x,
+    (v, k) => k[k.length - 1] == 'id' && v == 'rects',
+  ))
+    deep.unset(x, path.slice(0, -1));
+  for(let [value, path] of deep.iterate(x, (v, k) =>
+    /(^data-|^class$)/.test(k[k.length - 1]),
+  ))
+    deep.unset(x, path);
   //console.log('x:', x);
   return Element.toString(x, { newline: '\n' });
 };
@@ -373,7 +400,10 @@ const filesystem = {
 };
 
 async function LoadFile(file) {
-  let { url, name } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
+  let { url, name } =
+    typeof file == 'string'
+      ? { url: file, name: file.replace(/.*\//g, '') }
+      : GetProject(file);
 
   // url = /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
   url = `file?action=load&file=${file}`; // /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
@@ -422,7 +452,10 @@ async function SaveFile(filename, data, contentType) {
   return result;
 }
 
-async function SaveSVG(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
+async function SaveSVG(
+  filename,
+  layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51],
+) {
   const { doc } = project;
   const { basename, typeName } = doc;
   if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
@@ -443,7 +476,11 @@ async function SaveSVG(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48
 async function LoadSVG(filename) {
   let data = await FetchURL(filename).then(ResponseData);
   let xml = tXml(data.replace(/<\?xml[^>]*>/, ''));
-  let element = Element.create('div', { style: { display: 'inline-block' } }, 'body');
+  let element = Element.create(
+    'div',
+    { style: { display: 'inline-block' } },
+    'body',
+  );
   let component = ReactComponent.fromObject(xml[0]);
   React.render(component, element);
   return element.firstElementChild;
@@ -455,7 +492,12 @@ function LoadImage(filename) {
   //Element.setCSS(element, { width: `50%`, height: 'auto', 'z-index': 100000000, position: 'fixed', bottom: '4em', right: '4em', 'box-shadow': '0 0 4px 2px #000' });
   //Element.setCSS(element, { transform: `scale(2)` });
 
-  Element.setCSS(element, { position: 'fixed', bottom: '4em', right: '4em', 'z-index': 100000000 });
+  Element.setCSS(element, {
+    position: 'fixed',
+    bottom: '4em',
+    right: '4em',
+    'z-index': 100000000,
+  });
 
   return element;
 }
@@ -463,7 +505,11 @@ function LoadImage(filename) {
 const RenderComponent = (() => {
   let id = 1;
   return function RenderComponent(component) {
-    let element = Element.create('div', { id: `react-${id++}`, style: { display: 'inline-block' } }, 'body');
+    let element = Element.create(
+      'div',
+      { id: `react-${id++}`, style: { display: 'inline-block' } },
+      'body',
+    );
     React.render(component, element);
     return element;
   };
@@ -480,7 +526,9 @@ const ModifyColors = fn => e => {
 };
 
 const FindLayer = name_or_id => {
-  for(let id of (name_or_id + '').split(/\s+/g).map(n => (isNaN(n) ? n : +n))) {
+  for(let id of (name_or_id + '')
+    .split(/\s+/g)
+    .map(n => (isNaN(n) ? n : +n))) {
     const layer = layers.find(l => l.i == id || l.name == id);
     if(layer) return layer;
   }
@@ -527,7 +575,8 @@ const maxZIndex = () =>
 const groupProps = memoize(() => {
   let transform = `translate(300,-50)`;
   const prng = new Alea(234234800);
-  const randomColor = () => HSLA.random([240, -120], [100, 100], [30, 75], [1, 1], prng).hex();
+  const randomColor = () =>
+    HSLA.random([240, -120], [100, 100], [30, 75], [1, 1], prng).hex();
   return [
     { stroke: randomColor(), transform },
     { stroke: randomColor(), transform },
@@ -558,18 +607,26 @@ function DrawArc(start, end, angle) {
   //console.log('angles:', angles);
   let matrices = angles.map(a => new Rotation(a).toMatrix());
 
-  let slopes = matrices.map(m => new Point(m.transformPoint(line.slope)).normal());
+  let slopes = matrices.map(m =>
+    new Point(m.transformPoint(line.slope)).normal(),
+  );
 
   slopes[1].mul(-1);
   //console.log('slopes:', slopes);
 
   // r('rect', rect.toObject());
-  let rot = new TransformationList([new Translation(middle.x, middle.y), new Rotation(90), new Translation(-middle.x, -middle.y)]);
+  let rot = new TransformationList([
+    new Translation(middle.x, middle.y),
+    new Rotation(90),
+    new Translation(-middle.x, -middle.y),
+  ]);
   //console.log('rot:', rot + '');
   let pivots = [middle, line.a, line.b];
   let colors = ['#EB1F00', '#F0CC11', '#34DB05', '#0078F0', '#8D1AE6'];
   let compound = ['#2E17B3', '#554D85', '#3578E6', '#E9B470', '#B35917'];
-  let palette = ['ff595e', 'ffca3a', '8ac926', '1982c4', '6a4c93'].map(hex => `#${hex}`);
+  let palette = ['ff595e', 'ffca3a', '8ac926', '1982c4', '6a4c93'].map(
+    hex => `#${hex}`,
+  );
   let rainbow = ['#E64535', '#E6AA4C', '#D0E634', '#1EE67B', '#3394E8'];
   let lines2 = [new Line(p1, center), new Line(p2, center)];
 
@@ -581,9 +638,13 @@ function DrawArc(start, end, angle) {
   //console.log('norms:', norms);
   //console.log('center:', center);
 
-  let range = norms.map(({ x, y }) => new Point(x * radius, y * radius).sum(center));
+  let range = norms.map(({ x, y }) =>
+    new Point(x * radius, y * radius).sum(center),
+  );
   let deg = (angle * 180) / Math.PI;
-  let approx = range(0, deg, 10).map(a => Point.fromAngle((a * Math.PI) / 180 - angle, radius - 30));
+  let approx = range(0, deg, 10).map(a =>
+    Point.fromAngle((a * Math.PI) / 180 - angle, radius - 30),
+  );
 
   //console.log('range:', range);
   //console.log('approx:', approx);
@@ -608,7 +669,9 @@ function DrawArc(start, end, angle) {
   });
   lines2.forEach((l, i) => g('line', { ...l.toObject(), stroke: compound[i] }));
 
-  range.forEach((p, i) => b('circle', { cx: p.x, cy: p.y, r: 15, stroke: '#0ff' }));
+  range.forEach((p, i) =>
+    b('circle', { cx: p.x, cy: p.y, r: 15, stroke: '#0ff' }),
+  );
   approx.forEach((p, i) =>
     b('circle', {
       cx: p.x,
@@ -640,7 +703,8 @@ function DrawArc(start, end, angle) {
 
 const DrawBinaryTree = (tree, draw = DrawSVG()) => {
   let a = [];
-  const add = (level, item) => (a[level] ? a[level].push(item) : (a[level] = [item]));
+  const add = (level, item) =>
+    a[level] ? a[level].push(item) : (a[level] = [item]);
 
   RecurseBinaryNode(tree.root);
 
@@ -660,7 +724,12 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
     let fx = j => j * 20 - ((nodes.length - 1) * 20) / 2;
     nodes.map((node, j) => (node.x = fx(j)));
   });
-  a.flat().forEach(item => (DrawNode(item.x, item.y, item.node), item.parent && DrawEdge(item, item.parent)));
+  a.flat().forEach(
+    item => (
+      DrawNode(item.x, item.y, item.node),
+      item.parent && DrawEdge(item, item.parent)
+    ),
+  );
 
   function DrawNode(x, y, node) {
     draw('circle', {
@@ -699,7 +768,15 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
   }
 };
 DrawBinaryTree.bt = new BinaryTree(
-  new BinaryTree.Node('A', new BinaryTree.Node('B', new BinaryTree.Node('D')), new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F'))),
+  new BinaryTree.Node(
+    'A',
+    new BinaryTree.Node('B', new BinaryTree.Node('D')),
+    new BinaryTree.Node(
+      'C',
+      new BinaryTree.Node('E', null, new BinaryTree.Node('G')),
+      new BinaryTree.Node('F'),
+    ),
+  ),
 );
 DrawBinaryTree.bt = new BinaryTree(
   new BinaryTree.Node(
@@ -709,8 +786,16 @@ DrawBinaryTree.bt = new BinaryTree(
       'H',
       new BinaryTree.Node(
         'H',
-        new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)),
-        new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)),
+        new BinaryTree.Node(
+          'V',
+          new BinaryTree.Node(6),
+          new BinaryTree.Node(7),
+        ),
+        new BinaryTree.Node(
+          'V',
+          new BinaryTree.Node(4),
+          new BinaryTree.Node(5),
+        ),
         new BinaryTree.Node('V'),
       ),
       new BinaryTree.Node(3),
@@ -719,7 +804,10 @@ DrawBinaryTree.bt = new BinaryTree(
 );
 
 function GetPaths(query, parent = project.svgElement) {
-  return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]), []);
+  return Element.findAll(query, parent).reduce(
+    (a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]),
+    [],
+  );
 }
 
 function PathToPolylines(path, step = 0.01) {
@@ -735,7 +823,11 @@ function PathToPolylines(path, step = 0.01) {
     .filter(poly => poly.length > 1)
     .map(poly => {
       let transforms = new TransformationList(
-        Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse(),
+        Element.walkUp(path, (p, d, set, stop) =>
+          p.parentElement.tagName == 'svg'
+            ? stop()
+            : p.hasAttribute('transform') && set(p.getAttribute('transform')),
+        ).reverse(),
       ).collapse();
       //console.log('transforms', transforms);
       return new Polyline(poly).transform(transforms);
@@ -746,7 +838,11 @@ function PathToPolyline(path, step = 0.01) {
   let poly = [...SVG.pathIterator(path, { step })];
 
   let transforms = new TransformationList(
-    Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse(),
+    Element.walkUp(path, (p, d, set, stop) =>
+      p.parentElement.tagName == 'svg'
+        ? stop()
+        : p.hasAttribute('transform') && set(p.getAttribute('transform')),
+    ).reverse(),
   ).collapse();
   //console.log('transforms', transforms);
   return new Polyline(poly).transform(transforms);
@@ -764,12 +860,18 @@ function OutsetPath(path, offset, miterLimit = 2, arcTolerance = 0.01) {
   co.AddPath(
     path.closed ? path.slice(0, -1) : path,
     ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'],
-    ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound'],
+    ClipperLib.EndType[
+      path.closed
+        ? 'etClosedLine' /*'etClosedPolygon' */
+        : 'etOpenSquare' || 'etOpenRound'
+    ],
   );
   co.Execute(output, offset);
   //console.log('output:', output);
   output.toPolylines = function() {
-    return this.map(p => new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close());
+    return this.map(p =>
+      new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close(),
+    );
   };
   return output;
 }
@@ -805,14 +907,22 @@ function OutsetPaths(paths, offset, miterLimit = 2, arcTolerance = 0.25) {
 function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
   let cl = new ClipperLib.Clipper();
   let output = new ClipperLib.Paths();
-  const add = (p, clip = false) => (Array.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(cl, p, clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject, true);
+  const add = (p, clip = false) =>
+    (Array.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(
+      cl,
+      p,
+      clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject,
+      true,
+    );
 
   add(path, false);
   add(clip, true);
 
   cl.Execute(mode, output);
   output.toPolylines = function() {
-    return this.map(p => new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close());
+    return this.map(p =>
+      new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close(),
+    );
   };
   return output;
 }
@@ -821,13 +931,20 @@ function saveItemStates(itemList, get = item => is.on(item.visible())) {
   return itemList.map(item => [item, get(item)]);
 }
 
-function restoreItemStates(itemStates, /* prettier-ignore */ set = (item, value) => item.visible(value ? 'yes' : 'no')) {
+function restoreItemStates(
+  itemStates,
+  /* prettier-ignore */ set = (item, value) => item.visible(value ? 'yes' : 'no'),
+) {
   for(let [item, state] of itemStates) set(item, state);
 }
 
 function EagleMaps(project) {
-  let transformPath = p => p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
-  let dom2path = [...Element.findAll('*[data-path]', project.object)].map(e => [e, new ImmutableXPath(transformPath(e.getAttribute('data-path')))]);
+  let transformPath = p =>
+    p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
+  let dom2path = [...Element.findAll('*[data-path]', project.object)].map(e => [
+    e,
+    new ImmutableXPath(transformPath(e.getAttribute('data-path'))),
+  ]);
   //console.debug('dom2path:', dom2path);
   dom2path = mapFunction(new WeakMap(dom2path));
 
@@ -835,8 +952,13 @@ function EagleMaps(project) {
     let p;
     if((p = dom2path(node))) return project.doc.lookup(p);
   };
-  let eagle2dom = elem => Element.find(`[data-type=${elem.tagName}][data-name=${elem.name}]`, project.element);
-  let path2dom = p => Element.find(`[data-path='${CSS.escape(p)}']`, project.element);
+  let eagle2dom = elem =>
+    Element.find(
+      `[data-type=${elem.tagName}][data-name=${elem.name}]`,
+      project.element,
+    );
+  let path2dom = p =>
+    Element.find(`[data-path='${CSS.escape(p)}']`, project.element);
 
   let mapElements = {
     /*    eagle: unique(eagle2dom.map(([e, d]) => e)),
@@ -851,11 +973,19 @@ function EagleMaps(project) {
   );
   //console.debug('maps.eagle2dom:', maps.eagle2dom);*/
   //) maps.dom2eagle = mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
-  const [path2component, component2path] = project.renderer.maps.map(mapFunction);
-  const { /*path2obj, obj2path, */ path2eagle, eagle2path /*, eagle2obj, obj2eagle */ } = project.doc.maps;
+  const [path2component, component2path] =
+    project.renderer.maps.map(mapFunction);
+  const {
+    /*path2obj, obj2path, */ path2eagle,
+    eagle2path /*, eagle2obj, obj2eagle */,
+  } = project.doc.maps;
   const [component2eagle, eagle2component] = [
-    mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)),
-    mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined)),
+    mapAdapter((key, value) =>
+      value === undefined ? path2eagle(component2path(key)) : undefined,
+    ),
+    mapAdapter((key, value) =>
+      value === undefined ? path2component(eagle2path(key) + '') : undefined,
+    ),
   ];
   weakDefine(maps, {
     path2eagle,
@@ -886,11 +1016,28 @@ function EagleMaps(project) {
 
 function* PackageNames(doc = project.doc) {
   const tokenize = matchAll(/([A-Za-z]+|[0-9,]+|[^0-9A-Za-z]+)/g);
-  let packages = doc.packages && doc.packages.length ? doc.packages : [...doc.getAll('package')];
+  let packages =
+    doc.packages && doc.packages.length
+      ? doc.packages
+      : [...doc.getAll('package')];
   let names = packages
     .map(e => [e, e.getBounds()])
-    .map(([e, b]) => [e, b.width, b.height, Math.max(b.width, b.height), b.height > b.width])
-    .map(([e, w, h, m, v]) => [e, e.name, [...tokenize(e.name)], roundTo(w, 0.01), roundTo(h, 0.01), Math.floor(m), v ? 'V' : '']);
+    .map(([e, b]) => [
+      e,
+      b.width,
+      b.height,
+      Math.max(b.width, b.height),
+      b.height > b.width,
+    ])
+    .map(([e, w, h, m, v]) => [
+      e,
+      e.name,
+      [...tokenize(e.name)],
+      roundTo(w, 0.01),
+      roundTo(h, 0.01),
+      Math.floor(m),
+      v ? 'V' : '',
+    ]);
 
   for(let [element, name, matches, w, h, size, orientation] of names) {
     let tokens = matches.map(({ index, ...match }) => match[0] + '');
@@ -907,7 +1054,9 @@ function* PackageNames(doc = project.doc) {
       )
       .indexes.reverse();
     let sIndex = tokens.findIndex(([token, index]) => token == '/');
-    let vhIndex = tokens.findIndex(([token, index]) => token == 'V' || token == 'H');
+    let vhIndex = tokens.findIndex(
+      ([token, index]) => token == 'V' || token == 'H',
+    );
     let tokIndex = vhIndex != -1 ? vhIndex - 1 : sIndex + 1;
 
     if(tokens[vhIndex]) {
@@ -917,13 +1066,17 @@ function* PackageNames(doc = project.doc) {
 
     let token = tokens[tokIndex];
     let vertical = tokens[vhIndex] == 'V';
-    let number = typeof token == 'string' ? +token.replace(/[^-.0-9]/g, '') : NaN;
+    let number =
+      typeof token == 'string' ? +token.replace(/[^-.0-9]/g, '') : NaN;
     //console.log('names:', { index, sIndex, vhIndex, token, vertical, number });
 
     /*  if(number != size || vertical != (orientation == 'V')) */
 
     if(token) {
-      let fromTo = [`${token}${tokens[vhIndex] || ''}`, `${size}${vertical ? 'V' : ''}`];
+      let fromTo = [
+        `${token}${tokens[vhIndex] || ''}`,
+        `${size}${vertical ? 'V' : ''}`,
+      ];
       let newName = name.replace(...fromTo);
 
       yield Object.assign([name, newName, ...fromTo], {
@@ -941,8 +1094,12 @@ function* PackageNames(doc = project.doc) {
 function NextDocument(n = 1) {
   let i;
   const { projects } = globalThis;
-  if(typeof globalThis.projectIndex != 'number') globalThis.projectIndex = projects.indexOf(project);
-  const cond = isObject(n) && n instanceof RegExp ? (idx, i) => !n.test(projects[idx]?.name) : (idx, i) => i < n;
+  if(typeof globalThis.projectIndex != 'number')
+    globalThis.projectIndex = projects.indexOf(project);
+  const cond =
+    isObject(n) && n instanceof RegExp
+      ? (idx, i) => !n.test(projects[idx]?.name)
+      : (idx, i) => i < n;
   let start = projectIndex;
   for(i = 0; cond(++projectIndex, i); ++i) {
     //LogJS.verbose(`NextDocument skip ${i} [${projectIndex}] ${projects[projectIndex].name}`);
@@ -975,8 +1132,12 @@ async function LoadDocument(project, parentElem) {
   currentProj(project);
   LogJS.info(`${project.name} loaded.`);
   const topPlace = 'tPlace';
-  elementChildren = memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
-  elementGeometries = memoize(() => ElementGeometries(topPlace, ent => Object.fromEntries(ent)));
+  elementChildren = memoize(() =>
+    ElementChildren(topPlace, ent => Object.fromEntries(ent)),
+  );
+  elementGeometries = memoize(() =>
+    ElementGeometries(topPlace, ent => Object.fromEntries(ent)),
+  );
 
   tryCatch(() => {
     documentTitle(project.doc.file.replace(/.*\//g, ''));
@@ -1012,7 +1173,11 @@ async function LoadDocument(project, parentElem) {
 async function RenderProject(project = globalThis.project) {
   const { doc } = project;
 
-  project.renderer = new Renderer(doc, ReactComponent.append, config.debugFlag());
+  project.renderer = new Renderer(
+    doc,
+    ReactComponent.append,
+    config.debugFlag(),
+  );
 
   config.showGrid = trkl(true);
   config.showGrid.subscribe(value => {
@@ -1024,7 +1189,9 @@ async function RenderProject(project = globalThis.project) {
 
   let Component = project.renderer.render(doc, null, {});
 
-  let usedLayers = [...doc.layers]; /*.filter(layer => layer.elements.size > 0)*/
+  let usedLayers = [
+    ...doc.layers,
+  ]; /*.filter(layer => layer.elements.size > 0)*/
 
   Timer.once(250).then(() =>
     layerList(
@@ -1109,8 +1276,11 @@ async function RenderProject(project = globalThis.project) {
     project.makeGroup = function({ transform, ...props } = {}) {
       let e;
       if(props.id && (e = Element.find(`#${props.id}`))) return e;
-      let groupElement = Element.find('g.elements', svg) || Element.find('g.instances', svg);
-      transform = (groupElement ? groupElement.getAttribute('transform') : '') + (transform ? ' ' + transform : '');
+      let groupElement =
+        Element.find('g.elements', svg) || Element.find('g.instances', svg);
+      transform =
+        (groupElement ? groupElement.getAttribute('transform') : '') +
+        (transform ? ' ' + transform : '');
       return (e = SVG.create('g', { ...props, transform }, svg));
     };
     project.makeFactory = memoize(id =>
@@ -1128,7 +1298,11 @@ async function RenderProject(project = globalThis.project) {
     function xx() {
       let g = SVG.create('g', {});
       project.svgElement.appendChild(g);
-      let ll = geometries.R4 && geometries.R4.lines.toSVG(ReactComponent.append, () => h('g', { ...elementDefaultAttributes, defaultTransform }));
+      let ll =
+        geometries.R4 &&
+        geometries.R4.lines.toSVG(ReactComponent.append, () =>
+          h('g', { ...elementDefaultAttributes, defaultTransform }),
+        );
       render(ll, g);
     }
     window.AddElement = (function (transform) {
@@ -1136,7 +1310,11 @@ async function RenderProject(project = globalThis.project) {
       let list = [];
 
       return (tag, attr, children = []) => {
-        let e = SVG.create(tag, { ...elementDefaultAttributes, transform, ...attr }, root);
+        let e = SVG.create(
+          tag,
+          { ...elementDefaultAttributes, transform, ...attr },
+          root,
+        );
         list.push(e);
         let d = trkl.property(e, 'd');
         d.subscribe(value => e.setAttribute('d', value));
@@ -1172,7 +1350,9 @@ async function RenderProject(project = globalThis.project) {
 
     const setRect = rect => {
       svgElement.setAttribute('viewBox', rect + '');
-      ['x', 'y', 'width', 'height'].forEach(k => bgRects.forEach(elem => elem.setAttribute(k, rect[k])));
+      ['x', 'y', 'width', 'height'].forEach(k =>
+        bgRects.forEach(elem => elem.setAttribute(k, rect[k])),
+      );
     };
 
     let r = (globalThis.viewBox = {
@@ -1283,15 +1463,27 @@ const GenerateVoronoi = () => {
   //console.log('result:', Object.keys(result).join(', '));
   let { site, cells, edges, vertices, execTime } = result;
   //console.log('cells:', cells);
-  let holes = edges.filter(e => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
-  let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
-  let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
+  let holes = edges
+    .filter(e => !e.rSite)
+    .map(({ lSite, rSite, ...edge }) => new Point(lSite));
+  let rlines = edges
+    .filter(e => e.rSite)
+    .map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
+  let vlines = edges
+    .filter(e => e.va && e.vb)
+    .map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
   let points2 = vertices.map(v => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Array.isArray(arr) ? arr : []), ...items];
   const factory = SVG.factory();
   const lines = [
-    ...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]),
-    ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }]),
+    ...rlines.map(l => [
+      'line',
+      { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 },
+    ]),
+    ...vlines.map(l => [
+      'line',
+      { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 },
+    ]),
   ];
   const circles = [
     ...holes.map(p => [
@@ -1337,7 +1529,11 @@ const GenerateVoronoi = () => {
 };
 
 function PackageChildren(element, layer) {
-  let children = [...element.children].map((c, i) => [i, c]).filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
+  let children = [...element.children]
+    .map((c, i) => [i, c])
+    .filter(
+      ([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire',
+    );
   children.xml = children.map(([i, e]) => e.toXML()).join('\n');
   return children;
 }
@@ -1345,7 +1541,12 @@ function PackageChildren(element, layer) {
 function ElementChildren(layer = 'tPlace', rfn = ent => new Map(ent)) {
   const { elements = [] } = project.doc || {};
 
-  return rfn([...elements].map(([name, element]) => [name, PackageChildren(element, layer)]));
+  return rfn(
+    [...elements].map(([name, element]) => [
+      name,
+      PackageChildren(element, layer),
+    ]),
+  );
 }
 
 function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
@@ -1363,7 +1564,11 @@ function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
           }),
         ),
       ])
-      .map(([name, lines]) => [name, lines, lines.slice().toPolygons(pts => new Polyline(pts))])
+      .map(([name, lines]) => [
+        name,
+        lines,
+        lines.slice().toPolygons(pts => new Polyline(pts)),
+      ])
       .map(([name, lines, polygons]) => [name, { lines, polygons }]),
   );
 }
@@ -1444,7 +1649,9 @@ function HandleMessage(msg) {
       let { frame, width, height, contours } = body;
       //console.log('HandleMessage', { contours });
 
-      let lists = (typeof contours == 'string' ? contours.split(/\s*\|\s*/g) : contours).map(pointStr => new Polyline(pointStr));
+      let lists = (
+        typeof contours == 'string' ? contours.split(/\s*\|\s*/g) : contours
+      ).map(pointStr => new Polyline(pointStr));
 
       window.lists = lists;
       //console.log('HandleMessage', { type, width, height, frame }, lists);
@@ -1625,7 +1832,15 @@ const AppMain = (window.onload = async () => {
     fnmatch,
     PATH_FNM_MULTI,
 
-    ...{ GetColorBands, GetElements, GetInstances, GetPositions, UpdateMeasures, AlignAll, scientific },
+    ...{
+      GetColorBands,
+      GetElements,
+      GetInstances,
+      GetPositions,
+      UpdateMeasures,
+      AlignAll,
+      scientific,
+    },
     ...{
       GetExponent,
       GetMantissa,
@@ -1691,7 +1906,10 @@ const AppMain = (window.onload = async () => {
   Error.stackTraceLimit = 100;
 
   weakDefine(window, {
-    TestArc: () => timer(2000).then(() => DrawArc({ x: 50, y: 150 }, { x: 350, y: 300 }, 120 * (Math.PI / 180))),
+    TestArc: () =>
+      timer(2000).then(() =>
+        DrawArc({ x: 50, y: 150 }, { x: 350, y: 300 }, 120 * (Math.PI / 180)),
+      ),
   });
 
   const timestamps = new Repeater(async (push, stop) => {
@@ -1714,7 +1932,10 @@ const AppMain = (window.onload = async () => {
   window.keystroke =
     target =>
     (key, modifiers = 0) =>
-      keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
+      keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(
+        new keysim.Keystroke(modifiers, key),
+        target,
+      );
 
   window.focusSearch = state => {
     const input = currentSearch();
@@ -1742,7 +1963,9 @@ const AppMain = (window.onload = async () => {
   let c = h(testComponent, {});
   window.testComponent = c;
 
-  const UpdateProjectList = async (opts = config.listURL() ? { url: config.listURL(), ...credentials } : {}) => {
+  const UpdateProjectList = async (
+    opts = config.listURL() ? { url: config.listURL(), ...credentials } : {},
+  ) => {
     let list = [];
     //console.log('opts:', opts);
     let { url, ...restOfOpts } = opts;
@@ -1752,10 +1975,13 @@ const AppMain = (window.onload = async () => {
       // let data = await ListProjects({ ...opts, ...credentials, url });
 
       let data = {
-        files: await fetch('files?filter=.*.(brd|sch|lbr|GBL|GKO|GTL)$&flat=1', {
-          method: 'get' /*,
+        files: await fetch(
+          'files?filter=.*.(brd|sch|lbr|GBL|GKO|GTL)$&flat=1',
+          {
+            method: 'get' /*,
           body: JSON.stringify({ filter: '.*.(brd|sch|lbr|GBL|GKO|GTL)$' })*/,
-        })
+          },
+        )
           .then(resp => resp.text())
           .then(json => JSON.parse(json)),
       };
@@ -1794,7 +2020,11 @@ const AppMain = (window.onload = async () => {
       }})*/
 
       if(files) {
-        list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
+        list = list.concat(
+          files
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((obj, i) => new File(obj, i)),
+        );
         let svgs = list.reduce((acc, file) => {
           if(/\.lbr$/i.test(file.name)) return acc;
           file.svg = `${path.basename(file.name)}.${path.extname(file.name)}.svg`;
@@ -1876,7 +2106,10 @@ const AppMain = (window.onload = async () => {
   const updateIfChanged = (trkl, newValue, callback) => {
     const oldValue = trkl() || [];
     //console.info('updateIfChanged ', { oldValue, newValue });
-    if(!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)) return false;
+    if(
+      !Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)
+    )
+      return false;
     trkl(newValue);
     if(typeof callback == 'function') callback(trkl, oldValue, newValue);
     return true;
@@ -1893,7 +2126,9 @@ const AppMain = (window.onload = async () => {
     });
     config.listURL(urls);
     //    value = parts.filter(p => !/\:\/\//.test(p)).join(' ');
-    config.searchFilter(value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | '));
+    config.searchFilter(
+      value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | '),
+    );
   };
 
   const Consumer = props => {
@@ -1922,7 +2157,13 @@ const AppMain = (window.onload = async () => {
     class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
-        if(typeof window.pushlog == 'function') window.pushlog([type, isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
+        if(typeof window.pushlog == 'function')
+          window.pushlog([
+            type,
+            isoDate(d).replace(/-/g, ''),
+            d.toLocaleTimeString(navigator.language || 'de'),
+            msg,
+          ]);
       }
     },
   );
@@ -1974,7 +2215,12 @@ const AppMain = (window.onload = async () => {
     return h(
       'table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
-      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')])),
+      lines.map(([k, v], i) =>
+        h('tr', { className: 'watch' }, [
+          h('td', { className: 'name' }, k + ''),
+          h('td', { className: 'value' }, v + ''),
+        ]),
+      ),
     );
   };
 
@@ -2010,13 +2256,24 @@ const AppMain = (window.onload = async () => {
   const toggle = trkl => trkl(!trkl());
   let setTo;
 
-  const Layer = ({ title, name, label, i, color, element, className, ...props }) => {
+  const Layer = ({
+    title,
+    name,
+    label,
+    i,
+    color,
+    element,
+    className,
+    ...props
+  }) => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
 
-    const isVisible = visible === true || (visible !== false && { yes: true }[visible]);
+    const isVisible =
+      visible === true || (visible !== false && { yes: true }[visible]);
 
-    if(isObject(element) && 'visible' in element) setVisible = value => (element.visible = value);
+    if(isObject(element) && 'visible' in element)
+      setVisible = value => (element.visible = value);
     let [solo, setSolo] = useState(null);
 
     const onMouseDown = debounce(e => {
@@ -2037,7 +2294,8 @@ const AppMain = (window.onload = async () => {
           e => {
             let { target } = e;
 
-            while(!target.hasAttribute('id') && target.parentElement) target = target.parentElement;
+            while(!target.hasAttribute('id') && target.parentElement)
+              target = target.parentElement;
             //console.log('Double click', { solo, i, target });
             let layers = [...layerList()];
             let visibleLayers = layers.filter(l => is.on(l.visible()));
@@ -2049,7 +2307,9 @@ const AppMain = (window.onload = async () => {
               let restoreData = solo;
 
               setSolo(null);
-              restoreItemStates(restoreData, (item, value) => item.visible(value ? 'yes' : 'no'));
+              restoreItemStates(restoreData, (item, value) =>
+                item.visible(value ? 'yes' : 'no'),
+              );
 
               //console.debug('restoreData:', restoreData);
             } else {
@@ -2099,7 +2359,12 @@ const AppMain = (window.onload = async () => {
         h(
           'span',
           {
-            className: classNames(className, 'name', !isVisible && 'gray', solo && 'bold'),
+            className: classNames(
+              className,
+              'name',
+              !isVisible && 'gray',
+              solo && 'bold',
+            ),
             ...props,
           },
           `${name}`,
@@ -2126,7 +2391,8 @@ const AppMain = (window.onload = async () => {
     add(name, component) {
       const { map } = this;
 
-      if(!ReactComponent.isComponent(component)) component = h(component, {}, []);
+      if(!ReactComponent.isComponent(component))
+        component = h(component, {}, []);
 
       map.set(name, component);
       this.update();
@@ -2199,7 +2465,9 @@ const AppMain = (window.onload = async () => {
         h(
           DropDown,
           {
-            isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open })),
+            isOpen: layersDropDown.subscribe(open =>
+              console.log('layers dropdown', { open }),
+            ),
             // into: '#portal'
           },
           [
@@ -2246,12 +2514,19 @@ const AppMain = (window.onload = async () => {
                   gerber.cmds = await GerberParser.parse(gerber.data);
                   gerber.unit = gerber.cmds.find(i => i.prop == 'units');
 
-                  gerber.points = gerber.cmds.filter(i => i.coord).map(({ coord }) => new Point(coord.x, coord.y));
+                  gerber.points = gerber.cmds
+                    .filter(i => i.coord)
+                    .map(({ coord }) => new Point(coord.x, coord.y));
                 }
                 //console.debug('BoardToGerber side =', side, ' file =', gerber.file);
               }
             }
-            const sides = /*Object.fromEntries*/ ['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file]);
+            const sides = /*Object.fromEntries*/ [
+              'back',
+              'front',
+              'drill',
+              'outline',
+            ].map(side => [side, project.gerber[side].file]);
             //console.debug('  sides = ', sides);
             //console.debug('  project = ', project);
             let allGcode = {};
@@ -2289,7 +2564,8 @@ const AppMain = (window.onload = async () => {
                     let pos;
 
                     if(gc.svg) {
-                      if((pos = gc.svg.indexOf('<svg ')) != -1) gc.svg = gc.svg.substring(pos);
+                      if((pos = gc.svg.indexOf('<svg ')) != -1)
+                        gc.svg = gc.svg.substring(pos);
 
                       if(side == 'outline') {
                         //console.debug('outline', gc.svg);
@@ -2310,11 +2586,24 @@ const AppMain = (window.onload = async () => {
                         name: makeLayerName('processed', side),
                         'data-filename': processed,
                         create: (project, props = {}) => {
-                          let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svgElement);
+                          let g = SVG.create(
+                            'g',
+                            { innerHTML: gc.svg, ...props },
+                            project.svgElement,
+                          );
                           g.innerHTML = gc.svg;
-                          if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
+                          if(
+                            g.firstElementChild &&
+                            g.firstElementChild.tagName == 'svg'
+                          ) {
                             let svg = g.firstElementChild;
-                            ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a => svg.removeAttribute(a));
+                            [
+                              'width',
+                              'height',
+                              'xmlns',
+                              'xmlns:xlink',
+                              'version',
+                            ].forEach(a => svg.removeAttribute(a));
                             svg.setAttribute('viewBox', bbox);
                           }
                           Element.findAll('path', g)
@@ -2322,13 +2611,18 @@ const AppMain = (window.onload = async () => {
                             .forEach(e => (e.style.display = 'none'));
 
                           ['fill', 'stroke'].forEach(name =>
-                            Element.findAll(`[style*="${name}:"]`, g).forEach(e => {
-                              const value = e.style[name];
-                              if(value != 'rgb(0, 0, 0)' && value != 'none') {
-                                e.setAttribute(name, value);
-                                e.style.removeProperty(name);
-                              }
-                            }),
+                            Element.findAll(`[style*="${name}:"]`, g).forEach(
+                              e => {
+                                const value = e.style[name];
+                                if(
+                                  value != 'rgb(0, 0, 0)' &&
+                                  value != 'none'
+                                ) {
+                                  e.setAttribute(name, value);
+                                  e.style.removeProperty(name);
+                                }
+                              },
+                            ),
                           );
 
                           return g;
@@ -2353,8 +2647,14 @@ const AppMain = (window.onload = async () => {
             gcode(project.gcode);
 
             function makeLayerName(name, side) {
-              const prefix = side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
-              return camelize(prefix + path.basename(name, /\.[^.]+$/).replace(new RegExp(`_${side}`), ''));
+              const prefix =
+                side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
+              return camelize(
+                prefix +
+                  path
+                    .basename(name, /\.[^.]+$/)
+                    .replace(new RegExp(`_${side}`), ''),
+              );
             }
           }, 100),
           'data-tooltip': 'Generate Gerber RS274-X CAM data',
@@ -2434,9 +2734,13 @@ const AppMain = (window.onload = async () => {
         listTag: 'nav',
         files: projects,
         onActive: open,
-        onChange: debounce(async (e, p, i) => await ChooseDocument(p, i), 5000, {
-          leading: true,
-        }),
+        onChange: debounce(
+          async (e, p, i) => await ChooseDocument(p, i),
+          5000,
+          {
+            leading: true,
+          },
+        ),
         filter: config.searchFilter,
         showSearch,
         changeInput,
@@ -2502,22 +2806,30 @@ const AppMain = (window.onload = async () => {
     ),
 
     h(CrossHair, { ...crosshair }),
-    h(FloatingPanel, { onSize: config.logSize, className: 'no-select', id: 'console' }, [
-      /*h(div, {}, [ */ h(Logger, {}),
-      h(Dumper, {}),
-      h(Commander, {
-        onCommand: cmdStr => {
-          let fn = new Function(`return ${cmdStr};`);
+    h(
+      FloatingPanel,
+      { onSize: config.logSize, className: 'no-select', id: 'console' },
+      [
+        /*h(div, {}, [ */ h(Logger, {}),
+        h(Dumper, {}),
+        h(Commander, {
+          onCommand: cmdStr => {
+            let fn = new Function(`return ${cmdStr};`);
 
-          //console.log('Command:', cmdStr);
-          LogJS.info(`> ${cmdStr}`);
-          let result = fn();
-          LogJS.info(`= ${toSource(result)}`);
-        },
-      }) /*])*/,
-    ]),
+            //console.log('Command:', cmdStr);
+            LogJS.info(`> ${cmdStr}`);
+            let result = fn();
+            LogJS.info(`= ${toSource(result)}`);
+          },
+        }) /*])*/,
+      ],
+    ),
     h(Slot, { name: 'layers' }),
-    h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: config.credentials })),
+    h(
+      Conditional,
+      { signal: wantAuthorization },
+      h(AuthorizationDialog, { onAuth: config.credentials }),
+    ),
     h(Ruler, {
       class: 'ruler-container vertical ',
       handleChange: e => {
@@ -2562,7 +2874,8 @@ const AppMain = (window.onload = async () => {
   touchHandler.subscribe(TouchEvent);
 
   function MoveEvent(event, prevEvent) {
-    const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
+    const { x, y, clientX, clientY, index, buttons, start, type, target } =
+      event;
     window.lastMoveEvent = event;
     event.elements = document.elementsFromPoint(x, y);
     function* WalkUp(e) {
@@ -2603,12 +2916,21 @@ const AppMain = (window.onload = async () => {
           v => v,
           l => l.map(e => e.classList.value),
           () => '',
-        )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value)),
+        )(
+          Element.walkUp(
+            e,
+            (e, depth) =>
+              !e.classList.value.startsWith('aspect') && e.classList.value,
+          ),
+        ),
       ]),
     );
     removeIf(event.classes, classes => classes == '');
     removeIf(event.elements, e => e.tagName == 'polyline');
-    removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
+    removeIf(
+      event.elements,
+      e => !(event.classes.has(e) || event.colors.has(e)),
+    );
     const group =
       project &&
       project.makeGroup &&
@@ -2623,18 +2945,32 @@ const AppMain = (window.onload = async () => {
       });
 
     if(prevEvent && group) {
-      let u = union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
-      let [remove, add] = difference(prevEvent.elements, event.elements, (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1);
+      let u = union(prevEvent.elements, event.elements, (a, b) =>
+        a.isSameNode(b),
+      );
+      let [remove, add] = difference(
+        prevEvent.elements,
+        event.elements,
+        (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1,
+      );
 
       //console.log('difference:', [remove,add], 'union:', u);
       //console.log('add:', add);
 
-      const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
+      const bboxes = new Map(
+        add.map(e => [
+          e,
+          new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect()),
+        ]),
+      );
 
       for(let [e, rect] of bboxes) {
         let transforms =
           Element.walkUp(e, (p, d, set, stop) =>
-            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')),
+            p.parentElement == null ||
+            p.parentElement.isSameNode(p.ownerSVGElement)
+              ? stop()
+              : p.hasAttribute('transform') && set(p.getAttribute('transform')),
           ) || [];
         transforms = transforms.reverse();
         elems.add(e);
@@ -2644,7 +2980,11 @@ const AppMain = (window.onload = async () => {
         };
         rects.set(e, [
           // SVG.create('rect', { ...props, stroke: '#000', 'stroke-width': 0.127 * 2 }, group),
-          SVG.create('rect', { ...props, 'stroke-dasharray': '0.508 0.508', stroke: '#000' }, group),
+          SVG.create(
+            'rect',
+            { ...props, 'stroke-dasharray': '0.508 0.508', stroke: '#000' },
+            group,
+          ),
           SVG.create(
             'rect',
             {
@@ -2697,13 +3037,22 @@ const AppMain = (window.onload = async () => {
         if('preventDefault' in event) event.preventDefault();
         if(!resize && box) {
           let edges = Element.rect(box).toPoints();
-          let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
+          let corners = [edges[0], edges[2]].map((p, i) => [
+            i,
+            p.distance(new Point(start).sum(x, y)),
+            p,
+          ]);
           let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
-          window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, size => {
-            //console.log('resizeRelative:', { elemId, size });
-            if(elemId == 'console') config.logSize(size);
-          });
+          window.resize = resize = Element.resizeRelative(
+            box,
+            null,
+            edge[0] ? -1 : 1,
+            size => {
+              //console.log('resizeRelative:', { elemId, size });
+              if(elemId == 'console') config.logSize(size);
+            },
+          );
 
           box.style.cursor = `nwse-resize`;
           //console.log('RESIZE:', { resize, box, corners, edge });
@@ -2716,7 +3065,9 @@ const AppMain = (window.onload = async () => {
       const id = box && box.getAttribute('id');
 
       if(id == 'console') {
-        const rects = [true, false].map(border => Element.rect(box, { border }));
+        const rects = [true, false].map(border =>
+          Element.rect(box, { border }),
+        );
         let p = new Point(start.x + x, start.y + y);
         //console.log('', p);
         const inside = rects.map(r => r.inside(p));
@@ -2734,7 +3085,9 @@ const AppMain = (window.onload = async () => {
       }
       if(box) {
         let translation = new Translation();
-        let transformList = new TransformationList([translation]).concat(transform());
+        let transformList = new TransformationList([translation]).concat(
+          transform(),
+        );
 
         let setStyle = once(() =>
           Element.setCSS(box, {
@@ -2744,19 +3097,24 @@ const AppMain = (window.onload = async () => {
           }),
         );
 
-        window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top'], (pos, last, first) => {
-          if(pos && first) {
-            let rel = Point.diff(pos, first);
-            if(rel.distanceSquared() > 0) {
-              setStyle();
+        window.move = move = Element.moveRelative(
+          box,
+          null,
+          id == 'console' ? ['right', 'bottom'] : ['left', 'top'],
+          (pos, last, first) => {
+            if(pos && first) {
+              let rel = Point.diff(pos, first);
+              if(rel.distanceSquared() > 0) {
+                setStyle();
 
-              translation.x = rel.x;
-              translation.y = rel.y;
-              transform(transformList.collapse());
-              //console.log('TouchHandler transform:', transform());
+                translation.x = rel.x;
+                translation.y = rel.y;
+                transform(transformList.collapse());
+                //console.log('TouchHandler transform:', transform());
+              }
             }
-          }
-        });
+          },
+        );
       }
       return true;
     }
@@ -2794,7 +3152,8 @@ const AppMain = (window.onload = async () => {
     const { x, y, index, buttons, start, type, target } = event;
     let rect = Element.rect('.transformed-element-size');
     let cons = Element.rect('#console');
-    if(rect && cons) if (rect.inside(event) && !cons.inside(event)) return true;
+    if(rect && cons)
+      if(rect.inside(event) && !cons.inside(event)) return true;
     if(e.shiftKey && e.altKey) return true;
     //console.log('oncontextmenu',  event);
     return false;
@@ -2863,7 +3222,24 @@ const AppMain = (window.onload = async () => {
   });*/
 
   window.addEventListener('wheel', event => {
-    const { wheelDelta, deltaMode, deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY } = event;
+    const {
+      wheelDelta,
+      deltaMode,
+      deltaX,
+      deltaY,
+      screenX,
+      screenY,
+      clientX,
+      clientY,
+      pageX,
+      pageY,
+      x,
+      y,
+      offsetX,
+      offsetY,
+      layerX,
+      layerY,
+    } = event;
 
     window.wheelEvent = event;
 
@@ -2899,7 +3275,10 @@ const AppMain = (window.onload = async () => {
     const wheelPos = -dy.toFixed(2);
     let zoomVal = config.zoomLog();
 
-    zoomVal = altKey || ctrlKey || shiftKey ? 0 : clamp(-100, 300, zoomVal + wheelPos * 0.1);
+    zoomVal =
+      altKey || ctrlKey || shiftKey
+        ? 0
+        : clamp(-100, 300, zoomVal + wheelPos * 0.1);
     config.zoomLog(zoomVal);
     AdjustZoom();
   });

@@ -55,7 +55,7 @@
 
 import { CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, KEY_DOWN, KEY_END, KEY_ESCAPE, KEY_F, KEY_HOME, KEY_L, KEY_LEFT, KEY_PAGE_DOWN, KEY_PAGE_UP, KEY_Q, KEY_RIGHT, KEY_SPACE, KEY_UP, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, RESIZABLE, SAMPLES, Window, context, poll, } from 'glfw';
 import { SQLite3 } from 'sqlite';
-import { ALIGN_LEFT, ALIGN_MIDDLE, ALIGN_RIGHT, ANTIALIAS, CreateGL3, DeleteGL3, RGB, RGBA, STENCIL_STROKES } from 'nanovg';
+import { ALIGN_LEFT, ALIGN_MIDDLE, ALIGN_RIGHT, ANTIALIAS, CreateGL3, DeleteGL3, RGB, RGBA, STENCIL_STROKES, } from 'nanovg';
 
 const MB_LEFT = 0;
 const PRESS = 1;
@@ -312,7 +312,11 @@ class Indicators {
     const tr = new Float64Array(n);
     tr[0] = high[0] - low[0];
     for(let i = 1; i < n; i++) {
-      tr[i] = Math.max(high[i] - low[i], Math.abs(high[i] - close[i - 1]), Math.abs(low[i] - close[i - 1]));
+      tr[i] = Math.max(
+        high[i] - low[i],
+        Math.abs(high[i] - close[i - 1]),
+        Math.abs(low[i] - close[i - 1]),
+      );
     }
     this.atrAbs = ewm(tr, 1 / 14);
     this.atrRel = new Float64Array(n);
@@ -375,7 +379,8 @@ class Indicators {
     const volMean = rollingMean(vol, 48);
     const volStd = rollingStd(vol, 48);
     this.volZ = new Float64Array(n);
-    for(let i = 0; i < n; i++) this.volZ[i] = (vol[i] - volMean[i]) / (volStd[i] + 1e-12);
+    for(let i = 0; i < n; i++)
+      this.volZ[i] = (vol[i] - volMean[i]) / (volStd[i] + 1e-12);
 
     // ── ADX(14, Wilder) — trend strength; regime uses this ──
     // Wilder's Directional Movement:
@@ -407,7 +412,8 @@ class Indicators {
     // ── RegimeFilter.ok per bar ──
     this.regimeOk = new Uint8Array(n);
     for(let i = 0; i < n; i++) {
-      this.regimeOk[i] = this.adx[i] > REGIME_ADX_MIN && this.atrRel[i] > REGIME_ATR_MIN ? 1 : 0;
+      this.regimeOk[i] =
+        this.adx[i] > REGIME_ADX_MIN && this.atrRel[i] > REGIME_ATR_MIN ? 1 : 0;
     }
   }
 
@@ -427,7 +433,10 @@ class Indicators {
     const atrRel = this.atrRel[i];
     if(!isFinite(atrRel) || atrRel <= 0) return { size: 0, sizeEur: 0 };
     const riskEur = TARGET_VOL * equity;
-    const sizeEur = Math.min(riskEur / (STOP_ATR * atrRel), MAX_POS_FRAC * equity);
+    const sizeEur = Math.min(
+      riskEur / (STOP_ATR * atrRel),
+      MAX_POS_FRAC * equity,
+    );
     return { size: sizeEur / price, sizeEur };
   }
 }
@@ -502,7 +511,8 @@ function evalGate(store, indicators, idx) {
     why = `meta prob ${pred.meta_p.toFixed(3)} < ${ENTRY_META}`;
   } else {
     decision = 'ENTER';
-    why = (pred.p_long > pred.p_short ? 'LONG' : 'SHORT') + ' cleared all gates';
+    why =
+      (pred.p_long > pred.p_short ? 'LONG' : 'SHORT') + ' cleared all gates';
   }
 
   return {
@@ -573,7 +583,8 @@ class Store {
     this.product = p.product;
 
     this.refresh(0);
-    if(this.candles.length > 2) this.tf = this.candles[1].ts - this.candles[0].ts;
+    if(this.candles.length > 2)
+      this.tf = this.candles[1].ts - this.candles[0].ts;
   }
 
   get lastTs() {
@@ -581,29 +592,41 @@ class Store {
   }
 
   refresh(afterTs) {
-    for(const c of this.db.rows(`SELECT ts,open,high,low,close,volume FROM candles WHERE product='${this.product}' AND ts>${afterTs} ORDER BY ts`)) {
+    for(const c of this.db.rows(
+      `SELECT ts,open,high,low,close,volume FROM candles WHERE product='${this.product}' AND ts>${afterTs} ORDER BY ts`,
+    )) {
       this.idxByTs.set(c.ts, this.candles.length);
       this.candles.push(c);
     }
 
-    for(const r of this.db.rows(`SELECT * FROM predictions WHERE product='${this.product}' AND ts>${afterTs} ORDER BY ts`)) this.predByTs.set(r.ts, r);
+    for(const r of this.db.rows(
+      `SELECT * FROM predictions WHERE product='${this.product}' AND ts>${afterTs} ORDER BY ts`,
+    ))
+      this.predByTs.set(r.ts, r);
 
-    for(const a of this.db.rows(`SELECT * FROM actions WHERE product='${this.product}' AND ts>${afterTs} ORDER BY ts`)) {
+    for(const a of this.db.rows(
+      `SELECT * FROM actions WHERE product='${this.product}' AND ts>${afterTs} ORDER BY ts`,
+    )) {
       if(!this.actsByTs.has(a.ts)) this.actsByTs.set(a.ts, []);
       this.actsByTs.get(a.ts).push(a);
       if(a.action === 'HALT') this.haltTs.add(a.ts);
     }
 
-    for(const e of this.db.rows(`SELECT * FROM equity WHERE ts>${afterTs} ORDER BY ts`)) {
+    for(const e of this.db.rows(
+      `SELECT * FROM equity WHERE ts>${afterTs} ORDER BY ts`,
+    )) {
       this.eqByTs.set(e.ts, e);
       this.equity.push(e);
     }
 
     // trades get UPDATEd in place on close — refetch wholesale, it's small
-    this.trades = this.db.rows(`SELECT * FROM trades WHERE product='${this.product}' ORDER BY ts_open`);
+    this.trades = this.db.rows(
+      `SELECT * FROM trades WHERE product='${this.product}' ORDER BY ts_open`,
+    );
 
     this.state = {};
-    for(const s of this.db.rows(`SELECT key,value FROM state`)) this.state[s.key] = JSON.parse(s.value);
+    for(const s of this.db.rows(`SELECT key,value FROM state`))
+      this.state[s.key] = JSON.parse(s.value);
   }
 
   poll(now) {
@@ -613,7 +636,9 @@ class Store {
     // re-read the last stored candle too: the forming one gets overwritten
     const last = this.lastTs;
     if(last && this.idxByTs.has(last)) {
-      const row = this.db.one(`SELECT ts,open,high,low,close,volume FROM candles WHERE product='${this.product}' AND ts=${last}`);
+      const row = this.db.one(
+        `SELECT ts,open,high,low,close,volume FROM candles WHERE product='${this.product}' AND ts=${last}`,
+      );
       if(row) this.candles[this.idxByTs.get(last)] = row;
     }
     this.refresh(last);
@@ -863,7 +888,8 @@ class CandlePane extends Pane {
       const col = up ? COL.upFill : COL.dnFill;
       const yB0 = view.yOfPrice(Math.max(c.open, c.close), r); // body top
       const yB1 = view.yOfPrice(Math.min(c.open, c.close), r); // body bottom
-      const forming = replay.mode === 'LIVE' && i === cs.length - 1 && now - c.ts < store.tf;
+      const forming =
+        replay.mode === 'LIVE' && i === cs.length - 1 && now - c.ts < store.tf;
 
       // wicks — two segments so the line doesn't cross the body fill
       vg.BeginPath();
@@ -1001,7 +1027,12 @@ class CandlePane extends Pane {
   _gateCardRect(app) {
     const r = this.rect;
     const off = app.gateCardOffset;
-    return { x: r.x + 12 + off.dx, y: r.y + 12 + off.dy, w: 306, h: this.gateCardH || 224 };
+    return {
+      x: r.x + 12 + off.dx,
+      y: r.y + 12 + off.dy,
+      w: 306,
+      h: this.gateCardH || 224,
+    };
   }
 
   drawGateStatus(app) {
@@ -1024,7 +1055,11 @@ class CandlePane extends Pane {
     const hs = (y, h, tt) => hotspots.push({ y, h, tt });
 
     // header rows
-    hs(cardY + 14, 14, "The bar this card describes. In replay use ←/→ to step — every gate below re-evaluates for that bar's state.");
+    hs(
+      cardY + 14,
+      14,
+      "The bar this card describes. In replay use ←/→ to step — every gate below re-evaluates for that bar's state.",
+    );
     hs(
       cardY + 30,
       14,
@@ -1163,8 +1198,16 @@ class CandlePane extends Pane {
     app.text(cardX + 12, cardY + 14, `GATE STATUS — ${fmtTs(c.ts)}`);
 
     app.font(10, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
-    app.text(cardX + 12, cardY + 30, `model: ${g.modelVer}   (${g.totalPreds} preds logged)`);
-    app.text(cardX + 12, cardY + 44, `bars: ${store.candles.length} (min ${MIN_BARS_FOR_PRED})   equity: ${fmtNum(g.equity)}`);
+    app.text(
+      cardX + 12,
+      cardY + 30,
+      `model: ${g.modelVer}   (${g.totalPreds} preds logged)`,
+    );
+    app.text(
+      cardX + 12,
+      cardY + 44,
+      `bars: ${store.candles.length} (min ${MIN_BARS_FOR_PRED})   equity: ${fmtNum(g.equity)}`,
+    );
 
     const hr = hy => {
       vg.BeginPath();
@@ -1177,7 +1220,12 @@ class CandlePane extends Pane {
     hr(cardY + 54);
 
     for(const gr of gateRows) {
-      const dotCol = gr.pass === null || gr.pass === undefined ? COL.gateSkip : gr.pass ? COL.gateOk : COL.gateFail;
+      const dotCol =
+        gr.pass === null || gr.pass === undefined
+          ? COL.gateSkip
+          : gr.pass
+            ? COL.gateOk
+            : COL.gateFail;
       vg.BeginPath();
       vg.Circle(cardX + 14, gr.y, 4);
       vg.FillColor(dotCol);
@@ -1192,13 +1240,19 @@ class CandlePane extends Pane {
     }
 
     hr(dividerY);
-    const decCol = g.decision === 'ENTER' ? COL.gateOk : g.decision === 'HALT' ? COL.gateFail : COL.text;
+    const decCol =
+      g.decision === 'ENTER'
+        ? COL.gateOk
+        : g.decision === 'HALT'
+          ? COL.gateFail
+          : COL.text;
     app.font(12, decCol, ALIGN_LEFT | ALIGN_MIDDLE);
     for(let i = 0; i < decLines.length; i++) {
       app.text(cardX + 12, decY + i * decLineH, decLines[i]);
     }
 
-    if(hovered) this.drawGateTooltip(app, hovered.tt, cardX, cardY, cardW, cardH);
+    if(hovered)
+      this.drawGateTooltip(app, hovered.tt, cardX, cardY, cardW, cardH);
   }
 
   drawGateTooltip(app, text, cardX, cardY, cardW, cardH) {
@@ -1227,7 +1281,8 @@ class CandlePane extends Pane {
     vg.Stroke();
 
     app.font(11, COL.text, ALIGN_LEFT | ALIGN_MIDDLE);
-    for(let k = 0; k < lines.length; k++) app.text(ttX + 10, ttY + 12 + k * lineH, lines[k]);
+    for(let k = 0; k < lines.length; k++)
+      app.text(ttX + 10, ttY + 12 + k * lineH, lines[k]);
   }
 
   priceStep(range) {
@@ -1255,16 +1310,42 @@ class CandlePane extends Pane {
 
       vg.StrokeWidth(1);
       vg.StrokeColor(COL.entry);
-      dashedLine(vg, x0, view.yOfPrice(t.entry, r), x1, view.yOfPrice(t.entry, r), 2, 3);
+      dashedLine(
+        vg,
+        x0,
+        view.yOfPrice(t.entry, r),
+        x1,
+        view.yOfPrice(t.entry, r),
+        2,
+        3,
+      );
       vg.StrokeColor(COL.stop);
-      dashedLine(vg, x0, view.yOfPrice(t.stop, r), x1, view.yOfPrice(t.stop, r), 5, 4);
+      dashedLine(
+        vg,
+        x0,
+        view.yOfPrice(t.stop, r),
+        x1,
+        view.yOfPrice(t.stop, r),
+        5,
+        4,
+      );
       vg.StrokeColor(COL.tp);
-      dashedLine(vg, x0, view.yOfPrice(t.tp, r), x1, view.yOfPrice(t.tp, r), 5, 4);
+      dashedLine(
+        vg,
+        x0,
+        view.yOfPrice(t.tp, r),
+        x1,
+        view.yOfPrice(t.tp, r),
+        5,
+        4,
+      );
 
       // entry marker: triangle under (LONG) / over (SHORT) the entry bar
       const long = t.side === 'LONG';
       const c = store.candles[iO];
-      const ey = long ? view.yOfPrice(c.low, r) + 14 : view.yOfPrice(c.high, r) - 14;
+      const ey = long
+        ? view.yOfPrice(c.low, r) + 14
+        : view.yOfPrice(c.high, r) - 14;
       vg.BeginPath();
       if(long) {
         vg.MoveTo(x0, ey - 6);
@@ -1300,7 +1381,13 @@ class CandlePane extends Pane {
     // Gate-card hover takes precedence — its own tooltip is drawn later, and
     // the crosshair line/box across the card would just be visual noise.
     const gc = this._gateCardRect(app);
-    if(mouse.x >= gc.x && mouse.x < gc.x + gc.w && mouse.y >= gc.y && mouse.y < gc.y + gc.h) return;
+    if(
+      mouse.x >= gc.x &&
+      mouse.x < gc.x + gc.w &&
+      mouse.y >= gc.y &&
+      mouse.y < gc.y + gc.h
+    )
+      return;
 
     const i = clamp(Math.floor(view.indexOfX(mouse.x, r)), 0, replay.maxIdx);
     if(i < 0 || i >= store.candles.length) return;
@@ -1317,7 +1404,9 @@ class CandlePane extends Pane {
     vg.StrokeWidth(1);
     vg.Stroke();
 
-    const lines = [`${fmtTs(c.ts)}  O ${fmtNum(c.open)}  H ${fmtNum(c.high)}  L ${fmtNum(c.low)}  C ${fmtNum(c.close)}  V ${fmtNum(c.volume, 3)}`];
+    const lines = [
+      `${fmtTs(c.ts)}  O ${fmtNum(c.open)}  H ${fmtNum(c.high)}  L ${fmtNum(c.low)}  C ${fmtNum(c.close)}  V ${fmtNum(c.volume, 3)}`,
+    ];
     if(indicators.rsi && isFinite(indicators.rsi[i])) {
       const vwapD = ((c.close / indicators.vwap24[i] - 1) * 100).toFixed(2);
       lines.push(
@@ -1325,11 +1414,17 @@ class CandlePane extends Pane {
       );
       const okAdx = indicators.adx[i] > REGIME_ADX_MIN;
       const okAtr = indicators.atrRel[i] > REGIME_ATR_MIN;
-      lines.push(`regime: adx>${REGIME_ADX_MIN}? ${okAdx ? 'yes' : 'NO'}   atr>${(REGIME_ATR_MIN * 100).toFixed(2)}%? ${okAtr ? 'yes' : 'NO'}   → ${indicators.regimeOk[i] ? 'TRADEABLE' : 'off'}`);
+      lines.push(
+        `regime: adx>${REGIME_ADX_MIN}? ${okAdx ? 'yes' : 'NO'}   atr>${(REGIME_ATR_MIN * 100).toFixed(2)}%? ${okAtr ? 'yes' : 'NO'}   → ${indicators.regimeOk[i] ? 'TRADEABLE' : 'off'}`,
+      );
     }
     const p = store.predByTs.get(c.ts);
-    if(p) lines.push(`long ${fmtNum(p.p_long, 3)}  flat ${fmtNum(p.p_flat, 3)}  short ${fmtNum(p.p_short, 3)}  meta ${fmtNum(p.meta_p, 3)}  regime ${p.regime_ok ? 'ok' : 'OFF'}  ${p.model_ver}`);
-    for(const act of store.actsByTs.get(c.ts) ?? []) lines.push(`${act.action}  ${act.reason}`);
+    if(p)
+      lines.push(
+        `long ${fmtNum(p.p_long, 3)}  flat ${fmtNum(p.p_flat, 3)}  short ${fmtNum(p.p_short, 3)}  meta ${fmtNum(p.meta_p, 3)}  regime ${p.regime_ok ? 'ok' : 'OFF'}  ${p.model_ver}`,
+      );
+    for(const act of store.actsByTs.get(c.ts) ?? [])
+      lines.push(`${act.action}  ${act.reason}`);
 
     const bh = 8 + lines.length * 16;
     const bwx = 8 + this.maxLineWidth(lines) * 6.4;
@@ -1343,7 +1438,8 @@ class CandlePane extends Pane {
     vg.FillColor(COL.boxBg);
     vg.Fill();
     app.font(11, COL.text, ALIGN_LEFT | ALIGN_MIDDLE);
-    for(let k = 0; k < lines.length; k++) app.text(bx + 6, by + 12 + k * 16, lines[k]);
+    for(let k = 0; k < lines.length; k++)
+      app.text(bx + 6, by + 12 + k * 16, lines[k]);
   }
 
   maxLineWidth(lines) {
@@ -1365,8 +1461,24 @@ class SignalPane extends Pane {
     // threshold guides
     vg.StrokeColor(COL.thresh);
     vg.StrokeWidth(1);
-    dashedLine(vg, r.x, yOf(ENTRY_META), r.x + r.w - view.axisW, yOf(ENTRY_META), 3, 5);
-    dashedLine(vg, r.x, yOf(ENTRY_DIR), r.x + r.w - view.axisW, yOf(ENTRY_DIR), 3, 5);
+    dashedLine(
+      vg,
+      r.x,
+      yOf(ENTRY_META),
+      r.x + r.w - view.axisW,
+      yOf(ENTRY_META),
+      3,
+      5,
+    );
+    dashedLine(
+      vg,
+      r.x,
+      yOf(ENTRY_DIR),
+      r.x + r.w - view.axisW,
+      yOf(ENTRY_DIR),
+      3,
+      5,
+    );
 
     this.line(app, p => p.p_long, COL.pLong, yOf);
     this.line(app, p => p.p_short, COL.pShort, yOf);
@@ -1468,7 +1580,11 @@ class EquityPane extends Pane {
 
     const lastE = rows[rows.length - 1].e;
     app.font(11, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
-    app.text(r.x + 6, r.y + 10, `equity ${fmtNum(lastE.equity)}  dd ${fmtNum(lastE.drawdown * 100, 2)}%  day ${fmtNum(lastE.day_pnl)}`);
+    app.text(
+      r.x + 6,
+      r.y + 10,
+      `equity ${fmtNum(lastE.equity)}  dd ${fmtNum(lastE.drawdown * 100, 2)}%  day ${fmtNum(lastE.day_pnl)}`,
+    );
     vg.Restore();
   }
 }
@@ -1551,19 +1667,31 @@ class RegimePane extends Pane {
 
     // labels
     app.font(11, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
-    app.text(r.x + 6, r.y + 10, `regime: ADX/${REGIME_ADX_MIN} (navy)  &  ATR%/${(REGIME_ATR_MIN * 100).toFixed(1)}% (ochre)  — both must exceed 1`);
+    app.text(
+      r.x + 6,
+      r.y + 10,
+      `regime: ADX/${REGIME_ADX_MIN} (navy)  &  ATR%/${(REGIME_ATR_MIN * 100).toFixed(1)}% (ochre)  — both must exceed 1`,
+    );
     app.font(10, COL.dim, ALIGN_LEFT | ALIGN_MIDDLE);
     app.text(r.x + r.w - view.axisW + 6, yOf(1), 'thresh');
     app.text(r.x + r.w - view.axisW + 6, yOf(2), '2×');
 
     // current values readout on the right
     const idx = replay.maxIdx;
-    if(idx >= 0 && idx < store.candles.length && isFinite(indicators.adx[idx])) {
+    if(
+      idx >= 0 &&
+      idx < store.candles.length &&
+      isFinite(indicators.adx[idx])
+    ) {
       const adx = indicators.adx[idx];
       const atrPct = indicators.atrRel[idx] * 100;
       const ok = indicators.regimeOk[idx];
       app.font(11, ok ? COL.gateOk : COL.gateFail, ALIGN_RIGHT | ALIGN_MIDDLE);
-      app.text(r.x + r.w - view.axisW - 8, r.y + 10, `ADX ${adx.toFixed(1)}   ATR ${atrPct.toFixed(2)}%   ${ok ? 'TRADEABLE' : 'OFF'}`);
+      app.text(
+        r.x + r.w - view.axisW - 8,
+        r.y + 10,
+        `ADX ${adx.toFixed(1)}   ATR ${atrPct.toFixed(2)}%   ${ok ? 'TRADEABLE' : 'OFF'}`,
+      );
     }
 
     vg.Restore();
@@ -1713,10 +1841,14 @@ class StatusBar extends Pane {
       if(acts && acts.length) lastAct = acts[acts.length - 1];
     }
 
-    const mode = replay.mode === 'LIVE' ? 'LIVE' : `REPLAY ${replay.playing ? '▶' : '⏸'} ${replay.speed}x`;
+    const mode =
+      replay.mode === 'LIVE'
+        ? 'LIVE'
+        : `REPLAY ${replay.playing ? '▶' : '⏸'} ${replay.speed}x`;
     let s = `${mode}  |  ${store.product}  ${fmtTs(c.ts)}  ${fmtNum(c.close)}`;
     if(pred) s += `  |  model ${pred.model_ver}`;
-    if(eq) s += `  |  eq ${fmtNum(eq.equity)} (dd ${fmtNum(eq.drawdown * 100, 1)}%)`;
+    if(eq)
+      s += `  |  eq ${fmtNum(eq.equity)} (dd ${fmtNum(eq.drawdown * 100, 1)}%)`;
     if(lastAct) s += `  |  ${lastAct.action}: ${lastAct.reason}`;
 
     app.font(12, COL.text, ALIGN_LEFT | ALIGN_MIDDLE);
@@ -1766,13 +1898,21 @@ class App {
     Window.hint(RESIZABLE, false);
     Window.hint(SAMPLES, 4);
 
-    this.window = context.current = new Window(1280, 800, `tradeview — ${this.store.product}`);
+    this.window = context.current = new Window(
+      1280,
+      800,
+      `tradeview — ${this.store.product}`,
+    );
     const { width, height } = this.window.size;
     this.width = width;
     this.height = height;
 
     this.vg = CreateGL3(STENCIL_STROKES | ANTIALIAS);
-    for(const path of ['/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', '/usr/share/fonts/TTF/DejaVuSans.ttf', '/usr/share/fonts/dejavu/DejaVuSans.ttf']) {
+    for(const path of [
+      '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+      '/usr/share/fonts/TTF/DejaVuSans.ttf',
+      '/usr/share/fonts/dejavu/DejaVuSans.ttf',
+    ]) {
       if(this.vg.CreateFont('sans', path) >= 0) {
         this.hasFont = true;
         break;
@@ -1844,10 +1984,19 @@ class App {
         // handle, body below is left alone so hover tooltips work.
         if(app.candlePane.contains(app.mouse.x, app.mouse.y)) {
           const gc = app.candlePane._gateCardRect(app);
-          const inCard = app.mouse.x >= gc.x && app.mouse.x < gc.x + gc.w && app.mouse.y >= gc.y && app.mouse.y < gc.y + gc.h;
+          const inCard =
+            app.mouse.x >= gc.x &&
+            app.mouse.x < gc.x + gc.w &&
+            app.mouse.y >= gc.y &&
+            app.mouse.y < gc.y + gc.h;
           if(inCard && app.mouse.y < gc.y + 54) {
             app.dragPane = 'gateCard';
-            app.dragStart = { x: app.mouse.x, y: app.mouse.y, dx: app.gateCardOffset.dx, dy: app.gateCardOffset.dy };
+            app.dragStart = {
+              x: app.mouse.x,
+              y: app.mouse.y,
+              dx: app.gateCardOffset.dx,
+              dy: app.gateCardOffset.dy,
+            };
             return;
           }
           if(inCard) return; // click on card body → do nothing; keeps hover live
@@ -1856,7 +2005,11 @@ class App {
           app.minimapMode = app.minimap.hitTest(app, app.mouse.x);
           app.dragPane = 'minimap';
           app.minimap.applyDrag(app, app.mouse.x, app.minimapMode);
-        } else if(app.candlePane.contains(app.mouse.x, app.mouse.y) || app.signalPane.contains(app.mouse.x, app.mouse.y) || app.equityPane.contains(app.mouse.x, app.mouse.y)) {
+        } else if(
+          app.candlePane.contains(app.mouse.x, app.mouse.y) ||
+          app.signalPane.contains(app.mouse.x, app.mouse.y) ||
+          app.equityPane.contains(app.mouse.x, app.mouse.y)
+        ) {
           app.dragPane = 'chart';
           app.dragX = app.mouse.x;
         }
@@ -1995,7 +2148,9 @@ function main(...args) {
   console.log(`tradeview: opening ${dbPath} (read-only)`);
 
   const app = new App(dbPath);
-  console.log(`tradeview: ${app.store.product}, ${app.store.candles.length} candles, tf=${app.store.tf}s, ${app.store.trades.length} trades`);
+  console.log(
+    `tradeview: ${app.store.product}, ${app.store.candles.length} candles, tf=${app.store.tf}s, ${app.store.trades.length} trades`,
+  );
 
   app.initWindow();
   app.run();
@@ -2006,5 +2161,6 @@ try {
 } catch(error) {
   console.log(`FAIL: ${error.message ?? error}`);
   if(error && error.stack) console.log(error.stack);
-  if(error && error.constructor) console.log(`type: ${error.constructor.name}`);
+  if(error && error.constructor)
+    console.log(`type: ${error.constructor.name}`);
 }
