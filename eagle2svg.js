@@ -15,7 +15,7 @@ function render(doc, filename) {
   const svg = renderer.render();
   let str;
   try {
-    str = renderToString(svg);
+    str = renderToString(svg, {}, { xml: true });
   } catch(e) {
     console.log('ERROR:', e.message);
     console.log('STACK:', e.stack);

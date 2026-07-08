@@ -87,6 +87,15 @@ class EagleAdapter {
     return layer;
   }
 
+  findLibrary(name) {
+    for(const section of ['board', 'schematic', 'library']) {
+      const s = findChild(this.drawing, section);
+      const libs = s && findChild(s, 'libraries');
+      const lib = libs && [...libs.children].find(l => l.getAttribute('name') == name);
+      if(lib) return lib;
+    }
+  }
+
   layerOf(el) {
     switch (el.tagName) {
       case 'pad':
@@ -178,7 +187,7 @@ class EagleAdapter {
             if(target.tagName == 'part') return adapter.wrap(target.deviceset);
             break;
           case 'library':
-            if(target.tagName == 'element' || target.tagName == 'part') return adapter.wrap(target.library);
+            if(target.tagName == 'element' || target.tagName == 'part') return adapter.wrap(adapter.findLibrary(target.getAttribute('library')));
             break;
         }
 
@@ -476,6 +485,7 @@ export class BoardRenderer extends EagleSVGRenderer {
       bounds = new BBox();
       if(plain) bboxOfContainer(plain, bounds);
       if(elements) for(const e of filterChildren(elements, 'element')) bounds.add(num(e, 'x'), -num(e, 'y'));
+      if(signals) for(const sig of filterChildren(signals, 'signal')) bboxOfContainer(sig, bounds);
       if(!bounds.valid) bounds.add(0, 0);
     }
     bounds.outset(1.27);
