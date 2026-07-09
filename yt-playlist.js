@@ -43,9 +43,7 @@ async function GetYouTubeJSON(url) {
     url,
   ];
 
-  console.log(
-    `Executing ${args.map(arg => (/[&]/.test(arg) ? "'" + arg + "'" : arg)).join(' ')}`,
-  );
+  console.log(`Executing ${args.map(arg => (/[&]/.test(arg) ? "'" + arg + "'" : arg)).join(' ')}`);
 
   const child = spawn(args[0], args.slice(1), {
     stdio: ['inherit', 'pipe', 'inherit'],
@@ -56,14 +54,14 @@ async function GetYouTubeJSON(url) {
   console.log('GetYouTubeJSON', { child });
 
   let output = '';
-  
+
   for(;;) {
     await waitRead(stdout);
     const line = gets(stdout);
 
-  console.log('line', abbreviate(line));
+    console.log('line',  abbreviate(line,120));
 
-    output += line;
+    output += line + '\n';
     child.wait(WNOHANG);
 
     if(child.exited) break;
