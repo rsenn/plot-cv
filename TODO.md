@@ -8,8 +8,8 @@ Generated from `./*.js` file modification times + git history. Reflects state as
 DOM-style parser + SVG renderer for EAGLE `.brd`/`.sch`/`.lbr` XML files.
 - Reworked `eagle.js` element accessors: replaced the old `Collection(this)` constructor-return trick with plain getters (`ChildrenByTag`, `NamedChildByAttr`) — cleaner, more predictable API (commit `9f09c1f0`).
 - Rewrote `eagle-renderer.js` from scratch as an adapter layer (`EagleAdapter`) that presents DOM elements with the numeric-attribute / layer-object / palette API expected by `lib/eagle/components.js`, replacing the old hand-rolled palette + transform-string code (commit `ba721d47`, ~870 lines touched).
-- Recovered `dir-helpers.js`, which had been accidentally clobbered with a raw ImageMagick PostScript dump (500k+ lines) instead of its JS source — rewritten back to a working `DirIterator`/`RecursiveDirIterator` module (commit `9f09c1f0`).
-- **TODO:** verify no other files got silently corrupted by the same mistake (check `git log` around `2026-07-07T09:46` for other ImageMagick-clobbered files).
+- Recovered `dir-helpers.js`, which had been accidentally clobbered in commit `8200d99c` (2026-07-07 11:51) with a raw ImageMagick PostScript dump (502k+ lines, likely a misdirected shell redirect) instead of its JS source — rewritten back to a working `DirIterator`/`RecursiveDirIterator` module an hour later in commit `9f09c1f0`.
+- Checked (full history search, `git log --all -S`): no other file was hit by the same mistake — `eagle.js`, `eagle2svg.js`, `tradeview.js` in the same commit are legitimate edits, confirmed by diff.
 - Followed by a repo-wide Prettier-style reflow (long lines wrapped) across `main.js`, `eagle-shell.js`, `upload-server.js`, `tradeview.js`, `google-contacts.js`, `http-client.js`, `common.user.js`, `dir-helpers.js`, `eagle2svg.js`, `yt-playlist.js` (commit `2983d9a0`) — formatting only, no logic changes.
 
 ### 2. YouTube playlist metadata fetcher (yt-playlist.js) — most actively iterated file
