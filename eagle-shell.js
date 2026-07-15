@@ -415,7 +415,6 @@ function main(...args) {
     EventTarget,
     Graph,
     Edge,
-    xml,
     XPath,
     ImmutableXPath,
     parseXPath,
@@ -648,7 +647,7 @@ function main(...args) {
     false,
   ));
 
-  repl.history = LoadHistory(cmdhist);
+  repl.historyLoad();
   repl.loadSaveOptions();
 
   let log = console.log;
@@ -719,11 +718,6 @@ function Terminate(exitCode) {
   console.log('Terminate', exitCode);
 
   std.exit(exitCode);
-}
-
-function xml(strings, expressions) {
-  let [tag] = strings;
-  return e => e.tagName == tag;
 }
 
 function UpdateMeasures(board) {
