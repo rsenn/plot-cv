@@ -51,6 +51,11 @@ export class EagleProject {
     );
   }
 
+  get filenames() {
+    return [this.#filename + '.sch', this.#filename + '.brd'];
+  }
+
+
   closeAll() {
     delete this.schematic;
     delete this.board;

@@ -31,6 +31,7 @@ const filterChildren = (el, tag) =>
 
 function* descendants(el) {
   for(const c of el.children) {
+    if(c.nodeType != null && c.nodeType !== 1) continue;
     yield c;
     yield* descendants(c);
   }

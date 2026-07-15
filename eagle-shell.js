@@ -24,7 +24,7 @@ import { GetElements, GetInstances, GetParts, GetPositions, num2color, scientifi
 import CircuitJS from './lib/eda/circuitjs.js';
 import { GetColorBands, GetFactor, GetMultipliers, } from './lib/eda/colorCoding.js';
 import { GetExponent, GetMantissa, NumberToValue, ValueToNumber, } from './lib/eda/values.js';
-import { EventEmitter, eventify, EventTarget } from './lib/events.js';
+import { EventEmitter, EventTarget } from './lib/events.js';
 import { BBox, Circle, Line, LineList, Matrix, Point, Rect, Rotation, Scaling, Size, TransformationList, Translation, } from './lib/geom.js';
 import { Edge, Graph, Node as GraphNode } from './lib/fd-graph.js';
 import * as path from './lib/path.js';
@@ -413,7 +413,6 @@ function main(...args) {
     path,
     EventEmitter,
     EventTarget,
-    eventify,
     Graph,
     Edge,
     xml,
@@ -658,7 +657,7 @@ function main(...args) {
 
   repl.debugLog = debugLog;
   repl.exit = () => {
-    repl.cleanup();
+    repl?.cleanup?.();
     Terminate();
   };
   repl.debug = (...args) => {
