@@ -67,3 +67,15 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ## 5. Track Newly Discovered Bugs
 
 When you discover a bug that isn't the one you're currently fixing, append it to the end of the `BUGS` file (create it if it doesn't exist) instead of fixing it inline or silently ignoring it. Don't fix unrelated bugs without asking first — see Surgical Changes above.
+
+Format each entry like `shish/BUGS`:
+
+```
+- <canonical-name>: <description, wrapped prose explaining what's wrong,
+  how it was found, and any relevant root-cause detail>
+
+    <repro that triggers it>
+
+```
+
+Blank line between the description and the repro, and a blank line after the repro before the next entry.
