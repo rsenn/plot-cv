@@ -63,3 +63,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+## 5. Track Newly Discovered Bugs
+
+When you discover a bug that isn't the one you're currently fixing, append it to the end of the `BUGS` file (create it if it doesn't exist) instead of fixing it inline or silently ignoring it. Don't fix unrelated bugs without asking first — see Surgical Changes above.

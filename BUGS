@@ -1,0 +1,13 @@
+# BUGS
+
+Newly discovered bugs go at the end of this file (see CLAUDE.md, "Track Newly Discovered Bugs").
+Do not fix unrelated bugs inline without asking first.
+
+Entry template:
+
+## [YYYY-MM-DD] Short title
+- Where: file/module/component
+- What: what's wrong, observed vs expected behavior
+- How found: what you were doing when you noticed it
+- Severity: low / medium / high
+- Status: open
