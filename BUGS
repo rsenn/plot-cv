@@ -11,3 +11,17 @@ Entry template:
 - How found: what you were doing when you noticed it
 - Severity: low / medium / high
 - Status: open
+
+## [2026-07-23] forwardOutput's TextDecoder collides with qjs-lws's event loop
+- Where: quickjs/qjs-debugger/qjs-debugger.js, `forwardOutput()` (os.setReadHandler-based pipe polling)
+- What: once an lws `createContext()` is running, reading a spawned child's stdout/stderr through `forwardOutput` throws `InternalError: TextDecoder.decode: N bytes remaining` — the two event loops (os.setReadHandler polling vs qjs-lws's native loop) appear to interfere with each other's fd reads. Reproduces reliably even with a child that prints nothing, so it isn't about split multi-byte UTF-8; genuinely about the two event-loop mechanisms coexisting.
+- How found: building `server` mode (HTTP+WS via qjs-lws), which forwards a spawned qjsm engine's stdio the same way `Debugger.launch()` does. Worked around in `StartServer` by passing a custom `spawn` to `StartEngine` that sets `stdio: 'inherit'` instead of piping, so the engine's output goes straight to the parent's own stdout/stderr and forwardOutput/os.setReadHandler is never invoked while lws is active. `dap`/`repl`/`gui` modes don't touch lws and are unaffected.
+- Severity: medium (only hits when combining qjs-lws with os.setReadHandler-based fd polling in the same process)
+- Status: open (root cause in the interaction between os.setReadHandler and qjs-lws's context event loop, not investigated further)
+
+## [2026-07-23] RETRACTED — not a bug: WS clients must send Sec-WebSocket-Protocol for mount dispatch to work
+- Where: previously filed against qjs-lws (lws.so) mount->protocol dispatch
+- What it looked like: a `LWSContext` with several `mounts` pointing at different `protocol` names always seemed to dispatch WS upgrades to `protocols[0]` once a second `createServer()`/`LWSContext` existed anywhere in the process, regardless of which mountpoint the client connected to.
+- Actual root cause (found by reading libwebsockets' own `lws_process_ws_upgrade()` in `qjs-lws/libwebsockets/lib/roles/ws/server-ws.c`): when a WS client sends no `Sec-WebSocket-Protocol` header at all, libwebsockets binds the connection to `vhost->default_protocol_index` (`protocols[0]`) unconditionally and never consults mount data — this is correct, RFC 6455 §4.2.2-compliant behavior, nothing to do with context count. My test clients happened to omit that header in every case that "failed"; my JSON/raw ports "worked" only because they're each the sole (and thus already-index-0) protocol on their context. Confirmed by re-running the exact same multi-context, multi-mount setup with a client that sends `Sec-WebSocket-Protocol: browser` (matching qjs-lws's own `examples/debugger/demo.js`, which already does this unmodified) — dispatch was correct every time, context count and creation order both irrelevant.
+- Fix: none needed in qjs-lws. `quickjs/qjs-debugger/qjs-debugger.js` (`StartServer`) and `connector-lws.js` were reverted from the single-mount workaround back to the normal multi-mount design (matching `server.js`), and `LWSConnector`'s 'browser'-mode protocol is explicitly named `'browser'` to match what `demo.js` requests.
+- Status: closed (retracted)
