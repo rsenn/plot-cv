@@ -22,7 +22,7 @@ const sources = [
   'quickjs/quickjs-debugger-transport-unix.c',
   'quickjs/quickjs-find-module.c',
   'quickjs/quickjs-libc.c',
-  'quickjs/repl.c'
+  'quickjs/repl.c',
 ];
 
 const includeDirs = ['/opt/diet/include', '.'];
@@ -93,30 +93,30 @@ function main(...args) {
   const findInclude = FindIncludeFunc(file);
   let code;
   const pp = cpp({
-    include_func(file, system, resolve) {
-      // console.log('completion_func', { file, system, resolve });
+    includeFunc(file, system, resolve) {
+      // console.log('completionFunc', { file, system, resolve });
       file = findInclude(file);
-      // console.log('completion_func', file);
+      // console.log('completionFunc', file);
 
       const code = filesystem.readFileSync(file);
-      console.log('include_func', {
+      console.log('includeFunc', {
         file,
-        code: abbreviate(escape(code + ''), 40)
+        code: abbreviate(escape(code + ''), 40),
       });
 
       resolve(code);
     },
-    completion_func(text, arr, state) {
-      // console.log('completion_func', { text: abbreviate(text), arr: arr.map(s => abbreviate(s)), state });
+    completionFunc(text, arr, state) {
+      // console.log('completionFunc', { text: abbreviate(text), arr: arr.map(s => abbreviate(s)), state });
       code = text;
     },
-    error_func(error) {
-      console.log('error_func', { error });
+    errorFunc(error) {
+      console.log('errorFunc', { error });
       throw new Error(error);
     },
-    warn_func(warning) {
-      console.log('warn_func', { warning });
-    }
+    warnFunc(warning) {
+      console.log('warnFunc', { warning });
+    },
   });
 
   pp.define('__WORDSIZE', 64);
@@ -135,7 +135,7 @@ function main(...args) {
 
   const ast = cparse(code, {
     file,
-    types: [/*'int8_t','int16_t','int32_t','int64_t', 'uint8_t','uint16_t','uint32_t','uint64_t',*/ 'void', 'char', 'short', 'int', 'long', 'float', 'double']
+    types: [/*'int8_t','int16_t','int32_t','int64_t', 'uint8_t','uint16_t','uint32_t','uint64_t',*/ 'void', 'char', 'short', 'int', 'long', 'float', 'double'],
   });
 
   console.log(ast);

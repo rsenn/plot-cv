@@ -1,46 +1,22 @@
 import { readFileSync } from 'fs';
-import * as filesystem from 'fs';
-import { randInt } from 'util';
+import * as fs from 'fs';
+import { randInt, abbreviate } from 'util';
 import cpp from './lib/cpp.js';
-import * as path from './lib/path.js';
+import * as path from 'path';
 
-const includeDirs = ['/opt/diet/include', '.'];
+const includeDirs = [process.env.TERMUX_PREFIX + '/lib/gcc/x86_64-linux-gnu/16/include', process.env.TERMUX_PREFIX + '/include/x86_64-linux-gnu', '/opt/diet/include', '.'];
 
 const FindIncludeFunc = source => {
   const dirs = [path.dirname(source), ...includeDirs];
-
   return name => {
     for(let dir of dirs) {
       let file = path.join(dir, name);
-      //console.log('file:', file);
-      if(filesystem.exists(file)) return file;
+      if(path.exists(file)) return file;
     }
   };
 };
 
 const getSource = () => sources[randInt(0, sources.length - 1, prng)];
-
-function* Reader(input) {
-  const buffer = new ArrayBuffer(1024);
-  let ret;
-  do {
-    ret = filesystem.read(input, buffer, 0, 1024);
-    console.log('ret:', ret);
-
-    yield buffer.slice(0, ret);
-  } while(ret == 1024);
-}
-
-function ReadAll(input) {
-  let data = '';
-  for(let chunk of Reader(input)) {
-    console.log('chunk:', chunk);
-    console.log('chunk.length:', filesystem.bufferSize(chunk));
-    data += filesystem.bufferToString(chunk);
-  }
-  console.log('data:', data);
-  return data;
-}
 
 function StripPP(code) {
   return code
@@ -51,73 +27,48 @@ function StripPP(code) {
 
 function main(...args) {
   const file = args[0] || getSource();
-
   console.log('Source file:', file);
-  //const output = filesystem.open('out.e', 'w');
-  // console.log('out fd:', filesystem.fileno(output));
-  let cmd = ['/usr/lib/gcc/x86_64-linux-gnu/10/cc1', '-E', ...includeDirs.map(dir => `-I${dir}`), file /*, '-o', 'out.e'*/];
 
+  let cmd = ['/usr/lib/gcc/x86_64-linux-gnu/10/cc1', '-E', ...includeDirs.map(dir => `-I${dir}`), file];
   console.log('cmd:', cmd.join(' '));
 
-  /*  let proc = childProcess(cmd[0], cmd.slice(1), {
-    block: false,
-    stdio: [null, 'pipe', 'pipe']
-  });
-
-  console.log('out:', proc.stdout);*/
-
-  //const src =   ReadAll(proc.stdout);
   console.log('Source file:', file);
   const src = readFileSync(file, 'utf-8');
-
   const findInclude = FindIncludeFunc(file);
   let code;
-  const pp = globalThis.pp= cpp({
-    include_func(file, system, resolve) {
-      // console.log('completion_func', { file, system, resolve });
-      file = findInclude(file);
-      // console.log('completion_func', file);
-
-      const code = filesystem.readFileSync(file);
-      console.log('include_func', {
+  const pp = (globalThis.pp = cpp({
+    includeFunc(file, system, resolve) {
+      console.log('includeFunc', console.config({ compact: true }), {
         file,
-        code: abbreviate(escape(code + ''), 40)
+        system,
       });
 
+      file = findInclude(file);
+
+      const code = fs.readFileSync(file, 'utf-8');
       resolve(code);
     },
-    completion_func(text, arr, state) {
-      // console.log('completion_func', { text: abbreviate(text), arr: arr.map(s => abbreviate(s)), state });
+    completionFunc(text, arr, state) {
       code = text;
     },
-    error_func(error) {
-      console.log('error_func', { error });
-      throw new Error(error);
+    errorFunc(error, stack) {
+      //console.log('errorFunc', { error, stack });
+      throw Object.assign(new Error(error), stack ? { stack } : {});
+      std.exit(1);
     },
-    warn_func(warning) {
-      console.log('warn_func', { warning });
-    }
-  });
-
+    warnFunc(warning) {
+      //console.log('warnFunc', { warning });
+    },
+  }));
   pp.define('__WORDSIZE', 64);
   pp.define('__STDC_LIMIT_MACROS', 1);
   pp.define('__STDC_CONSTANT_MACROS', 1);
   pp.define('__SIZE_TYPE__', 'unsigned long');
   pp.define('__PTRDIFF_TYPE__', 'long');
+  pp.define('__GNUC_PREREQ(x,y)', 1);
 
-  let e;
-
-  console.log('Source code:', src);
-  e = pp.run(src);
-
-  //const src = filesystem.readFileSync('out.e');
-
-  const ast = cparse(code, {
-    file,
-    types: [/*'int8_t','int16_t','int32_t','int64_t', 'uint8_t','uint16_t','uint32_t','uint64_t',*/ 'void', 'char', 'short', 'int', 'long', 'float', 'double']
-  });
-
-  console.log(ast);
+  const e = pp.run(src);
+  console.log(e);
 
   os.kill(os.getpid(), os.SIGUSR1);
 }
