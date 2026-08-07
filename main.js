@@ -1348,7 +1348,7 @@ async function RenderProject(project = globalThis.project) {
   if(svgElement) {
     let viewBox = new Rect(svgElement.getAttribute('viewBox').split(/\s+/g));
 
-    let bgRects = [...svgElement.querySelector('#bg').children];
+    let bgRects = [...svgElement.querySelectorAll(':scope > rect')];
 
     const setRect = rect => {
       svgElement.setAttribute('viewBox', rect + '');
@@ -1379,10 +1379,9 @@ async function RenderProject(project = globalThis.project) {
   {
     let { name, data, doc, svg, bbox } = project;
 
-    let bounds = doc.getBounds();
-
-    //console.log('bounds', bounds);
-    let rect = bounds.toRect(Rect.prototype);
+    let rect = svgElement
+      ? new Rect(svgElement.getAttribute('viewBox').split(/\s+/g))
+      : new Rect(0, 0, 0, 0);
 
     //console.log('rect', rect);
 
@@ -1394,7 +1393,7 @@ async function RenderProject(project = globalThis.project) {
       size.mul(doc.type == 'brd' ? 2 : 1.5);
 
       let svgrect = SVG.bbox(project.svgElement);
-      let measures = (doc.measures || doc.getBounds()).rect;
+      let measures = doc.measures || rect;
 
       Element.attr(project.svgElement, {
         'data-filename': project.name,
