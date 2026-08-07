@@ -973,12 +973,14 @@ function EagleMaps(project) {
   );
   //console.debug('maps.eagle2dom:', maps.eagle2dom);*/
   //) maps.dom2eagle = mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
-  const [path2component, component2path] =
-    project.renderer.maps.map(mapFunction);
+  const noopMap = () => undefined;
+  const [path2component, component2path] = project.renderer.maps
+    ? project.renderer.maps.map(mapFunction)
+    : [noopMap, noopMap];
   const {
-    /*path2obj, obj2path, */ path2eagle,
-    eagle2path /*, eagle2obj, obj2eagle */,
-  } = project.doc.maps;
+    /*path2obj, obj2path, */ path2eagle = noopMap,
+    eagle2path = noopMap /*, eagle2obj, obj2eagle */,
+  } = project.doc.maps ?? {};
   const [component2eagle, eagle2component] = [
     mapAdapter((key, value) =>
       value === undefined ? path2eagle(component2path(key)) : undefined,

@@ -19,19 +19,24 @@ Entry template:
 - Severity: medium (only hits when combining qjs-lws with os.setReadHandler-based fd polling in the same process)
 - Status: open (root cause in the interaction between os.setReadHandler and qjs-lws's context event loop, not investigated further)
 
-## [2026-08-07] EagleMaps throws on `project.renderer.maps.map` (undefined)
-- Where: main.js:976-977, `EagleMaps()`: `const [path2component, component2path] = project.renderer.maps.map(mapFunction);`
-- What: loading any board/schematic (e.g. `TBA820-Amplifier-3.brd` via the file chooser) throws `TypeError: Cannot read properties of undefined (reading 'map')` because `project.renderer.maps` is undefined at this point — `RenderProject` (`main.js:1259-1260`) calls into `EagleMaps` before/without that being populated. Document still loads and renders visibly despite this (the renderer apparently tolerates the failure), but the console is left with a real uncaught exception on every document load.
-- How found: clicking a file in the project chooser after fixing the two rendering bugs (comma-operator bug in `lib/preact.js`'s `render()`, and the `Timer.once` misreference in `main.js:124`) that were previously masking this and other downstream errors entirely.
-- Severity: medium (doesn't visibly block rendering, but is a genuine crash on the hot path of every document load)
+## [2026-08-07] RenderProject crashes reading `svgElement.querySelector('#bg').children`
+- Where: main.js:1348-1351 (`RenderProject`): `if(svgElement) { let viewBox = ...; let bgRects = [...svgElement.querySelector('#bg').children]; ... }`
+- What: `TypeError: Cannot read properties of null (reading 'children')` on every document load. `svgElement.querySelector('#bg')` returns `null` because the live renderer (`eagle-renderer.js`'s `EagleSVGRenderer.renderSVG()`) emits `Background`/`Grid` as direct children of the `<svg>` root, not wrapped in a `<g id="bg">` — that wrapper only exists in the dead legacy renderer (`lib/eagle/components/drawing.js:47`, `h('g', { id: 'bg', ... }, ...)`), which nothing live uses anymore. Same class of stale-API-contract mismatch already tracked in TODO.md item 5 (main.js written against the old `lib/eagle/svgRenderer.js`/`renderer.js` DOM-structure contract, never updated for the new `eagle-renderer.js`).
+- How found: fixing the `EagleMaps`/`project.renderer.maps` crash and the `SaveSVG`/`ElementToXML` crash (both below, now fixed) let `RenderProject` run far enough to reach this line for the first time — it was previously masked because `EagleMaps` aborted `RenderProject` before execution ever got here.
+- Severity: medium (aborts `RenderProject` before zoom/viewBox setup runs, though the document still renders visibly since React.render already committed earlier in the function)
 - Status: open
 
-## [2026-08-07] SaveSVG/ElementToXML calls XMLSerializer.serializeToString with a non-Node argument
-- Where: main.js:362-363 (`ElementToXML`), called from `SaveSVG` (main.js:470-471), called from `main.js:1255-1256`
-- What: `TypeError: Failed to execute 'serializeToString' on 'XMLSerializer': parameter 1 is not of type 'Node'.` — whatever `SaveSVG` passes into `ElementToXML` at `main.js:1255-1256` isn't a real DOM `Node`, so every document load throws here too.
-- How found: same document-load repro as the two entries above.
-- Severity: medium (whatever `SaveSVG`'s caller at main.js:1255-1256 is trying to persist/cache on load silently fails)
-- Status: open
+## [2026-08-07] EagleMaps threw on `project.renderer.maps.map` (undefined) — FIXED
+- Where: main.js:976-982, `EagleMaps()`
+- What: loading any board/schematic threw `TypeError: Cannot read properties of undefined (reading 'map')` because `project.renderer.maps` doesn't exist on the new `eagle-renderer.js` `EagleSVGRenderer`/`SchematicRenderer`/etc. (only the dead legacy `lib/eagle/svgRenderer.js` had a `.maps` getter). `project.doc.maps` was likewise never defined on `EagleDocument` (`lib/eagle-dom.js`). Confirmed via live browser repro (`LoadDocument(...)`) that nothing downstream in `main.js`/`commands.js`/`lib/eagle/components*` ever actually reads `project.maps.*` — the whole `EagleMaps()` output is presently write-only/unconsumed. This crash also aborted `RenderProject` before it reached the lines that set `project.svgElement`, which was the direct cause of the SaveSVG/ElementToXML crash below.
+- Fix: guarded the two destructures with fallbacks (`project.renderer.maps ? ... : [noopMap, noopMap]`, and default values on `path2eagle`/`eagle2path` from `project.doc.maps ?? {}`) so `EagleMaps()` no longer throws when the new renderer/doc don't populate `.maps`. This is a stopgap — implementing real `.maps` tracking on the new renderer (mirroring the old `EagleSVGRenderer`'s `data-path`-keyed `path2component`/`component2path`) is future work, already scoped under TODO.md item 5's renderer-API migration.
+- Status: closed
+
+## [2026-08-07] SaveSVG/ElementToXML called XMLSerializer.serializeToString with a non-Node argument — FIXED
+- Where: main.js:362-363 (`ElementToXML`), called from `SaveSVG` (main.js:470-471), called from `main.js:1256-1257`
+- What: `TypeError: Failed to execute 'serializeToString' on 'XMLSerializer': parameter 1 is not of type 'Node'.` on every document load. Root cause: not an independent bug — `RenderProject` schedules `setTimeout(() => SaveSVG(), 500)` and *then* crashes in `EagleMaps()` (previous entry) before reaching the later line that assigns `project.svgElement`. 500ms later the scheduled `SaveSVG()` reads `project.svgElement`, finds it `undefined`, and passes that into `ElementToXML` → `XMLSerializer.serializeToString(undefined)`.
+- Fix: none needed directly — fixing the `EagleMaps` crash above let `RenderProject` reach the `project.svgElement = Element.find('svg', element)` assignment before the `SaveSVG` timeout fires. Verified live: `project.svgElement` is now a real `<svg>` node and `SaveSVG`/`ElementToXML` no longer throw.
+- Status: closed
 
 ## [2026-07-23] RETRACTED — not a bug: WS clients must send Sec-WebSocket-Protocol for mount dispatch to work
 - Where: previously filed against qjs-lws (lws.so) mount->protocol dispatch
