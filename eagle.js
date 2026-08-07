@@ -1,5 +1,11 @@
 import { declare, properties, define } from './lib/misc.js';
 import { Prototypes, Factory, Parser, HTMLCollection, NamedMap, NamedNodeMap, Element, Document, Node, Collection, } from './lib/dom.js';
+import { Palette } from './lib/eagle/common.js';
+import { RGBA } from './lib/color/rgba.js';
+import trkl from './lib/trkl.js';
+
+const LAYER_REF_BY_TAG = { pad: 'Pads', via: 'Vias', hole: 'Holes' };
+const VISIBLE_HANDLERS = new WeakMap();
 
 function FindChild(element, name) {
   return element.children[
@@ -75,6 +81,16 @@ export class EagleDocument extends Document {
   /* prettier-ignore */ get layers() { return this.eagle.drawing.layers; }
   /* prettier-ignore */ get type() { return this.eagle.drawing.type; }
 
+  get palette() {
+    let p = this._palette;
+    if(!p) p = this._palette = Palette[this.type == 'board' ? 'board' : 'schematic']((r, g, b) => new RGBA(r, g, b));
+    return p;
+  }
+
+  getLayer(ref) {
+    return ref == null || ref === '' ? undefined : this.layers[ref];
+  }
+
   static open(filename, readFn) {
     const parser = new EagleParser();
     let doc;
@@ -102,6 +118,15 @@ export class EagleElement extends Element {
           configurable: true,
         });
     }
+  }
+
+  getLayer() {
+    const ref = LAYER_REF_BY_TAG[this.tagName] ?? this.getAttribute('layer');
+    return this.ownerDocument.getLayer(ref);
+  }
+
+  getColor() {
+    return this.getLayer()?.getColor() ?? this.ownerDocument.palette[16];
   }
 
   static elements = Prototypes({
@@ -151,8 +176,30 @@ export class EagleElement extends Element {
       /* prettier-ignore */ get number() { return +this.getAttribute('number'); }
       /* prettier-ignore */ get color() { return +this.getAttribute('color'); }
       /* prettier-ignore */ get fill() { return +this.getAttribute('fill'); }
-      /* prettier-ignore */ get visible() { return this.getAttribute('visible') == 'yes'; }
+      /* prettier-ignore */ get visible() { return this.handlers.visible() == 'yes'; }
+      /* prettier-ignore */ set visible(v) { this.handlers.visible(v ? 'yes' : 'no'); }
       /* prettier-ignore */ get active() { return this.getAttribute('active') == 'yes'; }
+
+      getLayer() {
+        return this;
+      }
+
+      getColor() {
+        return this.ownerDocument.palette[this.color];
+      }
+
+      get handlers() {
+        let h = VISIBLE_HANDLERS.get(this);
+        if(!h) {
+          const visible = trkl(this.getAttribute('visible') ?? 'yes');
+          visible.subscribe(v => {
+            if(this.getAttribute('visible') !== v) this.setAttribute('visible', v);
+          });
+          h = { visible };
+          VISIBLE_HANDLERS.set(this, h);
+        }
+        return h;
+      }
     },
     description: class DescriptionElement extends this {},
 
