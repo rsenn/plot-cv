@@ -121,7 +121,7 @@ const is = {
 /* prettier-ignore */
 //extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleDocument, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
 
-const Timer = { ...Timers, once: dom.Timer };
+const Timer = { ...Timers, once: dom.Timer.promise };
 
 const putError = error =>
   console.log('ERROR: ' + error.message + '\n' + error.stack);
