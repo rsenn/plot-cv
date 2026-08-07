@@ -19,6 +19,20 @@ Entry template:
 - Severity: medium (only hits when combining qjs-lws with os.setReadHandler-based fd polling in the same process)
 - Status: open (root cause in the interaction between os.setReadHandler and qjs-lws's context event loop, not investigated further)
 
+## [2026-08-07] EagleMaps throws on `project.renderer.maps.map` (undefined)
+- Where: main.js:976-977, `EagleMaps()`: `const [path2component, component2path] = project.renderer.maps.map(mapFunction);`
+- What: loading any board/schematic (e.g. `TBA820-Amplifier-3.brd` via the file chooser) throws `TypeError: Cannot read properties of undefined (reading 'map')` because `project.renderer.maps` is undefined at this point — `RenderProject` (`main.js:1259-1260`) calls into `EagleMaps` before/without that being populated. Document still loads and renders visibly despite this (the renderer apparently tolerates the failure), but the console is left with a real uncaught exception on every document load.
+- How found: clicking a file in the project chooser after fixing the two rendering bugs (comma-operator bug in `lib/preact.js`'s `render()`, and the `Timer.once` misreference in `main.js:124`) that were previously masking this and other downstream errors entirely.
+- Severity: medium (doesn't visibly block rendering, but is a genuine crash on the hot path of every document load)
+- Status: open
+
+## [2026-08-07] SaveSVG/ElementToXML calls XMLSerializer.serializeToString with a non-Node argument
+- Where: main.js:362-363 (`ElementToXML`), called from `SaveSVG` (main.js:470-471), called from `main.js:1255-1256`
+- What: `TypeError: Failed to execute 'serializeToString' on 'XMLSerializer': parameter 1 is not of type 'Node'.` — whatever `SaveSVG` passes into `ElementToXML` at `main.js:1255-1256` isn't a real DOM `Node`, so every document load throws here too.
+- How found: same document-load repro as the two entries above.
+- Severity: medium (whatever `SaveSVG`'s caller at main.js:1255-1256 is trying to persist/cache on load silently fails)
+- Status: open
+
 ## [2026-07-23] RETRACTED — not a bug: WS clients must send Sec-WebSocket-Protocol for mount dispatch to work
 - Where: previously filed against qjs-lws (lws.so) mount->protocol dispatch
 - What it looked like: a `LWSContext` with several `mounts` pointing at different `protocol` names always seemed to dispatch WS upgrades to `protocols[0]` once a second `createServer()`/`LWSContext` existed anywhere in the process, regardless of which mountpoint the client connected to.
