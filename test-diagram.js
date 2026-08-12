@@ -19,16 +19,16 @@ function main(...args) {
   let size = font.size('X');
 
   let mat = new Mat([640, 480], CV_8UC3);
-  let diagramRect = new Rect(0, 0, ...mat.size).inset(20);
+  let diagramRect = new Rect(0, 0, ...mat.size()).inset(20);
   let diagramMat = mat(diagramRect);
 
   console.log('diagramRect', diagramRect);
 
-  Draw.rectangle(diagramMat, new Point(0, 0), new Point(...diagramMat.size), [255, 255, 255], FILLED);
+  Draw.rectangle(diagramMat, new Point(0, 0), new Point(...diagramMat.size()), [255, 255, 255], FILLED);
 
   let axes = {
-    x: AxisPoints(100, 10, X, font, diagramMat.size),
-    y: AxisPoints(100, 10, Y, font, diagramMat.size)
+    x: AxisPoints(100, 10, X, font, diagramMat.size()),
+    y: AxisPoints(100, 10, Y, font, diagramMat.size())
   };
   let ranges = {
     x: AxisRange(axes.x),

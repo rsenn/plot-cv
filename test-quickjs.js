@@ -113,16 +113,16 @@ function main(...args) {
   console.log(`CV_32FC4`, toHex(CV_32FC4), CV_32FC4);
   console.log(`0x3ff`, toHex(0x3ff));
   console.log(`inspect(mat)`, inspect(mat));
-  console.log(`mat.channels`, mat.channels);
-  console.log(`mat.depth`, mat.depth);
-  console.log(`1 << mat.depth`, 1 << mat.depth);
+  console.log(`mat.channels`, mat.channels());
+  console.log(`mat.depth`, mat.depth());
+  console.log(`1 << mat.depth`, 1 << mat.depth());
   console.log(
     `Mat[DEPTH]`,
-    Object.keys(Mat).find(k => Mat[k] === mat.depth)
+    Object.keys(Mat).find(k => Mat[k] === mat.depth())
   );
   console.log(
     `Mat[TYPE]`,
-    Object.keys(Mat).find(k => Mat[k] === mat.type)
+    Object.keys(Mat).find(k => Mat[k] === mat.type())
   );
   mat.setTo([0xff, 0xff, 0xff, 0x80]);
   let row0 = mat.row(0);
@@ -188,7 +188,7 @@ function main(...args) {
     for(let [[row, col], value] of roi.entries()) {
       console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
     }
-    console.log(`roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`);
+    console.log(`roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth()} channels=${roi.channels()}`);
 
     for(let r = 0; r < roi.rows; r++)
       for(let c = 0; c < roi.cols; c++) {

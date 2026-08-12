@@ -19,16 +19,16 @@ async function main(...args) {
   }
 
   let input = cv.imread(args[0] ?? '../an-tronics/images/fm/Two-Transistor-Regenerative-Receiver-Schematic-Circuit-Diagram.jpg');
-  console.log('input.type', '0x' + input.type.toString(16));
-  console.log('input.depth', '0x' + input.depth.toString(16));
-  console.log('input.channels', '0x' + input.channels.toString(16));
-  console.log('input.elemSize1', input.elemSize1);
+  console.log('input.type', '0x' + input.type().toString(16));
+  console.log('input.depth', '0x' + input.depth().toString(16));
+  console.log('input.channels', '0x' + input.channels().toString(16));
+  console.log('input.elemSize1', input.elemSize1());
   console.log('input.total', input.total);
   console.log('input.at', input.at(0, 0));
-  let size = input.size;
+  let size = input.size();
   console.log('size', size);
   let { width, height } = size;
-  let mat = new Mat(input.size, cv.CV_8UC3);
+  let mat = new Mat(input.size(), cv.CV_8UC3);
   let thresh = 100;
   const RandomPoint = () => new Point(randInt(0, width - 1), randInt(0, height - 1));
   const RandomColor = () => [randInt(0, 255), randInt(0, 255), randInt(0, 255), 255];

@@ -43,7 +43,7 @@ function GLFW(...args) {
 
 function WriteImage(name, mat) {
   cv.imwrite(name, mat);
-  console.log("Wrote '" + name + "' (" + mat.size + ').');
+  console.log("Wrote '" + name + "' (" + mat.size() + ').');
 }
 
 function SaveConfig(configObj) {
@@ -134,7 +134,7 @@ async function main(...args) {
   let trackbar = '';
   let file = args[0] || '../an-tronics/images/fm/4tr.jpg';
   let image = cv.imread(file);
-  let resolution = image.size;
+  let resolution = image.size();
   let scaled;
   console.log('Symbol.inspect', Symbol.inspect);
   console.log('resolution', resolution);
@@ -400,7 +400,7 @@ async function main(...args) {
         lsd.drawSegments(dst, lines);
       },
       function PixelNeighborhood(src, dst) {
-        let neighborhood = new Mat(src.size, cv.CV_8UC1);
+        let neighborhood = new Mat(src.size(), cv.CV_8UC1);
 
         cv.imwrite('src.png', src);
 
@@ -423,8 +423,8 @@ async function main(...args) {
         const skel = this.outputOf('Skeletonization');
         const morpho = this.outputOf('Morphology');
         let output = new Mat();
-        if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
-        if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
+        if(skel.channels() > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
+        if(morpho.channels() > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
         cv.HoughLinesP(
           skel,
           output,
@@ -542,8 +542,8 @@ async function main(...args) {
         paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
         if(paramNav.index < paramIndexes[0] || paramNav.index > paramIndexes[1]) paramNav.current = params[0];
         let mat = pipeline.getImage(i);
-        if(mat.channels == 1) cv.cvtColor(mat, outputMat, cv.COLOR_GRAY2BGR);
-        else if(mat.channels == 4) cv.cvtColor(mat, outputMat, cv.COLOR_BGRA2BGR);
+        if(mat.channels() == 1) cv.cvtColor(mat, outputMat, cv.COLOR_GRAY2BGR);
+        else if(mat.channels() == 4) cv.cvtColor(mat, outputMat, cv.COLOR_BGRA2BGR);
         else mat.copyTo(outputMat);
         RedrawStatus();
         RedrawWindow();
@@ -579,7 +579,7 @@ async function main(...args) {
   }
   function Scale(mat, f = 1) {
     if(f == 1) return mat;
-    let size = mat.size;
+    let size = mat.size();
     let dsize = size.mul(f);
     let [f2] = new Size(dsize).sub(size).div(size);
     let rect = new Rect(drag.pos ? drag.pos.mul(f2) : new Point(0, 0), size);

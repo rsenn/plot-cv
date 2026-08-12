@@ -224,7 +224,7 @@ function main(...args) {
     //console.log('mat.size', { w, h });
 
     //win.move(0, 0);
-    win.resize(...mat.size);
+    win.resize(...mat.size());
     win.align(0);
 
     win.show(out);
@@ -234,7 +234,7 @@ function main(...args) {
       if(['s', 'S', 115, 83].indexOf(k) != -1) {
         const { contours } = pipeline;
         console.log('contours.length', contours.length);
-        saveContours(contours, out.size);
+        saveContours(contours, out.size());
         // saveLines(lines, out.size);
         continue;
       }

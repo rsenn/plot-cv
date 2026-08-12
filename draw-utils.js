@@ -124,13 +124,17 @@ Object.assign(GLFW.prototype, {
 });
 
 export function Mat2Image(mat) {
-  if(mat.channels == 3) {
+  if(mat.channels() == 3) {
     let tmp = new Mat();
     cvtColor(mat, tmp, COLOR_BGR2RGBA);
     mat = tmp;
   }
-  assert(mat.channels, 4, 'channels == 4');
-  const { cols, rows, depth, channels, step, elemSize, elemSize1 } = mat;
+  assert(mat.channels(), 4, 'channels == 4');
+  const { cols, rows, step } = mat;
+  const depth = mat.depth(),
+    channels = mat.channels(),
+    elemSize = mat.elemSize(),
+    elemSize1 = mat.elemSize1();
   console.log('Mat2Image', { depth, channels, step: step / elemSize, cols, rows, elemSize, elemSize1 });
 
   return nvg.CreateImageRGBA(mat.cols, mat.rows, 0, mat.buffer);

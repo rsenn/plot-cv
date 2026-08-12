@@ -30,13 +30,13 @@ function main(...args) {
   for(const image of params['@']) {
     let m = imread(image);
 
-    if(m.size.aspect != size.aspect) {
-      let f = size.div(m.size);
+    if(m.size().aspect != size.aspect) {
+      let f = size.div(m.size());
 
       const factor = Math.min(...f);
       const index = [...f].indexOf(factor);
       const other = index ^ 1;
-      const newsz = new Size(m.size).mul(factor).round();
+      const newsz = new Size(m.size()).mul(factor).round();
       const delta = new Size(size).sub(newsz);
       const rect = new Rect(...new Size(delta).div(2).round(), ...newsz);
 
@@ -51,9 +51,9 @@ function main(...args) {
       m = frame;
     }
 
-    if(!m.size.equals(size)) resize(m, m, size);
+    if(!m.size().equals(size)) resize(m, m, size);
 
-    console.log(`frame #${++i}/${length}`, console.config({ compact: true }), m == frame, m.size);
+    console.log(`frame #${++i}/${length}`, console.config({ compact: true }), m == frame, m.size());
     w.write(m);
   }
 

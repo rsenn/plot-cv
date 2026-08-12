@@ -93,7 +93,7 @@ function main(...args) {
 
   let chars = '12345V67890V';
 
-  let segments = [...SegmentRect(img.size, dim)];
+  let segments = [...SegmentRect(img.size(), dim)];
   console.log('segments', console.config({ compact: 0 }), segments);
   let i = 0;
   for(let segment of segments) {

@@ -65,7 +65,7 @@ function findType(value) {
 }
 
 function getBitDepth(mat) {
-  switch (mat.depth) {
+  switch (mat.depth()) {
     case cv.CV_8U:
     case cv.CV_8S:
       return 8;
@@ -303,7 +303,7 @@ function main(...args) {
     [
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
-        if(dst.empty) dst0Size = dst.size;
+        if(dst.empty) dst0Size = dst.size();
         // log.info('video', video.read, video.constructor.name);
         framePos = video.get('pos_frames');
         //log.info('video', video.read, video.constructor.name);
@@ -311,9 +311,9 @@ function main(...args) {
         //log.info('dst', dst.size);
 
         win.show(dst);
-        if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
+        if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size();
         if(dstEmpty) firstSize = new Size(...videoSize);
-        if(dst.size && !videoSize.equals(dst.size)) throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
+        if(dst.size() && !videoSize.equals(dst.size())) throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size()}`);
       }),
       Processor(function Grayscale(src, dst) {
         let channels = [];
@@ -385,7 +385,7 @@ function main(...args) {
     });
 
   const resizeOutput = Once(() => {
-    let size = outputMat.size.mul(zoom);
+    let size = outputMat.size().mul(zoom);
     win.resize(size.width, Math.floor(size.height * 1.5));
   });
 
@@ -545,8 +545,8 @@ function main(...args) {
 
         case 's': /* save */ {
           log.info('contours.length', contours.length);
-          saveContours(contours, outputMat.size);
-          saveLines(lines, outputMat.size);
+          saveContours(contours, outputMat.size());
+          saveLines(lines, outputMat.size());
           break;
         }
         default: {
@@ -574,7 +574,7 @@ function main(...args) {
     let now = Date.now();
 
     out = outputMat;
-    if(outputMat.channels == 1) {
+    if(outputMat.channels() == 1) {
       cv.cvtColor(out, out, cv.COLOR_GRAY2BGRA);
     } else {
       cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);

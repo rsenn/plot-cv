@@ -111,7 +111,7 @@ function main(...args) {
 
   cvtColor(image2, image2, COLOR_BGR2BGRA);
 
-  image2.copyTo(mat(new Rect(image2.size)));
+  image2.copyTo(mat(new Rect(image2.size())));
 
   drawLine(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, LINE_AA);
   drawLine(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, LINE_AA);

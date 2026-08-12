@@ -17,7 +17,7 @@ import * as cv from 'opencv';
 
 function WriteImage(name, mat) {
   cv.imwrite(name, mat);
-  console.log(`Wrote '${name}' (${mat.size}).`);
+  console.log(`Wrote '${name}' (${mat.size()}).`);
 }
 
 function SaveConfig(configObj) {
@@ -92,16 +92,16 @@ function main(...args) {
     console.log(`Mat.CV_32FC4`, toHex(Mat.CV_32FC4), Mat.CV_32FC4);
     console.log(`0x3ff`, toHex(0x3ff));
     console.log(`inspect(mat)`, inspect(mat));
-    console.log(`mat.channels`, mat.channels);
-    console.log(`mat.depth`, mat.depth);
-    console.log(`1 << mat.depth`, 1 << mat.depth);
+    console.log(`mat.channels`, mat.channels());
+    console.log(`mat.depth`, mat.depth());
+    console.log(`1 << mat.depth`, 1 << mat.depth());
     console.log(
       `Mat[DEPTH]`,
-      Object.keys(Mat).find(k => Mat[k] === mat.depth)
+      Object.keys(Mat).find(k => Mat[k] === mat.depth())
     );
     console.log(
       `Mat[TYPE]`,
-      Object.keys(Mat).find(k => Mat[k] === mat.type)
+      Object.keys(Mat).find(k => Mat[k] === mat.type())
     );
     let row0 = mat.row(0);
     let col0 = mat.col(0);

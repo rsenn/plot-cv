@@ -188,8 +188,8 @@ function detectObjects(net, classNames, imagePath) {
 
   // YOLOv8-Output-Format parsen: [1, num_classes+4, anchors]
   // Transponieren zu [anchors, num_classes+4]
-  const data = output.reshape(1, output.size[1]);
-  const anchors = output.size[2];
+  const data = output.reshape(1, output.size()[1]);
+  const anchors = output.size()[2];
   const numCls = classNames.length;
 
   const boxes = [];

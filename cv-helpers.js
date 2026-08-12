@@ -12,13 +12,13 @@ export function Grayscale(src, dst) {
 }
 
 export function Dup(src) {
-  let dst = new Mat(src.size, src.type);
+  let dst = new Mat(src.size(), src.type());
   src.copyTo(dst);
   return dst;
 }
 
 export function Convert(src, type, alpha = 1, beta = 0) {
-  let dst = new Mat(src.size, type);
+  let dst = new Mat(src.size(), type);
   src.convertTo(dst, type, alpha, beta);
   return dst;
 }
