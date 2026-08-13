@@ -56,7 +56,8 @@ morphologyEx(bin, closed, MORPH_CLOSE, k);
 
 // ---------- 2. component detection ----------
 const contours = [];
-const findRes = findContours(closed.clone(), contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+const hierarchy = [];
+const findRes = findContours(closed.clone(), contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 //const contours = Array.isArray(findRes) ? findRes[0] : findRes;
 
 const imgArea = src.cols * src.rows;

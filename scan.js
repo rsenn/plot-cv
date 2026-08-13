@@ -52,7 +52,8 @@ function main() {
 
   // --- 3. find the page contour (largest 4-vertex approximation) ------------
   const contours = [];
-  /*const result =*/ findContours(edges, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+  const hierarchy = [];
+  /*const result =*/ findContours(edges, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
   //console.log('contours:', contours);
 
   const MIN_AREA = W * H * 0.05;

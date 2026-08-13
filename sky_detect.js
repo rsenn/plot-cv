@@ -103,7 +103,8 @@ function main(argv) {
   // Largest connected region = sky contour
   // --------------------------------------------------------------------------
   const contours = [];
-  findContours(mask, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+  const hierarchy = [];
+  findContours(mask, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
   //console.log('contours.length',contours.length);
 
