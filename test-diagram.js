@@ -24,7 +24,7 @@ function main(...args) {
 
   console.log('diagramRect', diagramRect);
 
-  Draw.rectangle(diagramMat, new Point(0, 0), new Point(...diagramMat.size()), [255, 255, 255], FILLED);
+  rectangle(diagramMat, new Point(0, 0), new Point(...diagramMat.size()), [255, 255, 255], FILLED);
 
   let axes = {
     x: AxisPoints(100, 10, X, font, diagramMat.size()),
@@ -42,7 +42,7 @@ function main(...args) {
   console.log('', { rect, origin });
   let area = ClientArea(diagramMat, axes.x, axes.y, font);
 
-  //Draw.rectangle(area, new Point(0, 0), new Point(area.cols - 1, area.rows - 1), [255, 0, 255], 1, LINE_8);
+  //rectangle(area, new Point(0, 0), new Point(area.cols - 1, area.rows - 1), [255, 0, 255], 1, LINE_8);
 
   let contour = new Contour(...range(0, 100, 10).map(x => new Point(x, randInt(100))));
   console.log('contour', console.config({ compact: false }), contour);
@@ -56,11 +56,11 @@ function main(...args) {
   let c = new Contour(...[...contour2].map(a => new Point(...a)));
   console.log('c', console.config({ compact: false }), c);
 
-  console.log('Draw.polylines', Draw.polylines);
+  console.log('polylines', polylines);
 
-  Draw.polylines(area, [c ?? [...contour2]], false, [1, 220, 90], 1, LINE_AA);
+  polylines(area, [c ?? [...contour2]], false, [1, 220, 90], 1, LINE_AA);
 
-  //  Draw.line(area, [0,0],[100,100], [0,255,0], 1, LINE_8);
+  //  line(area, [0,0],[100,100], [0,255,0], 1, LINE_8);
 
   DrawAxis(diagramMat, axes.x, rect, font);
   DrawAxis(diagramMat, axes.y, rect, font);

@@ -1,5 +1,5 @@
 import { mod, range } from 'util';
-import { CV_64FC1, CV_RGB, Draw, Line, LINE_8, LINE_AA, Mat, Point, Rect } from 'opencv';
+import { CV_64FC1, CV_RGB, Draw, Line, LINE_8, LINE_AA, Mat, Point, Rect, line } from 'opencv';
 
 export const X = Symbol.for('x');
 export const Y = Symbol.for('y');
@@ -64,7 +64,7 @@ export function DrawLine(mat, start, end, color = CV_RGB(0, 0, 0), width = 1, li
 
   //console.log('DrawLine', inspect({ points, width, lineType }, { compact: 2 }));
 
-  Draw.line(mat, ...points, color, width, lineType);
+  line(mat, ...points, color, width, lineType);
 }
 
 export function DrawRect(mat, [x1, y1], [x2, y2], color = CV_RGB(0, 0, 0), width = 1, lineType = LINE_AA) {

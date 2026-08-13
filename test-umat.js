@@ -86,7 +86,7 @@ async function main(...args) {
 
     let angle = Math.floor((line.angle / (cv.CV_PI / 24)) * 180) % 24;
     if(Math.abs(angle) > 2) continue;
-    Draw.line(mat, line.a, line.b, [255, 0, 0, 255], 1, cv.LINE_AA);
+    cv.line(mat, line.a, line.b, [255, 0, 0, 255], 1, cv.LINE_AA);
     /*    console.log('line.angle:', (line.angle * 180) / Math.PI);
     console.log('line.length:', line.length);*/
 
@@ -99,12 +99,12 @@ async function main(...args) {
 
   xgrid = xgrid.map((lines, col) => [col * 5, lines]).filter(([col, lines]) => lines.length > 1);
 
-  //for(let [x] of xgrid) Draw.line(mat, new Point(x, 0), new Point(x, input.rows), [255, 0, 255, 255], 1, cv.LINE_AA);
+  //for(let [x] of xgrid) cv.line(mat, new Point(x, 0), new Point(x, input.rows), [255, 0, 255, 255], 1, cv.LINE_AA);
 
-  // for(let [y] of ygrid) Draw.line(mat, new Point(0, y), new Point(input.cols, y), [255, 255, 0, 255], 1, cv.LINE_AA);
+  // for(let [y] of ygrid) cv.line(mat, new Point(0, y), new Point(input.cols, y), [255, 255, 0, 255], 1, cv.LINE_AA);
 
   for(let [x, y, r] of circles) {
-    Draw.circle(mat, new Point(x, y), r + 3, [0, 128, 255, 255], 5, cv.LINE_AA);
+    cv.circle(mat, new Point(x, y), r + 3, [0, 128, 255, 255], 5, cv.LINE_AA);
   }
   for(let contour of contours) {
     console.log('contour.length', contour.length);
@@ -134,7 +134,7 @@ async function main(...args) {
     /*  if(!angles.some(a => Math.abs(a) <= 1)) continue;
 
     if(lpoly.length > 4) continue;*/
-    Draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
+    cv.Draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
     i++;
   }
   // console.log(`lines`, [...lines]);
@@ -152,7 +152,7 @@ async function main(...args) {
   /* console.log(`input.buffer`, input.buffer);
   console.log(`input2.buffer`, input2.buffer);*/
 
-  //for(let i = 0; i < 100; i++) Draw.line(mat, RandomPoint(), RandomPoint(), RandomColor(), 1, cv.LINE_AA);
+  //for(let i = 0; i < 100; i++) cv.line(mat, RandomPoint(), RandomPoint(), RandomColor(), 1, cv.LINE_AA);
 
   let out = new Mat(size, cv.CV_8UC3);
 

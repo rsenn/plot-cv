@@ -584,7 +584,7 @@ function main(...args) {
     if(processor.functionName == 'HoughLines') {
       for(let line of lines) {
         const { a, b } = line;
-        Draw.line(over, line.a, line.b, { r: 255, g: 0, b: 0, a: 255 }, 2, cv.LINE_AA, 0);
+        cv.line(over, line.a, line.b, { r: 255, g: 0, b: 0, a: 255 }, 2, cv.LINE_AA, 0);
       }
     } else if(frameShow == 0 || frameShow == 7) {
       cv.drawContours(over, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
@@ -665,8 +665,8 @@ function main(...args) {
 
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
     if(maskRect && showOverlay) {
-      Draw.rectangle(out, maskRect, [0, 0, 0, 255], -1);
-      Draw.rectangle(out, maskRect, [255, 255, 255, 255], 1);
+      cv.rectangle(out, maskRect, [0, 0, 0, 255], -1);
+      cv.rectangle(out, maskRect, [255, 255, 255, 255], 1);
     }
     let composite = MakeMatFor(showOutput);
 
@@ -682,7 +682,7 @@ function main(...args) {
     }
     cv.addWeighted(out, 1, over, showOverlay ? 1 : 0, 0, composite);
     if(maskRect && showOverlay) {
-      Draw.rectangle(composite, maskRect, [255, 255, 255, 255], 1);
+      cv.rectangle(composite, maskRect, [255, 255, 255, 255], 1);
     }
 
     win.show(composite);

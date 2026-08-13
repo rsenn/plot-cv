@@ -358,7 +358,7 @@ async function main(...args) {
         for(let i = 0; i < n; i++) {
           const color = [0, 0, 255] ?? palette[i];
 
-          Draw.polylines(dst, [contours[i + start]], false, color, 1, cv.LINE_8);
+          cv.polylines(dst, [contours[i + start]], false, color, 1, cv.LINE_8);
         }
 
         console.log('ShowTrace', console.config({ maxArrayLength: Infinity }), { src, dst });
@@ -440,9 +440,9 @@ async function main(...args) {
         for(let elem of output.values()) {
           const line = new Line(elem);
           lines.push(line);
-          Draw.line(dst, ...line.toPoints(), [255, 128, 0], lineWidth, cv.LINE_AA);
-          Draw.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
-          Draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
+          cv.line(dst, ...line.toPoints(), [255, 128, 0], lineWidth, cv.LINE_AA);
+          cv.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
+          cv.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
         }
         lines = lines.map(l => (l.slope.y < 0 ? l.swap() : l));
@@ -493,12 +493,12 @@ async function main(...args) {
         for(let line of v) {
           let color = angle2Color((line.angle * (180 / Math.PI)) % 180);
 
-          Draw.line(dst, ...line.toPoints(), color, 1, cv.LINE_AA);
+          cv.line(dst, ...line.toPoints(), color, 1, cv.LINE_AA);
         }
         for(let line of h) {
           let color = angle2Color((line.angle * (180 / Math.PI)) % 180);
 
-          Draw.line(dst, ...line.toPoints(), color, 1, cv.LINE_AA);
+          cv.line(dst, ...line.toPoints(), color, 1, cv.LINE_AA);
         }
 
         let kern = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
@@ -525,12 +525,12 @@ async function main(...args) {
         let i = 0;
         for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
-          Draw.circle(dst, p, r, [0, 255, 0], lineWidth, cv.LINE_AA);
+          cv.circle(dst, p, r, [0, 255, 0], lineWidth, cv.LINE_AA);
           circles.push([x, y, r]);
         }
         for(let [x, y, r] of circles2) {
           let p = new Point(x, y);
-          Draw.circle(dst, p, r + 2, [255, 0, 0], lineWidth, cv.LINE_AA);
+          cv.circle(dst, p, r + 2, [255, 0, 0], lineWidth, cv.LINE_AA);
           circles.push([x, y, r]);
         }
       },
@@ -556,8 +556,8 @@ async function main(...args) {
     let { params } = processor.get(pipeline.getProcessor(i));
     let srect = new Rect(statusRect.size);
 
-    Draw.rectangle(statusMat, srect, backgroundColor, cv.FILLED, true);
-    Draw.rectangle(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
+    cv.rectangle(statusMat, srect, backgroundColor, cv.FILLED, true);
+    cv.rectangle(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
     const inspectOptions = {
       colors: true,
       hideKeys: ['callback'],
