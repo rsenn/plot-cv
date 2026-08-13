@@ -1,11 +1,11 @@
-import { Contour, Draw, drawCircle, drawLine, Line, Mat, Point, Rect, Size } from 'opencv';
+import { Contour, Draw, circle, line, Line, Mat, Point, Rect, Size } from 'opencv';
 
 async function main(...args) {
   //import { Contour } from "contour";
-  const { circle, contour, line, polygon, rect } = Draw;
+  const { circle: circleDraw, contour, line: lineDraw, polygon, rect } = Draw;
 
-  console.log('global:', { drawLine, drawCircle });
-  console.log('static:', { circle, contour, line, polygon, rect });
+  console.log('global:', { line, circle });
+  console.log('static:', { circle: circleDraw, contour, line: lineDraw, polygon, rect });
   console.log('test:', { Point, Size, Rect, Mat, Contour, Line, Draw });
 
   const ctors = [Point, Size, Rect, /*Mat,*/ Contour, Line];

@@ -16,7 +16,7 @@
  *   qjs-modules     – provides 'fs' for file I/O
  */
 
-import { Scalar, threshold, THRESH_BINARY_INV, THRESH_BINARY, Mat, imread, imshow, imwrite, waitKey, cvtColor, Canny, GaussianBlur, HoughLinesP, drawLine, LineSegmentDetector, COLOR_BGR2GRAY, LINE_AA, } from 'opencv';
+import { Scalar, threshold, THRESH_BINARY_INV, THRESH_BINARY, Mat, imread, imshow, imwrite, waitKey, cvtColor, Canny, GaussianBlur, HoughLinesP, line, LineSegmentDetector, COLOR_BGR2GRAY, LINE_AA, } from 'opencv';
 import { writeFileSync } from 'fs';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -122,7 +122,7 @@ const palette = [
 
 segments.forEach((seg, idx) => {
   const color = palette[idx % palette.length];
-  drawLine(canvas, { x: Math.round(seg.x1), y: Math.round(seg.y1) }, { x: Math.round(seg.x2), y: Math.round(seg.y2) }, color, 1, LINE_AA);
+  line(canvas, { x: Math.round(seg.x1), y: Math.round(seg.y1) }, { x: Math.round(seg.x2), y: Math.round(seg.y2) }, color, 1, LINE_AA);
 });
 
 // ─── display ─────────────────────────────────────────────────────────────────

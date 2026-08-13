@@ -17,7 +17,7 @@
  * qjs yolo.js --input video.mp4
  */
 
-import { CommandLineParser, destroyAllWindows, dnn, drawRect, FILLED, FONT_HERSHEY_SIMPLEX, getTextSize, imread, imshow, imwrite, Mat, Point, putText, Rect, Scalar, Size, TickMeter, VideoCapture, waitKey, } from 'opencv';
+import { CommandLineParser, destroyAllWindows, dnn, blobFromImage, rectangle, FILLED, FONT_HERSHEY_SIMPLEX, getTextSize, imread, imshow, imwrite, Mat, Point, putText, Rect, Scalar, Size, TickMeter, VideoCapture, waitKey, } from 'opencv';
 import { open } from 'std';
 import { writeFileSync } from 'fs';
 
@@ -135,7 +135,7 @@ function main() {
     const W = img.cols;
 
     //Image → YOLO blob (normalized, scaled, RGB swap)
-    const blob = dnn.blobFromImage(
+    const blob = blobFromImage(
       img,
       1 / 255.0, // scaling factor
       new Size(CONFIG.inputSize, CONFIG.inputSize),
@@ -210,7 +210,7 @@ function main() {
       const pt2 = new Point(d.x + d.w, d.y + d.h);
 
       // Bounding box
-      drawRect(img, pt1, pt2, color, 1);
+      rectangle(img, pt1, pt2, color, 1);
 
       // Label background
       const label = `${d.className} ${(d.conf * 100).toFixed(0)}%`;
@@ -218,7 +218,7 @@ function main() {
       const [width, height] = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, baseline);
       const labelY = Math.max(d.y, height + 4);
 
-      drawRect(img, new Point(d.x, labelY - height - 4), new Point(d.x + width + 4, labelY), color, FILLED);
+      rectangle(img, new Point(d.x, labelY - height - 4), new Point(d.x + width + 4, labelY), color, FILLED);
 
       // Text
       putText(img, label, new Point(d.x + 2, labelY - 2), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255, 255), 1);

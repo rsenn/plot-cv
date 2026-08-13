@@ -5,7 +5,7 @@ import { className } from 'util';
 import * as glfw from 'glfw';
 import * as ImGui from 'imgui';
 import * as nanovg from 'nanovg';
-import { imread, copyTo, log, CV_8UC4, COLOR_BGR2BGRA, LINE_AA, cvtColor, drawLine, Mat, Point, Rect } from 'opencv';
+import { imread, copyTo, log, CV_8UC4, COLOR_BGR2BGRA, LINE_AA, cvtColor, line, Mat, Point, Rect } from 'opencv';
 
 function Clear(color = nanovg.RGB(0, 0, 0)) {
   const { size } = glfw.context.current;
@@ -113,8 +113,8 @@ function main(...args) {
 
   image2.copyTo(mat(new Rect(image2.size())));
 
-  drawLine(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, LINE_AA);
-  drawLine(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, LINE_AA);
+  line(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, LINE_AA);
+  line(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, LINE_AA);
 
   let { buffer } = mat;
 

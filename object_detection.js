@@ -1,4 +1,4 @@
-import { WINDOW_NORMAL, FILLED, FONT_HERSHEY_SIMPLEX, drawRect, resize, minMaxLoc, Scalar, CV_8U, CV_32FC1, Size, CommandLineParser, createTrackbar, dnn, FileNode, FileStorage, getTextSize, getTickFrequency, Mat, namedWindow, VideoCapture, waitKey, imshow, putText, } from 'opencv';
+import { WINDOW_NORMAL, FILLED, FONT_HERSHEY_SIMPLEX, rectangle, resize, minMaxLoc, Scalar, CV_8U, CV_32FC1, Size, CommandLineParser, createTrackbar, dnn, readNet, blobFromImage, FileNode, FileStorage, getTextSize, getTickFrequency, Mat, namedWindow, VideoCapture, waitKey, imshow, putText, } from 'opencv';
 import { readFileSync } from 'fs';
 
 const Error = { StsNotImplemented: 1 };
@@ -155,7 +155,7 @@ function main() {
   }
 
   // Load a model.
-  let net = dnn.readNet(modelPath, configPath, parser.get('framework'));
+  let net = readNet(modelPath, configPath, parser.get('framework'));
   let backend = +parser.get('backend');
   net.setPreferableBackend(backend);
   net.setPreferableTarget(+parser.get('target'));
@@ -301,7 +301,7 @@ function preprocess(frame, net, inpSize, scale, mean, swapRB) {
   // Create a 4D blob from a frame.
   if(inpSize.width <= 0) inpSize.width = frame.cols;
   if(inpSize.height <= 0) inpSize.height = frame.rows;
-  dnn.blobFromImage(frame, blob, 1.0, inpSize, Scalar(), swapRB, false, CV_8U);
+  blobFromImage(frame, blob, 1.0, inpSize, Scalar(), swapRB, false, CV_8U);
 
   // Run a model.
   net.setInput(blob, '', scale, mean);
@@ -427,7 +427,7 @@ function postprocess(/*Mat&*/ frame, outs, /*Net& */ net, backend) {
 }
 
 function drawPred(classId, conf, left, top, right, bottom, /*Mat&*/ frame) {
-  drawRect(frame, new Point(left, top), new Point(right, bottom), Scalar(0, 255, 0));
+  rectangle(frame, new Point(left, top), new Point(right, bottom), Scalar(0, 255, 0));
 
   let label = Math.round(conf * 100) / 100;
 
@@ -440,7 +440,7 @@ function drawPred(classId, conf, left, top, right, bottom, /*Mat&*/ frame) {
   let labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, v => (baseLine = v));
 
   top = Math.max(top, labelSize.height);
-  drawRect(frame, new Point(left, top - labelSize.height), new Point(left + labelSize.width, top + baseLine), Scalar(255, 255, 255, 255), FILLED);
+  rectangle(frame, new Point(left, top - labelSize.height), new Point(left + labelSize.width, top + baseLine), Scalar(255, 255, 255, 255), FILLED);
   putText(frame, label, new Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, Scalar());
 }
 

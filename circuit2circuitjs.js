@@ -9,7 +9,7 @@
 
 import { existsSync, writeFileSync } from 'fs';
 import { basename, extname } from 'path';
-import { imread, imwrite, Mat, Size, Point, Rect, Scalar, cvtColor, GaussianBlur, adaptiveThreshold, getStructuringElement, morphologyEx, findContours, contourArea, boundingRect, arcLength, HoughLinesP, drawRect, putText, drawLine, COLOR_BGR2GRAY, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, MORPH_RECT, MORPH_CLOSE, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, FONT_HERSHEY_SIMPLEX, } from 'opencv.so';
+import { imread, imwrite, Mat, Size, Point, Rect, Scalar, cvtColor, GaussianBlur, adaptiveThreshold, getStructuringElement, morphologyEx, findContours, contourArea, boundingRect, arcLength, HoughLinesP, rectangle, putText, line, COLOR_BGR2GRAY, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, MORPH_RECT, MORPH_CLOSE, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, FONT_HERSHEY_SIMPLEX, } from 'opencv.so';
 
 // ---------- args ----------
 const args = scriptArgs.slice(1);
@@ -209,11 +209,11 @@ const overlay = src.clone();
 for(const c of keep) {
   const color = c.kind === 'resistor' ? new Scalar(0, 255, 0) : c.kind === 'capacitor' ? new Scalar(255, 200, 0) : c.kind === 'ic' ? new Scalar(255, 0, 255) : new Scalar(128, 128, 128);
   const r = c.rect;
-  drawRect(overlay, new Point(r.x, r.y), new Point(r.x + r.width, r.y + r.height), color, 2);
+  rectangle(overlay, new Point(r.x, r.y), new Point(r.x + r.width, r.y + r.height), color, 2);
   putText(overlay, c.kind, new Point(r.x, Math.max(12, r.y - 4)), FONT_HERSHEY_SIMPLEX, 0.5, color, 1);
 }
 for(const [x1, y1, x2, y2] of wires) {
-  drawLine(overlay, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 255), 2);
+  line(overlay, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 255), 2);
 }
 imwrite(debugPath, overlay);
 console.log(`wrote ${debugPath}  (visual check)`);

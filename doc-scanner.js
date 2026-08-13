@@ -1,6 +1,6 @@
 import { HSLA } from './lib/color/hsla.js';
 import { Console } from 'console';
-import { approxPolyDP, arcLength, Canny, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, Contour, contourArea, cvtColor, dilate, drawCircle, drawContours, FILLED, findContours, FONT_HERSHEY_PLAIN, GaussianBlur, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, Mat, MORPH_RECT, Point, putText, Rect, RETR_EXTERNAL, Size, waitKey, warpPerspective } from 'opencv';
+import { approxPolyDP, arcLength, Canny, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, Contour, contourArea, cvtColor, dilate, circle, drawContours, FILLED, findContours, FONT_HERSHEY_PLAIN, GaussianBlur, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, Mat, MORPH_RECT, Point, putText, Rect, RETR_EXTERNAL, Size, waitKey, warpPerspective } from 'opencv';
 
 let imgOriginal,
   imgGray = new Mat(),
@@ -133,7 +133,7 @@ function getBiggest(imgMask) {
 
 function drawPoints(points, color) {
   for(let i = 0; i < points.length; i++) {
-    drawCircle(imgOriginal, points[i], 5, color, FILLED);
+    circle(imgOriginal, points[i], 5, color, FILLED);
     putText(imgOriginal, String(i), points[i], FONT_HERSHEY_PLAIN, 3, color, 5);
   }
 }
@@ -235,7 +235,7 @@ function main(...args) {
     imshow('Image', imgOriginal);
 
     for(let i = 0; i < 4; i++) {
-      drawCircle(imgThreshold, initialPoints[i], 8, i2color(i * 10 + 120, 2), 2);
+      circle(imgThreshold, initialPoints[i], 8, i2color(i * 10 + 120, 2), 2);
     }
 
     imshow('ImageThreshold', imgThreshold);

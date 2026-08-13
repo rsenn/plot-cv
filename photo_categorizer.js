@@ -23,7 +23,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { err, exit, open } from 'std';
 import { mkdir, readdir, rename, stat } from 'os';
-import { FILLED, FONT_HERSHEY_SIMPLEX, Point, Rect, Scalar, Size, dnn, getTextSize, imread, imwrite, putText, drawRect as rectangle } from 'opencv';
+import { FILLED, FONT_HERSHEY_SIMPLEX, Point, Rect, Scalar, Size, dnn, readNetFromONNX, blobFromImage, getTextSize, imread, imwrite, putText, drawRect as rectangle } from 'opencv';
 
 // ─────────────────────────────────────────────
 // KONFIGURATION
@@ -151,7 +151,7 @@ function copyFile(src, dst) {
 /** Lädt das ONNX-Modell via OpenCV DNN */
 function loadModel(modelPath) {
   if(CONFIG.verbose) log('info', `Lade Modell: ${modelPath}`);
-  const net = dnn.readNetFromONNX(modelPath);
+  const net = readNetFromONNX(modelPath);
   if(!net || net.empty) throw new Error('Modell konnte nicht geladen werden.');
 
   // CPU bevorzugen; bei CUDA-Support: dnn.DNN_BACKEND_CUDA
@@ -174,7 +174,7 @@ function detectObjects(net, classNames, imagePath) {
   const { inputSize, confThreshold, nmsThreshold } = CONFIG;
 
   // Vorverarbeitung: Blob aus Bild erzeugen
-  const blob = dnn.blobFromImage(
+  const blob = blobFromImage(
     img,
     1 / 255.0, // Skalierungsfaktor
     new Size(inputSize, inputSize), // Zielgröße
