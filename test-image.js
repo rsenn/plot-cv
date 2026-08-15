@@ -247,14 +247,13 @@ function main(...args) {
       console.log('contour #' + i, contour);
       //contour =simplifyMethods.PERPENDICULAR_DISTANCE(contour);
       //contour = simplifyMethods.RADIAL_DISTANCE(contour);
-      let array = contour.toArray();
-      //log.info('array #' + i, array.length);
-      if(array.length >= 3) {
+      //log.info('array #' + i, contour.length);
+      if(contour.length >= 3) {
         let sp = new SvgPath();
         sp.abs();
 
-        for(let i = 0; i < array.length; i += 1) {
-          const { x, y } = array[i];
+        for(let i = 0; i < contour.length; i += 1) {
+          const { x, y } = contour[i];
           sp[i == 0 ? 'to' : 'line'](x, y);
         }
         let rsp = sp.toRelative();
