@@ -1,14 +1,13 @@
-import { Contour, Draw, circle, line, Line, Mat, Point, Rect, Size } from 'opencv';
+import { Draw, PointVector, circle, line, Line, Mat, Point, Rect, Size } from 'opencv';
 
 async function main(...args) {
-  //import { Contour } from "contour";
   const { circle: circleDraw, contour, line: lineDraw, polygon, rect } = Draw;
 
   console.log('global:', { line, circle });
   console.log('static:', { circle: circleDraw, contour, line: lineDraw, polygon, rect });
-  console.log('test:', { Point, Size, Rect, Mat, Contour, Line, Draw });
+  console.log('test:', { Point, Size, Rect, Mat, PointVector, Line, Draw });
 
-  const ctors = [Point, Size, Rect, /*Mat,*/ Contour, Line];
+  const ctors = [Point, Size, Rect, /*Mat,*/ PointVector, Line];
 
   let objs = [];
 
@@ -25,22 +24,22 @@ async function main(...args) {
   console.log('line.a:', l.a);
   console.log('line.b:', l.b);
 
-  let ct1 = new Contour();
-  let ct2 = new Contour();
+  let ct1 = new PointVector();
+  let ct2 = new PointVector();
   let pl1 = [new Point(0, 0), new Point(40, 0), new Point(40, 20), new Point(0, 20)];
   let pl2 = pl1.map(({ x, y }) => new Point(x + 100, y + 50));
   console.log('pl1:', pl1);
   console.log('pl2:', pl2);
 
-  for(let point of pl1) ct1.push(point);
-  for(let point of pl2) ct2.push(point);
+  for(let point of pl1) ct1.push_back(point);
+  for(let point of pl2) ct2.push_back(point);
   let it = ct1[Symbol.iterator]();
 
   let item;
 
   for(; (item = it.next()), !item.done; ) console.log('Item:', item);
   let i = 0;
-  for(let p of ct1.concat(ct2)) console.log(`p[${i++}]:`, p);
+  for(let p of [...ct1, ...ct2]) console.log(`p[${i++}]:`, p);
 }
 
 main(...scriptArgs.slice(1));

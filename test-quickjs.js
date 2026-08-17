@@ -30,38 +30,38 @@ function main(...args) {
   console.log('isBrowser:', isBrowser());
   //console.log('copyTextToClipboard()', await copyTextToClipboard('TEST'));
   // console.log('modules:', inspect({ Point, Size, Rect }));
-  const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
+  const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Draw'];
   for(let moduleName of moduleNames) tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
 
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
   console.log('globalThis:', Object.keys(globalThis));
   console.log('modules:', inspect(ctors));
 
-  let c = new Contour();
+  let c = new cv.PointVector();
   console.log('c.keys()', Object.getOwnPropertyNames(c));
-  console.log('c.push', c.push);
+  console.log('c.push_back', c.push_back);
 
-  c.push(new Point(0, 0));
-  c.push({ x: 50, y: 0 });
-  c.push({ x: 50, y: 50 });
-  c.push({ x: 0, y: 50 });
-  c.push({ x: 0, y: 0 });
-  console.log('contour[0]', c[0]);
-  console.log('contour[1]', c[1]);
-  c[4] = new Point(99, 33);
+  c.push_back(new Point(0, 0));
+  c.push_back({ x: 50, y: 0 });
+  c.push_back({ x: 50, y: 50 });
+  c.push_back({ x: 0, y: 50 });
+  c.push_back({ x: 0, y: 0 });
+  console.log('contour[0]', c.get(0));
+  console.log('contour[1]', c.get(1));
+  c.set(4, new Point(99, 33));
   let fitted = new Line();
   console.log('fitted', fitted);
-  c.fitLine(fitted);
+  cv.fitLine(c, fitted, 2, 0, 0.01, 0.01);
   let ellipse = new RotatedRect();
   console.log('ellipse', ellipse);
-  ellipse = c.fitEllipse();
+  ellipse = cv.fitEllipse(c);
   console.log('ellipse', ellipse);
 
   console.log('fitted', fitted);
-  console.log('contour[4]', c[4]);
+  console.log('contour[4]', c.get(4));
   console.log('contour:', c);
   console.log('c[Symbol.iterator]:', c[Symbol.iterator]);
-  console.log('Object.getOwnPropertyNames(Contour.prototype)', Object.getOwnPropertyNames(Contour.prototype));
+  console.log('Object.getOwnPropertyNames(PointVector.prototype)', Object.getOwnPropertyNames(cv.PointVector.prototype));
 
   console.log('Object.getOwnPropertyNames(c)', Object.getOwnPropertyNames(c));
   console.log('Object.keys(c)', Object.keys(c));
@@ -74,9 +74,9 @@ function main(...args) {
 
   console.log('contour[Symbol.iterator]:', c[Symbol.iterator]);
   console.log('contour[Symbol.iterator]():', className(it));
-  console.log('contour.get(0):', c[0]);
+  console.log('contour.get(0):', c.get(0));
   console.log('[...contour]:', [...c]);
-  console.log('contour.length:', c.length);
+  console.log('contour.length:', c.size());
   console.log('contour:', className(c));
   /*  let rect = new Rect(10, 100, 50, 250);
   const { x, y, width, height } = rect;

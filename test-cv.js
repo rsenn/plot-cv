@@ -61,7 +61,7 @@ function main(...args) {
 
   let image;
 
-  const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
+  const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Draw'];
   for(let moduleName of moduleNames) tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
   console.log('globalThis:', Object.keys(globalThis));

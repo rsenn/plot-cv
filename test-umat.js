@@ -108,7 +108,7 @@ async function main(...args) {
   }
   for(let contour of contours) {
     console.log('contour.length', contour.length);
-    let poly = new Contour();
+    let poly = new cv.PointVector();
     contour.approxPolyDP(poly, 0.05 * contour.arcLength());
     let lpoly = [...poly.lines()];
     let angles;

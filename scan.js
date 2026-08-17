@@ -12,7 +12,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { Mat, Size, Point, Scalar, Contour, CLAHE, imread, imwrite, cvtColor, GaussianBlur, Canny, findContours, approxPolyDP, arcLength, contourArea, drawContours, getPerspectiveTransform, warpPerspective, adaptiveThreshold, COLOR_BGR2GRAY, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, CV_8UC1, imshow, waitKey, } from 'opencv';
+import { Mat, Size, Point, Scalar, PointVector, CLAHE, imread, imwrite, cvtColor, GaussianBlur, Canny, findContours, approxPolyDP, arcLength, contourArea, drawContours, getPerspectiveTransform, warpPerspective, adaptiveThreshold, COLOR_BGR2GRAY, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, CV_8UC1, imshow, waitKey, } from 'opencv';
 
 function main() {
   // --- arg parsing ----------------------------------------------------------
@@ -73,9 +73,9 @@ function main() {
   for(const { c, area } of ranked) {
     let peri = arcLength(c, true);
     if(!Number.isFinite(peri)) peri = 10000;
-    const approx = new Contour();
+    const approx = new PointVector();
     //console.log('peri:', peri);
-    c.approxPolyDP(approx, 0.02 * peri, true);
+    approxPolyDP(c, approx, 0.02 * peri, true);
     const pts = [...approx].map(p => ({ x: p.x, y: p.y }));
     if(pts.length === 4) {
       pageContour = approx;

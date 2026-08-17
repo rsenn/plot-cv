@@ -1,6 +1,6 @@
 import { HSLA } from './lib/color/hsla.js';
 import { Console } from 'console';
-import { approxPolyDP, arcLength, Canny, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, Contour, contourArea, cvtColor, dilate, circle, drawContours, FILLED, findContours, FONT_HERSHEY_PLAIN, GaussianBlur, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, Mat, MORPH_RECT, Point, putText, Rect, RETR_EXTERNAL, Size, waitKey, warpPerspective } from 'opencv';
+import { approxPolyDP, arcLength, Canny, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, PointVector, contourArea, cvtColor, dilate, circle, drawContours, FILLED, findContours, FONT_HERSHEY_PLAIN, GaussianBlur, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, Mat, MORPH_RECT, Point, putText, Rect, RETR_EXTERNAL, Size, waitKey, warpPerspective } from 'opencv';
 
 let imgOriginal,
   imgGray = new Mat(),
@@ -45,7 +45,7 @@ function getContours(imgMask) {
   cvtColor(imgDilate, imgDilate, COLOR_GRAY2BGR);
   let j = 0;
   for(let i = 0; i < contours.length; i++) {
-    let c = Contour.from(contours[i]);
+    let c = contours[i];
     //console.log('c', c.toString());
     let area = contourArea(c);
 
@@ -61,15 +61,15 @@ function getContours(imgMask) {
       if(peri === Infinity) console.log('c', c);
       */ if(peri === Infinity) peri = 50;
       //contourPoly[i] = new Mat(c.length, 1, CV_32FC2);
-      contourPoly[i] = new Contour();
+      contourPoly[i] = new PointVector();
       approxPolyDP(c, contourPoly[i], peri / 50, true);
       //  console.log('contourPoly[i]', contourPoly[i]);
 
-      if(area > maxArea && contourPoly[i].length == 4) {
+      if(area > maxArea && contourPoly[i].size() == 4) {
         console.log('ENTERED LOOP 2');
         //drawContours(imgOriginal, contourPoly, i, Scalar(255, 0, 255), 3);
         maxArea = area;
-        biggest = [contourPoly[i][0], contourPoly[i][1], contourPoly[i][2], contourPoly[i][3]];
+        biggest = [contourPoly[i].get(0), contourPoly[i].get(1), contourPoly[i].get(2), contourPoly[i].get(3)];
       }
 
       //cout << contourPoly[i] << endl;
@@ -96,22 +96,22 @@ function getBiggest(imgMask) {
   let areas = [];
   let j = 0;
   for(let i = 0; i < contours.length; i++) {
-    let c = Contour.from(contours[i]);
+    let c = contours[i];
     //console.log('c', c.toString());
-    let area = c.area; //contourArea(contours[i]);
+    let area = contourArea(c);
     let peri = arcLength(c, true);
     //    if(peri === Infinity) peri = c.arcLength(true);
-    if(peri === Infinity) peri = c.arcLength(true);
+    if(peri === Infinity) peri = arcLength(c, true);
 
     if(peri !== Infinity) {
-      let contour = new Contour();
+      let contour = new PointVector();
       console.log('c', c);
       approxPolyDP(c, contour, 0.02 * peri, true);
       console.log('contour', contour);
 
       drawContours(imgDilate, [c], 0, i2color(i), 1);
 
-      if(contour.length == 4) areas.push([area, peri, contour, i]);
+      if(contour.size() == 4) areas.push([area, peri, contour, i]);
     }
   }
 
@@ -123,7 +123,7 @@ function getBiggest(imgMask) {
   let [area, peri, contour, index] = areas[0];
   console.log('area', area);
   console.log('peri', peri);
-  console.log('length', contour.length);
+  console.log('length', contour.size());
   console.log('contour', contour);
 
   drawContours(imgDilate, [contour], 0, i2color(0), 3);

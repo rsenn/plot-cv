@@ -2,7 +2,7 @@ import { randInt, range, srand } from 'util';
 import { AxisPoints, AxisRange, ClientArea, ClientMatrix, DrawAxis, GetRect, Origin, X, Y } from './diagram.js';
 import { TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { Console } from 'console';
-import { Contour, CV_64FC2, CV_8UC3, Draw, FILLED, imshow, imwrite, LINE_AA, Mat, Point, Rect, transform, waitKey } from 'opencv';
+import { CV_64FC2, CV_8UC3, Draw, FILLED, imshow, imwrite, LINE_AA, Mat, Point, Rect, transform, waitKey } from 'opencv';
 
 function main(...args) {
   globalThis.console = new Console({
@@ -44,16 +44,16 @@ function main(...args) {
 
   //rectangle(area, new Point(0, 0), new Point(area.cols - 1, area.rows - 1), [255, 0, 255], 1, LINE_8);
 
-  let contour = new Contour(...range(0, 100, 10).map(x => new Point(x, randInt(100))));
+  let contour = range(0, 100, 10).map(x => new Point(x, randInt(100)));
   console.log('contour', console.config({ compact: false }), contour);
 
   let matrix = ClientMatrix(diagramMat, axes.x, axes.y, font);
 
   let contour2 = new Mat(1, contour.length, CV_64FC2);
 
-  transform(contour.getMat(), contour2, matrix);
+  transform(contour, contour2, matrix);
 
-  let c = new Contour(...[...contour2].map(a => new Point(...a)));
+  let c = [...contour2].map(a => new Point(...a));
   console.log('c', console.config({ compact: false }), c);
 
   console.log('polylines', polylines);

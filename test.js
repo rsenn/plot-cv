@@ -19,9 +19,9 @@ Object.defineProperty(Point.prototype, 'distance', {
 
 async function main(...args) {
   function testPointVector() {
-    let pv = new Contour();
-    let poly = new Contour();
-    let hull = new Contour();
+    let pv = new cv.PointVector();
+    let poly = new cv.PointVector();
+    let hull = new cv.PointVector();
     let s = new Size(320, 200);
     let mat = new Mat(s, Mat.CV_32FC2);
     let mat2 = new Mat(200, 320, Mat.CV_32FC2);
@@ -32,17 +32,19 @@ async function main(...args) {
     //console.log('mat.channels =', mat.channels);
     //console.log('mat2.rows =', mat2.rows);
     //console.log('mat2.cols =', mat2.cols);
-    pv.push(0, 0);
-    pv.push({ x: 10, y: 0 });
-    pv.push({ x: 10, y: 20 });
-    pv.push({ x: 0, y: 20 });
-    pv.push({ x: 0, y: 0 });
+    pv.push_back(new Point(0, 0));
+    pv.push_back({ x: 10, y: 0 });
+    pv.push_back({ x: 10, y: 20 });
+    pv.push_back({ x: 0, y: 20 });
+    pv.push_back({ x: 0, y: 0 });
 
-    pv.approxPolyDP(poly, 2.0, true);
-    poly.convexHull(hull, true, true);
+    cv.approxPolyDP(pv, poly, 2.0, true);
+    cv.convexHull(poly, hull, true, true);
 
-    let circle = pv.minEnclosingCircle();
-    let triangle = pv.minEnclosingTriangle();
+    let circle = { center: null, radius: null };
+    cv.minEnclosingCircle(pv, c => (circle.center = c), r => (circle.radius = r));
+    let triangleOut = new Mat();
+    let triangle = cv.minEnclosingTriangle(pv, triangleOut);
     //console.log("circle.center: ", circle.center);
     //console.log('circle.radius: ', circle.radius);
     //console.log('triangle: ', triangle);
