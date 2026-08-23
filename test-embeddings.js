@@ -19,11 +19,7 @@ const CORPUS = [
   'She baked a chocolate cake for the birthday party.',
 ];
 
-const QUERIES = [
-  'a small cat',
-  'financial markets and money',
-  'baking a dessert',
-];
+const QUERIES = ['a small cat', 'financial markets and money', 'baking a dessert'];
 
 async function main() {
   const search = new SemanticSearch({ model });

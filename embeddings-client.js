@@ -43,9 +43,15 @@ import { LCCSCF_PIPELINE } from 'lws.so';
 export const OLLAMA_EMBEDDING_MODELS = [
   'bge-large',
   'bge-m3',
-  'embeddinggemma', 'granite-embedding', 'mxbai-embed-large',
-  'nomic-embed-text', 'nomic-embed-text-v2-moe', 'qwen3-embedding', 'qwen3-embedding:0.6b',
-  'snowflake-arctic-embed', 'snowflake-arctic-embed2',
+  'embeddinggemma',
+  'granite-embedding',
+  'mxbai-embed-large',
+  'nomic-embed-text',
+  'nomic-embed-text-v2-moe',
+  'qwen3-embedding',
+  'qwen3-embedding:0.6b',
+  'snowflake-arctic-embed',
+  'snowflake-arctic-embed2',
 ];
 
 const DEFAULT_TIMEOUT_SECS = 5 * 60;
@@ -66,10 +72,7 @@ class JsonPostClient {
 
   constructor(timeoutSecs = DEFAULT_TIMEOUT_SECS) {
     this.#timeoutMs = timeoutSecs * 1000;
-    this.#adapter = httpClient(
-      (req, resp) => this.#take(req)?.resolve(resp),
-      { error: (req, err) => this.#reject(req, err) },
-    );
+    this.#adapter = httpClient((req, resp) => this.#take(req)?.resolve(resp), { error: (req, err) => this.#reject(req, err) });
     this.#ctx = createContext({ protocols: [{ name: 'http', ...this.#adapter }], timeoutSecs });
   }
 
@@ -110,15 +113,20 @@ class JsonPostClient {
       }, this.#timeoutMs);
 
       this.#settled.set(req, {
-        resolve: v => { clearTimeout(timer); resolve(v); },
-        reject: e => { clearTimeout(timer); reject(e); },
+        resolve: v => {
+          clearTimeout(timer);
+          resolve(v);
+        },
+        reject: e => {
+          clearTimeout(timer);
+          reject(e);
+        },
       });
     });
 
     this.#lastActivityAt = Date.now();
 
-    if(resp.status < 200 || resp.status >= 300)
-      throw new Error(`HTTP ${resp.status}: ${await resp.text().catch(() => '')}`);
+    if(resp.status < 200 || resp.status >= 300) throw new Error(`HTTP ${resp.status}: ${await resp.text().catch(() => '')}`);
 
     return resp.json();
   }
@@ -166,7 +174,9 @@ export class OllamaClient {
 
 /** Cosine similarity between two equal-length vectors, in [-1, 1] (1 = identical direction). */
 export function cosineSimilarity(a, b) {
-  let dot = 0, na = 0, nb = 0;
+  let dot = 0,
+    na = 0,
+    nb = 0;
   for(let i = 0; i < a.length; i++) {
     dot += a[i] * b[i];
     na += a[i] * a[i];

@@ -32,13 +32,41 @@ const PATTERNS = ['../shish', '../c-utils', '../an-tronics', '../pictest', '../l
    packages, logs, generated JSON, ...) and would otherwise dominate the file
    listing. Matched against the basename with fnmatch(3) (glob-style: '*',
    '?', '[...]'). */
-const EXCLUDE_PATTERNS = ['.git', 'node_modules', 'build', '.cache', 'dist', 'CMakeFiles', '.qtc_clangd', 'autom4te.cache', 'tmp', '*.log', '*.json', '*.tmp*', '*.user*', '*.out', '*.xz', '*.es', 'try-*.c' ];
+const EXCLUDE_PATTERNS = [
+  '.git',
+  'node_modules',
+  'build',
+  '.cache',
+  'dist',
+  'CMakeFiles',
+  '.qtc_clangd',
+  'autom4te.cache',
+  'tmp',
+  '*.log',
+  '*.json',
+  '*.tmp*',
+  '*.user*',
+  '*.out',
+  '*.xz',
+  '*.es',
+  'try-*.c',
+];
 
 const excluded = name => EXCLUDE_PATTERNS.some(p => path.fnmatch(p, name) === 0);
 
 const EXT_LANG = {
-  '.c': 'c', '.h': 'c', '.cc': 'c', '.cpp': 'c', '.hpp': 'c', '.cxx': 'c',
-  '.js': 'js', '.mjs': 'js', '.cjs': 'js', '.jsx': 'js', '.ts': 'js', '.tsx': 'js',
+  '.c': 'c',
+  '.h': 'c',
+  '.cc': 'c',
+  '.cpp': 'c',
+  '.hpp': 'c',
+  '.cxx': 'c',
+  '.js': 'js',
+  '.mjs': 'js',
+  '.cjs': 'js',
+  '.jsx': 'js',
+  '.ts': 'js',
+  '.tsx': 'js',
 };
 
 /* Matched by filename (not extension) with fnmatch(3): CMake source has no
@@ -48,14 +76,13 @@ const NAME_LANG = [
   [['CMakeLists.txt', '*.cmake', '*.cmake.*'], 'cmake'],
   [['*.sh'], 'sh'],
   [['*.xml'], 'xml'],
-  [['Makefile', 'GNUmakefile', '*.mk'], 'make'],
+  [['Makefile', 'GNUmakefile', '*.mk', 'Makefile.in'], 'make'],
   [['*.ini'], 'ini'],
   [['*.y', '*.l'], 'bnf'],
 ];
 
 function langByName(basename) {
-  for(const [patterns, lang] of NAME_LANG)
-    if(patterns.some(p => path.fnmatch(p, basename) === 0)) return lang;
+  for(const [patterns, lang] of NAME_LANG) if(patterns.some(p => path.fnmatch(p, basename) === 0)) return lang;
   return undefined;
 }
 
@@ -66,13 +93,30 @@ const MIME_LANG = { 'text/x-shellscript': 'sh', 'text/xml': 'xml', 'text/html': 
 /* Common extensions get their mime type without asking libmagic. Anything
    else falls back to content sniffing via MAGIC below. */
 const EXT_MIME = {
-  '.txt': 'text/plain', '.css': 'text/css', '.html': 'text/html', '.htm': 'text/html',
-  '.xml': 'text/xml', '.csv': 'text/csv', '.svg': 'image/svg+xml',
-  '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif',
-  '.webp': 'image/webp', '.ico': 'image/x-icon', '.bmp': 'image/bmp',
-  '.pdf': 'application/pdf', '.zip': 'application/zip', '.gz': 'application/gzip',
-  '.wasm': 'application/wasm', '.woff': 'font/woff', '.woff2': 'font/woff2', '.ttf': 'font/ttf',
-  '.mp3': 'audio/mpeg', '.mp4': 'video/mp4', '.wav': 'audio/wav',
+  '.txt': 'text/plain',
+  '.css': 'text/css',
+  '.html': 'text/html',
+  '.htm': 'text/html',
+  '.xml': 'text/xml',
+  '.csv': 'text/csv',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.webp': 'image/webp',
+  '.ico': 'image/x-icon',
+  '.bmp': 'image/bmp',
+  '.pdf': 'application/pdf',
+  '.zip': 'application/zip',
+  '.gz': 'application/gzip',
+  '.wasm': 'application/wasm',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.mp3': 'audio/mpeg',
+  '.mp4': 'video/mp4',
+  '.wav': 'audio/wav',
 };
 
 /* libmagic (file(1)) content-type detection, used when the extension alone
@@ -84,7 +128,9 @@ function mimeFor(abs, ext) {
   try {
     const type = MAGIC.file(abs);
     if(type) return type;
-  } catch(e) { /* fall through */ }
+  } catch(e) {
+    /* fall through */
+  }
   return 'application/octet-stream';
 }
 
@@ -138,18 +184,19 @@ code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size:.9em; }
 `;
 
 function page(title, body) {
-  return `<!doctype html><html><head><meta charset="utf-8"><title>${escAttr(title)}</title>` +
-    `<style>${STYLE}</style></head><body>${body}</body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${escAttr(title)}</title>` + `<style>${STYLE}</style></head><body>${body}</body></html>`;
 }
 
 /** 'n' levels of '../', to reach the site root from a page 'n' directories deep.
  *  Every generated link is relative (never starts with '/') so the server works
  *  unchanged when reverse-proxied under any path prefix (e.g. /projects/). */
-const up = n => n === 0 ? '.' : '../'.repeat(n);
+const up = n => (n === 0 ? '.' : '../'.repeat(n));
 
 function projectIndex() {
-  const items = [...PROJECTS.keys()].sort()
-    .map(name => `<li><a href="${escAttr(name)}/">${esc(name)}</a></li>`).join('');
+  const items = [...PROJECTS.keys()]
+    .sort()
+    .map(name => `<li><a href="${escAttr(name)}/">${esc(name)}</a></li>`)
+    .join('');
   return page('projects', `<h1>Projects</h1><ul class="tree">${items}</ul>`);
 }
 
@@ -197,8 +244,7 @@ function renderNode(node, base) {
   for(const [name, child] of node.dirs) {
     const childBase = base ? base + '/' + name : name;
     const open = isOpenDir(childBase) ? ' open' : '';
-    html += `<li><details${open}><summary>${esc(name)}/ <span class="count">(${child.count} files)</span></summary>` +
-      `<ul class="tree">${renderNode(child, childBase)}</ul></details></li>`;
+    html += `<li><details${open}><summary>${esc(name)}/ <span class="count">(${child.count} files)</span></summary>` + `<ul class="tree">${renderNode(child, childBase)}</ul></details></li>`;
   }
   for(const name of node.files) {
     const rel = base ? base + '/' + name : name;
@@ -221,8 +267,7 @@ function breadcrumb(projectName, rel) {
 }
 
 function sourcePage(projectName, rel, lang, src) {
-  const body = `<h1>${breadcrumb(projectName, rel)}</h1>` +
-    `<pre><code>${highlight(src, lang)}</code></pre>`;
+  const body = `<h1>${breadcrumb(projectName, rel)}</h1>` + `<pre><code>${highlight(src, lang)}</code></pre>`;
   return page(rel, body);
 }
 
@@ -245,7 +290,11 @@ function sendFile(wsi, mime, buf) {
 }
 
 function decode(part) {
-  try { return decodeURIComponent(part); } catch(e) { return part; }
+  try {
+    return decodeURIComponent(part);
+  } catch(e) {
+    return part;
+  }
 }
 
 function onHttp(wsi) {
@@ -261,11 +310,9 @@ function onHttp(wsi) {
   if(!rel) return send(wsi, 200, fileTree(projectName, dir));
 
   const abs = path.resolve(dir, rel);
-  if(abs !== dir && !abs.startsWith(dir + '/'))
-    return send(wsi, 403, page('forbidden', '<h1>403</h1>'));
+  if(abs !== dir && !abs.startsWith(dir + '/')) return send(wsi, 403, page('forbidden', '<h1>403</h1>'));
 
-  if(!path.isFile(abs))
-    return send(wsi, 404, page('not found', `<h1>404</h1><p>no such file: ${esc(rel)}</p>`));
+  if(!path.isFile(abs)) return send(wsi, 404, page('not found', `<h1>404</h1><p>no such file: ${esc(rel)}</p>`));
 
   const ext = path.extname(abs).toLowerCase();
 
