@@ -38,6 +38,16 @@ const EXT_LANG = {
   '.js': 'js', '.mjs': 'js', '.cjs': 'js', '.jsx': 'js', '.ts': 'js', '.tsx': 'js',
 };
 
+/* Matched by filename (not extension) with fnmatch(3), since CMake source
+   has no dedicated extension for its main file. */
+const CMAKE_PATTERNS = ['CMakeLists.txt', '*.cmake', '*.cmake.*'];
+
+/** Language for a file, by basename (CMake) or extension (everything else). */
+function langFor(basename, ext) {
+  if(CMAKE_PATTERNS.some(p => path.fnmatch(p, basename) === 0)) return 'cmake';
+  return EXT_LANG[ext];
+}
+
 /** name (basename) -> absolute project directory */
 const PROJECTS = new Map();
 for(const pattern of PATTERNS)
@@ -205,7 +215,7 @@ function onHttp(wsi) {
 
   if(ext === '.md') return send(wsi, 200, markdownPage(projectName, rel, src));
 
-  const lang = EXT_LANG[ext];
+  const lang = langFor(path.basename(abs), ext);
   if(lang) return send(wsi, 200, sourcePage(projectName, rel, lang, src));
 
   return send(wsi, 404, page('not found', `<h1>404</h1><p>unsupported file type: ${esc(ext)}</p>`));

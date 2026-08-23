@@ -6,6 +6,7 @@
 
 import CLexer from './quickjs/qjs-modules/lib/lexer/c.js';
 import ECMAScriptLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
+import CMakeLexer from './quickjs/qjs-modules/lib/lexer/cmake.js';
 
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -80,11 +81,40 @@ function classifyJs(tokens, i) {
   }
 }
 
+/* ---------------------------------------------------------------- CMake */
+
+const CMAKE_KEYWORD = new Set([
+  'if', 'elseif', 'else', 'endif', 'foreach', 'endforeach', 'while', 'endwhile',
+  'function', 'endfunction', 'macro', 'endmacro', 'break', 'continue', 'return',
+]);
+const CMAKE_ATOM = new Set(['TRUE', 'FALSE', 'ON', 'OFF', 'YES', 'NO']);
+
+function classifyCMake(tokens, i) {
+  const tok = tokens[i];
+  switch(tok.type) {
+    case 'bracketComment': case 'lineComment': return 'cm';
+    case 'bracketArgument': case 'quotedArgument': return 'str';
+    case 'variableRef': return 'var';
+    case 'whitespace': case 'newline': return null;
+    case 'identifier': {
+      let j = i + 1;
+      while(tokens[j] && tokens[j].type === 'whitespace') j++;
+      if(tokens[j] && tokens[j].type === 'lparen') return 'fn';
+      if(CMAKE_KEYWORD.has(tok.lexeme.toLowerCase())) return 'kw';
+      return 'id';
+    }
+    case 'unquotedArgument': return CMAKE_ATOM.has(tok.lexeme) ? 'atom' : null;
+    default:
+      return null; // lparen, rparen, dollar: plain
+  }
+}
+
 /* ------------------------------------------------------------------- api */
 
 const LEXERS = {
   c: [src => new CLexer(src, undefined, 'source'), classifyC],
   js: [src => new ECMAScriptLexer(src, 'source'), classifyJs],
+  cmake: [src => new CMakeLexer(src, undefined, 'source'), classifyCMake],
 };
 
 /**
