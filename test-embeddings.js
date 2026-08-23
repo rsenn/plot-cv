@@ -4,7 +4,7 @@
  */
 import { OllamaClient, Embeddings } from './embeddings-client.js';
 
-const model = scriptArgs[1] || 'nomic-embed-text';
+const model = scriptArgs[1] || 'bge-m3';
 
 class SemanticSearch extends Embeddings(OllamaClient) {}
 
