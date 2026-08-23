@@ -9,12 +9,16 @@ import ECMAScriptLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
 import CMakeLexer from './quickjs/qjs-modules/lib/lexer/cmake.js';
 import ShellLexer from './quickjs/qjs-modules/lib/lexer/shell.js';
 import XMLLexer from './quickjs/qjs-modules/lib/lexer/xml.js';
+import { GNUMakeLexer } from './quickjs/qjs-modules/lib/lexer/make.js';
+import IniLexer from './quickjs/qjs-modules/lib/lexer/ini.js';
+import CSVLexer from './quickjs/qjs-modules/lib/lexer/csv.js';
+import BNFLexer from './quickjs/qjs-modules/lib/lexer/bnf.js';
 
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 const ALIASES = {
   javascript: 'js', jsx: 'js', mjs: 'js', cjs: 'js', ts: 'js', tsx: 'js', h: 'c', cpp: 'c', cc: 'c', hpp: 'c', cxx: 'c',
-  bash: 'sh', shell: 'sh', html: 'xml', htm: 'xml', svg: 'xml',
+  bash: 'sh', shell: 'sh', html: 'xml', htm: 'xml', svg: 'xml', makefile: 'make', mk: 'make', yacc: 'bnf', lex: 'bnf',
 };
 
 /* -------------------------------------------------------------------- C */
@@ -152,6 +156,80 @@ function classifyXml(tokens, i) {
   }
 }
 
+/* ------------------------------------------------------------------- Make */
+
+const MAKE_KEYWORD = new Set([
+  'bangDirective', 'ifeq', 'ifneq', 'ifdef', 'ifndef', 'else', 'endif', 'includeIgnore', 'sinclude',
+  'include', 'override', 'export', 'unexport', 'undefine', 'vpath', 'private', 'define', 'endef',
+]);
+const MAKE_OP = new Set(['dcolon', 'colon', 'assign', 'assignImmediate', 'assignSimple', 'assignAppend', 'assignConditional', 'assignShell']);
+const MAKE_STR = new Set(['string', 'stringSingle']);
+const MAKE_VAR = new Set(['varOpen', 'varClose', 'automaticVar', 'varText']);
+
+function classifyMake(tokens, i) {
+  const tok = tokens[i];
+  switch(tok.type) {
+    case 'comment': return 'cm';
+    case 'name': return 'id';
+    case 'newline': case 'defineNewline': case 'whitespace': case 'lineContinuation':
+    case 'defineBackslash': case 'recipePrefix': case 'recipeBackslash': return null;
+    default:
+      if(MAKE_KEYWORD.has(tok.type)) return 'kw';
+      if(MAKE_OP.has(tok.type)) return 'op';
+      if(MAKE_STR.has(tok.type)) return 'str';
+      if(MAKE_VAR.has(tok.type)) return 'var';
+      return null; // recipeText, defineBody, punctuation: plain
+  }
+}
+
+/* -------------------------------------------------------------------- Ini */
+
+function classifyIni(tokens, i) {
+  const tok = tokens[i];
+  switch(tok.type) {
+    case 'comment': return 'cm';
+    case 'section': return 'type';
+    case 'string': case 'stringSingle': return 'str';
+    case 'equals': return 'op';
+    default: return null; // text, newline, whitespace: plain
+  }
+}
+
+/* -------------------------------------------------------------------- CSV */
+
+function classifyCsv(tokens, i) {
+  const tok = tokens[i];
+  switch(tok.type) {
+    case 'separator': return 'op';
+    case 'field': return tok.lexeme.startsWith('"') ? 'str' : null;
+    default: return null; // nl: plain
+  }
+}
+
+/* -------------------------------------------------------------------- BNF */
+
+const BNF_KEYWORD = new Set(['keyword', 'lexstart', 'directive', 'd_name', 'p_state']);
+const BNF_STR = new Set(['char', 'chars', 'literal', 'd_string', 'p_literal', 'char_class', 'p_class']);
+const BNF_COMMENT = new Set(['multiline_comment', 'singleline_comment']);
+const BNF_OP = new Set(['bar', 'r_pipe', 'p_bar', 'dotdot', 'arrow', 'equals', 'tilde', 'asterisk', 'plus', 'question', 'p_postfix']);
+
+function classifyBnf(tokens, i) {
+  const tok = tokens[i];
+  // Embedded C ("<C>..." rules) and JS ("<JS>..." rules) action code: keep
+  // plain rather than reimplementing classifyC/classifyJs's lookahead logic
+  // against these differently-prefixed token types.
+  if(tok.type.startsWith('c_') || tok.type.startsWith('js_')) return null;
+  switch(tok.type) {
+    case 'identifier': case 'r_identifier': case 'l_identifier': case 'd_identifier': return 'id';
+    default:
+      if(BNF_COMMENT.has(tok.type)) return 'cm';
+      if(BNF_STR.has(tok.type)) return 'str';
+      if(BNF_KEYWORD.has(tok.type)) return 'kw';
+      if(BNF_OP.has(tok.type)) return 'op';
+      return null;
+  }
+}
+
 /* ------------------------------------------------------------------- api */
 
 const LEXERS = {
@@ -160,6 +238,10 @@ const LEXERS = {
   cmake: [src => new CMakeLexer(src, undefined, 'source'), classifyCMake],
   sh: [src => new ShellLexer(src, undefined, 'source'), classifyShell],
   xml: [src => new XMLLexer(src, 'source'), classifyXml],
+  make: [src => new GNUMakeLexer(src, undefined, 'source'), classifyMake],
+  ini: [src => new IniLexer(src, undefined, 'source'), classifyIni],
+  csv: [src => new CSVLexer(src, 'source'), classifyCsv],
+  bnf: [src => new BNFLexer(src, 'source'), classifyBnf],
 };
 
 /**

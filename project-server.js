@@ -48,6 +48,9 @@ const NAME_LANG = [
   [['CMakeLists.txt', '*.cmake', '*.cmake.*'], 'cmake'],
   [['*.sh'], 'sh'],
   [['*.xml'], 'xml'],
+  [['Makefile', 'GNUmakefile', '*.mk'], 'make'],
+  [['*.ini'], 'ini'],
+  [['*.y', '*.l'], 'bnf'],
 ];
 
 function langByName(basename) {
