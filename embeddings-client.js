@@ -34,14 +34,16 @@
  *   const emb = new E({ model: 'nomic-embed-text' });
  *   const vector = await emb.embed('hello world');
  */
-import createContext from './quickjs/qjs-lws/lib/lws/context.js';
-import { httpClient } from './quickjs/qjs-lws/lib/lws/protocols.js';
+import createContext from 'lws/context.js';
+import { httpClient } from 'lws/protocols.js';
 import { LCCSCF_PIPELINE } from 'lws.so';
 
 /* Ollama models with an "embedding" capability, as of this writing - for
    discoverability/autocomplete, not enforced anywhere below. */
 export const OLLAMA_EMBEDDING_MODELS = [
-  'bge-large', 'bge-m3', 'embeddinggemma', 'granite-embedding', 'mxbai-embed-large',
+  'bge-large',
+  'bge-m3',
+  'embeddinggemma', 'granite-embedding', 'mxbai-embed-large',
   'nomic-embed-text', 'nomic-embed-text-v2-moe', 'qwen3-embedding', 'qwen3-embedding:0.6b',
   'snowflake-arctic-embed', 'snowflake-arctic-embed2',
 ];
