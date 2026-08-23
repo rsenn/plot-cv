@@ -1,11 +1,13 @@
 /**
  * project-server.js — serves source files (C & JS, syntax-highlighted) and
  * markdown (rendered to HTML) out of a fixed set of sibling project
- * directories, over plain HTTP via the raw qjs-lws (lws.so) API.
+ * directories, over plain HTTP via the raw qjs-lws (lws.so) API. Anything
+ * else is served as-is, with its mime type taken from the extension or,
+ * failing that, sniffed via libmagic.
  *
  * There are no real filesystem mounts: every request is dispatched through
  * a single LWSMPRO_CALLBACK mount on '/', which reads the requested file
- * itself and returns generated HTML.
+ * itself and returns generated HTML (or the raw file).
  *
  * Run:
  *   qjs -m project-server.js [port]
@@ -13,6 +15,7 @@
 
 import { createServer, LWSMPRO_CALLBACK, LWS_WRITE_HTTP_FINAL } from 'lws';
 import { glob, GLOB_MARK } from 'misc';
+import { Magic } from 'magic';
 import * as path from 'path';
 import * as std from 'std';
 import * as os from 'os';
@@ -46,6 +49,43 @@ const CMAKE_PATTERNS = ['CMakeLists.txt', '*.cmake', '*.cmake.*'];
 function langFor(basename, ext) {
   if(CMAKE_PATTERNS.some(p => path.fnmatch(p, basename) === 0)) return 'cmake';
   return EXT_LANG[ext];
+}
+
+/* Common extensions get their mime type without asking libmagic. Anything
+   else falls back to content sniffing via MAGIC below. */
+const EXT_MIME = {
+  '.txt': 'text/plain', '.css': 'text/css', '.html': 'text/html', '.htm': 'text/html',
+  '.xml': 'text/xml', '.csv': 'text/csv', '.svg': 'image/svg+xml',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif',
+  '.webp': 'image/webp', '.ico': 'image/x-icon', '.bmp': 'image/bmp',
+  '.pdf': 'application/pdf', '.zip': 'application/zip', '.gz': 'application/gzip',
+  '.wasm': 'application/wasm', '.woff': 'font/woff', '.woff2': 'font/woff2', '.ttf': 'font/ttf',
+  '.mp3': 'audio/mpeg', '.mp4': 'video/mp4', '.wav': 'audio/wav',
+};
+
+/* libmagic (file(1)) content-type detection, used when the extension alone
+   doesn't say what a file is. Loaded from the system magic database. */
+const MAGIC = new Magic(Magic.MIME_TYPE, '/usr/share/misc/magic.mgc');
+
+function mimeFor(abs, ext) {
+  if(EXT_MIME[ext]) return EXT_MIME[ext];
+  try {
+    const type = MAGIC.file(abs);
+    if(type) return type;
+  } catch(e) { /* fall through */ }
+  return 'application/octet-stream';
+}
+
+/** Binary-safe whole-file read into an ArrayBuffer. */
+function readFile(abs) {
+  const [st, statErr] = os.stat(abs);
+  if(statErr) return null;
+  const fd = os.open(abs, os.O_RDONLY);
+  if(fd < 0) return null;
+  const buf = new ArrayBuffer(st.size);
+  os.read(fd, buf, 0, st.size);
+  os.close(fd);
+  return buf;
 }
 
 /** name (basename) -> absolute project directory */
@@ -187,6 +227,11 @@ function send(wsi, status, body) {
   wsi.write(body, LWS_WRITE_HTTP_FINAL);
 }
 
+function sendFile(wsi, mime, buf) {
+  wsi.respond(200, { 'content-type': mime }, buf.byteLength);
+  wsi.write(buf, LWS_WRITE_HTTP_FINAL);
+}
+
 function decode(part) {
   try { return decodeURIComponent(part); } catch(e) { return part; }
 }
@@ -210,15 +255,16 @@ function onHttp(wsi) {
   if(!path.isFile(abs))
     return send(wsi, 404, page('not found', `<h1>404</h1><p>no such file: ${esc(rel)}</p>`));
 
-  const src = std.loadFile(abs);
   const ext = path.extname(abs).toLowerCase();
 
-  if(ext === '.md') return send(wsi, 200, markdownPage(projectName, rel, src));
+  if(ext === '.md') return send(wsi, 200, markdownPage(projectName, rel, std.loadFile(abs)));
 
   const lang = langFor(path.basename(abs), ext);
-  if(lang) return send(wsi, 200, sourcePage(projectName, rel, lang, src));
+  if(lang) return send(wsi, 200, sourcePage(projectName, rel, lang, std.loadFile(abs)));
 
-  return send(wsi, 404, page('not found', `<h1>404</h1><p>unsupported file type: ${esc(ext)}</p>`));
+  const buf = readFile(abs);
+  if(!buf) return send(wsi, 404, page('not found', `<h1>404</h1><p>no such file: ${esc(rel)}</p>`));
+  return sendFile(wsi, mimeFor(abs, ext), buf);
 }
 
 createServer({
