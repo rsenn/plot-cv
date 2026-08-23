@@ -12,7 +12,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { Mat, Size, Point, Scalar, PointVector, CLAHE, imread, imwrite, cvtColor, GaussianBlur, Canny, findContours, approxPolyDP, arcLength, contourArea, drawContours, getPerspectiveTransform, warpPerspective, adaptiveThreshold, COLOR_BGR2GRAY, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, CV_8UC1, imshow, waitKey, } from 'opencv';
+import { Mat, Size, Point, Scalar, PointVector, createCLAHE, imread, imwrite, cvtColor, GaussianBlur, Canny, findContours, approxPolyDP, arcLength, contourArea, drawContours, getPerspectiveTransform, warpPerspective, adaptiveThreshold, COLOR_BGR2GRAY, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, CV_8UC1, imshow, waitKey, } from 'opencv';
 
 function main() {
   // --- arg parsing ----------------------------------------------------------
@@ -137,7 +137,7 @@ function main() {
 
   cvtColor(warped, warpedGray, COLOR_BGR2GRAY);
 
-  const clahe = new CLAHE(2.0, new Size(8, 8)); // clipLimit, tileGridSize
+  const clahe = createCLAHE(2.0, new Size(8, 8)); // clipLimit, tileGridSize
   clahe.apply(warpedGray, equalised);
 
   adaptiveThreshold(
