@@ -41,15 +41,24 @@ const EXT_LANG = {
   '.js': 'js', '.mjs': 'js', '.cjs': 'js', '.jsx': 'js', '.ts': 'js', '.tsx': 'js',
 };
 
-/* Matched by filename (not extension) with fnmatch(3), since CMake source
-   has no dedicated extension for its main file. */
-const CMAKE_PATTERNS = ['CMakeLists.txt', '*.cmake', '*.cmake.*'];
+/* Matched by filename (not extension) with fnmatch(3): CMake source has no
+   dedicated extension for its main file, and this catches shell/XML files
+   the EXT_LANG table above doesn't (e.g. a shebang script with no .sh). */
+const NAME_LANG = [
+  [['CMakeLists.txt', '*.cmake', '*.cmake.*'], 'cmake'],
+  [['*.sh'], 'sh'],
+  [['*.xml'], 'xml'],
+];
 
-/** Language for a file, by basename (CMake) or extension (everything else). */
-function langFor(basename, ext) {
-  if(CMAKE_PATTERNS.some(p => path.fnmatch(p, basename) === 0)) return 'cmake';
-  return EXT_LANG[ext];
+function langByName(basename) {
+  for(const [patterns, lang] of NAME_LANG)
+    if(patterns.some(p => path.fnmatch(p, basename) === 0)) return lang;
+  return undefined;
 }
+
+/* Falls back to the mime type (extension- or libmagic-detected, see mimeFor
+   below) for files langByName/EXT_LANG don't otherwise recognize. */
+const MIME_LANG = { 'text/x-shellscript': 'sh', 'text/xml': 'xml', 'text/html': 'xml' };
 
 /* Common extensions get their mime type without asking libmagic. Anything
    else falls back to content sniffing via MAGIC below. */
@@ -259,12 +268,17 @@ function onHttp(wsi) {
 
   if(ext === '.md') return send(wsi, 200, markdownPage(projectName, rel, std.loadFile(abs)));
 
-  const lang = langFor(path.basename(abs), ext);
+  let lang = EXT_LANG[ext] || langByName(path.basename(abs));
+  let mime;
+  if(!lang) {
+    mime = mimeFor(abs, ext);
+    lang = MIME_LANG[mime];
+  }
   if(lang) return send(wsi, 200, sourcePage(projectName, rel, lang, std.loadFile(abs)));
 
   const buf = readFile(abs);
   if(!buf) return send(wsi, 404, page('not found', `<h1>404</h1><p>no such file: ${esc(rel)}</p>`));
-  return sendFile(wsi, mimeFor(abs, ext), buf);
+  return sendFile(wsi, mime || mimeFor(abs, ext), buf);
 }
 
 createServer({

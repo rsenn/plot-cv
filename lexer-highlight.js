@@ -7,10 +7,15 @@
 import CLexer from './quickjs/qjs-modules/lib/lexer/c.js';
 import ECMAScriptLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
 import CMakeLexer from './quickjs/qjs-modules/lib/lexer/cmake.js';
+import ShellLexer from './quickjs/qjs-modules/lib/lexer/shell.js';
+import XMLLexer from './quickjs/qjs-modules/lib/lexer/xml.js';
 
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-const ALIASES = { javascript: 'js', jsx: 'js', mjs: 'js', cjs: 'js', ts: 'js', tsx: 'js', h: 'c', cpp: 'c', cc: 'c', hpp: 'c', cxx: 'c' };
+const ALIASES = {
+  javascript: 'js', jsx: 'js', mjs: 'js', cjs: 'js', ts: 'js', tsx: 'js', h: 'c', cpp: 'c', cc: 'c', hpp: 'c', cxx: 'c',
+  bash: 'sh', shell: 'sh', html: 'xml', htm: 'xml', svg: 'xml',
+};
 
 /* -------------------------------------------------------------------- C */
 
@@ -109,17 +114,58 @@ function classifyCMake(tokens, i) {
   }
 }
 
+/* ----------------------------------------------------------------- Shell */
+
+const SH_KEYWORD = new Set(['bang', 'case', 'do', 'done', 'elif', 'else', 'esac', 'fi', 'for', 'if', 'in', 'then', 'until', 'while']);
+const SH_OP = new Set([
+  'dsemi', 'semi', 'and_if', 'backgnd', 'or_if', 'pipe', 'bq', 'dlessdash', 'dless', 'lessand',
+  'lessgreat', 'less', 'dgreat', 'greatand', 'clobber', 'great',
+]);
+
+function classifyShell(tokens, i) {
+  const tok = tokens[i];
+  switch(tok.type) {
+    case 'comment': return 'cm';
+    case 'newline': case 'whitespace': return null;
+    case 'io_number': return 'num';
+    case 'name': return 'id';
+    default:
+      if(SH_KEYWORD.has(tok.type)) return 'kw';
+      if(SH_OP.has(tok.type)) return 'op';
+      return null; // lparen, rparen, lbrace, rbrace, word/assign/redir placeholders: plain
+  }
+}
+
+/* ------------------------------------------------------------------- XML */
+
+function classifyXml(tokens, i) {
+  const tok = tokens[i];
+  switch(tok.type) {
+    case 'comment': case 'bangTag': return 'cm';
+    case 'tagStart': case 'closeTagStart': case 'gt': case 'slash': return 'pre';
+    case 'tagName': return 'type';
+    case 'attrName': return 'id';
+    case 'eq': return 'op';
+    case 'quoted': case 'quotedSingle': return 'str';
+    default:
+      return null; // text, ws: plain
+  }
+}
+
 /* ------------------------------------------------------------------- api */
 
 const LEXERS = {
   c: [src => new CLexer(src, undefined, 'source'), classifyC],
   js: [src => new ECMAScriptLexer(src, 'source'), classifyJs],
   cmake: [src => new CMakeLexer(src, undefined, 'source'), classifyCMake],
+  sh: [src => new ShellLexer(src, undefined, 'source'), classifyShell],
+  xml: [src => new XMLLexer(src, 'source'), classifyXml],
 };
 
 /**
  * @param {string} code raw source text
- * @param {string} lang 'c', 'js', or an alias; unknown languages are escaped as-is
+ * @param {string} lang 'c', 'js', 'cmake', 'sh', 'xml', or an alias; unknown
+ *   languages are escaped as-is
  * @returns {string} HTML with <span class="t-*"> token markup
  */
 export function highlight(code, lang) {
@@ -135,11 +181,20 @@ export function highlight(code, lang) {
     return esc(code); // malformed/unsupported input: fall back to plain text
   }
 
+  // Some lexers (shell, xml) silently discard characters they don't have a
+  // rule for (e.g. via a skip() handler) rather than erroring or tokenizing
+  // them - walk token.charRange gaps and emit that source verbatim so no
+  // text is ever lost from the rendered output.
   let out = '';
+  let pos = 0;
   for(let i = 0; i < tokens.length; i++) {
     const tok = tokens[i];
+    const [start, end] = tok.charRange;
+    if(start > pos) out += esc(code.slice(pos, start));
     const cls = classify(tokens, i);
     out += cls ? '<span class="t-' + cls + '">' + esc(tok.lexeme) + '</span>' : esc(tok.lexeme);
+    pos = end;
   }
+  if(pos < code.length) out += esc(code.slice(pos));
   return out;
 }
