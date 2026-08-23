@@ -10,8 +10,8 @@ function main(...args) {
     inspectOptions: {
       maxStringLength: 200,
       compact: 2,
-      depth: Infinity
-    }
+      depth: Infinity,
+    },
   });
   console.log('console', className(console));
   console.log('console.log', console.log);
@@ -19,11 +19,11 @@ function main(...args) {
   console.log(console.config({ depth: 1, compact: 1 }), entries);
   console.log(
     console.config({ compact: 0 }),
-    Object.keys(entries).filter(k => /[0-9]S/.test(k))
+    Object.keys(entries).filter(k => /[0-9]S/.test(k)),
   );
   console.log(
     console.config({ compact: 0 }),
-    Object.keys(entries).filter(k => /[0-9]F/.test(k))
+    Object.keys(entries).filter(k => /[0-9]F/.test(k)),
   );
 
   console.log('start');
@@ -118,11 +118,11 @@ function main(...args) {
   console.log(`1 << mat.depth`, 1 << mat.depth());
   console.log(
     `Mat[DEPTH]`,
-    Object.keys(Mat).find(k => Mat[k] === mat.depth())
+    Object.keys(Mat).find(k => Mat[k] === mat.depth()),
   );
   console.log(
     `Mat[TYPE]`,
-    Object.keys(Mat).find(k => Mat[k] === mat.type())
+    Object.keys(Mat).find(k => Mat[k] === mat.type()),
   );
   mat.setTo([0xff, 0xff, 0xff, 0x80]);
   let row0 = mat.row(0);
@@ -231,7 +231,7 @@ function main(...args) {
     console.log('values(): ', line.values());
     console.log(
       'toPoints(): ',
-      [...line.toPoints()].map(p => className(p))
+      [...line.toPoints()].map(p => className(p)),
     );
 
     console.log('toString(): ', line.toString());

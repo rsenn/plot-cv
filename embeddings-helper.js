@@ -157,15 +157,16 @@ function extractBalancedBraceBlock(str, startIndex) {
  * High-level helper: Recursively walks a directory, chunks code files,
  * and feeds them directly into an Embeddings instance.
  */
-export async function indexProjectSource(searchInstance, rootDir, extensions = ['.js', '.c', '.h', '.cpp']) {
+export async function indexProjectSource(searchInstance, rootDir, extensions = ['.js', '.c', '.h', '.cpp'], exclude = []) {
+  exclude = ['node_modules', '.git', 'build', 'dist', ...exclude];
+
   function walk(dir, fileList = []) {
     for(const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const file = entry.name;
-      const fullPath = path.join(dir, file);
+      const fullPath = path.join(dir, entry.name);
 
       if(entry.isDirectory()) {
-        if(!['node_modules', '.git', 'build', 'dist'].includes(file)) walk(fullPath, fileList);
-      } else if(extensions.includes(path.extname(file).toLowerCase())) {
+        if(!exclude.includes(entry.name)) walk(fullPath, fileList);
+      } else if(extensions.includes(path.extname(entry.name).toLowerCase())) {
         fileList.push(fullPath);
       }
     }

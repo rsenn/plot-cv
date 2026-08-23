@@ -14,7 +14,7 @@ Object.defineProperty(Point.prototype, 'distance', {
   get() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   },
-  enumerable: true
+  enumerable: true,
 });
 
 async function main(...args) {
@@ -42,7 +42,11 @@ async function main(...args) {
     cv.convexHull(poly, hull, true, true);
 
     let circle = { center: null, radius: null };
-    cv.minEnclosingCircle(pv, c => (circle.center = c), r => (circle.radius = r));
+    cv.minEnclosingCircle(
+      pv,
+      c => (circle.center = c),
+      r => (circle.radius = r),
+    );
     let triangleOut = new Mat();
     let triangle = cv.minEnclosingTriangle(pv, triangleOut);
     //console.log("circle.center: ", circle.center);
@@ -132,7 +136,7 @@ async function main(...args) {
     'CV_64FC1',
     'CV_64FC2',
     'CV_64FC3',
-    'CV_64FC4'
+    'CV_64FC4',
   ];
   let matTypeEntries = matTypes.map(n => [n, cv[n]]);
   console.log(new Map(matTypeEntries.map(([n, v]) => [n, ('0000000' + v.toString(16)).slice(-8)])));
@@ -142,7 +146,7 @@ async function main(...args) {
     matTypeEntries
       .filter(([n, v]) => !/C[0-9]$/.test(n))
       .reduce((acc, [n, v]) => acc | v, 0)
-      .toString(2)
+      .toString(2),
   );
 
   let input = cv.imread(args[0] ?? '3daaffa22db97a9394054e9e9bdb6837_20170930_120917.jpg');
@@ -177,7 +181,7 @@ async function main(...args) {
       },
       firstChild(i) {
         return this.index(this.hier[i][HIER_FIRSTCHILD]);
-      }
+      },
     };
 
     console.log('contours.length=', contours.length);
@@ -196,7 +200,7 @@ async function main(...args) {
 
     let outlines = {
       contours,
-      hier
+      hier,
     };
     contours = contours.filter(c => c.length > 3);
 
@@ -272,8 +276,8 @@ async function main(...args) {
         { x: 320, y: 0 },
         { x: 320, y: 240 },
         { x: 0, y: 240 },
-        { x: 0, y: 0 }
-      ])
+        { x: 0, y: 0 },
+      ]),
     ];
 
     polygons.push(polygons[0].sum({ x: 320, y: 0 }));

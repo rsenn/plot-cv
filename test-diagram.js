@@ -6,7 +6,7 @@ import { CV_64FC2, CV_8UC3, Draw, FILLED, imshow, imwrite, LINE_AA, Mat, Point, 
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true }
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true },
   });
 
   srand(Date.now());
@@ -28,11 +28,11 @@ function main(...args) {
 
   let axes = {
     x: AxisPoints(100, 10, X, font, diagramMat.size()),
-    y: AxisPoints(100, 10, Y, font, diagramMat.size())
+    y: AxisPoints(100, 10, Y, font, diagramMat.size()),
   };
   let ranges = {
     x: AxisRange(axes.x),
-    y: AxisRange(axes.y)
+    y: AxisRange(axes.y),
   };
   console.log('', { ranges });
 

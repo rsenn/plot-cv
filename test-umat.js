@@ -11,7 +11,7 @@ async function main(...args) {
     ['CV_32S', cv.CV_32S],
     ['CV_32F', cv.CV_32F],
     ['CV_64F', cv.CV_64F],
-    ['CV_64FC2', cv.CV_64FC2]
+    ['CV_64FC2', cv.CV_64FC2],
   ];
 
   for(let [k, v] of types) {
@@ -117,18 +117,18 @@ async function main(...args) {
     console.log(
       'lpoly.length',
       lpoly.length,
-      lpoly.map(({ x1, y1, x2, y2 }) => `${x1},${y1}|${x2},${y2}`)
+      lpoly.map(({ x1, y1, x2, y2 }) => `${x1},${y1}|${x2},${y2}`),
     );
     console.log('lpoly angles', lpoly.length, (angles = lpoly.map(l => Math.floor((l.angle * 180) / Math.PI)).map(a => a % 90)));
     console.log(
       'lpoly slopes',
       lpoly.length,
-      lpoly.map(l => l.slope).map(({ x, y }) => [x, y])
+      lpoly.map(l => l.slope).map(({ x, y }) => [x, y]),
     );
     console.log(
       'lpoly lengths',
       lpoly.length,
-      lpoly.map(l => Math.round(l.length))
+      lpoly.map(l => Math.round(l.length)),
     );
 
     /*  if(!angles.some(a => Math.abs(a) <= 1)) continue;

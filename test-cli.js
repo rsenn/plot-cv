@@ -37,7 +37,7 @@ async function main(...args) {
 
   let item;
 
-  for(; (item = it.next()), !item.done; ) console.log('Item:', item);
+  for(; (item = it.next()), !item.done;) console.log('Item:', item);
   let i = 0;
   for(let p of [...ct1, ...ct2]) console.log(`p[${i++}]:`, p);
 }

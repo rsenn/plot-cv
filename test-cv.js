@@ -33,7 +33,7 @@ function LoadConfig() {
   configObj = Object.fromEntries(
     Object.entries(configObj)
       .map(([k, v]) => [k, +v])
-      .filter(([k, v]) => !isNaN(v))
+      .filter(([k, v]) => !isNaN(v)),
   );
   console.log('LoadConfig:', configObj);
   return configObj;
@@ -44,7 +44,7 @@ function main(...args) {
     colors: true,
     depth: 3,
     maxArrayLength: 30,
-    compact: 3
+    compact: 3,
   });
 
   // console.log('cv', cv);
@@ -97,11 +97,11 @@ function main(...args) {
     console.log(`1 << mat.depth`, 1 << mat.depth());
     console.log(
       `Mat[DEPTH]`,
-      Object.keys(Mat).find(k => Mat[k] === mat.depth())
+      Object.keys(Mat).find(k => Mat[k] === mat.depth()),
     );
     console.log(
       `Mat[TYPE]`,
-      Object.keys(Mat).find(k => Mat[k] === mat.type())
+      Object.keys(Mat).find(k => Mat[k] === mat.type()),
     );
     let row0 = mat.row(0);
     let col0 = mat.col(0);
@@ -189,7 +189,7 @@ function main(...args) {
       console.log('values(): ', line.values());
       console.log(
         'toPoints(): ',
-        [...line.toPoints()].map(p => className(p))
+        [...line.toPoints()].map(p => className(p)),
       );
       console.log('toString(): ', line.toString());
       console.log('new Line(50,50,320-50,240-25): ', new Line(50, 50, 320 - 50, 240 - 25));

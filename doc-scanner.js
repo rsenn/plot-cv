@@ -1,6 +1,6 @@
 import { HSLA } from './lib/color/hsla.js';
 import { Console } from 'console';
-import { approxPolyDP, arcLength, Canny, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, PointVector, contourArea, cvtColor, dilate, circle, drawContours, FILLED, findContours, FONT_HERSHEY_PLAIN, GaussianBlur, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, Mat, MORPH_RECT, Point, putText, Rect, RETR_EXTERNAL, Size, waitKey, warpPerspective } from 'opencv';
+import { approxPolyDP, arcLength, Canny, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, PointVector, contourArea, cvtColor, dilate, circle, drawContours, FILLED, findContours, FONT_HERSHEY_PLAIN, GaussianBlur, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, Mat, MORPH_RECT, Point, putText, Rect, RETR_EXTERNAL, Size, waitKey, warpPerspective, } from 'opencv';
 
 let imgOriginal,
   imgGray = new Mat(),
@@ -203,7 +203,7 @@ function getWarp(img, points, w, h) {
 
 function main(...args) {
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: false, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 10 }
+    inspectOptions: { compact: false, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 10 },
   });
 
   console.log('args', args);
