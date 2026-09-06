@@ -117,7 +117,7 @@ function main() {
 
   if(isImage) {
     frame = imread(inputSrc);
-    if(!frame || frame.empty) throw new Error(`Image not found: ${inputSrc}`);
+    if(!frame || frame.empty()) throw new Error(`Image not found: ${inputSrc}`);
   } else {
     cap = new VideoCapture(isCamera ? parseInt(inputSrc) : inputSrc);
     if(!cap.isOpened()) throw new Error(`Cannot open input: ${inputSrc}`);

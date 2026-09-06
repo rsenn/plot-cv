@@ -270,7 +270,7 @@ function main() {
 
   while(waitKey(1) < 0) {
     cap.read(frame);
-    if(frame.empty) {
+    if(frame.empty()) {
       waitKey();
       break;
     }

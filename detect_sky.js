@@ -30,7 +30,7 @@ const outputPath = args[1] ?? inputPath.replace(/(\.\w+)$/, '_sky$1');
 
 // ─── Load source image ────────────────────────────────────────────────────────
 const src = imread(inputPath);
-if(src.empty) {
+if(src.empty()) {
   print(`Error: could not load "${inputPath}"`);
   std.exit(1);
 }

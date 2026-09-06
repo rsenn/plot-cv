@@ -8,7 +8,7 @@ function nextFrame(cap) {
   let m = new Mat();
   cap.read(m);
   //cvtColor(m, m, COLOR_BGR2GRAY);
-  return m.empty ? null : m;
+  return m.empty() ? null : m;
 }
 
 function similarity(a, b) {

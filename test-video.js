@@ -302,8 +302,8 @@ function main(...args) {
   let pipeline = new Pipeline(
     [
       Processor(function AcquireFrame(src, dst) {
-        const dstEmpty = dst.empty;
-        if(dst.empty) dst0Size = dst.size();
+        const dstEmpty = dst.empty();
+        if(dst.empty()) dst0Size = dst.size();
         // log.info('video', video.read, video.constructor.name);
         framePos = video.get('pos_frames');
         //log.info('video', video.read, video.constructor.name);

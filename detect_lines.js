@@ -47,7 +47,7 @@ const outputJSON = args[2] ?? 'lines_output.json';
 console.log(`Loading image: ${inputPath}`);
 const src = imread(inputPath);
 
-if(src.empty) die(`Could not load image: ${inputPath}`);
+if(src.empty()) die(`Could not load image: ${inputPath}`);
 
 const [rows, cols] = [src.rows, src.cols];
 console.log(`Image size: ${cols}×${rows}`);
@@ -72,7 +72,7 @@ try {
   const lsdLines = new Mat();
   lsd.detect(blurred, lsdLines);
 
-  if(!lsdLines.empty) {
+  if(!lsdLines.empty()) {
     for(let i = 0; i < lsdLines.rows; i++) {
       const v = lsdLines.at(i, 0); // [x1, y1, x2, y2]
       segments.push({ x1: v[0], y1: v[1], x2: v[2], y2: v[3], method: 'LSD' });

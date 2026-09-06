@@ -53,7 +53,7 @@ function main(argv) {
   // Load
   // --------------------------------------------------------------------------
   const src = imread(inputPath);
-  if(src.empty) {
+  if(src.empty()) {
     console.log(`error: failed to decode image: ${inputPath}`);
     return 1;
   }

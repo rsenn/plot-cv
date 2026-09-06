@@ -51,8 +51,8 @@ export function ImagePipeline(/*input,*/ config) {
     [
       /*     Processor(function AcquireFrame(src, dst) {
         let dst0Size, firstSize, videoSize;
-        const dstEmpty = dst.empty;
-        if(dst.empty) dst0Size = dst.size;
+        const dstEmpty = dst.empty();
+        if(dst.empty()) dst0Size = dst.size;
 
        
         framePos = input.get('pos_frames');

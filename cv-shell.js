@@ -54,7 +54,7 @@ function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
     repl.globalKeys();
     if(arg instanceof cv.Mat) {
       console.log('arg', arg);
-      if(!arg.empty) {
+      if(!arg.empty()) {
         let win = defaultWin();
         win.resize(arg.cols, arg.rows);
         win.show(arg);

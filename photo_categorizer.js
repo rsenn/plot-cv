@@ -167,7 +167,7 @@ function loadModel(modelPath) {
  */
 function detectObjects(net, classNames, imagePath) {
   const img = imread(imagePath);
-  if(!img || img.empty) {
+  if(!img || img.empty()) {
     throw new Error(`Bild konnte nicht gelesen werden: ${imagePath}`);
   }
 
@@ -277,7 +277,7 @@ function categorize(detections) {
  */
 function saveAnnotated(imagePath, detections, outDir) {
   const img = imread(imagePath);
-  if(!img || img.empty) return;
+  if(!img || img.empty()) return;
 
   for(const { label, confidence, box } of detections) {
     // Rahmen zeichnen
