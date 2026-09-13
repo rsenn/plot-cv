@@ -413,3 +413,34 @@ add_custom_target(
 install(FILES meriyah.js eagle2gerber.js xml2react.js convert-imports.js create-tamper.js cv-shell.js eagle2svg.js
               eagle-shell.js extract-structs.js takephoto.js xml2js.js DESTINATION bin
         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+# eagle-agent tool scripts (doc/eagle-agent.md) - installed executable, same
+# as the tool scripts above.
+install(FILES eagle-materialize.js eagle-dematerialize.js eagle-extract.js eagle-lookup.js eagle-library-collect.js
+              eagle-tool.js
+        DESTINATION bin
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+# Their local module dependencies (everything reachable via relative
+# "./..."/"../..." imports from the scripts above, transitively) - these
+# are imported, not executed, so no execute bit. Layout under bin/ mirrors
+# their layout here relative to the tool scripts, since imports resolve
+# relative to the importing script's own installed location.
+install(FILES eagle.js io-helpers.js DESTINATION bin
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+install(FILES lib/css3-selectors.js lib/deep.js lib/dom.js lib/fs.js lib/json.js lib/misc.js lib/objectInspect.js
+              lib/path.js lib/pointer.js lib/predicate.js lib/tree_walker.js lib/trkl.js lib/xml.js
+        DESTINATION bin/lib
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+install(FILES lib/color/rgba.js DESTINATION bin/lib/color
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+install(FILES lib/eagle/common.js DESTINATION bin/lib/eagle
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+install(FILES lib/json/diff.js lib/json/json2xml.js lib/json/path.js lib/json/pathMapper.js
+              lib/json/treeObserver.js lib/json/util.js lib/json/xml2json.js
+        DESTINATION bin/lib/json
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+install(FILES lib/proxy/observableMembrane.js DESTINATION bin/lib/proxy
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+install(FILES lib/xml/xpath.js DESTINATION bin/lib/xml
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)

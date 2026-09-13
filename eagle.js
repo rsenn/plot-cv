@@ -108,7 +108,7 @@ export class EagleElement extends Element {
     for(let e of Element.hier(this)
       .slice(0, -1)
       .filter(
-        e => e.hasAttribute && (e.hasAttribute('name') || e.tagName == 'sheet'),
+        e => e.hasAttribute && (e.hasAttribute('name') || e.tagName == 'sheet' || e.tagName == 'library'),
       )) {
       const { tagName } = e;
 
@@ -345,7 +345,7 @@ export class EagleElement extends Element {
     gates: class GatesElement extends this {
       constructor(node, parent) {
         super(node, parent);
-        return NamedMap(this, 'name', () => []);
+        return NamedMap(this, 'name');
       }
     },
     gate: class GateElement extends this {

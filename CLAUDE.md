@@ -79,3 +79,7 @@ Format each entry like `shish/BUGS`:
 ```
 
 Blank line between the description and the repro, and a blank line after the repro before the next entry.
+
+## 6. Use `qjsm`, Not `qjs`
+
+Project scripts (e.g. `eagle-materialize.js`, `eagle-dematerialize.js`) use ES modules and are shebanged `#!/usr/bin/env qjsm`, not `qjs` — `qjs` lacks `process` and other globals these scripts rely on and will silently swallow uncaught errors in module mode (no stderr, exit 0), which looks like a passing run. Since these files aren't executable (mode 0644), they can't be run via `./script.js` — invoke them explicitly as `qjsm script.js ...args`.

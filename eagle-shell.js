@@ -2,25 +2,16 @@ import child_process from 'child_process';
 import * as fs from 'fs';
 
 import { Renderer, SchematicRenderer, BoardRenderer, LibraryRenderer, } from './eagle-renderer.js';
-
 import { EagleElement, EagleDocument, EagleProject } from './eagle.js';
 import { Node, Element } from 'dom';
-
 import { className, define, entries, getOpt, glob, GLOB_BRACE, intersect, difference, isObject, lazyProperties, memoize, range, unique, weakDefine, } from 'util';
-
 import { Table } from './cli-helpers.js';
 import { DirIterator, ReadDirRecursive, RecursiveDirIterator, } from './dir-helpers.js';
-
 import { CopyToClipboard, FdReader, Filter, FilterImages, IfDebug, LoadHistory, LogCall, LogIfDebug, ReadBJSON, ReadFd, ReadFile, ReadJSON, ReadXML, SortFiles, StatFiles, WriteBJSON, WriteFile, WriteJSON, WriteXML, } from './io-helpers.js';
 import { BinaryTree, BoxHash, BucketMap, BucketStore, ComponentMap, CompositeMap, DenseSpatialHash2D, Deque, Enum, HashList, HashMap, HashMultimap, MultiBiMap, MultiKeyMap, Multimap, Shash, SortedMap, SpatialH, SpatialHash, SpatialHash2D, SpatialHashMap, } from './lib/container.js';
 import * as deep from './lib/deep.js';
 import { forwardRef, Fragment, h, React, ReactComponent, render, toChildArray, } from './lib/dom/preactComponent.js';
-
 import { GetElements, GetInstances, GetParts, GetPositions, num2color, scientific, } from './eagle-commands.js';
-//import { EagleSVGRenderer, useTrkl, Renderer, ImmutablePath, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug,  EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes,  DereferenceError } from './lib/eagle.js';
-
-//import { ElementNameToComponent, ElementToComponent, PinSizes } from './lib/eagle/components.js';
-
 import CircuitJS from './lib/eda/circuitjs.js';
 import { GetColorBands, GetFactor, GetMultipliers, } from './lib/eda/colorCoding.js';
 import { GetExponent, GetMantissa, NumberToValue, ValueToNumber, } from './lib/eda/values.js';
@@ -339,29 +330,7 @@ function main(...args) {
     SaveLibraries,
     SchematicRenderer,
     BoardRenderer,
-    LibraryRenderer,
-    /*PinSizes,
-    EscapeClassName,
-    UnescapeClassName,
-    LayerToClass,
-    ElementToClass,
-    ClampAngle,
-    AlignmentAngle,
-    MakeRotation,
-    EagleAlignments,
-    Alignment,
-    SVGAlignments,
-    AlignmentAttrs,
-    RotateTransformation,
-    LayerAttributes,
-    InvertY,
-    PolarToCartesian,
-    CartesianToPolar,
-    RenderArc,
-    CalculateArcRadius,
-    LinesToPath,
-    MakeCoordTransformer,
-    useAttributes,*/
+    LibraryRenderer, 
     Renderer,
     GetNames,
     GetByName,
