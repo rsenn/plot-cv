@@ -58,3 +58,17 @@ Entry template:
 - Not yet root-caused: candidates not yet checked include a race between the `Xvfb "$DISPLAY_NUM"` background start and the `sleep 2` before launching `eagle` (2s may not always be enough), and the random `DISPLAY_NUM` (`:90`-`:99`) colliding with a leftover Xvfb from a previous run of this same script in the same session.
 - Severity: medium — makes the skill's own verification step an unreliable signal; following its documented advice ("a genuine FAIL always means the .scr's coordinates need to change") on a false FAIL would send someone chasing a nonexistent geometry bug.
 - Status: open
+
+- shparse2ast-absolute-path-function-crash: shparse2ast (/usr/local/bin/shparse2ast)
+  given an absolute script path misbehaves on scripts that define a function:
+  small ones die with a core dump (`timeout` reports "dumped core"), while
+  bytes-0.4.12/ci/install.sh from the cargo registry makes it print JSON
+  forever (filled the disk to 100% before it was killed). The same scripts
+  parse fine when run from their own directory with a relative path, and
+  scripts without a function definition are fine either way. Found while
+  writing shell-commands.js, which now runs `cd dir && shparse2ast ./base`
+  and caps the output size as a workaround; root cause in shparse2ast not
+  investigated.
+
+    printf 'f() { echo hi; }\nf\n' > /tmp/t.sh; shparse2ast -P /tmp/t.sh | head -c 100000 | wc -c
+
