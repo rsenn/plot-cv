@@ -68,7 +68,7 @@ function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
-    Terminal.mousetrackingDisable();
+    Terminal.mousetrackingDisable(std.out);
     let numLines = repl.historySave();
 
     repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);

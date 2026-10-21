@@ -202,7 +202,7 @@ function CommandLine() {
   };*/
 
   repl.addCleanupHandler(() => {
-    Terminal.mousetrackingDisable();
+    Terminal.mousetrackingDisable(std.out);
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
     WriteFile(
       cmdhist,

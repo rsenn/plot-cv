@@ -361,7 +361,7 @@ function main(...args) {
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
-    Terminal.mousetrackingDisable();
+    Terminal.mousetrackingDisable(std.out);
     let numLines = repl.historySave(histfile);
 
     repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);
