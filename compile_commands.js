@@ -47,10 +47,10 @@ const transformMap = (globalThis.transformMap = (input, output, map) => {
 });
 
 const workDir = (globalThis.workDir = workDir => {
-  if(path.isRelative(workDir)) workDir = path.absolute(workDir);
+  if(!path.isAbsolute(workDir)) workDir = path.resolve(workDir);
   return {
     toAbsolute(p) {
-      if(path.isRelative(p)) p = path.join(this?.workDir ?? workDir, p);
+      if(!path.isAbsolute(p)) p = path.join(this?.workDir ?? workDir, p);
       return p;
     },
     toRelative(p) {
@@ -64,7 +64,7 @@ const workDir = (globalThis.workDir = workDir => {
 });
 
 const relativeMap = (globalThis.relativeMap = (relativeTo, map) => {
-  let { toAbsolute, toRelative } = workDir(path.absolute(relativeTo));
+  let { toAbsolute, toRelative } = workDir(path.resolve(relativeTo));
 
   return transformMap(toAbsolute, toRelative, map);
 });

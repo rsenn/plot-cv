@@ -13,7 +13,7 @@ function main(...args) {
   console.log('path', getMethodNames(path));
 
   let filename = process.argv[1];
-  let cwd = path.absolute('.');
+  let cwd = path.resolve('.');
   console.log(`path.relative('/', '${cwd}')`, path.relative('/', cwd));
 
   console.log('path.sep', path.sep);

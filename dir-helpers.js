@@ -133,7 +133,7 @@ export class Path {
     return path.isAbsolute(this.#string);
   }
   get isRelative() {
-    return path.isRelative(this.#string);
+    return !path.isAbsolute(this.#string);
   }
 
   relativeTo(to) {

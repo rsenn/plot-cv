@@ -2,7 +2,6 @@ import { spawnSync, spawn, WNOHANG } from 'child_process';
 import { writeFileSync, reader, readerSync, readAll, gets, waitRead } from 'fs';
 import { TextDecoder } from 'textcode';
 import { quote, abbreviate } from 'util';
-import { read, write } from 'json';
 
 /*function GetYouTubeJSONSync(url) {
   const child = spawnSync(
@@ -70,7 +69,7 @@ async function GetYouTubeJSON(url) {
   return output
     .trimEnd()
     .split(/\n/g)
-    .map(s => read(s));
+    .map(s => JSON.parse(s));
 }
 
 async function main(...args) {
@@ -87,7 +86,7 @@ async function main(...args) {
       }),
       data,
     );
-    writeFileSync('out.json', write(data, 2));
+    writeFileSync('out.json', JSON.stringify(data, null, 2));
   }
 }
 

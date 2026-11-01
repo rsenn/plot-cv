@@ -17,7 +17,11 @@ import { REPL } from 'repl';
 import { inspect } from 'inspect';
 import { and } from 'predicate';
 import { ECMAScriptParser } from './lib/ecmascript.js';
-//import PortableSpawn from './lib/spawn.js';
+import * as std from 'std';
+import * as os from 'os';
+import * as path from 'path';
+import { glob } from 'util';
+import { CompileCommand } from './lib/compileCommand.js';
 
 extendArray(Array.prototype);
 
@@ -100,6 +104,61 @@ const StringGenerator =
     });
   };
 
+function LoadCompileCommands(jsonPath) {
+  if (!jsonPath) {
+    // Glob for build alternatives and sort by mtime (newest wins)
+    const matches = glob('build/*/compile_commands.json');
+    if (matches && matches.length > 0) {
+      matches.sort((a, b) => {
+        try {
+          const statA = fs.statSync(a);
+          const statB = fs.statSync(b);
+          return (statB.mtimeMs || statB.mtime || 0) - (statA.mtimeMs || statA.mtime || 0);
+        } catch (e) {
+          return 0;
+        }
+      });
+      jsonPath = matches[0];
+      console.log(`Auto-selected newest compile_commands.json: ${jsonPath}`);
+    } else {
+      jsonPath = 'build/x86_64-linux-gnu/compile_commands.json';
+    }
+  }
+
+  if (!fs.existsSync(jsonPath)) {
+    console.log(`Compile commands file not found: ${jsonPath}`);
+    return null;
+  }
+
+  const raw = fs.readFileSync(jsonPath, 'utf-8');
+  const entries = JSON.parse(raw);
+  const commandMap = new Map();
+
+  for (const entry of entries) {
+    const { directory, command, file } = entry;
+    const workDir = directory || process.cwd();
+    const absFile = path.isAbsolute(file) ? file : path.resolve(workDir, file);
+    
+    const cmdObj = CompileCommand.fromString(command, workDir);
+    
+    const info = {
+      file: absFile,
+      relativeFile: file,
+      directory: workDir,
+      command: cmdObj,
+      flags: cmdObj.argv.slice(1),
+      cflags: cmdObj.cflags || []
+    };
+
+    commandMap.set(absFile, info);
+    commandMap.set(file, info);
+  }
+
+  globalThis.compileCommandsMap = commandMap;
+  console.log(`Successfully loaded compile commands for ${entries.length} source files from ${jsonPath}.`);
+  return commandMap;
+}
+
 async function ImportModule(modulePath, ...args) {
   let done = false,
     moduleName = path.basename(modulePath, '.js');
@@ -133,15 +192,17 @@ function CommandLine() {
   let log = console.reallog;
   // let outputLog = fs.openSync('output.log', 'w+');
 
-  let repl;
-  repl = globalThis.repl = new REPL('AST', false);
+  let repl = globalThis.repl = new REPL('AST', false);
 
   let cfg = ReadJSON(config);
 
   if(cfg) Object.assign(console.options, cfg.inspectOptions);
 
   repl.importModule = ImportModule;
-  repl.history = LoadHistory(cmdhist);
+  
+  repl.historyLoad();
+
+  
   Object.assign(repl.directives, {
     c: [
       (...args) => {
@@ -204,13 +265,9 @@ function CommandLine() {
   repl.addCleanupHandler(() => {
     Terminal.mousetrackingDisable(std.out);
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
-    WriteFile(
-      cmdhist,
-      hist
-        .filter(entry => (entry + '').trim() != '')
-        .map(entry => entry.replace(/\n/g, '\\n') + '\n')
-        .join(''),
-    );
+    
+    repl.historySave(); 
+    //WriteFile(cmdhist, hist .filter(entry => (entry + '').trim() != '').map(entry => entry.replace(/\n/g, '\\n') + '\n').join(''));
 
     let cfg = { inspectOptions: console.options };
     WriteJSON(config, cfg);
@@ -1334,6 +1391,289 @@ function MakeQuickJSClass(node, ast = $) {
   return out.menum + `\n` + out.mfn + `\n` + (members.fields.length > 0 ? out.penum + `\n` + out.pget + `\n` + out.pset + `\n` : '') + out.fns;
 }
 
+
+
+function PathFilter(pattern = 'lib/.*\\.h$') {
+  const re = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
+  if (typeof Predicate !== 'undefined' && Predicate.property && Predicate.regexp) {
+    return Predicate.property("loc", Predicate.property("file", Predicate.regexp(re)));
+  }
+  return node => {
+    const file = node?.loc?.file ?? node?.loc?.includedFrom?.file;
+    return file ? re.test(file) : false;
+  };
+}
+
+
+function FindReferences(targetNodeOrId, ast = $.data) {
+  let targetId = typeof targetNodeOrId === 'object' && targetNodeOrId !== null ? targetNodeOrId.id : targetNodeOrId;
+  if (!targetId) return [];
+
+  const matchPaths = deep.select(ast, v => v === targetId, deep.RETURN_PATH | deep.PATH_AS_POINTER);
+  const references = [];
+
+  for (const ptr of matchPaths) {
+    const atoms = ptr.toArray();
+    const prop = atoms[atoms.length - 1];
+    let ownerPtr = Pointer.from(ptr);
+    let ownerNode = null;
+    let ownerPath = ownerPtr.toString();
+
+    while (ownerPtr.length > 0) {
+      ownerPtr = Pointer.from(ownerPtr.slice(0, -1));
+      try {
+        const node = ownerPtr.deref(ast);
+        if (node && typeof node === 'object' && (node.kind || node.id)) {
+          ownerNode = node;
+          ownerPath = ownerPtr.toString();
+          break;
+        }
+      } catch (e) {}
+    }
+
+    references.push({
+      pointer: ptr,
+      property: prop,
+      ownerPath,
+      ownerKind: ownerNode ? ownerNode.kind : 'Unknown',
+      ownerId: ownerNode ? ownerNode.id : null,
+      owner: ownerNode
+    });
+  }
+
+  return references;
+}
+
+
+function GetStructTypedefs(ast = $.data, locFilter = PathFilter('lib/.*\\.h$')) {
+  const filterFn = typeof locFilter === 'function' ? locFilter : (typeof locFilter === 'string' ? PathFilter(locFilter) : () => true);
+  const recordNodes = [...DeepSelect(ast, n => n && n.kind === 'RecordDecl' && n.tagUsed === 'struct' && filterFn(n))];
+  const ids = new Set(recordNodes.map(n => n.id).filter(Boolean));
+  const matchPaths = deep.select(ast, v => ids.has(v), deep.RETURN_PATH | deep.PATH_AS_POINTER);
+  
+  const structRegistry = new Map();
+  for (const ptr of matchPaths) {
+    if (ptr[ptr.length - 1] === 'id') {
+      const nodePtr = Pointer.from(ptr.slice(0, -1));
+      try {
+        const node = nodePtr.deref(ast);
+        if (node && node.kind === 'RecordDecl' && node.tagUsed === 'struct') {
+          const structId = node.id;
+          if (!structRegistry.has(structId)) {
+            structRegistry.set(structId, {
+              id: structId,
+              name: node.name || null,
+              nodePtr: nodePtr,
+              rawNode: node
+            });
+          }
+        }
+      } catch (e) {}
+    }
+  }
+
+  const resolvedStructs = [];
+  for (const [id, struct] of structRegistry.entries()) {
+    let refName = '';
+    let foundTypedefName = null;
+    let currentPtr = Pointer.from(struct.nodePtr);
+
+    while (currentPtr.length > 0) {
+      currentPtr = Pointer.from(currentPtr.slice(0, -1));
+      if (currentPtr.length === 0) break;
+      try {
+        const ancestor = currentPtr.deref(ast);
+        if (ancestor && (ancestor.kind === 'TypedefDecl' || ancestor.kind === 'TypeAliasDecl') && ancestor.name) {
+          foundTypedefName = ancestor.name;
+          break;
+        }
+      } catch (e) {}
+    }
+
+    if (foundTypedefName) {
+      refName = foundTypedefName;
+    } else if (struct.name && struct.name.trim() !== '') {
+      refName = `struct ${struct.name}`;
+    } else {
+      refName = `/* anonymous struct ${id} */`;
+    }
+
+    resolvedStructs.push({
+      id: struct.id,
+      structName: struct.name || null,
+      typedefName: foundTypedefName,
+      referenceName: refName,
+      pointer: struct.nodePtr.toString(),
+      node: struct.rawNode
+    });
+  }
+  return resolvedStructs;
+}
+
+function GetTypedefMap(ast = $.data, locFilter = PathFilter()) {
+  const filterFn = typeof locFilter === 'function' ? locFilter : PathFilter(locFilter);
+  const typedefs = [...DeepSelect(ast, n => n && (n.kind === 'TypedefDecl' || n.kind === 'TypeAliasDecl') && filterFn(n))];
+  const map = new Map();
+  for (const td of typedefs) {
+    if (td.name) {
+      map.set(td.name, {
+        id: td.id,
+        name: td.name,
+        underlyingType: td.type?.qualType || null,
+        node: td
+      });
+    }
+  }
+  return map;
+}
+
+function FindUnusedStructs(ast = $.data, locFilter = PathFilter()) {
+  const structs = GetStructTypedefs(ast, locFilter);
+  const unused = [];
+  for (const s of structs) {
+    const refs = FindReferences(s.id, ast);
+    // Ignore self-references (the RecordDecl id definition itself)
+    const externalRefs = refs.filter(r => r.property !== 'id' || r.ownerKind !== 'RecordDecl');
+    if (externalRefs.length === 0) {
+      unused.push(s);
+    }
+  }
+  return unused;
+}
+
+function GetRedeclChain(targetNodeOrId, ast = $.data) {
+  let targetId = typeof targetNodeOrId === 'object' && targetNodeOrId !== null ? targetNodeOrId.id : targetNodeOrId;
+  const chain = [];
+  let currentId = targetId;
+  const visited = new Set();
+
+  while (currentId && !visited.has(currentId)) {
+    visited.add(currentId);
+    const nodes = [...DeepSelect(ast, n => n && n.id === currentId)];
+    if (nodes.length === 0) break;
+    const node = nodes[0];
+    chain.push(node);
+    currentId = node.previousDecl || null;
+  }
+  return chain;
+}
+
+function GetFunctionSignatures(ast = $.data, locFilter = PathFilter()) {
+  const filterFn = typeof locFilter === 'function' ? locFilter : PathFilter(locFilter);
+  const funcs = [...DeepSelect(ast, n => n && n.kind === 'FunctionDecl' && filterFn(n))];
+  return funcs.map(f => ({
+    id: f.id,
+    name: f.name,
+    returnType: f.type?.qualType?.replace(/\s*\(.*$/g, '') || 'unknown',
+    params: (f.inner || []).filter(i => i.kind === 'ParmVarDecl').map(p => ({
+      name: p.name || '',
+      type: p.type?.qualType || ''
+    })),
+    loc: LocationString(GetLoc(f))
+  }));
+}
+function GetStructCandidates(structs, widthFilter = w => w <= 32, signFilter = null) {
+  const candidates = [];
+
+  for (const s of structs) {
+    const node = s.node;
+    if (!node || !Array.isArray(node.inner)) continue;
+
+    // Filter inner declarations for FieldDecls (struct members)
+    for (const field of node.inner) {
+      if (field.kind === 'FieldDecl' && field.name) {
+        // Skip existing bitfields
+        if (field.isBitfield || field.bitWidth !== undefined) continue;
+
+        const qualType = field.type?.qualType || '';
+        
+        // Match standard integer or boolean types (ignoring pointers, floats, arrays)
+        if (/(int|char|short|long|_Bool)/.test(qualType) && !/\*/.test(qualType)) {
+          const isSigned = !/^unsigned/.test(qualType) && !/^(_Bool|bool)/.test(qualType);
+          
+          // Determine approximate bit width based on type
+          let width = 32;
+          if (/char/.test(qualType)) width = 8;
+          else if (/short/.test(qualType)) width = 16;
+          else if (/long long/.test(qualType)) width = 64;
+          else if (/long/.test(qualType)) width = 32; // depends on arch, but typical
+          else if (/(_Bool|bool)/.test(qualType)) width = 1;
+
+          // Apply filters
+          const widthMatch = typeof widthFilter === 'function' ? widthFilter(width, qualType) : width <= widthFilter;
+          const signMatch = signFilter === null || isSigned === signFilter;
+
+          if (widthMatch && signMatch) {
+            candidates.push({
+              structId: s.id,
+              structName: s.referenceName,
+              memberName: field.name,
+              type: qualType,
+              width,
+              isSigned,
+              node: field
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return candidates;
+}
+
+function FindMemberReferences(structNameOrId, memberName, ast = $.data) {
+  // First, find references to the struct itself using our existing tools
+  const structs = GetStructTypedefs(ast);
+  const targetStruct = structs.find(s => s.id === structNameOrId || s.structName === structNameOrId || s.referenceName === structNameOrId);
+  
+  if (!targetStruct) {
+    console.log(`Struct not found: ${structNameOrId}`);
+    return [];
+  }
+
+  const structRefs = FindReferences(targetStruct.id, ast);
+  const memberAccesses = [];
+
+  // Look through all references to see which ones point to MemberExpr or FieldDecl matching memberName
+  for (const ref of structRefs) {
+    // If the struct is referenced as a type or declaration, check its owner or children
+    if (ref.owner && Array.isArray(ref.owner.inner)) {
+      for (const child of ref.owner.inner) {
+        if (child.kind === 'FieldDecl' && child.name === memberName) {
+          memberAccesses.push({
+            type: 'declaration',
+            pointer: ref.pointer,
+            owner: ref.owner,
+            memberNode: child
+          });
+        }
+      }
+    }
+
+    // Also scan member expressions (.member or ->member usages in code)
+    const allMemberExprs = [...DeepSelect(ast, n => n && n.kind === 'MemberExpr' && n.name === memberName)];
+    for (const expr of allMemberExprs) {
+      memberAccesses.push({
+        type: 'usage',
+        expression: expr,
+        loc: LocationString(GetLoc(expr))
+      });
+    }
+  }
+
+  // Deduplicate usages by location/pointer
+  const uniqueMap = new Map();
+  for (const acc of memberAccesses) {
+    const key = acc.pointer || acc.loc || JSON.stringify(acc.expression);
+    if (!uniqueMap.has(key)) {
+      uniqueMap.set(key, acc);
+    }
+  }
+
+  return [...uniqueMap.values()];
+}
+
 async function ASTShell(...args) {
   let inspectOptions = {
     depth: 2,
@@ -1527,6 +1867,8 @@ async function ASTShell(...args) {
     List,
     Shell,
     ParseStructs,
+    FindMemberReferences,
+    FindReferences,FindUnusedStructs,GetStructCandidates,GetStructTypedefs
   });
 
   Pointer.prototype.chain = function(step, limit = Infinity) {
@@ -1594,6 +1936,13 @@ async function ASTShell(...args) {
     GetIdentifiers,
     Namespaces,
     UnsetLoc,
+    PathFilter,
+    GetStructTypedefs,
+    GetTypedefMap,
+    FindUnusedStructs,
+    GetRedeclChain,
+    GetFunctionSignatures,
+    FindReferences,
   });
   //globalThis.Util = Util;
   globalThis.F = arg => $.getFunction(arg);

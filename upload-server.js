@@ -28,7 +28,10 @@ import { MessageReceiver, MessageTransmitter, MessageTransceiver, codecs, RPCApi
 import { PromiseWorker } from './promise-worker.js';
 
 const DEBUG = process.env.DEBUG ?? false;
-const isin = (other, p) => path.slice(other, 0, path.length(p)) == p;
+/* components of p, the root as an empty first one: '/a/b/' gives ['', 'a', 'b'] */
+const pathComponents = p => p.split(/\/+/).filter((c, i) => i == 0 || c != '');
+const slicePath = (p, start, end) => pathComponents(p).slice(start, end).join('/');
+const isin = (other, p) => slicePath(other, 0, pathComponents(p).length) == p;
 
 extendArray();
 extendGenerator();
@@ -104,20 +107,20 @@ const allowedDirs = (globalThis.allowedDirs = new Map(
   defaultDirs
     .map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd))
     .map(d => path.resolve(d))
-    .map(d => path.relative(d))
+    .map(d => path.relative(process.cwd(), d))
     .map(d => [DirName(d), d]),
 ));
 
 function GetDir(dir) {
   let a = dir.split(new RegExp(path.sep + '+', 'g'));
   let i = a.findIndex(n => /[*{}]/.test(n));
-  return i != -1 ? path.slice(dir, 0, i) : dir;
+  return i != -1 ? slicePath(dir, 0, i) : dir;
 }
 
 function DirName(name) {
-  let p = path.relative(name);
+  let p = path.relative(process.cwd(), name);
 
-  p = path.slice(
+  p = slicePath(
     p,
     p.split(new RegExp(path.sep + '+', 'g')).findIndex(it => it != '..'),
   );
@@ -508,7 +511,7 @@ function main(...args) {
           let base = path.basename(file);
 
           if(file) {
-            file = path.absolute(file);
+            file = path.resolve(file);
             file = path.normalize(file);
             console.log(
               `allowedDirs:`,
@@ -555,8 +558,8 @@ function main(...args) {
 
             case 'list':
               const { dir = 'uploads', mask = TYPE_MASK, filter = '*' } = query ?? {};
-              const d = path.absolute(dir);
-              const allowed = path.isRelative(dir) && [...allowedDirs.values()].map(path.absolute).some(x => isin(d, x));
+              const d = path.resolve(dir);
+              const allowed = !path.isAbsolute(dir) && [...allowedDirs.values()].map(path.absolute).some(x => isin(d, x));
 
               if(!allowed) {
                 console.log('NOT ALLOWED');
@@ -674,9 +677,9 @@ function main(...args) {
             } else {
               names = glob(dir, GLOB_BRACE);
               if(!Array.isArray(names)) names = [];
-              let a = path.toArray(dir);
+              let a = pathComponents(dir);
               let i = a.findIndex(n => /[*{}]/.test(n));
-              dir = path.slice(dir, 0, i);
+              dir = slicePath(dir, 0, i);
               names = names.map(n => n.slice(dir.length + 1));
             }
             if(!Array.isArray(names)) continue;

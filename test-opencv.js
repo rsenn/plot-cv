@@ -401,7 +401,7 @@ async function main(...args) {
 
         console.log('neighborhood', { neighborhood, palette });
 
-        cv.imwrite('neighborhood.png', neighborhood, palette);
+        cv.imwrite('neighborhood.png', neighborhood, { palette });
 
         let im = cv.imread('neighborhood.png');
         im.copyTo(dst);

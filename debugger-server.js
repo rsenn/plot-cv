@@ -834,7 +834,7 @@ function main(...args) {
 
                 if(command == 'stackTrace') {
                   response.body = response.body.map(frame => {
-                    if(frame.filename) frame.filename = path.relative(frame.filename);
+                    if(frame.filename) frame.filename = path.relative(process.cwd(), frame.filename);
 
                     return frame;
                   });

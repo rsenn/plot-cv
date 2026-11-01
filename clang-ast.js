@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import * as deep from 'deep';
 import * as path from 'path';
 import * as BJSON from 'bjson';
-import * as json from 'json';
 import { Pointer } from 'pointer';
 import { Spawn } from './os-helpers.js';
 //import { countSubstring } from './string-helpers.js';
@@ -127,13 +126,14 @@ function TrimSubscripts(str, sub) {
 }
 
 export function nameOrIdPred(name_or_id, ...args) {
+  if(typeof name_or_id == 'function') return name_or_id;
+
   if(/^(struct|union)\s/.test(name_or_id)) {
     const idx = name_or_id.indexOf(' ');
     const tag = name_or_id.substring(0, idx);
     const name = name_or_id.substring(idx + 1);
 
     return and(property('name', string(name)), property('tagUsed', string(tag)), ...args);
-    return node => node.name == name && node.tagUsed == tag;
   }
 
   if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
@@ -1547,7 +1547,7 @@ export async function AstDump(compiler, source, args, force) {
         else throw new Error(`ERROR reading ${this.file}`);
       }
 
-      return json.read(fs.readFileSync(this.file, null));
+      return JSON.parse(fs.readFileSync(this.file, 'utf8'));
     },
     data() {
       let data = this.json;

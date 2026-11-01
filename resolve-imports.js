@@ -60,7 +60,7 @@ function ResolveAlias(filename) {
 }
 
 function NormalizePath(p) {
-  p = path.absolute(p);
+  p = path.resolve(p);
   p = path.relative(p, path.getcwd());
   p = path.normalize(p);
   if(!path.isAbsolute(p)) if (!p.startsWith('./') && !p.startsWith('../') && p != '..') p = './' + p;
@@ -339,7 +339,7 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
     let j = path.join(dir, s);
     j = path.normalize(j);
     j = path.normalize(j);
-    if(path.isRelative(j)) j = './' + j;
+    if(!path.isAbsolute(j)) j = './' + j;
     return ModuleLoader(j);
   };
   let prevToken;
@@ -544,7 +544,7 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
 
   let exportsFrom = exports.filter(exp => exp.tokens).filter(exp => exp.tokens.some(tok => tok.lexeme == 'from'));
 
-  if(path.isRelative(source) && !/^(\.|\.\.)\//.test(source)) source = './' + source;
+  if(!path.isAbsolute(source) && !/^(\.|\.\.)\//.test(source)) source = './' + source;
 
   // console.log('exportsFrom', exports);
 
@@ -1266,7 +1266,7 @@ function main(...args) {
       'case-sensitive': [false, null, 'c'],
       quiet: [false, null, 'q'],
       export: [false, () => (exp = true), 'e'],
-      'relative-to': [true, arg => (relativeTo = path.absolute(arg)), 'r'],
+      'relative-to': [true, arg => (relativeTo = path.resolve(arg)), 'r'],
       output: [true, file => (outputFile = file), 'o'],
       'no-recursive': [false, () => (recursive = false), 'R'],
       'remove-exports': [false, () => (removeExports = true), 'E'],

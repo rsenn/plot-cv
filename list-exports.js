@@ -229,7 +229,7 @@ function main(...args) {
       else if(/(case|^-c)/.test(args[optind])) caseSensitive = true;
       else if(/(quiet|^-q)/.test(args[optind])) quiet = true;
       else if(/(export|^-e)/.test(args[optind])) exp = true;
-      else if(/(relative|^-r)/.test(args[optind])) relativeTo = path.absolute(args[++optind]);
+      else if(/(relative|^-r)/.test(args[optind])) relativeTo = path.resolve(args[++optind]);
       else if(/(match|^-m)/.test(args[optind])) match = new RegExp(args[++optind], 'i');
     } else files.push(args[optind]);
 
@@ -407,7 +407,7 @@ function main(...args) {
 
     if(relativeTo) {
       let rel = path.resolve(relativeTo);
-      source = path.absolute(source);
+      source = path.resolve(source);
 
       if(path.exists(rel) && !path.isDirectory(rel)) rel = path.dirname(rel);
 
@@ -416,7 +416,7 @@ function main(...args) {
       source = path.relative(source, rel);
     }
 
-    if(path.isRelative(source) && !/^(\.|\.\.)\//.test(source)) source = './' + source;
+    if(!path.isAbsolute(source) && !/^(\.|\.\.)\//.test(source)) source = './' + source;
 
     if(exportNames.length) {
       const names = exportNames.map(t => (t == 'default' ? t + ' as ' + base : t)).filter(n => match.test(n));

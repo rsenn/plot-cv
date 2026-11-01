@@ -127,7 +127,7 @@ export function Copy(src, dest) {
     unlinkSync(dest);
   } catch(e) {}
 
-  if(DEBUG) console.log(`Copying '${relative(src)}' to '${dest}'.`);
+  if(DEBUG) console.log(`Copying '${relative(process.cwd(), src)}' to '${dest}'.`);
 
   return copyFileSync(src, dest, constants.COPYFILE_FICLONE);
 }
@@ -137,7 +137,7 @@ export function Convert(src, dest, options = []) {
     unlinkSync(dest);
   } catch(e) {}
 
-  if(DEBUG) console.log(`Converting '${relative(src)}' to '${dest}'.`);
+  if(DEBUG) console.log(`Converting '${relative(process.cwd(), src)}' to '${dest}'.`);
 
   const cmd = ['convert-im6', src, ...options, dest];
   const child = spawn(cmd);
