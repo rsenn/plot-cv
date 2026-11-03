@@ -22,13 +22,41 @@ import * as os from 'os';
 import * as path from 'path';
 import { glob } from 'util';
 import { CompileCommand } from './lib/compileCommand.js';
+import { cc } from 'ffi';
 
 extendArray(Array.prototype);
 
 globalThis.fs = fs;
 
 let params;
-let files;
+
+const filesRegistry = new Map();
+
+function setupFileRegistry() {
+  const filesRegistry = new Map();
+  globalThis.files = new Proxy({}, {
+    get(target, filename) {
+      if (typeof filename !== 'string' || filename.startsWith('_') || filename === 'then') {
+        return target[filename];
+      }
+      const absPath = path.isAbsolute(filename) ? path.normalize(filename) : path.resolve(process.cwd(), filename);
+      return filesRegistry.get(absPath) || target[absPath];
+    },
+    set(target, filename, value) {
+      if (typeof filename === 'string' && !filename.startsWith('_')) {
+        const absPath = path.isAbsolute(filename) ? path.normalize(filename) : path.resolve(process.cwd(), filename);
+        filesRegistry.set(absPath, value);
+        target[absPath] = value;
+        target[filename] = value;
+      } else {
+        target[filename] = value;
+      }
+      return true;
+    }
+  });
+}
+
+
 let spawn, base, cmdhist, config;
 let defs, includes, libs, sources;
 let libdirs = [
@@ -51,6 +79,63 @@ let libdirs = [
 ];
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
 let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
+
+
+function generateStructProbeCode(structName, members, includes = []) {
+  const includeLines = [
+    '#include <stddef.h>',
+    ...includes.map(inc => `#include "${inc}"`)
+  ].join('\n');
+
+  const memberProbes = members.map((member, index) => {
+    const field = member.replace(/:.*/, '');
+    const idx = index * 2;
+    return `  /* .${field} */
+  buffer[${idx}] = (uint32_t)offsetof(${structName}, ${field});
+  buffer[${idx} + 1] = (uint32_t)sizeof((((${structName}*)0)->${field}));`;
+  }).join('\n');
+
+  return `
+${includeLines}
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void probe_layout(uint32_t* buffer) {
+${memberProbes}
+}
+
+#ifdef __cplusplus
+}
+#endif
+`.trim();
+}
+
+export function probeStructABI(structName, members, includes = []) {
+  const sourceCode = generateStructProbeCode(structName, members, includes);
+  const sourceBytes = Uint8Array.from(sourceCode, c => c.charCodeAt(0));
+
+  const { symbols: { probe_layout } } = cc({
+    source: sourceBytes,
+    symbols: {
+      probe_layout: {
+        args: ['pointer'],
+        returns: 'void'
+      }
+    }
+  });
+
+  const bufferView = new Uint32Array(members.length * 2);
+  probe_layout(bufferView);
+
+  return members.map((member, i) => ({
+    field: member.replace(/:.*/, ''),
+    offset: bufferView[i * 2],
+    size: bufferView[i * 2 + 1]
+  }));
+}
 
 const traceProxy = (obj, handler) => {
   let proxy;
@@ -103,6 +188,48 @@ const StringGenerator =
       },
     });
   };
+
+// Scope kinds that define lexical boundaries
+const SCOPE_KINDS = new Set([
+  'TranslationUnitDecl',
+  'NamespaceDecl',
+  'CXXRecordDecl',
+  'RecordDecl',
+  'FunctionDecl',
+  'CompoundStmt',
+  'ForStmt',
+  'WhileStmt',
+  'IfStmt'
+]);
+
+export function* LazyScopeIter(node, predicate = () => true, currentScopePath = []) {
+  if (!node || typeof node !== 'object') return;
+
+  const kind = node.kind;
+  const isScope = SCOPE_KINDS.has(kind);
+  
+  // Build up the scope descriptor for this level
+  const scopeInfo = {
+    kind,
+    name: node.name || null,
+    range: node.range || null,
+    node
+  };
+
+  const nextPath = isScope ? [...currentScopePath, scopeInfo] : currentScopePath;
+
+  // Test current node against predicate
+  if (predicate(node, nextPath)) {
+    yield { node, scopePath: nextPath };
+  }
+
+  // Lazily traverse inner children only if they exist
+  if (Array.isArray(node.inner)) {
+    for (const child of node.inner) {
+      yield* LazyScopeIter(child, predicate, nextPath);
+    }
+  }
+}
 
 function LoadCompileCommands(jsonPath) {
   if (!jsonPath) {
@@ -194,7 +321,7 @@ function CommandLine() {
 
   let repl = globalThis.repl = new REPL('AST', false);
 
-  let cfg = ReadJSON(config);
+  let cfg = config ? ReadJSON(config) : null;
 
   if(cfg) Object.assign(console.options, cfg.inspectOptions);
 
@@ -280,7 +407,7 @@ function CommandLine() {
 
   repl = traceProxy(repl);
 
-  if(params.exec) repl.evalAndPrint(params.exec);
+  if(params?.exec) repl.evalAndPrint(params.exec);
   else repl.run(false);
 }
 
@@ -1674,318 +1801,261 @@ function FindMemberReferences(structNameOrId, memberName, ast = $.data) {
   return [...uniqueMap.values()];
 }
 
-async function ASTShell(...args) {
-  let inspectOptions = {
-    depth: 2,
-    /*breakLength: 240, */ customInspect: true,
-    compact: false,
-    depth: Infinity,
-    maxArrayLength: Infinity,
-    hideKeys: ['loc', 'range'],
+// --- Helper: Extract and merge flags from compile_commands.json ---
+function extractDatabaseFlags(sources, includes, defs) {
+  const mergedIncludes = new Set(includes);
+  const mergedDefs = new Set(defs);
+  const extraFlags = [];
+
+  if (globalThis.compileCommandsMap) {
+    for (const source of sources) {
+      const absSource = path.isAbsolute(source) ? source : path.resolve(process.cwd(), source);
+      const info = globalThis.compileCommandsMap.get(absSource) || globalThis.compileCommandsMap.get(source);
+      if (info && info.command && info.command.argv) {
+        for (const arg of info.command.argv) {
+          if (arg.startsWith('-I')) {
+            mergedIncludes.add(arg.slice(2));
+          } else if (arg.startsWith('-D')) {
+            mergedDefs.add(arg.slice(2));
+          } else if (!arg.startsWith('-c') && arg !== source && !arg.endsWith('.c') && !arg.endsWith('.o')) {
+            extraFlags.push(arg);
+          }
+        }
+      }
+    }
+  }
+  return {
+    includes: [...mergedIncludes],
+    defs: [...mergedDefs],
+    extraFlags
   };
+}
 
-  globalThis.console = new Console({ inspectOptions });
+// --- Helper: Process all target source files ---
+async function processSources(sources, extraFlags, hist, items, Compile) {
+  for (let source of sources) {
+    let item = await Compile(source, ...extraFlags);
+    if (item && !(item instanceof Error)) {
+      pushUnique(hist, [...flags, source]);
+      items.push(item);
+      globalThis['$'] = item;
+    }
+  }
+}
+async function Compile(file, ...args) {
+  let r;
 
-  globalThis.files = files = {};
+  try {
+    r = globalThis.r = await AstDump(globalThis.params.compiler, file, [...globalThis.flags, ...args], globalThis.params.force);
+  } catch(e) {
+    console.log('Compile ERROR:', e.message + '\n' + e.stack);
+    return e;
+  }
+  r.source = file;
 
-  base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
-  cmdhist = `.${base}-cmdhistory`;
-  config = `.${base}-config`;
+  globalThis.files[file] = r;
 
-  params = globalThis.params = getOpt(
-    {
-      include: [true, (a, p) => (p || []).concat([a]), 'I'],
-      define: [true, (a, p) => (p || []).concat([a]), 'D'],
-      libs: [true, (a, p) => (p || []).concat([a]), 'l'],
-      debug: [false, null, 'x'],
-      force: [false, null, 'f'],
-      target: [true, null, 't'],
-      exec: [true, null, 'e'],
-      'system-includes': [false, null, 's'],
-      'no-remove-empty': [false, null, 'E'],
-      'output-dir': [true, null, 'd'],
-      compiler: ['clang', null, 'c'],
-      '@': 'input',
+  let ast2path = mapWrapper(new WeakMap());
+
+  // Your complete query facade
+  define(r, {
+    select(name_or_id, pred = n => true, ...args) {
+      return DeepSelect(this.data, nameOrIdPred(name_or_id, pred), ...args);
     },
-    args,
+    getByIdOrName(name_or_id, ...args) {
+      let node = this.data.inner.findLast(nameOrIdPred(name_or_id, ...args));
+      node ??= this.classes.findLast(nameOrIdPred(name_or_id, ...args));
+      node ??= DeepFind(this.data, nameOrIdPred(name_or_id, ...args));
+      return node;
+    },
+    getType: memoize(function getType(name_or_id) {
+      let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl|NamespaceDecl)/.test(n.kind) && /Decl/.test(n.kind));
+      result ??= GetType(name_or_id, this.data);
+
+      if(result) {
+        let type = TypeFactory(result, this.data);
+        if(type) result = type;
+      }
+
+      return result;
+    }),
+    getNamespace(arg, root = this.data, predicate = () => true) {
+      return GetNamespace(arg, root, predicate);
+    },
+    namespaceOf(node) {
+      return NamespaceOf(node?.ast ?? node, this.data);
+    },
+    getClass: memoize(function getClass(name_or_id) {
+      return GetClass(name_or_id, this.data);
+    }),
+    getFunction(name_or_id) {
+      const result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+      if(result) return new FunctionDecl(result, this.data);
+    },
+    getVariable(name_or_id) {
+      let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
+      if(result) return new VarDecl(result, this.data);
+    },
+    getLoc(node) {
+      return CompleteLocation(node);
+    },
+  });
+
+  defineGetter(
+    r,
+    'tree',
+    memoize(() => new Tree(r.data)),
   );
 
-  defs = params.define || [];
-  includes = params.include || [];
-  libs = params.libs || [];
-  sources = params['@'] || [];
+  return define(r, {
+    pathOf(needle, maxDepth = 10) {
+      let p = ast2path(needle?.ast ?? needle);
+      if(!p) {
+        p = DeepPathOf(this.data, needle?.ast ?? needle);
+        ast2path(needle?.ast ?? needle, (p = new Pointer(p)));
+      }
+      if(p) return p;
 
-  define(globalThis, {
-    defs,
-    includes,
-    libs,
-    /* prettier-ignore */ get flags() {
-      return [ ...(params.target? [`--target=${params.target}`] : []),  ...includes.filter(v => typeof v == 'string').map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
+      if('ast' in needle) needle = needle.ast;
+
+      for(let [node, path] of DeepSelect(r.data, n => typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, maxDepth)) {
+        if(node === needle) return new Pointer(path);
+      }
     },
   });
+}
 
-  async function Compile(file, ...args) {
-    let r;
-
-    /* if(params.target)
-      args.unshift(`--target=${params.target}`);*/
-
-    try {
-      r = globalThis.r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
-    } catch(e) {
-      console.log('Compile ERROR:', e.message + '\n' + e.stack);
-      return e;
-    }
-    r.source = file;
-
-    globalThis.files[file] = r;
-
-    let ast2path = mapWrapper(new WeakMap());
-
-    define(r, {
-      select(name_or_id, pred = n => true, ...args) {
-        return DeepSelect(this.data, nameOrIdPred(name_or_id, pred), ...args);
-      },
-      getByIdOrName(name_or_id, ...args) {
-        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, ...args));
-
-        node ??= this.classes.findLast(nameOrIdPred(name_or_id, ...args));
-        node ??= DeepFind(this.data, nameOrIdPred(name_or_id, ...args));
-        return node;
-      },
-      getType: memoize(function getType(name_or_id) {
-        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl|NamespaceDecl)/.test(n.kind) && /Decl/.test(n.kind));
-        //let result = this.getNamespace(name_or_id, this.data, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind));
-
-        result ??= GetType(name_or_id, this.data);
-
-        if(result) {
-          let type = TypeFactory(result, this.data);
-          if(type) result = type;
-        }
-
-        return result;
-      }),
-      getNamespace(arg, root = this.data, predicate = () => true) {
-        return GetNamespace(arg, root, predicate);
-      },
-      namespaceOf(node) {
-        return NamespaceOf(node?.ast ?? node, this.data);
-      },
-      getClass: memoize(function getClass(name_or_id) {
-        return GetClass(name_or_id, this.data);
-      }),
-      getFunction(name_or_id) {
-        const result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
-
-        if(result) return new FunctionDecl(result, this.data);
-      },
-      getVariable(name_or_id) {
-        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
-
-        if(result) return new VarDecl(result, this.data);
-      },
-      getLoc(node) {
-        return CompleteLocation(node);
-      },
-    });
-
-    defineGetter(
-      r,
-      'tree',
-      memoize(() => new Tree(r.data)),
-    );
-    return define(r, {
-      pathOf(needle, maxDepth = 10) {
-        let p = ast2path(needle?.ast ?? needle);
-        if(!p) {
-          p = DeepPathOf(this.data, needle?.ast ?? needle);
-          ast2path(needle?.ast ?? needle, (p = new Pointer(p)));
-        }
-        if(p) return p;
-
-        if('ast' in needle) needle = needle.ast;
-
-        for(let [node, path] of DeepSelect(r.data, n => typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, maxDepth)) if(node === needle) return new Pointer(path);
-      },
-    });
-  }
-
-  Object.assign(globalThis, {
-    nameOrIdPred,
-    DeepSelect,
-    DeepGet,
-    DeepFind,
-    DeepPathOf,
-    SIZEOF_POINTER,
-    Type,
-    PointerType,
-    ReferenceType,
-    FieldDecl,
-    NameFor,
-    AstDump,
-    SourceDependencies,
-    NodePrinter,
-    NodeType,
-    NodeName,
-    GetLoc,
-    RawLocation,
-    CompleteLocation,
-    RawRange,
-    CompleteRange,
-    GetTypeStr,
-    PrintRange,
-    OverlapRange,
-    ParentNode,
-    NextSibling,
-    PreviousSibling,
-    FirstChild,
-    LastChild,
-    GenerateInspectStruct,
-    GenerateStructClass,
-    InspectStruct,
-    MakeStructClass,
-    DirIterator,
-    RecursiveDirIterator,
-    IncludeAll,
-    Terminal,
-    PrintAst,
-    ConcatIterator,
-    StringGenerator,
-    ReadFile,
-    WriteFile,
-    MakeFFI,
-    MakeQuickJSClass,
-    ParseECMAScript,
-    PrintECMAScript,
-    ProcessFile,
-    toArrayBuffer,
-    toString,
-    Constants,
-    PrintCArray,
-    GetParams,
-    List,
-    Shell,
-    ParseStructs,
-    FindMemberReferences,
-    FindReferences,FindUnusedStructs,GetStructCandidates,GetStructTypedefs
-  });
-
+// --- 1. Global Registrations (Moved out of ASTShell entirely) ---
+function registerGlobals() {
   Pointer.prototype.chain = function(step, limit = Infinity) {
-    let ptr = this,
-      ret = [],
-      len = ptr.length;
-
+    let ptr = this, ret = [], len = ptr.length;
     for(;;) {
       if(ret.length >= limit) break;
       ret.unshift(ptr);
-
       len -= step;
       if(len <= 0) break;
       ptr = ptr.slice(0, -step);
     }
-
     return ret;
   };
 
   Object.assign(globalThis, {
-    Pointer,
-    Tree,
-    deep,
-    path,
-    Compile,
-    SelectLocations,
-    LocationString,
-    Table,
-    Structs,
-    Node,
-    Type,
-    RecordDecl,
-    EnumDecl,
-    TypedefDecl,
-    VarDecl,
-    FindType,
-    Hier,
-    PathOf,
-    FunctionDecl,
-    Location,
-    Range,
-    TypeFactory,
-    SpawnCompiler,
-    AstDump,
-    NodeType,
-    NodeName,
-    GetLoc,
-    GetClass,
-    GetBases,
-    GetByName,
-    GetNamespace,
-    NamespaceOf,
-    GetType,
-    GetTypeStr,
-    GetTypeNode,
-    GetFields,
-    PathRemoveLoc,
-    FFI_Function,
-    libdirs,
-    libdirs32,
-    libdirs64,
-    LibraryExports,
-    MemberNames,
-    GetImports,
-    GetIdentifiers,
-    Namespaces,
-    UnsetLoc,
-    PathFilter,
-    GetStructTypedefs,
-    GetTypedefMap,
-    FindUnusedStructs,
-    GetRedeclChain,
-    GetFunctionSignatures,
-    FindReferences,
+    nameOrIdPred, DeepSelect, DeepGet, DeepFind, DeepPathOf, SIZEOF_POINTER,
+    Type, PointerType, ReferenceType, FieldDecl, NameFor, AstDump, SourceDependencies,
+    NodePrinter, NodeType, NodeName, GetLoc, RawLocation, CompleteLocation, RawRange,
+    CompleteRange, GetTypeStr, PrintRange, OverlapRange, ParentNode, NextSibling,
+    PreviousSibling, FirstChild, LastChild, GenerateInspectStruct, GenerateStructClass,
+    InspectStruct, MakeStructClass, DirIterator, RecursiveDirIterator, IncludeAll,
+    Terminal, PrintAst, ConcatIterator, StringGenerator, ReadFile, WriteFile, MakeFFI,
+    MakeQuickJSClass, ParseECMAScript, PrintECMAScript, ProcessFile, toArrayBuffer,
+    toString, Constants, PrintCArray, GetParams, List, Shell, ParseStructs,
+    FindMemberReferences, FindReferences, FindUnusedStructs, GetStructCandidates, GetStructTypedefs,
+    Pointer, Tree, deep, path, Compile, SelectLocations, LocationString, Table, Structs,
+    Node, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FindType, Hier, PathOf,
+    FunctionDecl, Location, Range, TypeFactory, SpawnCompiler, GetClass, GetBases,
+    GetByName, GetNamespace, NamespaceOf, GetType, GetTypeNode, GetFields, PathRemoveLoc,
+    FFI_Function, libdirs, libdirs32, libdirs64, LibraryExports, MemberNames, GetImports,
+    GetIdentifiers, Namespaces, UnsetLoc, PathFilter, GetTypedefMap, GetRedeclChain,
+    GetFunctionSignatures, LazyScopeIter, generateStructProbeCode, probeStructABI
   });
-  //globalThis.Util = Util;
+
   globalThis.F = arg => $.getFunction(arg);
   globalThis.T = arg => $.getType(arg);
 
   lazyProperty(globalThis, 'P', () => {
     let printer = NodePrinter($.data);
-
     return node => {
       if('ast' in node) node = node.ast;
       printer.clear();
       return printer.print(node);
     };
   });
+}
 
-  //console.log('Loading history');
+async function ASTShell(...args) {
+  globalThis.console = new Console({
+    depth: Infinity,
+    customInspect: true,
+    compact: false,
+    maxArrayLength: Infinity,
+    hideKeys: ['loc', 'range'],
+  });
 
+  // 1. Initialize file registry proxy and arguments
+  setupFileRegistry();
+  const params = globalThis.params = getOpt({
+    include: [true, (a, p) => (p || []).concat([a]), 'I'],
+    define: [true, (a, p) => (p || []).concat([a]), 'D'],
+    libs: [true, (a, p) => (p || []).concat([a]), 'l'],
+    debug: [false, null, 'x'],
+    force: [false, null, 'f'],
+    target: [true, null, 't'],
+    exec: [true, null, 'e'],
+    'system-includes': [false, null, 's'],
+    'no-remove-empty': [false, null, 'E'],
+    'output-dir': [true, null, 'd'],
+    compiler: ['clang', null, 'c'],
+    '@': 'input',
+  }, args);
+
+  const defs = params.define || [];
+  const includes = params.include || [];
+  const libs = params.libs || [];
+  const sources = params['@'] || [];
+
+  define(globalThis, {
+    defs,
+    includes,
+    libs,
+    get flags() {
+      return [...(params.target ? [`--target=${params.target}`] : []), ...includes.map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
+    },
+  });
+
+  // 2. Load compile database and register globals
+  LoadCompileCommands();
+  registerGlobals();
+
+const base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   const unithist = `.${base}-unithistory`;
-  let items = [],
-    hist = ReadJSON(unithist) || [];
-
-  console.log('sources:', sources);
-  console.log('Loading sources:' + sources.map(s => ' ' + s).join(','));
-
-  globalThis['_'] = items;
-
-  for(let source of sources) {
-    let item = await ProcessFile(source);
-
-    globalThis['$'] = item;
-
-    /*if(/\.js$/.test(source)) item = ParseECMAScript(source);
-    else item = await Compile(source);*/
-
-    if(item) {
-      pushUnique(hist, [...flags, source]);
-      items.push(item);
-    }
+  
+  let hist = [];
+  try {
+    const content = ReadFile(unithist);
+    if (content) hist = JSON.parse(content);
+  } catch (e) {
+    // File doesn't exist yet or is empty; start with fresh history
+    hist = [];
   }
 
-  WriteFile(unithist, JSON.stringify(hist, null, 2));
+  console.log('sources (lazy):', sources);
 
-  // globalThis.$ = items.length == 1 ? items[0] : items;
+  // 3. Gather unique commands and reduce them cleanly using CompileCommand.accumulate
+  const commands = sources.map(source => {
+    const absSource = path.isAbsolute(source) ? source : path.resolve(process.cwd(), source);
+    return globalThis.compileCommandsMap?.get(absSource) || globalThis.compileCommandsMap?.get(source);
+  }).filter(Boolean);
+
+  const gathered = commands.reduce(CompileCommand.accumulate, {
+    includes: new Set(includes),
+    defines: new Set(defs),
+    flags: new Set()
+  });
+
+  globalThis.includes = [...gathered.includes];
+  globalThis.defs = [...gathered.defines];
+  
+  // Expose extra flags globally if needed for lazy compilation later
+  globalThis.extraFlags = [...gathered.flags];
+  globalThis.unithistPath = unithist;
+  globalThis.historyRecords = hist;
+
+  globalThis['_'] = [];
+  globalThis['$'] = null;
+
+  // NO EAGER COMPILER SPAWN HERE.
+  // Files will only compile when accessed or explicitly invoked via Compile().
+
   await CommandLine();
 }
 

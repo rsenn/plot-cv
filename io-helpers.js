@@ -78,7 +78,18 @@ export function ReadFile(name, binary) {
 }
 
 export function ReadAny(obj, binary) {
-  return { number: ReadFd, string: ReadFile, object: ReadClose }[typeof obj](obj, binary);
+  const type = typeof obj;
+  const handler = {
+    number: ReadFd,
+    string: ReadFile,
+    object: obj !== null ? ReadClose : undefined
+  }[type];
+
+  if (!handler) {
+    throw new TypeError(`ReadAny: Incompatible type '${type}' for input: ${obj}`);
+  }
+
+  return handler(obj, binary);
 }
 
 export function LoadHistory(filename) {
