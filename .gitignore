@@ -1,3 +1,6 @@
 node_modules
 build
 */build/*
+/tmp/
+.eagle-config.json
+/index.json

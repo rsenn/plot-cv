@@ -72,3 +72,18 @@ Entry template:
 
     printf 'f() { echo hi; }\nf\n' > /tmp/t.sh; shparse2ast -P /tmp/t.sh | head -c 100000 | wc -c
 
+
+- qjs-modules-url-search-throws: qjs-modules' lib/url.js `URL.search` getter (re-encode
+  in toString) throws on a query containing unencoded ( ) | $. Found while serving the
+  EAGLE client's `files?filter=.*.(brd|sch|lbr|GBL|GKO|GTL)$&flat=1` through qjs-lws
+  `Bun.serve`; eagle-server.js parses the query from req.url to avoid it.
+
+    qjsm -e "import('url').then(m=>console.log(new m.URL('http://x/f?a=(b|c)\$').search))"
+
+
+## [2026-11-05] main.js helpers still on the old EAGLE document API
+- Where: main.js `GenerateVoronoi`, `PackageNames`, `ElementChildren`/`ElementGeometries`, `EagleMaps`; eagle-commands.js `GetParts`/`GetElements`/`GetInstances`/`GetPositions`/`UpdateMeasures`/`AlignAll`
+- What: they use `doc.elements`, `doc.packages`, `doc.getAll()`, `doc.getBounds()`, `doc.lookup()` and `project.renderer.maps`, none of which exist on the DOM-based EagleDocument (root eagle.js) or on eagle-renderer.js. They are console helpers (exposed on `window`), not wired to the toolbar, so the app itself is unaffected; they throw when called. `EagleMaps` no longer maps anything: the components emit `data-path` from `data.path`, which eagle-renderer.js's adapter returns as `[]`. `GenerateVoronoi` was also unfinished before (ends with an undefined `svgElem`).
+- How found: lifting main.js to the new renderer (see TODO.md); the live UI paths were fixed, these were left.
+- Severity: low
+- Status: open

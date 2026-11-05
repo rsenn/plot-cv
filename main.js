@@ -331,9 +331,7 @@ function DrawSVG(...args) {
 function calcViewBox(box) {
   box =
     box ||
-    (project &&
-      project.doc &&
-      BBox.from(project.doc.getMeasures(true) || project.doc.getBounds(0)));
+    (project && project.renderer && project.renderer.rect);
   box = box || Element.rect('.aspect-ratio-box-inside');
   const { width, height, x, y } = box;
   let { x1, y1, x2, y2 } = new Rect(x, y, width, height);
@@ -399,6 +397,19 @@ const filesystem = {
   async realpath(filename) {},
 };
 
+/* the DOM document model carries no file information: add what the viewer shows and saves under */
+function DescribeDocument(doc, name) {
+  const file = name.replace(/.*\//, '');
+
+  Object.defineProperties(doc, {
+    file: { value: file, configurable: true },
+    basename: { value: file.replace(/\.[^.]*$/, ''), configurable: true },
+    typeName: { value: { board: 'brd', schematic: 'sch', library: 'lbr' }[doc.type], configurable: true },
+  });
+
+  return doc;
+}
+
 async function LoadFile(file) {
   let { url, name } =
     typeof file == 'string'
@@ -414,7 +425,7 @@ async function LoadFile(file) {
 
   console.log(`LoadFile ${name}`, { xml });
 
-  let doc = new EagleParser().parseFromString(xml, name);
+  let doc = DescribeDocument(new EagleParser().parseFromString(xml, name), name);
   //let doc = new EagleDocument(xml, null, name, null, filesystem);
 
   //console.log(`LoadFile ${name}`, { doc, xml });
@@ -927,6 +938,43 @@ function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
   return output;
 }
 
+/* the render components do not follow attribute changes any more, so the grid and hidden layers are plain CSS */
+let gridBound = false;
+
+function SetGridVisible(project, visible) {
+  /* looked up each time: the fence re-renders and replaces the svg element */
+  const grid = document.querySelector('#main svg > rect[fill^="url"]');
+
+  if(grid) grid.style.display = visible ? '' : 'none';
+}
+
+function BindLayerVisibility(layers) {
+  let style = document.getElementById('layer-visibility');
+  let pending = false;
+
+  if(!style) {
+    style = document.createElement('style');
+    style.id = 'layer-visibility';
+    document.head.appendChild(style);
+  }
+
+  const update = () => {
+    if(pending) return;
+    pending = true;
+
+    queueMicrotask(() => {
+      pending = false;
+      style.textContent = layers
+        .filter(l => !is.on(l.visible()))
+        .map(l => `#main [data-layer^="${l.i} "] { display: none; }`)
+        .join('\n');
+    });
+  };
+
+  for(const l of layers) l.visible.subscribe(update);
+  update();
+}
+
 function saveItemStates(itemList, get = item => is.on(item.visible())) {
   return itemList.map(item => [item, get(item)]);
 }
@@ -1142,9 +1190,7 @@ async function LoadDocument(project, parentElem) {
   );
 
   tryCatch(() => {
-    documentTitle(project.doc.file.replace(/.*\//g, ''));
-    let s = project.doc.type != 'lbr' && project.doc.dimensions;
-    if(s) documentSize(s.round(0.01).toString({ unit: 'mm' }));
+    documentTitle(project.doc.file);
   });
 
   const { doc } = project;
@@ -1181,41 +1227,41 @@ async function RenderProject(project = globalThis.project) {
     config.debugFlag(),
   );
 
-  config.showGrid = trkl(true);
-  config.showGrid.subscribe(value => {
-    let obj = { ...project.renderer.grid, visible: value };
-    project.renderer.grid = obj;
-  });
+  if(!gridBound) {
+    gridBound = true;
+    config.showGrid.subscribe(value => SetGridVisible(globalThis.project, value));
+  }
 
   let style = { width: '100%', height: '100%', position: 'relative' };
 
-  let Component = project.renderer.render(doc, null, {});
+  /* render(sheetNo): the schematic renderer shows one sheet at a time, the other renderers take no argument */
+  let Component = project.renderer.render(project.sheet ?? 0);
 
   let usedLayers = [
     ...doc.layers,
   ]; /*.filter(layer => layer.elements.size > 0)*/
 
-  Timer.once(250).then(() =>
-    layerList(
-      usedLayers.map(layer => ({
-        i: layer.number,
-        name: layer.name,
-        color: layer.getColor(),
-        element: layer,
-        visible: (() => {
-          let fn;
-          const handler = layer.handlers.visible;
-          fn = function(v) {
-            if(v !== undefined) handler(is.on(v) ? 'yes' : 'no');
-            else return handler();
-          };
-          fn.subscribe = handler.subscribe;
-          fn.unsubscribe = handler.unsubscribe;
-          return fn;
-        })(),
-      })),
-    ),
-  );
+  const layerEntries = usedLayers.map(layer => ({
+    i: layer.number,
+    name: layer.name,
+    color: layer.getColor(),
+    element: layer,
+    visible: (() => {
+      let fn;
+      const handler = layer.handlers.visible;
+      fn = function(v) {
+        if(v !== undefined) handler(is.on(v) ? 'yes' : 'no');
+        else return handler();
+      };
+      fn.subscribe = handler.subscribe;
+      fn.unsubscribe = handler.unsubscribe;
+      return fn;
+    })(),
+  }));
+
+  BindLayerVisibility(layerEntries);
+
+  Timer.once(250).then(() => layerList(layerEntries));
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = Component;
   let element = Element.find('#main');
@@ -1224,10 +1270,13 @@ async function RenderProject(project = globalThis.project) {
     let r = project.renderer.rect || project.renderer.bounds;
     let size = (project.dimensions = project.renderer.size);
     let aspectRatio = 1;
-    if(project.doc.type != 'lbr') {
+    if(project.doc.type != 'library') {
       if(r) {
         aspectRatio = r.width / r.height;
         sizeListener(size);
+        const { width, height } = new Size(r.width, r.height).round(0.01);
+
+        documentSize(`${width}mm \u2715 ${height}mm`);
       }
     } else {
       sizeListener({});
@@ -1266,6 +1315,7 @@ async function RenderProject(project = globalThis.project) {
 
     window.project.element = element;
     window.project.svgElement = svgElement = Element.find('svg', element);
+    SetGridVisible(project, config.showGrid());
 
     project.grid = Element.find('g.grid', project.element);
     project.bbox = SVG.bbox(project.grid);
@@ -1285,14 +1335,15 @@ async function RenderProject(project = globalThis.project) {
         (transform ? ' ' + transform : '');
       return (e = SVG.create('g', { ...props, transform }, svg));
     };
-    project.makeFactory = memoize(id =>
-      SVG.factory(() =>
-        project.makeGroup({
-          ...((id !== undefined && { id }) || {}),
-          'stroke-width': 0.127 / 4,
-        }),
-      ),
-    );
+    /* f(tag, attrs, parent = group): SVG.factory() no longer takes a function as its root */
+    project.makeFactory = memoize(id => {
+      const group = project.makeGroup({
+        ...((id !== undefined && { id }) || {}),
+        'stroke-width': 0.127 / 4,
+      });
+
+      return (tag, attrs = {}, parent = group) => SVG.create(tag, attrs, parent);
+    });
     project.makeFactory();
 
     let center = SVG.bbox(svgElement).center.round();
@@ -1331,7 +1382,7 @@ async function RenderProject(project = globalThis.project) {
     let rect = bounds.toRect(Rect.prototype);
     let size = new Size(rect.size);
     // currentProj(project);
-    size.mul(doc.type == 'brd' ? 2 : 1.5);
+    size.mul(doc.type == 'board' ? 2 : 1.5);
     let svgrect = SVG.bbox(project.svgElement);
     let measures = (doc.measures || doc.getBounds()).rect;
     //console.debug('measures:', measures);
@@ -1390,7 +1441,7 @@ async function RenderProject(project = globalThis.project) {
     if(width && height) {
       let size = new Size(width, height);
 
-      size.mul(doc.type == 'brd' ? 2 : 1.5);
+      size.mul(doc.type == 'board' ? 2 : 1.5);
 
       let svgrect = SVG.bbox(project.svgElement);
       let measures = doc.measures || rect;

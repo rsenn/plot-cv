@@ -451,6 +451,11 @@ export class EagleSVGRenderer {
     const rect = new Rect(x1, y1, width, height);
     const grid = findChild(this.adapter.drawing, 'grid');
 
+    /* what viewers (main.js) need to size the document: the drawing rectangle and its CSS size in mm */
+    this.bounds = bounds;
+    this.rect = rect;
+    this.size = { width: `${width}mm`, height: `${height}mm` };
+
     return h(
       SVG,
       {

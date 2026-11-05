@@ -1,0 +1,6 @@
+{
+  "fire.html": { "description": "Interactive fire animation on a canvas" },
+  "map.html": { "description": "OpenLayers map with timeline, drag-and-drop upload and fly-to shortcuts" },
+  "/eagle": { "name": "EAGLE renderer", "description": "Board and schematic viewer for EAGLE files with Gerber and G-code export" },
+  "/webakeit": { "hidden": true }
+}

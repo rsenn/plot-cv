@@ -260,3 +260,99 @@ Added `define`/`nonenumerable`/`declare` helpers and a `quote`/`extractTable` pa
 
 ## Submodule note
 `quickjs`, `qjs-opencv`, and `eslint-plugin-unused-imports` all show as modified (submodule pointer bumps) with their own dirty working trees (build artifacts, nested submodule changes, and — in `eslint-plugin-unused-imports` — real source edits under `src/`). Not covered by this summary; revisit separately if that work needs tracking.
+
+## transistorisiert.ch site + eagle-server.js — 2026-11-05
+
+Two tracks, in order:
+
+1. **Static site (done, needs install — see "Site scope change" below)**: `tools/build-site.mjs` exports the pages
+   directory.js would list (root `*.html` without a dash, non-empty title) with their
+   module/asset closure into `build/site/` and writes a static `index.html`. An
+   import map injected into each page maps `rbush`/`quickselect`/`earcut` to
+   `static/vendor/`. `tools/deploy-site.sh [--nginx]` rsyncs to
+   `/var/www/transistorisiert.ch`; patched nginx files are `nginx/{ssl,default}`
+   (root moved off `/var/www/html`, which holds the "device probe" page; dead
+   `/home/roman/Projects/plot-cv` static root and the `/static` and `/`→directory.html
+   rules removed; `/eagle/` gets websocket upgrade + big bodies). Install needs sudo,
+   not run yet. debugger/list/upload pages still need a backend.
+2. **eagle-server.js (in progress)**: full rewrite on `serve()` (Bun.serve shape,
+   runs on qjs-lws and Bun), covering what main.js/commands.js call:
+   `/config` (GET/POST), `/files` (GET + POST), `/file?action=load&file=`, `/save`,
+   `/gerber`, `/gcode`, `/contours`, `/ws` (+ `/serial`, `/list-serial`),
+   `/static/*`, `/data|tmp|vfs/*`. Supersedes item 3 above. `/github` proxy is only
+   used for the GitHub-repository project source and is postponed.
+
+### Site scope change (2026-11-05, user request) — in progress
+
+Wanted: index as many projects/PoCs/demos as possible at www.transistorisiert.ch,
+new design, rendered previews, and `directory.js` must collect name + description
+for every *active/reachable* `location {}` of `/etc/nginx/sites-available/ssl`.
+Plan (order):
+ a. `directory.js` = one ES module, two faces: `collect`/`previews` commands under
+    qjsm/bun/node (writes `index.json`, `previews/*.png` via headless google-chrome),
+    and the browser renderer (card grid, search, kind filter) reading `index.json`.
+ b. `directory.html` rewritten (new design); `tools/build-site.mjs` stages the pages
+    listed in `index.json` (not its own page selection) + `directory.js`, `index.json`,
+    `previews/`, and publishes directory.html as `index.html`.
+ c. `tools/deploy-site.sh` runs collect → build-site → previews → rsync.
+ d. eagle-server.js (track 2 above) resumes afterwards. Findings so far: on qjsm
+    `Bun.file()` yields an empty body (use `fs`); Bun.serve + `upgrade`/`publish` work
+    on both runtimes; a Bun client could not complete a ws handshake against the qjsm
+    server in a first test (re-test against the real server).
+
+### Status 2026-11-05 (end of session)
+
+- Site: a–c done. Pending, needs sudo/the user: `tools/www-cert.sh` (own certificate
+  for www.transistorisiert.ch: nginx.crt only has the apex name, www resolves to this
+  host (dyndns), the apex to 155.2.234.135), then `tools/deploy-site.sh --nginx`.
+  `/webakeit` proxies to 127.0.0.1:80 = the site itself (loop), hidden in
+  directory.json. `/eagle` shows "Bun - Build Failed" from whatever listens on 3000
+  until eagle-server.js runs there.
+- eagle-server.js: rewritten, verified on qjsm and Bun (files, file, save, config,
+  gerber/gcode with stub tools, contours + ws hub). `eagle`/`pcb2gcode` are not
+  installed here (real conversion untested). Workarounds in the server: fallbacks for
+  `quickjs/qjs-modules/*` (empty submodule here; events.js -> lib/events.js) and
+  `quickjs/qjs-net/js/rpc.js` -> lib/rpc.js. Open: a service unit/launcher for port 3000;
+  qjs-modules' `URL.search` throws on unencoded `( ) | $` (log in qjs-modules BUGS).
+
+### main.js lifted to the DOM model + eagle-renderer.js — 2026-11-05
+
+Done (main.js, eagle-renderer.js; nothing under lib/eagle/ touched):
+- eagle-renderer.js stores `rect`, `bounds`, `size` (CSS mm) like the old renderer; main.js calls
+  `render(sheetNo)` instead of `render(doc, null, {})` (schematics rendered no sheet).
+- main.js: `DescribeDocument()` adds `file`/`basename`/`typeName` (SaveSVG names `X.brd.svg` again),
+  doc types `board`/`library` instead of `brd`/`lbr`, document size display from the renderer.
+- Layer visibility and the grid toggle are CSS now (`BindLayerVisibility`, `SetGridVisible`): the
+  render components stopped following attribute changes in lib commit 3ff172f6.
+- `project.makeFactory` built on `SVG.create` (SVG.factory no longer accepts a function root).
+Open: see BUGS "main.js helpers still on the old EAGLE document API"; multi-sheet schematics have
+no sheet switcher (`project.sheet` is read by RenderProject, nothing sets it); the CAM/gerber/gcode
+flow was not re-tested (eagle/pcb2gcode not installed here).
+
+### Remaining tasks (2026-11-05)
+
+Needs the user (sudo / DNS / decisions):
+1. `tools/deploy-site.sh --nginx` — installs nginx/{ssl,default}, publishes build/site to
+   /var/www/transistorisiert.ch (landing.html is the front page, the project index is
+   /directory.html). The certificate for www + apex is already in place (/etc/nginx/www.{crt,key}).
+2. Remove the old apex-only cert entry: `~/.acme.sh/acme.sh --remove -d transistorisiert.ch --ecc`.
+3. Start eagle-server.js on port 3000 for /eagle/ (`qjsm|bun eagle-server.js -p 3000`); no service
+   unit by decision. Until then /eagle/ shows whatever else listens on 3000.
+4. Decide: add a link from landing.html to /directory.html (the index is otherwise unreachable
+   from the front page); /webakeit proxies to 127.0.0.1:80 (loops onto the site itself).
+
+Open work:
+5. eagle-server.js: real eagle/pcb2gcode conversion untested (tools not installed here); /save and
+   POST /config are unauthenticated (same as server.js) — add a token before exposing /eagle/;
+   conversions block the server (qjsm has no async child_process); drop the path fallbacks for
+   quickjs/qjs-modules and qjs-net/js/rpc.js once main.js imports the real locations.
+6. main.js: helpers on the old document API (BUGS "main.js helpers still on the old EAGLE document
+   API"): GenerateVoronoi, PackageNames, ElementChildren/Geometries, EagleMaps, eagle-commands.js
+   GetParts/GetElements/GetInstances/GetPositions/UpdateMeasures/AlignAll; sheet switcher for
+   multi-sheet schematics (`project.sheet`); re-test the CAM flow with eagle + pcb2gcode.
+7. directory.js/site: descriptions are empty for most demo pages (fill directory.json); fire.html
+   preview is mostly black (needs input); pages needing a backend (debugger, list, upload) are
+   listed but cannot work on the static host; previews are regenerated with
+   `qjsm directory.js previews --force`.
+8. qjs-modules: `URL.search` throws on unencoded `( ) | $` (BUGS entry
+   qjs-modules-url-search-throws).

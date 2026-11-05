@@ -1,76 +1,207 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>Index</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>transistorisiert.ch</title>
+    <meta name="description" content="Projects, proofs of concept and experiments" />
     <link rel="shortcut icon" sizes="16x16 32x32 48x48 64x64 128x128 256x256" type="image/x-icon" href="favicon.ico" />
-    <style type="text/css">
-      body,
-      html {
-        padding: 0;
+    <style>
+      :root {
+        color-scheme: dark light;
+        --bg: #0e1116;
+        --panel: #171b22;
+        --line: #262c36;
+        --text: #e6e9ee;
+        --dim: #8b94a3;
+        --accent: #36c5f0;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f4f5f7;
+          --panel: #fff;
+          --line: #dfe2e8;
+          --text: #1b1f27;
+          --dim: #646d7c;
+          --accent: #0a7fb0;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
         margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 15px/1.45 system-ui, 'Century Gothic', sans-serif;
       }
-      html,
-      body,
-      #page {
-        overflow: hidden;
-      }
-      body {
-        background: white;
-        font-family: 'fixed-width', Fixed;
-      }
-      body {
-        font-family: 'Century Gothic', Arial, Fixed;
-        padding: 1em;
-      }
-      body {
-        width: 100%;
-        height: 100%;
-        position: relative;
-      }
-      body {
+      header {
         display: flex;
-        align-items: flex-start;
-        justify-content: center;
-      }
-      body > div {
-        display: flex;
-        flex-flow: column;
-        align-items: flex-start;
-        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+        align-items: end;
+        justify-content: space-between;
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem 1rem;
       }
       h1 {
-        font-weight: 600;
-        font-size: 2.5rem;
-        filter: drop-shadow(3px 2px 0px hsla(210, 100%, 50%, 0.8)) drop-shadow(0px -1px #00000080);
-        margin: 0 0 0.67em 0;
-        color: black;
+        margin: 0;
+        font: 600 clamp(1.8rem, 4vw, 2.8rem) / 1.1 ui-monospace, 'DejaVu Sans Mono', monospace;
+        letter-spacing: -0.03em;
       }
-      ul {
-        display: inline-flex;
-        flex-flow: column;
-        padding: 0;
-        margin: 0 0 1em 0;
+      h1 span {
+        color: var(--accent);
       }
-      li {
-        display: inline-grid;
-        grid-template-columns: 10em 1fr;
-        margin: 1px 0;
+      header p {
+        margin: 0.4rem 0 0;
+        color: var(--dim);
       }
-      a:hover {
-        text-decoration: underline;
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        align-items: center;
       }
-      a {
-        color: hsla(210, 100%, 50%, 1);
+      #q {
+        width: 15rem;
+        padding: 0.5rem 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--panel);
+        color: inherit;
+        font: inherit;
+      }
+      #q:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 1px;
+      }
+      #chips button {
+        margin-right: 0.3rem;
+        padding: 0.4rem 0.9rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: transparent;
+        color: var(--dim);
+        font: inherit;
+        cursor: pointer;
+      }
+      #chips button:hover {
+        color: var(--text);
+      }
+      #chips button.on {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      main {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 0 1.5rem 3rem;
+      }
+      section h3 {
+        margin: 2rem 0 0.8rem;
+        font: 600 0.8rem ui-monospace, monospace;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+      section h3 small {
+        font-weight: 400;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+        gap: 1.1rem;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel);
+        color: inherit;
         text-decoration: none;
+        transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
       }
-      a:visited {
-        color: hsla(250, 100%, 50%, 1);
+      .card[hidden] {
+        display: none;
+      }
+      .card:hover,
+      .card:focus-visible {
+        transform: translateY(-3px);
+        border-color: var(--accent);
+        box-shadow: 0 8px 24px #0006;
+        outline: none;
+      }
+      .thumb {
+        position: relative;
+        aspect-ratio: 8 / 5;
+        background: linear-gradient(135deg, hsl(var(--h) 45% 28%), hsl(calc(var(--h) + 50) 50% 16%));
+        display: grid;
+        place-items: center;
+      }
+      .thumb span {
+        font: 700 3.5rem ui-monospace, monospace;
+        color: #fff4;
+      }
+      .thumb img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+        background: #fff;
+      }
+      .info {
+        padding: 0.8rem 0.95rem 0.95rem;
+        min-width: 0;
+      }
+      .info h2 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .info p {
+        min-height: 2.9em;
+        margin: 0.25rem 0 0.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: var(--dim);
+        font-size: 0.9rem;
+      }
+      .info code {
+        color: var(--accent);
+        font-size: 0.78rem;
+      }
+      footer {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 0 1.5rem 2rem;
+        color: var(--dim);
+        font-size: 0.8rem;
       }
     </style>
+    <script src="directory.js" type="module"></script>
   </head>
   <body>
-    <div>
-      <h1>Directory index</h1>
-      <script src="directory.js" type="module"></script>
-    </div>
+    <header>
+      <div>
+        <h1>transistor<span>isiert</span>.ch</h1>
+        <p>Projects, proofs of concept and experiments</p>
+      </div>
+      <div class="controls">
+        <div id="chips"></div>
+        <input id="q" type="search" placeholder="Search…" autocomplete="off" aria-label="Search" />
+      </div>
+    </header>
+    <main id="entries"></main>
+    <footer id="stamp"></footer>
   </body>
 </html>

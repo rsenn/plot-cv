@@ -1,0 +1,10 @@
+- 2026-11-05
+  static site for transistorisiert.ch: directory.js (collect index.json from the root pages and the active nginx locations, headless-chrome previews, card-grid browser renderer), new directory.html, directory.json overrides, tools/build-site.mjs (page + import closure, import map for rbush/earcut/quickselect in static/vendor), tools/deploy-site.sh, tools/www-cert.sh, patched nginx/{ssl,default}
+- 2026-11-05
+  eagle-server.js rewritten on the Bun.serve shape (qjsm + qjs-lws and Bun): config, files, file, save, gerber, gcode, contours, ws hub, list-serial, static files with module-alias rewriting and path fallbacks
+- 2026-11-05
+  main.js lifted to the DOM document model and eagle-renderer.js: render(sheetNo), renderer rect/bounds/size, DescribeDocument, layer visibility and grid as CSS, makeFactory on SVG.create, document size display (lib/eagle untouched)
+- 2026-11-05
+  eagle-renderer.js exposes rect, bounds and size
+- 2026-11-05
+  BUGS: qjs-modules-url-search-throws, main.js helpers on the old document API
