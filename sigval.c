@@ -4,6 +4,8 @@
 
 int
 main() {
+  printf("%-10s = %d\n", "SIG_DFL", SIG_DFL);
+  printf("%-10s = %d\n", "SIG_IGN", SIG_IGN);
   printf("%-10s = %d\n", "SIGHUP", SIGHUP);
   printf("%-10s = %d\n", "SIGINT", SIGINT);
   printf("%-10s = %d\n", "SIGQUIT", SIGQUIT);
