@@ -209,13 +209,15 @@ cfg-mingw() {
     esac
 
     : ${PKG_CONFIG_PATH=/usr/${host}/sys-root/mingw/lib/pkgconfig}
+    PKG_CONFIG=${host}-pkg-config
 
-    export TOOLCHAIN PKG_CONFIG_PATH
+    export TOOLCHAIN PKG_CONFIG PKG_CONFIG_PATH
 
     builddir=build/$host \
       bindir=$prefix/bin \
       libdir=$prefix/lib \
       cfg \
+      -DPKG_CONFIG_EXECUTABLE=${host}-pkg-config \
       "$@"
   )
 }
@@ -335,8 +337,9 @@ cfg-msys() {
     : ${prefix=/usr/$host/sysroot/usr}
     echo "host: $host"
     : ${PKG_CONFIG_PATH=/usr/${host}/sysroot/usr/lib/pkgconfig}
+    PKG_CONFIG=${host}-pkg-config
 
-    export PKG_CONFIG_PATH
+    export PKG_CONFIG PKG_CONFIG_PATH
 
     case "$host" in
     x86_64*) TOOLCHAIN=/opt/cmake-toolchains/msys64.cmake ;;
@@ -352,6 +355,7 @@ cfg-msys() {
       host=$host \
       build=$build \
       cfg \
+      -DPKG_CONFIG_EXECUTABLE=${host}-pkg-config \
       "$@"
   )
 }
